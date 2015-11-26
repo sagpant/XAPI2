@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 
-namespace QuantBox.XAPI
+namespace QuantBox.XAPI.COM
 {
     /// <summary>
     /// 查询持仓,查委托，查成交
@@ -241,9 +241,9 @@ namespace QuantBox.XAPI
     /// <summary>
     /// 服务器信息
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct ServerInfoField
+    [ComVisible(true)]
+    [Guid("44C1222D-D53A-40E7-ADE6-8106ED187389")]
+    public class ServerInfoClass
     {
         /// <summary>
         /// 订阅主题
@@ -266,10 +266,10 @@ namespace QuantBox.XAPI
         /// <summary>
         /// 流恢复
         /// </summary>
-        public ResumeType MarketDataTopicResumeType;
-        public ResumeType PrivateTopicResumeType;
-        public ResumeType PublicTopicResumeType;
-        public ResumeType UserTopicResumeType;
+        public int MarketDataTopicResumeType;
+        public int PrivateTopicResumeType;
+        public int PublicTopicResumeType;
+        public int UserTopicResumeType;
         /// <summary>
         /// 经纪公司代码
         /// </summary>
@@ -306,9 +306,9 @@ namespace QuantBox.XAPI
     /// <summary>
     /// 用户信息
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct UserInfoField
+    [ComVisible(true)]
+    [Guid("64B0070A-B601-45C2-BD7D-CE507AFB924E")]
+    public class UserInfoClass
     {
         /// <summary>
         /// 用户代码
@@ -379,56 +379,19 @@ namespace QuantBox.XAPI
     }
 
 
-    /// <summary>
-    /// 登录回报
-    /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct RspUserLoginField
+    [ComVisible(true)]
+    [Guid("D642BDD2-8BB7-4BC9-BDC4-29CF05D1EAD4")]
+    public class RspUserLoginClass
     {
-        /// <summary>
-        /// 交易日
-        /// </summary>
         public int TradingDay;
-        /// <summary>
-        /// 时间
-        /// </summary>
         public int LoginTime;
-        /// <summary>
-        /// 
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string SessionID;
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string UserID;
-        /// <summary>
-        /// 
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string AccountID;
-        /// <summary>
-        /// 投资者名称
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 81)]
-        public byte[] InvestorName;
-
-        /// <summary>
-        /// 错误代码
-        /// </summary>
+        public string InvestorName;
         public int XErrorID;
-        /// <summary>
-        /// 错误信息
-        /// </summary>
         public int RawErrorID;
-        /// <summary>
-        /// 错误信息
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public byte[] Text;
+        public string Text;
     }
 
     
@@ -436,9 +399,8 @@ namespace QuantBox.XAPI
     /// <summary>
     /// DepthField行情
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct DepthField
+    [ComVisible(true)]
+    public struct DepthClass
     {
         public double Price;
         public int Size;
@@ -795,8 +757,8 @@ namespace QuantBox.XAPI
         public int BidCount;
     }
 
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    [ComVisible(true)]
+    [Guid("468A2E0A-A1F3-4B68-8CC4-D1C4DBA8E45B")]
     public class DepthMarketDataNClass
     {
         public int TradingDay;
@@ -807,7 +769,7 @@ namespace QuantBox.XAPI
         /// <summary>
         /// 交易所代码
         /// </summary>
-        public ExchangeType Exchange;
+        public int Exchange;
 
         /// <summary>
         /// 合约代码
@@ -886,7 +848,7 @@ namespace QuantBox.XAPI
         public double PreOpenInterest;
 
         ///交易阶段类型
-        public TradingPhaseType TradingPhase;
+        public int TradingPhase;
 
         ///买档个数
         public DepthField[] Bids;

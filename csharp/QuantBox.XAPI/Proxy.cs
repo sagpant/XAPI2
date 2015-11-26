@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 
 namespace QuantBox.XAPI
 {
+    [ComVisible(false)]
     public delegate IntPtr XCall(byte type, IntPtr pApi1, IntPtr pApi2, double double1, double double2, IntPtr ptr1, int size1, IntPtr ptr2, int size2, IntPtr ptr3, int size3);
+    [ComVisible(false)]
     public class Proxy
     {
         private InvokeBase _Invoke;

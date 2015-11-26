@@ -7,6 +7,7 @@ using System.Text;
 
 namespace QuantBox.XAPI.Interface
 {
+    [ComVisible(false)]
     public interface IXApi
     {
         DelegateOnConnectionStatus OnConnectionStatus { get; set; }
@@ -24,6 +25,7 @@ namespace QuantBox.XAPI.Interface
         string GetApiVersion { get;}
     }
 
+    [ComVisible(false)]
     public interface IXMarketData
     {
         DelegateOnRtnDepthMarketData OnRtnDepthMarketData{ get; set; }
@@ -31,11 +33,13 @@ namespace QuantBox.XAPI.Interface
         void Unsubscribe(string szInstrument, string szExchange);
     }
 
+    [ComVisible(false)]
     public interface IXInstrument
     {
         DelegateOnRspQryInstrument OnRspQryInstrument { get; set; }
     }
 
+    [ComVisible(false)]
     public interface IXQuery
     {
         DelegateOnRspQryTradingAccount OnRspQryTradingAccount { get; set; }
@@ -47,6 +51,7 @@ namespace QuantBox.XAPI.Interface
         DelegateOnRspQryQuote OnRspQryQuote { get; set; }
     }
 
+    [ComVisible(false)]
     public interface IXTrade
     {
         DelegateOnRtnOrder OnRtnOrder { get; set; }
@@ -60,6 +65,7 @@ namespace QuantBox.XAPI.Interface
         void CancelQuote(string szId,out string err);
     }
 
+    [ComVisible(false)]
     public interface IXHistoricalData
     {
         DelegateOnRspQryHistoricalTicks OnRspQryHistoricalTicks { get; set; }
