@@ -6,6 +6,7 @@ using System.Text;
 
 namespace QuantBox.XAPI
 {
+    [ComVisible(false)]
     public class DllInvoke:InvokeBase
     {
         [System.Flags]

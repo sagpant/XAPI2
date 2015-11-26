@@ -6,84 +6,24 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 
-namespace QuantBox
+namespace QuantBox.XAPI.COM
 {
-    /// <summary>
-    /// 连接状态
-    /// </summary>
-    [ComVisible(false)]
-    public enum ConnectionStatus : byte
+    public class ConnectionStatus
     {
-        /// <summary>
-        /// 未初始化
-        /// </summary>
-        [Description("未初始化")]
-        Uninitialized = 0,
-        /// <summary>
-        /// 已经初始化
-        /// </summary>
-        [Description("已经初始化")]
-        Initialized,
-        /// <summary>
-        /// 连接已经断开
-        /// </summary>
-        [Description("连接已经断开")]
-        Disconnected,
-        /// <summary>
-        /// 连接中...
-        /// </summary>
-        [Description("连接中...")]
-        Connecting,
-        /// <summary>
-        /// 连接成功
-        /// </summary>
-        [Description("连接成功")]
-        Connected,
-        /// <summary>
-        /// 授权中...
-        /// </summary>
-        [Description("授权中...")]
-        Authorizing,
-        /// <summary>
-        /// 授权成功
-        /// </summary>
-        [Description("授权成功")]
-        Authorized,
-        /// <summary>
-        /// 登录中...
-        /// </summary>
-        [Description("登录中...")]
-        Logining,
-        /// <summary>
-        /// 登录成功
-        /// </summary>
-        [Description("登录成功")]
-        Logined,
-        /// <summary>
-        /// 确认中...
-        /// </summary>
-        [Description("确认中...")]
-        Confirming,
-        /// <summary>
-        /// 已经确认
-        /// </summary>
-        [Description("已经确认")]
-        Confirmed,
-        /// <summary>
-        /// 已经确认
-        /// </summary>
-        [Description("操作中...")]
-        Doing,
-        /// <summary>
-        /// 完成
-        /// </summary>
-        [Description("完成")]
-        Done,
-        /// <summary>
-        /// 未知
-        /// </summary>
-        [Description("未知")]
-        Unknown,
+        public const int Uninitialized = 0;
+        public const int Initialized = 1;
+        public const int Disconnected = 2;
+        public const int Connecting = 3;
+        public const int Connected = 4;
+        public const int Authorizing = 5;
+        public const int Authorized = 6;
+        public const int Logining = 7;
+        public const int Logined = 8;
+        public const int Confirming = 9;
+        public const int Confirmed = 10;
+        public const int Doing = 11;
+        public const int Done = 12;
+        public const int Unknown = 13;
     }
 
     [ComVisible(false)]
@@ -100,13 +40,12 @@ namespace QuantBox
         Query = 64,
     };
 
-    [ComVisible(false)]
-    public enum ResumeType : byte
+    public class ResumeType
     {
-        Restart,
-        Resume,
-        Quick,
-        Undefined,
+        public const int Restart = 0;
+        public const int Resume = 1;
+        public const int Quick = 2;
+        public const int Undefined = 3;
     };
 
     [ComVisible(false)]

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Ideafixxxer.Generics
@@ -17,6 +18,7 @@ namespace Ideafixxxer.Generics
     /// Helper class for enum types
     /// </summary>
     /// <typeparam name="T">Must be enum type (declared using <c>enum</c> keyword)</typeparam>
+    [ComVisible(false)]
     public static class Enum<T> where T : struct, IConvertible
     {
         private static readonly EnumConverter Converter;

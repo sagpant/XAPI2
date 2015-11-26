@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace QuantBox.XAPI.Event
 {
-    [ProgId("QuantBox.XAPI.Event.XApiWrapper"), ComVisible(true)]
     public class XApiWrapper:XApi
     {
         public new event EventHandler OnConnectionStatus;
