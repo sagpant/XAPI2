@@ -141,12 +141,11 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 订单信息
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct OrderField
+    [ComVisible(true)]
+    public class OrderClass
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public byte[] InstrumentName;
+        public string InstrumentName;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Symbol;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
@@ -159,11 +158,14 @@ namespace QuantBox.XAPI.COM
         public string AccountID;
 
 
-        public OrderSide Side;
+        public int Side;
+        public string Side_String;
         public double Qty;
         public double Price;
-        public OpenCloseType OpenClose;
-        public HedgeFlagType HedgeFlag;
+        public int OpenClose;
+        public string OpenClose_String;
+        public int HedgeFlag;
+        public string HedgeFlag_String;
         public int Date;
         public int Time;
 
@@ -176,12 +178,16 @@ namespace QuantBox.XAPI.COM
         public string LocalID;
 
 
-        public OrderType Type;
+        public int Type;
+        public string Type_String;
         public double StopPx;
-        public TimeInForce TimeInForce;
+        public int TimeInForce;
+        public string TimeInForce_String;
 
-        public OrderStatus Status;
-        public ExecType ExecType;
+        public int Status;
+        public string Status_String;
+        public int ExecType;
+        public string ExecType_String;
         public double LeavesQty;
         public double CumQty;
         public double AvgPx;
@@ -189,7 +195,7 @@ namespace QuantBox.XAPI.COM
         public int XErrorID;
         public int RawErrorID;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public byte[] Text;
+        public string Text;
 
         public int ReserveInt32;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
@@ -849,6 +855,7 @@ namespace QuantBox.XAPI.COM
 
         ///交易阶段类型
         public int TradingPhase;
+        public string TradingPhase_String;
 
         ///买档个数
         public DepthField[] Bids;

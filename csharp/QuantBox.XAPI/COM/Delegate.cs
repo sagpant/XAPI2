@@ -6,7 +6,7 @@ using System.Text;
 
 namespace QuantBox.XAPI.COM
 {
-    public delegate void DelegateOnConnectionStatus(object sender, int status, string status_string, [In] ref RspUserLoginClass userLogin, int size1);
+    public delegate void DelegateOnConnectionStatus(object sender, int status, string status_String, [In] ref RspUserLoginClass userLogin, int size1);
     //public delegate void DelegateOnRtnError(object sender, [In] ref ErrorField error);
     //public delegate void DelegateOnLog(object sender, [In] ref LogField log);
 
@@ -18,7 +18,7 @@ namespace QuantBox.XAPI.COM
     //public delegate void DelegateOnRspQryInvestorPosition(object sender, [In] ref PositionField position, int size1, bool bIsLast);
     //public delegate void DelegateOnRspQrySettlementInfo(object sender, [In] ref SettlementInfoClass settlementInfo, int size1, bool bIsLast);
     //public delegate void DelegateOnRspQryInvestor(object sender, [In] ref InvestorField investor, int size1, bool bIsLast);
-    //public delegate void DelegateOnRtnOrder(object sender, [In] ref OrderField order);
+    public delegate void DelegateOnRtnOrder(object sender, [In] ref OrderClass order);
     //public delegate void DelegateOnRtnTrade(object sender, [In] ref TradeField trade);
     //public delegate void DelegateOnRtnQuote(object sender, [In] ref QuoteField quote);
     //public delegate void DelegateOnRspQryOrder(object sender, [In] ref OrderField order, int size1, bool bIsLast);
