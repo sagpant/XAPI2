@@ -29,8 +29,10 @@ namespace QuantBox.XAPI.COM
         [DispId(21)]
         void Unsubscribe(string szInstrument, string szExchange);
 
-
-
+        [DispId(31)]
+        void SendOrder(ref OrderClass[] orders); // , out string[] OrderRefs
+        
+            
         [DispId(100)]
         void ReqQuery();
         
