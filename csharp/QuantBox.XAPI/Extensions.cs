@@ -19,6 +19,11 @@ namespace QuantBox.XAPI
             return PInvokeUtility.GetUnicodeString(field.InstrumentName);
         }
 
+        public static string InstrumentName([In]this TradeField field)
+        {
+            return PInvokeUtility.GetUnicodeString(field.InstrumentName);
+        }
+
         public static string Text([In]this OrderField field)
         {
             return PInvokeUtility.GetUnicodeString(field.Text);

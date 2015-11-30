@@ -112,6 +112,7 @@
     <Compile Include="COM\Enum.cs" />
     <Compile Include="COM\IXApi.cs" />
     <Compile Include="COM\IXApiEvents.cs" />
+    <Compile Include="COM\QueryType.cs" />
     <Compile Include="COM\Struct.cs" />
     <Compile Include="COM\XApiCom.cs" />
     <Compile Include="Delegate.cs" />
