@@ -17,7 +17,9 @@ namespace QuantBox.XAPI.COM
     {
         public event DelegateOnConnectionStatus OnConnectionStatus;
         public event DelegateOnRtnDepthMarketData OnRtnDepthMarketData;
+        public event DelegateOnRspQryInstrument OnRspQryInstrument;
         public event DelegateOnRtnOrder OnRtnOrder;
+        public event DelegateOnRtnTrade OnRtnTrade;
 
         private XApi api;
 
@@ -32,7 +34,7 @@ namespace QuantBox.XAPI.COM
             api.OnRtnDepthMarketData = OnRtnDepthMarketData_callback;
             //base.OnRtnQuoteRequest = OnRtnQuoteRequest_callback;
 
-            //base.OnRspQryInstrument = OnRspQryInstrument_callback;
+            api.OnRspQryInstrument = OnRspQryInstrument_callback;
             //base.OnRspQryTradingAccount = OnRspQryTradingAccount_callback;
             //base.OnRspQryInvestorPosition = OnRspQryInvestorPosition_callback;
             //base.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
@@ -42,7 +44,7 @@ namespace QuantBox.XAPI.COM
             //base.OnRspQryQuote = OnRspQryQuote_callback;
 
             api.OnRtnOrder = OnRtnOrder_callback;
-            //base.OnRtnTrade = OnRtnTrade_callback;
+            api.OnRtnTrade = OnRtnTrade_callback;
             //base.OnRtnQuote = OnRtnQuote_callback;
 
             //base.OnRspQryHistoricalTicks = OnRspQryHistoricalTicks_callback;
@@ -51,12 +53,13 @@ namespace QuantBox.XAPI.COM
             //base.OnRspQryInvestor = OnRspQryInvestor_callback;
         }
 
+
         public void SetLibPath(string LibPath)
         {
             api.LibPath = LibPath;
         }
 
-        public void SetServerInfo(ServerInfoClass ServerInfo)
+        public void SetServerInfo(ref ServerInfoClass ServerInfo)
         {
             api.Server.IsUsingUdp = ServerInfo.IsUsingUdp;
             api.Server.IsMulticast = ServerInfo.IsMulticast;
@@ -74,7 +77,7 @@ namespace QuantBox.XAPI.COM
             api.Server.ExtInfoChar128 = ServerInfo.ExtInfoChar128;
         }
 
-        public void SetUserInfo(UserInfoClass UserInfo)
+        public void SetUserInfo(ref UserInfoClass UserInfo)
         {
             api.User.UserID = UserInfo.UserID;
             api.User.Password = UserInfo.Password;
@@ -148,110 +151,219 @@ namespace QuantBox.XAPI.COM
             api.SendOrder(ref fields, out OrderRefs);
         }
 
-        public void ReqQuery()
+        public void CancelOrder(ref string[] ids)
         {
+            string[] errs;
+            api.CancelOrder(ids, out errs);
+        }
 
+        public void ReqQuery(int type, ref ReqQueryClass query)
+        {
+            ReqQueryField field = default(ReqQueryField);
+            ReqQueryClass cls = query;
+
+            //field.InstrumentName = cls.InstrumentName;
+            field.Symbol = cls.Symbol;
+            field.InstrumentID = cls.InstrumentID;
+            field.ExchangeID = cls.ExchangeID;
+            field.ClientID = cls.ClientID;
+            field.AccountID = cls.AccountID;
+            field.CurrencyID = cls.CurrencyID;
+            field.DateStart = cls.DateStart;
+            field.DateEnd = cls.DateEnd;
+            field.TimeStart = cls.TimeStart;
+            field.TimeEnd = cls.TimeEnd;
+            field.Char64ID = cls.Char64ID;
+            field.Int32ID = cls.Int32ID;
+            field.Char64RefID = cls.Char64RefID;
+            field.Int32RefID = cls.Int32RefID;
+
+            api.ReqQuery((XAPI.QueryType)type,ref field);
         }
 
 
         private void OnConnectionStatus_callback(object sender, QuantBox.ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
         {
-            if (null != OnConnectionStatus)
+            if (null == OnConnectionStatus)
+                return;
+
+            RspUserLoginClass cls = null;
+
+            if (size1 > 0)
             {
-                RspUserLoginClass cls = null;
-                
-                if(size1>0)
-                {
-                    cls = new RspUserLoginClass();
-                    RspUserLoginField field = userLogin;
+                cls = new RspUserLoginClass();
+                RspUserLoginField field = userLogin;
 
-                    cls.TradingDay = field.TradingDay;
-                    cls.LoginTime = field.LoginTime;
-                    cls.SessionID = field.SessionID;
-                    cls.UserID = field.UserID;
-                    cls.AccountID = field.AccountID;
-                    cls.InvestorName = field.InvestorName();
-                    cls.XErrorID = field.XErrorID;
-                    cls.RawErrorID = field.RawErrorID;
-                    cls.Text = field.Text();
-                }
-
-                OnConnectionStatus(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
+                cls.TradingDay = field.TradingDay;
+                cls.LoginTime = field.LoginTime;
+                cls.SessionID = field.SessionID;
+                cls.UserID = field.UserID;
+                cls.AccountID = field.AccountID;
+                cls.InvestorName = field.InvestorName();
+                cls.XErrorID = field.XErrorID;
+                cls.RawErrorID = field.RawErrorID;
+                cls.Text = field.Text();
             }
+
+            OnConnectionStatus(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
         }
 
         private void OnRtnDepthMarketData_callback(object sender, ref QuantBox.XAPI.DepthMarketDataNClass marketData)
         {
-            if (null != OnRtnDepthMarketData)
-            {
-                DepthMarketDataNClass cls = new DepthMarketDataNClass();
-                QuantBox.XAPI.DepthMarketDataNClass field = marketData;
+            if (null == OnRtnDepthMarketData)
+                return;
 
-                cls.TradingDay = field.TradingDay;
-                cls.ActionDay = field.ActionDay;
-                cls.UpdateTime = field.UpdateTime;
-                cls.UpdateMillisec = field.UpdateMillisec;
-                cls.Exchange = (int)field.Exchange;
-                cls.Symbol = field.Symbol;
-                cls.InstrumentID = field.InstrumentID;
-                cls.LastPrice = field.LastPrice;
-                cls.Volume = field.Volume;
-                cls.Turnover = field.Turnover;
-                cls.OpenInterest = field.OpenInterest;
-                cls.AveragePrice = field.AveragePrice;
-                cls.OpenPrice = field.OpenPrice;
-                cls.HighestPrice = field.HighestPrice;
-                cls.LowestPrice = field.LowestPrice;
-                cls.ClosePrice = field.ClosePrice;
-                cls.SettlementPrice = field.SettlementPrice;
-                cls.UpperLimitPrice = field.UpperLimitPrice;
-                cls.LowerLimitPrice = field.LowerLimitPrice;
-                cls.PreClosePrice = field.PreClosePrice;
-                cls.PreSettlementPrice = field.PreSettlementPrice;
-                cls.PreOpenInterest = field.PreOpenInterest;
-                cls.TradingPhase = (int)field.TradingPhase;
-                cls.TradingPhase_String = Enum<QuantBox.TradingPhaseType>.ToString(field.TradingPhase);
-                //cls.Bids = marketData.TradingDay;
-                //cls.TradingDay = marketData.TradingDay;
+            DepthMarketDataNClass cls = new DepthMarketDataNClass();
+            QuantBox.XAPI.DepthMarketDataNClass field = marketData;
 
-                OnRtnDepthMarketData(this, ref cls);
-            }
+            cls.TradingDay = field.TradingDay;
+            cls.ActionDay = field.ActionDay;
+            cls.UpdateTime = field.UpdateTime;
+            cls.UpdateMillisec = field.UpdateMillisec;
+            cls.Exchange = (int)field.Exchange;
+            cls.Symbol = field.Symbol;
+            cls.InstrumentID = field.InstrumentID;
+            cls.LastPrice = field.LastPrice;
+            cls.Volume = field.Volume;
+            cls.Turnover = field.Turnover;
+            cls.OpenInterest = field.OpenInterest;
+            cls.AveragePrice = field.AveragePrice;
+            cls.OpenPrice = field.OpenPrice;
+            cls.HighestPrice = field.HighestPrice;
+            cls.LowestPrice = field.LowestPrice;
+            cls.ClosePrice = field.ClosePrice;
+            cls.SettlementPrice = field.SettlementPrice;
+            cls.UpperLimitPrice = field.UpperLimitPrice;
+            cls.LowerLimitPrice = field.LowerLimitPrice;
+            cls.PreClosePrice = field.PreClosePrice;
+            cls.PreSettlementPrice = field.PreSettlementPrice;
+            cls.PreOpenInterest = field.PreOpenInterest;
+            cls.TradingPhase = (int)field.TradingPhase;
+            cls.TradingPhase_String = Enum<QuantBox.TradingPhaseType>.ToString(field.TradingPhase);
+            //cls.Bids = marketData.TradingDay;
+            //cls.TradingDay = marketData.TradingDay;
+
+            OnRtnDepthMarketData(this, ref cls);
         }
 
         private void OnRtnOrder_callback(object sender, ref OrderField order)
         {
-            if (null != OnRtnOrder)
-            {
-                OrderField field = order;
+            if (null == OnRtnOrder)
+                return;
 
-                OrderClass cls = new OrderClass();
+            OrderField field = order;
 
-                cls.InstrumentName = field.InstrumentName();
-                cls.Symbol = field.Symbol;
-                cls.InstrumentID = field.InstrumentID;
-                cls.ExchangeID = field.ExchangeID;
-                cls.ClientID = field.ClientID;
-                cls.AccountID = field.AccountID;
-                cls.Side = (int)field.Side;
-                cls.Side_String = Enum<QuantBox.OrderSide>.ToString(field.Side);
-                cls.StopPx = field.StopPx;
-                cls.TimeInForce = (int)field.TimeInForce;
-                cls.TimeInForce_String = Enum<QuantBox.TimeInForce>.ToString(field.TimeInForce);
-                cls.Status = (int)field.Status;
-                cls.Status_String = Enum<QuantBox.OrderStatus>.ToString(field.Status);
-                cls.ExecType = (int)field.ExecType;
-                cls.ExecType_String = Enum<QuantBox.ExecType>.ToString(field.ExecType);
-                cls.LeavesQty = field.LeavesQty;
-                cls.CumQty = field.CumQty;
-                cls.AvgPx = field.AvgPx;
-                cls.XErrorID = field.XErrorID;
-                cls.RawErrorID = field.RawErrorID;
-                cls.Text = field.Text();
-                cls.ReserveInt32 = field.ReserveInt32;
-                cls.ReserveChar64 = field.ReserveChar64;
+            OrderClass cls = new OrderClass();
 
-                OnRtnOrder(this, ref cls);
-            }
+            cls.InstrumentName = field.InstrumentName();
+            cls.Symbol = field.Symbol;
+            cls.InstrumentID = field.InstrumentID;
+            cls.ExchangeID = field.ExchangeID;
+            cls.ClientID = field.ClientID;
+            cls.AccountID = field.AccountID;
+            cls.Side = (int)field.Side;
+            cls.Side_String = Enum<QuantBox.OrderSide>.ToString(field.Side);
+            cls.Qty = field.Qty;
+            cls.Price = field.Price;
+            cls.OpenClose = (int)field.OpenClose;
+            cls.OpenClose_String = Enum<QuantBox.OpenCloseType>.ToString(field.OpenClose);
+            cls.HedgeFlag = (int)field.HedgeFlag;
+            cls.HedgeFlag_String = Enum<QuantBox.HedgeFlagType>.ToString(field.HedgeFlag);
+            cls.Date = field.Date;
+            cls.Time = field.Time;
+            cls.ID = field.ID;
+            cls.OrderID = field.OrderID;
+            cls.LocalID = field.LocalID;
+            cls.Type = (int)field.Type;
+            cls.Type_String = Enum<QuantBox.OrderType>.ToString(field.Type);
+            cls.StopPx = field.StopPx;
+            cls.TimeInForce = (int)field.TimeInForce;
+            cls.TimeInForce_String = Enum<QuantBox.TimeInForce>.ToString(field.TimeInForce);
+            cls.Status = (int)field.Status;
+            cls.Status_String = Enum<QuantBox.OrderStatus>.ToString(field.Status);
+            cls.ExecType = (int)field.ExecType;
+            cls.ExecType_String = Enum<QuantBox.ExecType>.ToString(field.ExecType);
+            cls.LeavesQty = field.LeavesQty;
+            cls.CumQty = field.CumQty;
+            cls.AvgPx = field.AvgPx;
+            cls.XErrorID = field.XErrorID;
+            cls.RawErrorID = field.RawErrorID;
+            cls.Text = field.Text();
+            cls.ReserveInt32 = field.ReserveInt32;
+            cls.ReserveChar64 = field.ReserveChar64;
+
+            OnRtnOrder(this, ref cls);
+        }
+
+        private void OnRtnTrade_callback(object sender, ref TradeField trade)
+        {
+            if (null == OnRtnTrade)
+                return;
+
+            TradeField field = trade;
+
+            TradeClass cls = new TradeClass();
+
+            cls.InstrumentName = field.InstrumentName();
+            cls.Symbol = field.Symbol;
+            cls.InstrumentID = field.InstrumentID;
+            cls.ExchangeID = field.ExchangeID;
+            cls.ClientID = field.ClientID;
+            cls.AccountID = field.AccountID;
+            cls.Side = (int)field.Side;
+            cls.Side_String = Enum<QuantBox.OrderSide>.ToString(field.Side);
+            cls.Qty = field.Qty;
+            cls.Price = field.Price;
+            cls.OpenClose = (int)field.OpenClose;
+            cls.OpenClose_String = Enum<QuantBox.OpenCloseType>.ToString(field.OpenClose);
+            cls.HedgeFlag = (int)field.HedgeFlag;
+            cls.HedgeFlag_String = Enum<QuantBox.HedgeFlagType>.ToString(field.HedgeFlag);
+            cls.Date = field.Date;
+            cls.Time = field.Time;
+            cls.ID = field.ID;
+            cls.TradeID = field.TradeID;
+            cls.ReserveInt32 = field.ReserveInt32;
+            cls.ReserveChar64 = field.ReserveChar64;
+
+            OnRtnTrade(this, ref cls);
+        }
+
+        private void OnRspQryInstrument_callback(object sender, ref InstrumentField instrument, int size1, bool bIsLast)
+        {
+            if (null == OnRspQryInstrument)
+                return;
+
+            InstrumentField field = instrument;
+
+            InstrumentClass cls = new InstrumentClass();
+
+            cls.InstrumentName = field.InstrumentName();
+            cls.Symbol = field.Symbol;
+            cls.InstrumentID = field.InstrumentID;
+            cls.ExchangeID = field.ExchangeID;
+            cls.ClientID = field.ClientID;
+            cls.AccountID = field.AccountID;
+
+            cls.ExchangeInstID = field.ExchangeInstID;
+
+            cls.Type = (int)field.Type;
+            cls.Type_String = Enum<QuantBox.InstrumentType>.ToString(field.Type);
+
+            cls.VolumeMultiple = field.VolumeMultiple;
+            cls.PriceTick = field.PriceTick;
+            cls.ExpireDate = field.ExpireDate;
+            cls.StrikePrice = field.StrikePrice;
+
+            cls.OptionsType = (int)field.OptionsType;
+            cls.OptionsType_String = Enum<QuantBox.PutCall>.ToString(field.OptionsType);
+
+            cls.ProductID = field.ProductID;
+            cls.UnderlyingInstrID = field.UnderlyingInstrID;
+
+            cls.InstLifePhase = (int)field.InstLifePhase;
+            cls.InstLifePhase_String = Enum<QuantBox.InstLifePhaseType>.ToString(field.InstLifePhase);
+
+            OnRspQryInstrument(this, ref cls, size1, bIsLast);
         }
     }
 }

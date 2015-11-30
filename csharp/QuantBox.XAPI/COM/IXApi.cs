@@ -14,9 +14,9 @@ namespace QuantBox.XAPI.COM
         [DispId(1)]
         void SetLibPath(string LibPath);
         [DispId(2)]
-        void SetServerInfo(ServerInfoClass ServerInfo);
+        void SetServerInfo(ref ServerInfoClass ServerInfo);
         [DispId(3)]
-        void SetUserInfo(UserInfoClass UserInfo);
+        void SetUserInfo(ref UserInfoClass UserInfo);
 
 
         [DispId(10)]
@@ -31,10 +31,12 @@ namespace QuantBox.XAPI.COM
 
         [DispId(31)]
         void SendOrder(ref OrderClass[] orders); // , out string[] OrderRefs
+        [DispId(32)]
+        void CancelOrder(ref string[] ids);
         
             
         [DispId(100)]
-        void ReqQuery();
+        void ReqQuery(int type, ref ReqQueryClass query);
         
     }
 }

@@ -10,12 +10,12 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 查询持仓,查委托，查成交
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct ReqQueryField
+    [ComVisible(true)]
+    [Guid("6E232C62-E200-4C15-863F-D319B74414C9")]
+    public class ReqQueryClass
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public byte[] InstrumentName;
+        public string InstrumentName;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Symbol;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
@@ -142,6 +142,7 @@ namespace QuantBox.XAPI.COM
     /// 订单信息
     /// </summary>
     [ComVisible(true)]
+    [Guid("23FC4E48-54FF-4A89-B924-B8668C5D9570")]
     public class OrderClass
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
@@ -205,12 +206,12 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 成交回报
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct TradeField
+    [ComVisible(true)]
+    [Guid("9FF68AA1-CB14-49E5-91F9-856400663C5E")]
+    public class TradeClass
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public byte[] InstrumentName;
+        public string InstrumentName;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Symbol;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
@@ -222,14 +223,16 @@ namespace QuantBox.XAPI.COM
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string AccountID;
 
-        public OrderSide Side;
+        public int Side;
+        public string Side_String;
         public double Qty;
         public double Price;
-        public OpenCloseType OpenClose;
-        public HedgeFlagType HedgeFlag;
+        public int OpenClose;
+        public string OpenClose_String;
+        public int HedgeFlag;
+        public string HedgeFlag_String;
         public int Date;
         public int Time;
-
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string ID;
@@ -341,9 +344,8 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 错误信息
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct ErrorField
+    [ComVisible(true)]
+    public class ErrorField
     {
         /// <summary>
         /// 错误代码
@@ -357,7 +359,7 @@ namespace QuantBox.XAPI.COM
         /// 错误信息
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public byte[] Text;
+        public string Text;
         /// <summary>
         /// 信息来源
         /// </summary>
@@ -369,19 +371,19 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 日志信息
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct LogField
+    [ComVisible(true)]
+    public class LogField
     {
         /// <summary>
         /// 日志级别
         /// </summary>
-        public LogLevel Level;
+        public int Level;
+        public string Level_String;
         /// <summary>
         /// 错误信息
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public byte[] Message;
+        public string Message;
     }
 
 
@@ -417,11 +419,12 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 合约信息
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct InstrumentField
+    [ComVisible(true)]
+    [Guid("37ED5322-1C11-477A-AC97-F947AD8532B2")]
+    public class InstrumentClass
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public byte[] InstrumentName;
+        public string InstrumentName;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Symbol;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
@@ -441,7 +444,8 @@ namespace QuantBox.XAPI.COM
         /// <summary>
         /// 类型
         /// </summary>
-        public InstrumentType Type;
+        public int Type;
+        public string Type_String;
         /// <summary>
         /// 合约数量乘数
         /// </summary>
@@ -462,7 +466,8 @@ namespace QuantBox.XAPI.COM
         /// <summary>
         /// 期权类型
         /// </summary>
-        public PutCall OptionsType;
+        public int OptionsType;
+        public string OptionsType_String;
         /// <summary>
         /// 产品代码
         /// </summary>
@@ -474,7 +479,8 @@ namespace QuantBox.XAPI.COM
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
         public string UnderlyingInstrID;
         ///合约生命周期状态
-        public InstLifePhaseType InstLifePhase;
+        public int InstLifePhase;
+        public string InstLifePhase_String;
     }
 
     /// <summary>
