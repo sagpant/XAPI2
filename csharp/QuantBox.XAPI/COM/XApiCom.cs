@@ -2,6 +2,7 @@
 using QuantBox.XAPI.Callback;
 using System;
 using System.Collections.Generic;
+using System.EnterpriseServices;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -13,11 +14,15 @@ namespace QuantBox.XAPI.COM
     [ComVisible(true)]
     [Guid("825E3182-8444-4580-8A8C-965485FBF451"), ClassInterface(ClassInterfaceType.None), ComSourceInterfaces(typeof(IXApiEvents))]
     [ProgId("XApiCom")]
-    public class XApiCom :IXApi
+    [EventTrackingEnabled(true)]
+    [Description("Interface Serviced Component")]
+    public class XApiCom : ServicedComponent, IXApi
     {
         public event DelegateOnConnectionStatus OnConnectionStatus;
         public event DelegateOnRtnDepthMarketData OnRtnDepthMarketData;
         public event DelegateOnRspQryInstrument OnRspQryInstrument;
+        public event DelegateOnRspQryTradingAccount OnRspQryTradingAccount;
+        public event DelegateOnRspQryInvestorPosition OnRspQryInvestorPosition;
         public event DelegateOnRtnOrder OnRtnOrder;
         public event DelegateOnRtnTrade OnRtnTrade;
 
@@ -35,8 +40,8 @@ namespace QuantBox.XAPI.COM
             //base.OnRtnQuoteRequest = OnRtnQuoteRequest_callback;
 
             api.OnRspQryInstrument = OnRspQryInstrument_callback;
-            //base.OnRspQryTradingAccount = OnRspQryTradingAccount_callback;
-            //base.OnRspQryInvestorPosition = OnRspQryInvestorPosition_callback;
+            api.OnRspQryTradingAccount = OnRspQryTradingAccount_callback;
+            api.OnRspQryInvestorPosition = OnRspQryInvestorPosition_callback;
             //base.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
 
             //base.OnRspQryOrder = OnRspQryOrder_callback;
@@ -52,7 +57,6 @@ namespace QuantBox.XAPI.COM
 
             //base.OnRspQryInvestor = OnRspQryInvestor_callback;
         }
-
 
         public void SetLibPath(string LibPath)
         {
@@ -364,6 +368,74 @@ namespace QuantBox.XAPI.COM
             cls.InstLifePhase_String = Enum<QuantBox.InstLifePhaseType>.ToString(field.InstLifePhase);
 
             OnRspQryInstrument(this, ref cls, size1, bIsLast);
+        }
+
+        private void OnRspQryInvestorPosition_callback(object sender, ref PositionField position, int size1, bool bIsLast)
+        {
+            if (null == OnRspQryInvestorPosition)
+                return;
+
+            PositionField field = position;
+
+            PositionClass cls = new PositionClass();
+
+            cls.InstrumentName = field.InstrumentName();
+            cls.Symbol = field.Symbol;
+            cls.InstrumentID = field.InstrumentID;
+            cls.ExchangeID = field.ExchangeID;
+            cls.ClientID = field.ClientID;
+            cls.AccountID = field.AccountID;
+
+            cls.Side = (int)field.Side;
+            cls.Side_String = Enum<QuantBox.PositionSide>.ToString(field.Side);
+            cls.HedgeFlag = (int)field.HedgeFlag;
+            cls.HedgeFlag_String = Enum<QuantBox.HedgeFlagType>.ToString(field.HedgeFlag);
+
+            cls.Date = field.Date;
+            cls.PositionCost = field.PositionCost;
+            cls.Position = field.Position;
+            cls.TodayPosition = field.TodayPosition;
+            cls.HistoryPosition = field.HistoryPosition;
+            cls.HistoryFrozen = field.HistoryFrozen;
+            cls.TodayBSPosition = field.TodayBSPosition;
+            cls.TodayBSFrozen = field.TodayBSFrozen;
+            cls.TodayPRPosition = field.TodayPRPosition;
+            cls.TodayPRFrozen = field.TodayPRFrozen;
+
+            OnRspQryInvestorPosition(this, ref cls, size1, bIsLast);
+        }
+
+        private void OnRspQryTradingAccount_callback(object sender, ref AccountField account, int size1, bool bIsLast)
+        {
+            if (null == OnRspQryTradingAccount)
+                return;
+
+            AccountField field = account;
+
+            AccountClass cls = new AccountClass();
+
+            cls.ClientID = field.ClientID;
+            cls.AccountID = field.AccountID;
+            cls.CurrencyID = field.CurrencyID;
+
+            cls.PreBalance = field.PreBalance;
+            cls.CurrMargin = field.CurrMargin;
+            cls.CloseProfit = field.CloseProfit;
+            cls.PositionProfit = field.PositionProfit;
+            cls.Balance = field.Balance;
+            cls.Available = field.Available;
+            cls.Deposit = field.Deposit;
+            cls.Withdraw = field.Withdraw;
+            cls.WithdrawQuota = field.WithdrawQuota;
+            cls.FrozenTransferFee = field.FrozenTransferFee;
+            cls.FrozenStampTax = field.FrozenStampTax;
+            cls.FrozenCommission = field.FrozenCommission;
+            cls.FrozenCash = field.FrozenCash;
+            cls.StampTax = field.StampTax;
+            cls.Commission = field.Commission;
+            cls.CashIn = field.CashIn;
+
+            OnRspQryTradingAccount(this, ref cls, size1, bIsLast);
         }
     }
 }

@@ -45,12 +45,12 @@ namespace QuantBox.XAPI.COM
     }
 
     ///持仓
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct PositionField
+    [ComVisible(true)]
+    [Guid("07C1DA6E-A85E-4931-ABE6-03681A3DBB0B")]
+    public class PositionClass
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public byte[] InstrumentName;
+        public string InstrumentName;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Symbol;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
@@ -62,8 +62,10 @@ namespace QuantBox.XAPI.COM
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string AccountID;
 
-        public PositionSide Side;
-        public HedgeFlagType HedgeFlag;
+        public int Side;
+        public string Side_String;
+        public int HedgeFlag;
+        public string HedgeFlag_String;
         public int Date;
         public double PositionCost;
         
@@ -345,7 +347,8 @@ namespace QuantBox.XAPI.COM
     /// 错误信息
     /// </summary>
     [ComVisible(true)]
-    public class ErrorField
+    [Guid("5F68D385-04A7-4247-8C07-839C6CE68EFF")]
+    public class ErrorClass
     {
         /// <summary>
         /// 错误代码
@@ -486,9 +489,9 @@ namespace QuantBox.XAPI.COM
     /// <summary>
     /// 账号
     /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct AccountField
+    [ComVisible(true)]
+    [Guid("6A75FF0C-C78F-4805-96AB-0FB4AF196152")]
+    public class AccountClass
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string ClientID;
