@@ -787,6 +787,7 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 				OrderField* pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 
 				WTLB_2_OrderField_0(ppRS[i], pField);
+
 				m_NewOrderList.push_back(pField);
 
 				if (!ZTSM_IsDone(ppRS[i]->ZTSM_))
@@ -835,7 +836,11 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 
 			// 如果能找到下单时的委托，就修改后发出来
 			unordered_map<string, OrderField*>::iterator it = m_id_platform_order.find(pField->ID);
-			if (it != m_id_platform_order.end())
+			if (it == m_id_platform_order.end())
+			{
+				m_id_platform_order.insert(pair<string, OrderField*>(pField->ID, pField));
+			}
+			else
 			{
 				OrderField* pField_ = it->second;
 				pField_->Date = pField->Date;
@@ -849,6 +854,20 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 
 				pField = pField_;
 			}
+
+			{
+				unordered_map<string, Order_STRUCT*>::iterator it = m_id_api_order.find(pField->ID);
+				if (it == m_id_api_order.end())
+				{
+					Order_STRUCT* pTdxField = (Order_STRUCT*)m_msgQueue->new_block(sizeof(Order_STRUCT));
+					strcpy(pTdxField->GDDM, pField->AccountID);
+					strcpy(pTdxField->ZHLB_, "1");
+					strcpy(pTdxField->WTBH, pField->ID);
+
+					m_id_api_order.insert(pair<string, Order_STRUCT*>(pField->ID, pTdxField));
+				}
+			}
+			
 			
 			m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
 		}

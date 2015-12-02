@@ -23,6 +23,9 @@ void GetExchangeTime_DCE(char* TradingDay, char* ActionDay, char* UpdateTime, in
 void GetExchangeTime(char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);
 void GetExchangeTime(time_t Time, int* _TradingDay, int* _ActionDay, int* _UpdateTime);
 
+void GetUpdateTime_HH_mm_ss(char* UpdateTime, int* _HH, int* _mm, int* _ss);
+void GetUpdateTime_HHmmss(char* UpdateTime, int* _HH, int* _mm, int* _ss);
+
 int GetDate(char* TradingDay);
 int GetTime(char* UpdateTime);
 

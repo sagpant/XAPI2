@@ -67,23 +67,13 @@ TDXAPI_API void DeleteErrors(Error_STRUCT** pErrs);
 TDXAPI_API void DeleteErrors(Error_STRUCT** pErrs, int count);
 // 得到错误数
 TDXAPI_API int GetCountErrors(Error_STRUCT** pErrs);
-
 //////////////////////////////////////////////////////////////////////////
-// 将字符串表转成特定对
-TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults);
-
-TDXAPI_API void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults);
-
-TDXAPI_API void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT*** pppResults);
-
-TDXAPI_API void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT*** pppResults);
-
-TDXAPI_API void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT*** pppResults);
-
-TDXAPI_API void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults);
-
-TDXAPI_API void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults);
-
 TDXAPI_API int GetCountStructs(void** ppResults);
 
 TDXAPI_API void DeleteStructs(void*** pppStructs);
+//////////////////////////////////////////////////////////////////////////
+// 股东列表处理，用于授权部分
+TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults);
+
+TDXAPI_API void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults);
+
