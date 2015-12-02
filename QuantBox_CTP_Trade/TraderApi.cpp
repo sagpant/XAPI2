@@ -453,14 +453,14 @@ void CTraderApi::Clear()
 	m_id_platform_position.clear();
 }
 
-int CTraderApi::ReqOrderInsert(
+char* CTraderApi::ReqOrderInsert(
 	OrderField* pOrder,
 	int count,
-	OrderIDType* pInOut)
+	char* pszLocalIDBuf)
 {
 	int OrderRef = -1;
 	if (nullptr == m_pApi)
-		return -1;
+		return nullptr;
 
 	CThostFtdcInputOrderField body = {0};
 
@@ -586,13 +586,13 @@ int CTraderApi::ReqOrderInsert(
 			memcpy(pField, pOrder, sizeof(OrderField));
 			strcpy(pField->ID, m_orderInsert_Id);
 			strcpy(pField->LocalID, pField->ID);
-			m_id_platform_order.insert(pair<string, OrderField*>(m_orderInsert_Id, pField));
+			m_id_platform_order.insert(pair<string, OrderField*>(pField->LocalID, pField));
 
 		}
-		strncpy((char*)pInOut, m_orderInsert_Id, sizeof(OrderIDType));
+		strncpy((char*)pszLocalIDBuf, m_orderInsert_Id, sizeof(OrderIDType));
 	}
 
-	return nRet;
+	return pszLocalIDBuf;
 }
 
 void CTraderApi::OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
@@ -664,19 +664,20 @@ void CTraderApi::OnRtnTrade(CThostFtdcTradeField *pTrade)
 	OnTrade(pTrade, 0, true);
 }
 
-int CTraderApi::ReqOrderAction(OrderIDType* szIds, int count, OrderIDType* pOutput)
+char* CTraderApi::ReqOrderAction(OrderIDType* szIds, int count, char* pzsRtn)
 {
 	unordered_map<string, CThostFtdcOrderField*>::iterator it = m_id_api_order.find(szIds[0]);
 	if (it == m_id_api_order.end())
 	{
-		sprintf((char*)pOutput, "%d", -100);
-		return -100;
+		sprintf(pzsRtn, "%d", -100);
 	}
 	else
 	{
 		// 找到了订单
-		return ReqOrderAction(it->second, count, pOutput);
+		return ReqOrderAction(it->second, count, pzsRtn);
 	}
+
+	return pzsRtn;
 }
 
 int CTraderApi::ReqOrderAction(OrderField *pOrder, int count, OrderIDType* pOutput)
@@ -721,7 +722,7 @@ int CTraderApi::ReqOrderAction(OrderField *pOrder, int count, OrderIDType* pOutp
 	return 0;
 }
 
-int CTraderApi::ReqOrderAction(CThostFtdcOrderField *pOrder, int count, OrderIDType* pOutput)
+char* CTraderApi::ReqOrderAction(CThostFtdcOrderField *pOrder, int count, char* pzsRtn)
 {
 	if (nullptr == m_pApi)
 		return 0;
@@ -756,10 +757,9 @@ int CTraderApi::ReqOrderAction(CThostFtdcOrderField *pOrder, int count, OrderIDT
 	{
 		memset(m_orderAction_Id, 0, sizeof(OrderIDType));
 	}
-	strncpy((char*)pOutput, m_orderAction_Id, sizeof(OrderIDType));
+	strncpy(pzsRtn, m_orderAction_Id, sizeof(OrderIDType));
 
-
-	return nRet;
+	return pzsRtn;
 }
 
 void CTraderApi::OnRspOrderAction(CThostFtdcInputOrderActionField *pInputOrderAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)

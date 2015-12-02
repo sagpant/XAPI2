@@ -6,21 +6,32 @@
 #define COL_EACH_ROW	(64) //每行多少例，相当重要
 
 // 125_帐号类别
+// 37 期权
+// 40 沪港通
 
 
 // 130_买卖标志
 // 下单时使用买卖标志来指定报单类型
 // 查询时，单子只简单的表示了买卖方向，是否要启用委托类别？
-#define MMBZ_Buy_Limit			0	// 限价买
+#define MMBZ_Buy_Limit			0	// 限价买,		可转债转股
 #define MMBZ_Sell_Limit			1	// 限价卖
 #define MMBZ_Cancel				2	// 撤买/撤卖
-#define MMBZ_3					3	// 融券
-#define MMBZ_Buy_Market			67	// 市价买
-#define MMBZ_Sell_Market		68	// 市价卖
-#define MMBZ_Creation			79	// 基金申购
-#define MMBZ_Redemption			80	// 基金赎回
+#define MMBZ_3					3	// ?融券
 #define MMBZ_Merge				12	// 基金合并
 #define MMBZ_Split				13	// 基金分拆
+#define MMBZ_Buy_Market			67	// 市价买
+#define MMBZ_Sell_Market		68	// 市价卖
+#define MMBZ_Buy_RZ				69	// 融资买入
+#define MMBZ_Sell_RQ			70	// 融券卖出
+#define MMBZ_Buy_HQ				71	// 买券还券
+#define MMBZ_73					73	// 现券还券
+#define MMBZ_74					74	// 担保品划转
+#define MMBZ_75					75	// 现金还款
+#define MMBZ_76					76	// 卖券还款
+#define MMBZ_Creation			79	// 基金申购
+#define MMBZ_Redemption			80	// 基金赎回
+#define MMBZ_86					86	// 权证行权
+
 
 // 5565_委托类别
 #define WTLB_MM	0;	// 买卖
@@ -49,7 +60,18 @@
 #define WTFS_FOK				5 // 全额成交或撤销委托,全额成交或撤销,全额成交或撤销委托,
 #define WTFS_Five_Limit			6 // 五档即时成交剩余转限,五档即成转限价,最优五档即时成交剩余转限价委托,
 
+#define WTFS_HRXYZH				0 // 划入信用账户
+#define WTFS_HCXYZH				1 // 划出信用账户
 
+#define WTFS_ZQXJP				2 // 增强限价盘
+#define WTFS_JJXJP				3 // 竞价限价盘
+
+// 113_操作标志
+#define CZBZ_Open				1	// 开仓
+#define CZBZ_Close				2	// 平仓
+#define CZBZ_3					3	// ?
+#define CZBZ_Lock				4	// 锁定
+#define CZBZ_Unlock				5	// 解锁
 
 // 281_融资融券标识
 #define RZRQBS_NO				0	// 非融资融券
@@ -63,7 +85,7 @@
 #define ZTSM_4					4	//
 #define ZTSM_PartiallyFilled	5	// 5-部分成交
 #define ZTSM_AllFilled			6	// 6-全部成交,已成,全部成交
-#define ZTSM_PartiallyCancelled	7	// 部撤，这是猜的，需要以后修正
+#define ZTSM_PartiallyCancelled	7	// 7-部成部撤，部撤
 #define ZTSM_AllCancelled		8	// 8-全部撤单,已撤,全部撤单
 #define ZTSM_CancelRejected		9	// 9-撤单未成					只会出现撤单记录中
 

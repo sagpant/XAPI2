@@ -74,17 +74,17 @@ public:
 		int count);
 	void Disconnect();
 
-	int ReqOrderInsert(
+	char* ReqOrderInsert(
 		OrderField* pOrder,
 		int count,
-		OrderIDType* pInOut);
+		char* pszLocalIDBuf);
 
 	//char* ReqParkedOrderInsert(int OrderRef,
 	//	OrderField* pOrder1,
 	//	OrderField* pOrder2);
 
-	int ReqOrderAction(OrderIDType* szId, int count, OrderIDType* pOutput);
-	int ReqOrderAction(Order_STRUCT *pOrder, int count, OrderIDType* pOutput);
+	char* ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn);
+	//char* ReqOrderAction(Order_STRUCT *pOrder, int count, char* pzsRtn);
 
 	//char* ReqQuoteInsert(
 	//	int QuoteRef,

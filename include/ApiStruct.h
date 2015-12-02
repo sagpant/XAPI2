@@ -3,7 +3,7 @@
 
 #include "ApiDataType.h"
 #include "ApiEnum.h"
-//#include "QueueEnum.h"
+#include "QueueEnum.h"
 
 #pragma pack(push,1)
 
@@ -384,6 +384,8 @@ struct DepthMarketDataNField
 	SymbolType			Symbol;
 	///合约代码
 	InstrumentIDType	InstrumentID;
+
+	ExchangeIDType		ExchangeID;
 	///交易所代码，枚举类型，主要是用于过滤使用，效率比字符串比较要高
 	ExchangeType		Exchange;
 

@@ -782,11 +782,6 @@ namespace QuantBox.XAPI.COM
         public int UpdateMillisec;
 
         /// <summary>
-        /// 交易所代码
-        /// </summary>
-        public int Exchange;
-
-        /// <summary>
         /// 合约代码
         /// </summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
@@ -796,6 +791,13 @@ namespace QuantBox.XAPI.COM
         /// </summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
         public string InstrumentID;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 9)]
+        public string ExchangeID;
+
+        /// <summary>
+        /// 交易所代码
+        /// </summary>
+        public int Exchange;
 
 
         /// <summary>

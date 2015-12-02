@@ -160,58 +160,42 @@ void X_UnsubscribeQuote(void* pFun, void* pApi, char* szInstrument, char* szExch
 	((fnOnRespone)pFun)(RequestType::UnsubscribeQuote, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
 }
 
-void X_ReqQryInstrument(void* pFun, void* pApi, char* szInstrument, char* szExchange)
+void X_ReqQuery(void* pFun, void* pApi, QueryType type, ReqQueryField* query)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(QueryType::ReqQryInstrument, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
+	((fnOnRespone)pFun)(type, pApi, nullptr, 0, 0, query, sizeof(ReqQueryField), nullptr, 0, nullptr, 0);
 }
 
-void X_ReqQryInvestorPosition(void* pFun, void* pApi, char* szInstrument, char* szExchange)
+char* X_SendOrder(void* pFun, void* pApi, OrderField* pOrder, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
-		return;
+		return nullptr;
 
-	((fnOnRespone)pFun)(QueryType::ReqQryInvestorPosition, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
+	return (char*)((fnOnRespone)pFun)(RequestType::ReqOrderInsert, pApi, nullptr, 0, 0, pOrder, count, pOut, 0, nullptr, 0);
 }
 
-void X_ReqQryTradingAccount(void* pFun, void* pApi)
+char* X_CancelOrder(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
-		return;
+		return nullptr;
 
-	((fnOnRespone)pFun)(QueryType::ReqQryTradingAccount, pApi, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	return (char*)((fnOnRespone)pFun)(RequestType::ReqOrderAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
 }
 
-void X_SendOrder(void* pFun, void* pApi, OrderField* pOrder, OrderIDType* pInOut, int count)
+char* X_SendQuote(void* pFun, void* pApi, QuoteField* pQuote, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
-		return;
+		return nullptr;
 
-	((fnOnRespone)pFun)(RequestType::ReqOrderInsert, pApi, nullptr, 0, 0, pOrder, count, pInOut, 0, nullptr, 0);
+	return (char*)((fnOnRespone)pFun)(RequestType::ReqQuoteInsert, pApi, nullptr, 0, 0, pQuote, count, pOut, 0, nullptr, 0);
 }
 
-void X_CancelOrder(void* pFun, void* pApi, OrderIDType* pIn, OrderIDType* pOut, int count)
+char* X_CancelQuote(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
-		return;
+		return nullptr;
 
-	((fnOnRespone)pFun)(RequestType::ReqOrderAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
-}
-
-void X_SendQuote(void* pFun, void* pApi, QuoteField* pQuote, OrderIDType* pAskOut, OrderIDType* pBidOut, int count)
-{
-	if (pFun == nullptr || pApi == nullptr)
-		return;
-
-	((fnOnRespone)pFun)(RequestType::ReqQuoteInsert, pApi, nullptr, 0, 0, pQuote, count, pAskOut, 0, pBidOut, 0);
-}
-
-void X_CancelQuote(void* pFun, void* pApi, OrderIDType* pIn, OrderIDType* pOut, int count)
-{
-	if (pFun == nullptr || pApi == nullptr)
-		return;
-
-	((fnOnRespone)pFun)(RequestType::ReqQuoteAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
+	return (char*)((fnOnRespone)pFun)(RequestType::ReqQuoteAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
 }

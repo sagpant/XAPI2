@@ -53,18 +53,11 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 		pApi->ReqQuery((QueryType)type, (ReqQueryField*)ptr1);
 		break;
 	case ReqOrderInsert:
-		if (double2 == 0)
-		{
-			return (void*)pApi->ReqOrderInsert((OrderField*)ptr1, size1, (OrderIDType*)ptr2);
-		}
-		//else
-		//{
-		//	return pApi->ReqParkedOrderInsert((int)double1, (OrderField*)ptr1, (OrderField*)ptr2);
-		//}
+		return (void*)pApi->ReqOrderInsert((OrderField*)ptr1, size1, (char*)ptr2);
 	case ReqQuoteInsert:
 		return pApi->ReqQuoteInsert((QuoteField*)ptr1, (OrderIDType*)ptr2, (OrderIDType*)ptr3);
 	case ReqOrderAction:
-		return (void*)pApi->ReqOrderAction((OrderIDType*)ptr1, size1, (OrderIDType*)ptr2);
+		return (void*)pApi->ReqOrderAction((OrderIDType*)ptr1, size1, (char*)ptr2);
 	case ReqQuoteAction:
 		return (void*)pApi->ReqQuoteAction((const char*)ptr1, (OrderIDType*)ptr2);
 	default:

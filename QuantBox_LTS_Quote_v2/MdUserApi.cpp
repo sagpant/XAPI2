@@ -261,7 +261,7 @@ void CMdUserApi::Disconnect()
 }
 
 
-void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchageID)
+void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchangeID)
 {
 	if(nullptr == m_pApi)
 		return;
@@ -272,14 +272,14 @@ void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchag
 	lock_guard<mutex> cl(m_csMapInstrumentIDs);
 
 	set<string> _setInstrumentIDs;
-	map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(szExchageID);
+	map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(szExchangeID);
 	if (it != m_mapInstrumentIDs.end())
 	{
 		_setInstrumentIDs = it->second;
 	}
 
 	char* pBuf = GetSetFromString(szInstrumentIDs.c_str(), _QUANTBOX_SEPS_, vct, st, 1, _setInstrumentIDs);
-	m_mapInstrumentIDs[szExchageID] = _setInstrumentIDs;
+	m_mapInstrumentIDs[szExchangeID] = _setInstrumentIDs;
 
 	if(vct.size()>0)
 	{
@@ -291,14 +291,14 @@ void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchag
 		}
 
 		//¶©ÔÄ
-		m_pApi->SubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchageID.c_str()));
+		m_pApi->SubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchangeID.c_str()));
 
 		delete[] pArray;
 	}
 	delete[] pBuf;
 }
 
-void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExchageID)
+void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExchangeID)
 {
 	if(nullptr == m_pApi)
 		return;
@@ -312,11 +312,11 @@ void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExc
 
 	if (szInstrumentIDs.length()>1)
 	{
-		Subscribe(szInstrumentIDs, szExchageID);
+		Subscribe(szInstrumentIDs, szExchangeID);
 	}
 }
 
-void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExchageID)
+void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExchangeID)
 {
 	if(nullptr == m_pApi)
 		return;
@@ -327,14 +327,14 @@ void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExch
 	lock_guard<mutex> cl(m_csMapInstrumentIDs);
 
 	set<string> _setInstrumentIDs;
-	map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(szExchageID);
+	map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(szExchangeID);
 	if (it != m_mapInstrumentIDs.end())
 	{
 		_setInstrumentIDs = it->second;
 	}
 
 	char* pBuf = GetSetFromString(szInstrumentIDs.c_str(), _QUANTBOX_SEPS_, vct, st, -1, _setInstrumentIDs);
-	m_mapInstrumentIDs[szExchageID] = _setInstrumentIDs;
+	m_mapInstrumentIDs[szExchangeID] = _setInstrumentIDs;
 
 	if(vct.size()>0)
 	{
@@ -346,7 +346,7 @@ void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExch
 		}
 
 		//¶©ÔÄ
-		m_pApi->UnSubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchageID.c_str()));
+		m_pApi->UnSubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchangeID.c_str()));
 
 		delete[] pArray;
 	}
@@ -463,6 +463,7 @@ void CMdUserApi::OnRtnDepthMarketData(CSecurityFtdcDepthMarketDataField *pDepthM
 
 
 	strcpy(pField->InstrumentID, pDepthMarketData->InstrumentID);
+	strcpy(pField->ExchangeID, pDepthMarketData->ExchangeID);
 	pField->Exchange = TSecurityFtdcExchangeIDType_2_ExchangeType(pDepthMarketData->ExchangeID);
 
 	sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pDepthMarketData->ExchangeID);

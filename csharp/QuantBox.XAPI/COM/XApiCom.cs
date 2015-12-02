@@ -109,10 +109,8 @@ namespace QuantBox.XAPI.COM
             api.Unsubscribe(szInstrument, szExchange);
         }
 
-        public void SendOrder(ref OrderClass[] orders)//, out string[] OrderRefs
+        public string SendOrder(ref OrderClass[] orders)
         {
-            string[] OrderRefs;
-
             int len = orders.Length;
 
             OrderField[] fields = new OrderField[len];
@@ -152,13 +150,12 @@ namespace QuantBox.XAPI.COM
                 fields[i] = field;
             }
 
-            api.SendOrder(ref fields, out OrderRefs);
+            return api.SendOrder(ref fields);
         }
 
-        public void CancelOrder(ref string[] ids)
+        public string CancelOrder(ref string[] ids)
         {
-            string[] errs;
-            api.CancelOrder(ids, out errs);
+            return api.CancelOrder(ids);
         }
 
         public void ReqQuery(int type, ref ReqQueryClass query)
@@ -227,6 +224,7 @@ namespace QuantBox.XAPI.COM
             cls.Exchange = (int)field.Exchange;
             cls.Symbol = field.Symbol;
             cls.InstrumentID = field.InstrumentID;
+            cls.ExchangeID = field.ExchangeID;
             cls.LastPrice = field.LastPrice;
             cls.Volume = field.Volume;
             cls.Turnover = field.Turnover;

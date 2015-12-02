@@ -60,6 +60,8 @@ public:
 	// 得到资金账号
 	virtual const char* GetAccount() = 0;
 
+	virtual int GetTableHeader(int request, FieldInfo_STRUCT*** pppResults) = 0;
+
 protected:
 	CTdxApi();
 	~CTdxApi(){};
