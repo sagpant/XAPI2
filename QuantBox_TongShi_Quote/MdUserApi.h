@@ -56,11 +56,11 @@ public:
 
 	void InitDriver(HWND hWnd, UINT Msg);
 	void QuitDriver();
-	//void Subscribe(const string& szInstrumentIDs, const string& szExchageID);
-	//void Unsubscribe(const string& szInstrumentIDs, const string& szExchageID);
+	//void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
+	//void Unsubscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
-	//void SubscribeQuote(const string& szInstrumentIDs, const string& szExchageID);
-	//void UnsubscribeQuote(const string& szInstrumentIDs, const string& szExchageID);
+	//void SubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID);
+	//void UnsubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID);
 private:
 	bool FilterExchangeInstrument(WORD wMarket, int instrument);
 
@@ -84,8 +84,8 @@ private:
 	//int _ReqUserLogin(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	//¶©ÔÄÐÐÇé
-	void Subscribe(const set<string>& instrumentIDs, const string& szExchageID);
-	void SubscribeQuote(const set<string>& instrumentIDs, const string& szExchageID);
+	void Subscribe(const set<string>& instrumentIDs, const string& szExchangeID);
+	void SubscribeQuote(const set<string>& instrumentIDs, const string& szExchangeID);
 
 	//virtual void OnFrontConnected();
 	//virtual void OnFrontDisconnected(int nReason);

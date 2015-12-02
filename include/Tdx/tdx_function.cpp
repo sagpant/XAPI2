@@ -511,27 +511,28 @@ int ZTSM_str_2_int(char* pIn)
 	{
 		if (pBu)
 		{
-			// 部成是啥？这里需要完成
 			return ZTSM_PartiallyFilled;
 		}
 		return ZTSM_AllFilled;
 	}
 
-	char* pQ = strstr(pIn, "全");
-	char* pY = strstr(pIn, "已");
-	char* pBao = strstr(pIn, "报");
-	char* pF = strstr(pIn, "废");
+	char* pF1 = strstr(pIn, "废");
+	char* pF2 = strstr(pIn, "非");
 
-	if (pF)
+	if (pF1||pF2)
 	{
 		return ZTSM_Illegal;
 	}
 
+	//char* pQ = strstr(pIn, "全");
+	//char* pY = strstr(pIn, "已");
+	//char* pBao = strstr(pIn, "报");
+
 	return ZTSM_New;
 }
 
-// 将中文的报价方式转成委托方式，这是根据字符串的特点进行分类
-int BJFS_2_WTFS(char* pIn)
+// 报价方式转，这是根据字符串的特点进行分类
+int BJFS_str_2_int(char* pIn)
 {
 	char* pX1 = strstr(pIn, "限");
 	
@@ -575,9 +576,49 @@ int BJFS_2_WTFS(char* pIn)
 			{
 				return WTFS_Best_Reverse;
 			}
-			return WTFS_Best_Forward; // 本
+			char* pB = strstr(pIn, "本");
+			if (pB)
+			{
+				return WTFS_Best_Forward;
+			}
 		}
+
+		return WTFS_Limit;
 	}
+}
+
+
+///发现不管你下的什么单，只要是特殊的单，买卖标志都是3，所以需要另行处理
+int WTLB_str_2_int(char* pIn)
+{
+	// 有没有ETF，或融资融券部分，或
+	char* pBuy = strstr(pIn, "买");
+	if (pBuy)
+	{
+		return MMBZ_Buy_Limit;
+	}
+	char* pSell = strstr(pIn, "卖");
+	if (pSell)
+	{
+		return MMBZ_Sell_Limit;
+	}
+	char* pShen = strstr(pIn, "申");
+	if (pShen)
+	{
+		return MMBZ_Creation;
+	}
+	char* pShu = strstr(pIn, "赎");
+	if (pShu)
+	{
+		return MMBZ_Redemption;
+	}
+	char* pChe = strstr(pIn, "撤");
+	if (pChe)
+	{
+		return MMBZ_Cancel;
+	}
+
+	return MMBZ_Buy_Limit;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -663,6 +704,8 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 	int col_161 = GetIndexByFieldID(ppFieldInfos, FIELD_DJZJ);
 	int col_1213 = GetIndexByFieldID(ppFieldInfos, FIELD_BLXX);
 
+	int col_166 = GetIndexByFieldID(ppFieldInfos, FIELD_WTFS);
+
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new WTLB_STRUCT();
@@ -703,6 +746,8 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 			strcpy_s(ppResults[i]->DJZJ, ppTable[i * COL_EACH_ROW + col_161]);
 		if (col_1213 >= 0)
 			strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
+		if (col_166 >= 0)
+			strcpy_s(ppResults[i]->WTFS, ppTable[i * COL_EACH_ROW + col_166]);
 
 		ppResults[i]->WTRQ_ = atoi(ppResults[i]->WTRQ);
 		ppResults[i]->MMBZ_ = atoi(ppResults[i]->MMBZ);
@@ -712,15 +757,24 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		ppResults[i]->CJJG_ = atof(ppResults[i]->CJJG);
 		ppResults[i]->CJSL_ = atoi(ppResults[i]->CJSL);
 		ppResults[i]->DJZJ_ = atof(ppResults[i]->DJZJ);
+		ppResults[i]->WTFS_ = atof(ppResults[i]->WTFS);
 
 		// 可能没有，怎么办
 		ppResults[i]->CDSL_ = atoi(ppResults[i]->CDSL);
 
-		int HH = 0, mm = 0, ss = 0;
-		GetUpdateTime_HH_mm_ss(ppResults[i]->WTSJ, &HH, &mm, &ss);
-		ppResults[i]->WTSJ_ = HH * 10000 + mm * 100 + ss;
+		if (strstr(ppResults[i]->WTSJ,":"))
+		{
+			int HH = 0, mm = 0, ss = 0;
+			GetUpdateTime_HH_mm_ss(ppResults[i]->WTSJ, &HH, &mm, &ss);
+			ppResults[i]->WTSJ_ = HH * 10000 + mm * 100 + ss;
+		}
+		else
+		{
+			ppResults[i]->WTSJ_ = atoi(ppResults[i]->WTSJ);
+		}
+		
 
-		// 第一个的字符，并转成数字
+		// 第一个的字符，并转成数字，其实也可以全走文本比较的方式，但认为这样更快
 		if (ppResults[i]->ZTSM[1] == '-')
 		{
 			ppResults[i]->ZTSM_ = ppResults[i]->ZTSM[0] - '0';
@@ -730,7 +784,15 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 			ppResults[i]->ZTSM_ = ZTSM_str_2_int(ppResults[i]->ZTSM);
 		}
 
-		ppResults[i]->BJFS_ = BJFS_2_WTFS(ppResults[i]->BJFS);
+		ppResults[i]->BJFS_ = BJFS_str_2_int(ppResults[i]->BJFS);
+
+		// 华宝没有这个字段，广发有，下单时其实是用它的
+		if (col_166 >= 0)
+		{
+			ppResults[i]->WTFS_ = ppResults[i]->BJFS_;
+		}
+		
+		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
 	}
 }
 
@@ -825,9 +887,17 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 		// 可能没有
 		ppResults[i]->FSJE_ = atof(ppResults[i]->FSJE);
 
-		int HH = 0, mm = 0, ss = 0;
-		GetUpdateTime_HH_mm_ss(ppResults[i]->CJSJ, &HH, &mm, &ss);
-		ppResults[i]->CJSJ_ = HH * 10000 + mm * 100 + ss;
+
+		if (strstr(ppResults[i]->CJSJ, ":"))
+		{
+			int HH = 0, mm = 0, ss = 0;
+			GetUpdateTime_HH_mm_ss(ppResults[i]->CJSJ, &HH, &mm, &ss);
+			ppResults[i]->CJSJ_ = HH * 10000 + mm * 100 + ss;
+		}
+		else
+		{
+			ppResults[i]->CJSJ_ = atoi(ppResults[i]->CJSJ);
+		}
 	}
 }
 

@@ -54,15 +54,13 @@ public:
 	virtual void Subscribe(char* szInstrument, char* szExchange) = 0;
 	virtual void Unsubscribe(char* szInstrument, char* szExchange) = 0;
 
-	virtual void ReqQryInstrument(char* szInstrument, char* szExchange) = 0;
-	virtual void ReqQryInvestorPosition(char* szInstrument, char* szExchange) = 0;
-	virtual void ReqQryTradingAccount() = 0;
+	virtual void ReqQuery(QueryType type, ReqQueryField* query) = 0;
 
-	virtual void SendOrder(OrderField* pOrder, OrderIDType* pInOut, int count) = 0;
-	virtual void CancelOrder(OrderIDType* pIn, OrderIDType* pOut, int count) = 0;
+	virtual char* SendOrder(OrderField* pOrder, int count, char* pOut) = 0;
+	virtual char* CancelOrder(OrderIDType* pIn, int count, char* pOut) = 0;
 
-	virtual void SendQuote(QuoteField* pQuote, OrderIDType* pAskOut, OrderIDType* pBidOut, int count) = 0;
-	virtual void CancelQuote(OrderIDType* pIn, OrderIDType* pOut, int count) = 0;
+	virtual char* SendQuote(QuoteField* pQuote, int count, char* pOut) = 0;
+	virtual char* CancelQuote(OrderIDType* pIn, int count, char* pOut) = 0;
 protected:
 	CXApi();
 	~CXApi(){};

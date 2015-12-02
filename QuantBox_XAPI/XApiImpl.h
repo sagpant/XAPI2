@@ -24,15 +24,13 @@ public:
 	virtual void Subscribe(char* szInstrument, char* szExchange);
 	virtual void Unsubscribe(char* szInstrument, char* szExchange);
 
-	virtual void ReqQryInstrument(char* szInstrument, char* szExchange);
-	virtual void ReqQryInvestorPosition(char* szInstrument, char* szExchange);
-	virtual void ReqQryTradingAccount();
+	virtual void ReqQuery(QueryType type, ReqQueryField* query);
 
-	virtual void SendOrder(OrderField* pOrder, OrderIDType* pInOut, int count);
-	virtual void CancelOrder(OrderIDType* pIn, OrderIDType* pOut, int count);
+	virtual char* SendOrder(OrderField* pOrder, int count, char* pOut);
+	virtual char* CancelOrder(OrderIDType* pIn, int count, char* pOut);
 
-	virtual void SendQuote(QuoteField* pQuote, OrderIDType* pAskOut, OrderIDType* pBidOut, int count);
-	virtual void CancelQuote(OrderIDType* pIn, OrderIDType* pOut, int count);
+	virtual char* SendQuote(QuoteField* pQuote, int count, char* pOut);
+	virtual char* CancelQuote(OrderIDType* pIn, int count, char* pOut);
 public:
 	static  void* __stdcall OnRespone(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 private:

@@ -193,14 +193,14 @@ int main_1(int argc, char* argv[])
 		pOrder->Type = OrderType::OrderType_Limit;
 		pOrder->Side = OrderSide::OrderSide_Buy;
 
-		pApi2->SendOrder(pOrder, &Out, 1);
+		pApi2->SendOrder(pOrder, 1, Out);
 
 		printf("%s\r\n", Out);
 
 		getchar();
 
 		OrderIDType Out2 = { 0 };
-		pApi2->CancelOrder(&Out, &Out2, 1);
+		pApi2->CancelOrder(&Out,1,Out2);
 
 		getchar();
 

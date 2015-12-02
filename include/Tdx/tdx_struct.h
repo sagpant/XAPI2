@@ -33,9 +33,10 @@ struct Order_STRUCT
 	int ZHLB;		// 125_帐号类别
 	int RZRQBS;		// 281_融资融券标识
 	double Price;	// 145_委托价格
-	long Qty;		// 144_委托数量
+	double Qty;		// 144_委托数量
 	long MMBZ;		// 130_买卖标志
 	long WTFS;		// 166_委托方式
+	int CZBZ;		// 113_操作标志
 
 	char ZHLB_[2];	// 125_帐号类别
 	// 下完单后用来回填
@@ -66,8 +67,8 @@ struct WTLB_STRUCT
 	char GDDM[32];  // 123_股东代码
 	char ZQDM[32];  // 140_证券代码
 	char ZQMC[32];  // 141_证券名称
-	char MMBZ[32];  // 130_买卖标志
-	char WTLB[32];  // 131_委托类别
+	char MMBZ[32];  // 130_买卖标志	*由于很多特别的指令都是3,只能想法解析中文
+	char WTLB[32];  // 131_委托类别	*
 	char JYSDM[32];	// 100_交易所代码
 	char WTJG[32];  // 145_委托价格
 	char WTSL[32];  // 144_委托数量
@@ -75,14 +76,17 @@ struct WTLB_STRUCT
 	char CJSL[32];  // 152_成交数量
 	char CDSL[32];  // 162_撤单数量
 	char WTBH[32];  // 146_委托编号
-	char BJFS[32];  // 194_报价方式
+	char WTFS[32];  // 166_委托方式	*有些版本没有此字段，只能想法解析中文
+	char BJFS[32];  // 194_报价方式	*
 	char ZTSM[32];  // 147_状态说明
 	char DJZJ[32];  // 161_冻结资金
 	char BLXX[32];	// 1213_保留信息
+	
 
 	int WTRQ_;
 	int WTSJ_;
 	char MMBZ_;
+	char WTLB_;
 	char JYSDM_;
 	double WTJG_;
 	int WTSL_;
@@ -92,6 +96,7 @@ struct WTLB_STRUCT
 	double DJZJ_;
 	int ZTSM_;
 	int BJFS_;
+	int WTFS_;
 };
 
 // 成交列表

@@ -60,9 +60,9 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 		pApi->ReqQrySettlementInfo((const char*)ptr1);
 		break;*/
 	case ReqOrderInsert:
-		return (void*)pApi->ReqOrderInsert((OrderField*)ptr1, size1, (OrderIDType*)ptr2);
+		return (void*)pApi->ReqOrderInsert((OrderField*)ptr1, size1, (char*)ptr2);
 	case ReqOrderAction:
-		return (void*)pApi->ReqOrderAction((OrderIDType*)ptr1, size1, (OrderIDType*)ptr2);
+		return (void*)pApi->ReqOrderAction((OrderIDType*)ptr1, size1, (char*)ptr2);
 	case Subscribe:
 		pApi->Subscribe((const char*)ptr1, (const char*)ptr2);
 		break;

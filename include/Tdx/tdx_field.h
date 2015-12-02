@@ -90,7 +90,7 @@ ID一样，中文名可能不一样
 #define FIELD_QSXH			1207	//	1207_起始序号
 #define FIELD_BLXX			1213	//	1213_保留信息
 #define FIELD_JCFXBZ		1223	//	1223_检查风险标志
-#define FIELD_BZ_1217		1217	//	1217_备注
+#define FIELD_BZ_1217		1217	//	1217_备注	感觉是给当成备兑用了
 #define FIELD_CS			1227	//	1227_参数
 #define FIELD_XSYS			1231	//	1231_显示颜色
 

@@ -160,36 +160,27 @@ void CXApiImpl::Unsubscribe(char* szInstrument, char* szExchange)
 	X_Unsubscribe(m_pFun, m_pApi, szInstrument, szExchange);
 }
 
-void CXApiImpl::ReqQryInstrument(char* szInstrument, char* szExchange)
+void CXApiImpl::ReqQuery(QueryType type, ReqQueryField* query)
 {
-	X_ReqQryInstrument(m_pFun, m_pApi, szInstrument, szExchange);
+	X_ReqQuery(m_pFun, m_pApi, type, query);
 }
 
-void CXApiImpl::ReqQryInvestorPosition(char* szInstrument, char* szExchange)
+char* CXApiImpl::SendOrder(OrderField* pOrder, int count, char* pOut)
 {
-	X_ReqQryInvestorPosition(m_pFun, m_pApi, szInstrument, szExchange);
+	return X_SendOrder(m_pFun, m_pApi, pOrder, count, pOut);
 }
 
-void CXApiImpl::ReqQryTradingAccount()
+char* CXApiImpl::CancelOrder(OrderIDType* pIn, int count, char* pOut)
 {
-	X_ReqQryTradingAccount(m_pFun, m_pApi);
+	return X_CancelOrder(m_pFun, m_pApi, pIn, count, pOut);
 }
 
-void CXApiImpl::SendOrder(OrderField* pOrder, OrderIDType* pInOut, int count)
+char* CXApiImpl::SendQuote(QuoteField* pQuote, int count, char* pOut)
 {
-	X_SendOrder(m_pFun, m_pApi, pOrder, pInOut, count);
+	return X_SendQuote(m_pFun, m_pApi, pQuote, count, pOut);
 }
 
-void CXApiImpl::CancelOrder(OrderIDType* pIn, OrderIDType* pOut, int count)
+char* CXApiImpl::CancelQuote(OrderIDType* pIn, int count, char* pOut)
 {
-	X_CancelOrder(m_pFun, m_pApi, pIn, pOut, count);
-}
-
-void CXApiImpl::SendQuote(QuoteField* pQuote, OrderIDType* pAskOut, OrderIDType* pBidOut, int count)
-{
-	X_SendQuote(m_pFun, m_pApi, pQuote, pAskOut, pBidOut, count);
-}
-void CXApiImpl::CancelQuote(OrderIDType* pIn, OrderIDType* pOut, int count)
-{
-	X_CancelQuote(m_pFun, m_pApi, pIn, pOut, count);
+	return X_CancelQuote(m_pFun, m_pApi, pIn, count, pOut);
 }

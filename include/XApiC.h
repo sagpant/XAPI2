@@ -26,15 +26,13 @@ void X_Unsubscribe(void* pFun, void* pApi, char* szInstrument, char* szExchange)
 void X_SubscribeQuote(void* pFun, void* pApi, char* szInstrument, char* szExchange);
 void X_UnsubscribeQuote(void* pFun, void* pApi, char* szInstrument, char* szExchange);
 
-void X_ReqQryInstrument(void* pFun, void* pApi, char* szInstrument, char* szExchange);
-void X_ReqQryInvestorPosition(void* pFun, void* pApi, char* szInstrument, char* szExchange);
-void X_ReqQryTradingAccount(void* pFun, void* pApi);
+void X_ReqQuery(void* pFun, void* pApi, QueryType type, ReqQueryField* query);
 
-void X_SendOrder(void* pFun, void* pApi, OrderField* pOrder, OrderIDType* pInOut, int count);
-void X_CancelOrder(void* pFun, void* pApi, OrderIDType* pIn, OrderIDType* pOut, int count);
+char* X_SendOrder(void* pFun, void* pApi, OrderField* pOrder, int count, char* pOut);
+char* X_CancelOrder(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut);
 
-void X_SendQuote(void* pFun, void* pApi, QuoteField* pQuote, OrderIDType* pAskOut, OrderIDType* pBidOut, int count);
-void X_CancelQuote(void* pFun, void* pApi, OrderIDType* pIn, OrderIDType* pOut, int count);
+char* X_SendQuote(void* pFun, void* pApi, QuoteField* pQuote, int count, char* pOut);
+char* X_CancelQuote(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut);
 
 #ifdef __cplusplus
 }

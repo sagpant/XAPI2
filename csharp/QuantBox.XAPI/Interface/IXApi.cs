@@ -58,11 +58,10 @@ namespace QuantBox.XAPI.Interface
         DelegateOnRtnTrade OnRtnTrade { get; set; }
         DelegateOnRtnQuote OnRtnQuote { get; set; }
 
-
-        void SendOrder(ref OrderField[] orders, out string[] OrderRefs);
-        void CancelOrder(string[] szId,out string[] errs);
-        void SendQuote(ref QuoteField quote,out string AskRef,out string BidRef);
-        void CancelQuote(string szId,out string err);
+        string SendOrder(ref OrderField[] orders);
+        string CancelOrder(string[] szId);
+        string SendQuote(ref QuoteField quote);
+        string CancelQuote(string szId);
     }
 
     [ComVisible(false)]

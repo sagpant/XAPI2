@@ -499,12 +499,12 @@ void CTraderApi::Disconnect()
 	}
 }
 
-int CTraderApi::ReqOrderInsert(
+char* CTraderApi::ReqOrderInsert(
 	OrderField* pOrder,
 	int count,
-	OrderIDType* pInOut)
+	char* pszLocalIDBuf)
 {
-	memset(pInOut, 0, sizeof(OrderIDType)*count);
+	memset(pszLocalIDBuf, 0, sizeof(OrderIDType)*count);
 
 	if (count < 1)
 		return 0;	
@@ -517,8 +517,14 @@ int CTraderApi::ReqOrderInsert(
 		OrderField* pNewOrder = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 		memcpy(pNewOrder, pOrder, sizeof(OrderField));
 
-		strcpy(pInOut[i], m_pIDGenerator->GetIDString());
-		strcpy(pNewOrder[i].LocalID, pInOut[i]);
+		strcpy(pNewOrder[i].LocalID, m_pIDGenerator->GetIDString());
+		strcat(pszLocalIDBuf, pNewOrder[i].LocalID);
+		
+		if (i <count-1)
+		{
+			strcat(pszLocalIDBuf, ";");
+		}
+
 		ppOrders[i] = pNewOrder;
 
 		// 注意这里保存了最开始发单的结构体的备份
@@ -530,7 +536,7 @@ int CTraderApi::ReqOrderInsert(
 
 	delete[] ppOrders;
 	
-	return 0;
+	return pszLocalIDBuf;
 }
 
 int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
@@ -624,9 +630,9 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 	return 0;
 }
 
-int CTraderApi::ReqOrderAction(OrderIDType* szId, int count, OrderIDType* pOutput)
+char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 {
-	memset(pOutput, 0, sizeof(OrderIDType)*count);
+	memset(pzsRtn, 0, sizeof(OrderIDType)*count);
 
 	OrderField** ppOrders = new OrderField*[count];
 	Order_STRUCT** ppTdxOrders = new Order_STRUCT*[count];
@@ -647,6 +653,11 @@ int CTraderApi::ReqOrderAction(OrderIDType* szId, int count, OrderIDType* pOutpu
 			if (it != m_id_api_order.end())
 				ppTdxOrders[i] = it->second;
 		}
+
+		if (i < count - 1)
+		{
+			strcat(pzsRtn, ";");
+		}
 	}
 
 	m_msgQueue_Query->Input_Copy(RequestType::E_InputOrderActionField, m_msgQueue_Query, this, 0, 0,
@@ -655,7 +666,7 @@ int CTraderApi::ReqOrderAction(OrderIDType* szId, int count, OrderIDType* pOutpu
 	delete[] ppOrders;
 	delete[] ppTdxOrders;
 
-	return 0;
+	return pzsRtn;
 }
 
 int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)

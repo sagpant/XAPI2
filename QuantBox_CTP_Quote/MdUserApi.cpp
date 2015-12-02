@@ -257,7 +257,7 @@ void CMdUserApi::Disconnect()
 }
 
 
-void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchageID)
+void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchangeID)
 {
 	if(nullptr == m_pApi)
 		return;
@@ -285,7 +285,7 @@ void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchag
 	delete[] pBuf;
 }
 
-void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExchageID)
+void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExchangeID)
 {
 	if(nullptr == m_pApi)
 		return;
@@ -299,11 +299,11 @@ void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExc
 
 	if (szInstrumentIDs.length()>1)
 	{
-		Subscribe(szInstrumentIDs, szExchageID);
+		Subscribe(szInstrumentIDs, szExchangeID);
 	}
 }
 
-void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExchageID)
+void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExchangeID)
 {
 	if(nullptr == m_pApi)
 		return;
@@ -331,7 +331,7 @@ void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExch
 	delete[] pBuf;
 }
 
-void CMdUserApi::SubscribeQuote(const string& szInstrumentIDs, const string& szExchageID)
+void CMdUserApi::SubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID)
 {
 	if (nullptr == m_pApi)
 		return;
@@ -359,7 +359,7 @@ void CMdUserApi::SubscribeQuote(const string& szInstrumentIDs, const string& szE
 	delete[] pBuf;
 }
 
-void CMdUserApi::SubscribeQuote(const set<string>& instrumentIDs, const string& szExchageID)
+void CMdUserApi::SubscribeQuote(const set<string>& instrumentIDs, const string& szExchangeID)
 {
 	if (nullptr == m_pApi)
 		return;
@@ -373,11 +373,11 @@ void CMdUserApi::SubscribeQuote(const set<string>& instrumentIDs, const string& 
 
 	if (szInstrumentIDs.length()>1)
 	{
-		SubscribeQuote(szInstrumentIDs, szExchageID);
+		SubscribeQuote(szInstrumentIDs, szExchangeID);
 	}
 }
 
-void CMdUserApi::UnsubscribeQuote(const string& szInstrumentIDs, const string& szExchageID)
+void CMdUserApi::UnsubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID)
 {
 	if (nullptr == m_pApi)
 		return;
@@ -497,6 +497,7 @@ void CMdUserApi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMark
 		DepthMarketDataNField* pField = (DepthMarketDataNField*)m_msgQueue->new_block(sizeof(DepthMarketDataNField)+sizeof(DepthField)* 10);
 
 		strcpy(pField->InstrumentID, pDepthMarketData->InstrumentID);
+		strcpy(pField->ExchangeID, pDepthMarketData->ExchangeID);
 		pField->Exchange = TThostFtdcExchangeIDType_2_ExchangeType(pDepthMarketData->ExchangeID);
 
 		sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pDepthMarketData->ExchangeID);

@@ -109,10 +109,43 @@ OrderSide MMBZ_2_OrderSide(int In)
 		return OrderSide::OrderSide_Buy;
 	case MMBZ_Sell_Limit:
 		return OrderSide::OrderSide_Sell;
+	case MMBZ_Buy_Market:
+		return OrderSide::OrderSide_Buy;
+	case MMBZ_Sell_Market:
+		return OrderSide::OrderSide_Sell;
+	case MMBZ_Creation:
+		return OrderSide::OrderSide_Creation;
+	case MMBZ_Redemption:
+		return OrderSide::OrderSide_Redemption;
+	case MMBZ_Merge:
+		return OrderSide::OrderSide_Merge;
+	case MMBZ_Split:
+		return OrderSide::OrderSide_Split;
 	default:
 		break;
 	}
 	return OrderSide::OrderSide_Buy;
+}
+
+// 将买卖方式转成开平
+OpenCloseType MMBZ_2_OpenCloseType(int In)
+{
+	switch (In)
+	{
+	case MMBZ_Buy_Limit:
+	case MMBZ_Buy_Market:
+	case MMBZ_Creation:
+	case MMBZ_Merge:
+		return OpenCloseType::OpenCloseType_Open;
+	case MMBZ_Sell_Limit:
+	case MMBZ_Sell_Market:
+	case MMBZ_Redemption:
+	case MMBZ_Split:
+		return OpenCloseType::OpenCloseType_Close;
+	default:
+		break;
+	}
+	return OpenCloseType::OpenCloseType_Open;
 }
 
 void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
@@ -142,7 +175,8 @@ void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
 	pOut->Qty = pIn->WTSL_;
 	pOut->Date = pIn->WTRQ_;
 	pOut->Time = pIn->WTSJ_;
-	pOut->Side = MMBZ_2_OrderSide(pIn->MMBZ_);
+	// 这个地方怎么会这样
+	pOut->Side = MMBZ_2_OrderSide(pIn->WTLB_);
 
 	pOut->Type = WTFS_2_OrderType(pIn->BJFS_);
 	pOut->TimeInForce = WTFS_2_TimeInForce(pIn->BJFS_);
@@ -150,7 +184,7 @@ void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
 	pOut->Status = ZTSM_2_OrderStatus(pIn->ZTSM_);
 	pOut->ExecType = ZTSM_2_ExecType(pIn->ZTSM_);
 
-	pOut->OpenClose = pOut->Side == OrderSide::OrderSide_Buy ? OpenCloseType::OpenCloseType_Open : OpenCloseType::OpenCloseType_Close;
+	pOut->OpenClose = MMBZ_2_OpenCloseType(pIn->WTLB_);
 	pOut->HedgeFlag = HedgeFlagType::HedgeFlagType_Speculation;
 
 	strcpy(pOut->AccountID, pIn->GDDM);
@@ -191,19 +225,31 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 	pOut->RZRQBS = RZRQBS_NO;
 
 	// 这个地方后期要再改，因为没有处理基金等情况
-	switch (pIn->Type)
+	switch (pIn->Side)
 	{
-	case OrderType::OrderType_Market:
-		if (pIn->Side == OrderSide::OrderSide_Buy)
+	case OrderSide::OrderSide_Buy:
+		if (pIn->Type == OrderType::OrderType_Market)
 			pOut->MMBZ = MMBZ_Buy_Market;
 		else
-			pOut->MMBZ = MMBZ_Sell_Market;
-		break;
-	case OrderType::OrderType_Limit:
-		if (pIn->Side == OrderSide::OrderSide_Buy)
 			pOut->MMBZ = MMBZ_Buy_Limit;
+		break;
+	case OrderSide::OrderSide_Sell:
+		if (pIn->Type == OrderType::OrderType_Market)
+			pOut->MMBZ = MMBZ_Sell_Market;
 		else
 			pOut->MMBZ = MMBZ_Sell_Limit;
+		break;
+	case OrderSide::OrderSide_Creation:
+		pOut->MMBZ = MMBZ_Creation;
+		break;
+	case OrderSide::OrderSide_Redemption:
+		pOut->MMBZ = MMBZ_Redemption;
+		break;
+	case OrderSide::OrderSide_Merge:
+		pOut->MMBZ = MMBZ_Merge;
+		break;
+	case OrderSide::OrderSide_Split:
+		pOut->MMBZ = MMBZ_Split;
 		break;
 	}
 }
@@ -217,7 +263,7 @@ void GDLB_2_InvestorField(GDLB_STRUCT* pIn, InvestorField* pOut)
 void ZJYE_2_AccountField(ZJYE_STRUCT* pIn, AccountField* pOut)
 {
 	strcpy(pOut->AccountID, pIn->ZJZH);
-	//pIn->BZ;
+	
 	pOut->Available = pIn->KYZJ_;
 
 	// 还有很多不知道如何对应，有可能需要扩展XAPI部分

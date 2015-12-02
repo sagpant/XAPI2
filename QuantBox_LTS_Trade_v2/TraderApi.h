@@ -67,13 +67,13 @@ public:
 		UserInfoField* pUserInfo);
 	void Disconnect();
 
-	int ReqOrderInsert(
+	char* ReqOrderInsert(
 		OrderField* pOrder,
 		int count,
-		OrderIDType* pInOut);
+		char* pszLocalIDBuf);
 
-	int ReqOrderAction(OrderIDType* szIds, int count, OrderIDType* pOutput);
-	int ReqOrderAction(CSecurityFtdcOrderField *pOrder, int count, OrderIDType* pOutput);
+	char* ReqOrderAction(OrderIDType* szIds, int count, char* pzsRtn);
+	char* ReqOrderAction(CSecurityFtdcOrderField *pOrder, int count, char* pzsRtn);
 
 	int ReqQuoteInsert(
 		int QuoteRef,
