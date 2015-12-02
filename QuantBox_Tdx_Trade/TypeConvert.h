@@ -7,6 +7,20 @@
 // 两种情况：
 // 1.完全重建
 // 2.部分重建
+
+void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults);
+
+void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT*** pppResults);
+
+void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT*** pppResults);
+
+void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT*** pppResults);
+
+void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults);
+
+//////////////////////////////////////////////////////////////////////////
+
+
 bool ZTSM_IsDone(int In);
 bool ZTSM_IsNotSent(int In);
 
