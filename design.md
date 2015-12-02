@@ -1,5 +1,20 @@
 # XAPI2设计文档
 
+## 支持的API
+目前想支持的：
+* CTP 期货交易
+* CTPZQ
+* LTS 股票交易
+* Femas 期货交易
+* Kingstar
+* KingstarGold 上海黄金交易所的接口
+* SPTrader 想干的经纪公司基本都用这个
+ 
+以后再说的：
+* XSpeed
+* XSpeed_Stock
+
+
 ## 设计中需要解决的问题
 
 ####1. 在`ApiStruct.h`中的结构体的命名
