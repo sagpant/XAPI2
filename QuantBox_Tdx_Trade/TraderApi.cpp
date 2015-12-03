@@ -19,6 +19,29 @@
 #include <cstring>
 #include <assert.h>
 
+int Today(int day)
+{
+	time_t now = time(0);
+	now += day * 86400;
+	struct tm *ptmNow = localtime(&now);
+
+	return (ptmNow->tm_year + 1900) * 10000
+		+ (ptmNow->tm_mon + 1) * 100
+		+ ptmNow->tm_mday;
+}
+
+void CreateID(char* pOut, char* pDate, char*pZh,char* wtbh)
+{
+	if (pDate == nullptr || strlen(pDate) == 0)
+	{
+		sprintf(pOut, "%d:%s:%s", Today(0), pZh, wtbh);
+	}
+	else
+	{
+		sprintf(pOut, "%s:%s:%s", pDate, pZh, wtbh);
+	}
+}
+
 
 void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
@@ -212,11 +235,6 @@ void CTraderApi::ReqUserLogin()
 {
 	if (m_UserInfo_Pos >= m_UserInfo_Count)
 		return;
-
-	//STTraderLogin* pBody = (STTraderLogin*)m_msgQueue_Query->new_block(sizeof(STTraderLogin));
-
-	//strncpy(pBody->cust_no, m_pUserInfos[m_UserInfo_Pos].UserID, sizeof(TCustNoType));
-	//strncpy(pBody->cust_pwd, m_pUserInfos[m_UserInfo_Pos].Password, sizeof(TCustPwdType));
 
 	m_msgQueue_Query->Input_NoCopy(RequestType::E_ReqUserLoginField, m_msgQueue_Query, this, 0, 0,
 		nullptr, 0, nullptr, 0, nullptr, 0);
@@ -515,10 +533,11 @@ char* CTraderApi::ReqOrderInsert(
 	for (int i = 0; i < count; ++i)
 	{
 		OrderField* pNewOrder = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
-		memcpy(pNewOrder, pOrder, sizeof(OrderField));
+		memcpy(pNewOrder, &pOrder[i], sizeof(OrderField));
 
-		strcpy(pNewOrder[i].LocalID, m_pIDGenerator->GetIDString());
-		strcat(pszLocalIDBuf, pNewOrder[i].LocalID);
+		strcpy(pNewOrder->LocalID, m_pIDGenerator->GetIDString());
+		strcpy(pNewOrder->ID, pNewOrder->LocalID);
+		strcat(pszLocalIDBuf, pNewOrder->LocalID);
 		
 		if (i <count-1)
 		{
@@ -567,7 +586,12 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 	// 将结果立即取出来
 	for (int i = 0; i < count;++i)
 	{
-		m_id_api_order.insert(pair<string, Order_STRUCT*>(ppOrders[i]->LocalID, ppTdxOrders[i]));
+		WTLB_STRUCT* pWTOrders = new WTLB_STRUCT;
+		strcpy(pWTOrders->GDDM, ppTdxOrders[i]->GDDM);
+		strcpy(pWTOrders->WTBH, ppTdxOrders[i]->WTBH);
+		strcpy(pWTOrders->JYSDM, ppTdxOrders[i]->ZHLB_);
+
+		m_id_api_order.insert(pair<string, WTLB_STRUCT*>(ppOrders[i]->LocalID, pWTOrders));
 		// 处理错误
 		if (ppErrs && ppErrs[i])
 		{
@@ -580,10 +604,11 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		{
 			bSuccess = true;
 			// 写上柜台的ID，以后将基于此进行定位
-			strcpy(ppOrders[i]->ID, ppResults[i*COL_EACH_ROW + 0]);
+			//strcpy(ppOrders[i]->ID, ppResults[i*COL_EACH_ROW + 0]);
+			CreateID(ppOrders[i]->ID, nullptr, ppTdxOrders[i]->GDDM, ppResults[i*COL_EACH_ROW + 0]);
 
 			m_id_api_order.erase(ppOrders[i]->LocalID);
-			m_id_api_order.insert(pair<string, Order_STRUCT*>(ppOrders[i]->ID, ppTdxOrders[i]));
+			m_id_api_order.insert(pair<string, WTLB_STRUCT*>(ppOrders[i]->ID, pWTOrders));
 
 			m_id_platform_order.erase(ppOrders[i]->LocalID);
 			m_id_platform_order.insert(pair<string, OrderField*>(ppOrders[i]->ID, ppOrders[i]));
@@ -635,7 +660,7 @@ char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 	memset(pzsRtn, 0, sizeof(OrderIDType)*count);
 
 	OrderField** ppOrders = new OrderField*[count];
-	Order_STRUCT** ppTdxOrders = new Order_STRUCT*[count];
+	WTLB_STRUCT** ppTdxOrders = new WTLB_STRUCT*[count];
 
 	for (int i = 0; i < count; ++i)
 	{
@@ -649,7 +674,7 @@ char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 		}
 		
 		{
-			unordered_map<string, Order_STRUCT*>::iterator it = m_id_api_order.find(szId[i]);
+			unordered_map<string, WTLB_STRUCT*>::iterator it = m_id_api_order.find(szId[i]);
 			if (it != m_id_api_order.end())
 				ppTdxOrders[i] = it->second;
 		}
@@ -661,7 +686,7 @@ char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 	}
 
 	m_msgQueue_Query->Input_Copy(RequestType::E_InputOrderActionField, m_msgQueue_Query, this, 0, 0,
-		ppOrders, sizeof(OrderField*)*count, ppTdxOrders, sizeof(Order_STRUCT*)*count, nullptr, 0);
+		ppOrders, sizeof(OrderField*)*count, ppTdxOrders, sizeof(WTLB_STRUCT*)*count, nullptr, 0);
 
 	delete[] ppOrders;
 	delete[] ppTdxOrders;
@@ -674,8 +699,9 @@ int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double doub
 	int count = (int)size1 / sizeof(OrderField*);
 	// 通过ID找到原始结构，用于撤单
 	// 通过ID找到通用结构，用于接收回报
+	// 这里传过来的的是已经被复制过的内容
 	OrderField** ppOrders = (OrderField**)ptr1;
-	Order_STRUCT** ppTdxOrders = (Order_STRUCT**)ptr2;
+	WTLB_STRUCT** ppTdxOrders = (WTLB_STRUCT**)ptr2;
 
 	FieldInfo_STRUCT** ppFieldInfos = nullptr;
 	char** ppResults = nullptr;
@@ -695,7 +721,7 @@ int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double doub
 				strcpy(ppOrders[i]->Text, ppErrs[i]->ErrInfo);
 
 				ppOrders[i]->ExecType = ExecType::ExecType_CancelReject;
-				// 注意报单状态问题
+				// 注意报单状态问题，交给报单查询来处理
 			}
 			else
 			{
@@ -747,14 +773,11 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 	Error_STRUCT* pErr = nullptr;
 
 	m_pApi->ReqQueryData(REQUEST_DRWT, &ppFieldInfos, &ppResults, &pErr);
-	// 测试用，事后要删除
-	//m_pApi->ReqQueryData(REQUEST_LSWT, &ppFieldInfos, &ppResults, &pErr, "20150801", "20151031");
 
 	if (IsErrorRspInfo("ReqQryOrder", pErr))
 	{
 		double _queryTime = 0.5 * QUERY_TIME_MAX + QUERY_TIME_MIN;
 		m_QueryOrderTime = time(nullptr) + _queryTime;
-		//OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_QueryOrder_Error");
 
 		DeleteTableBody(ppResults);
 		DeleteError(pErr);
@@ -783,10 +806,11 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 			// 将撤单委托过滤
 			if (ppRS[i]->MMBZ_ != MMBZ_Cancel)
 			{
-				// 需要将它输入到一个地方用于计算
+				// 需要将它输入到一个地方用于计算，这个是临时的，需要删除
 				OrderField* pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 
 				WTLB_2_OrderField_0(ppRS[i], pField);
+				CreateID(pField->ID, ppRS[i]->WTRQ, ppRS[i]->GDDM, ppRS[i]->WTBH);
 
 				m_NewOrderList.push_back(pField);
 
@@ -797,6 +821,15 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 				if (ZTSM_IsNotSent(ppRS[i]->ZTSM_))
 				{
 					IsNotSent = true;
+				}
+
+				// 需要将其保存起来，是只保存一次，还是每次都更新呢？个人认为只保存一次即可，反正是用来撤单的
+				unordered_map<string, WTLB_STRUCT*>::iterator it = m_id_api_order.find(pField->ID);
+				if (it == m_id_api_order.end())
+				{
+					WTLB_STRUCT* pWTField = (WTLB_STRUCT*)m_msgQueue->new_block(sizeof(WTLB_STRUCT));
+					memcpy(pWTField, ppRS[i], sizeof(WTLB_STRUCT));
+					m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pField->ID, pWTField));
 				}
 			}
 			++i;
@@ -838,36 +871,17 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 			unordered_map<string, OrderField*>::iterator it = m_id_platform_order.find(pField->ID);
 			if (it == m_id_platform_order.end())
 			{
-				m_id_platform_order.insert(pair<string, OrderField*>(pField->ID, pField));
+				// 因为上次生成的可能在后期删了，所以要复制一份
+				OrderField* pField_ = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
+				memcpy(pField_, pField, sizeof(OrderField));
+
+				m_id_platform_order.insert(pair<string, OrderField*>(pField_->ID, pField_));
 			}
 			else
 			{
 				OrderField* pField_ = it->second;
-				pField_->Date = pField->Date;
-				pField_->Time = pField->Time;
-				pField_->CumQty = pField->CumQty;
-				pField_->LeavesQty = pField->LeavesQty;
-				pField_->AvgPx = pField->AvgPx;
-				pField_->Status = pField->Status;
-				pField_->ExecType = pField->ExecType;
-				strcpy(pField_->Text, pField->Text);
-
-				pField = pField_;
+				memcpy(pField_, pField, sizeof(OrderField));
 			}
-
-			{
-				unordered_map<string, Order_STRUCT*>::iterator it = m_id_api_order.find(pField->ID);
-				if (it == m_id_api_order.end())
-				{
-					Order_STRUCT* pTdxField = (Order_STRUCT*)m_msgQueue->new_block(sizeof(Order_STRUCT));
-					strcpy(pTdxField->GDDM, pField->AccountID);
-					strcpy(pTdxField->ZHLB_, "1");
-					strcpy(pTdxField->WTBH, pField->ID);
-
-					m_id_api_order.insert(pair<string, Order_STRUCT*>(pField->ID, pTdxField));
-				}
-			}
-			
 			
 			m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
 		}

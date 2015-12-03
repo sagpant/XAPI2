@@ -229,7 +229,7 @@ private:
 	int							m_nSleep;
 
 	unordered_map<string, OrderField*>				m_id_platform_order;
-	unordered_map<string, Order_STRUCT*>			m_id_api_order;
+	unordered_map<string, WTLB_STRUCT*>				m_id_api_order;
 
 	unordered_map<string, string>					m_cust_acc_no;
 

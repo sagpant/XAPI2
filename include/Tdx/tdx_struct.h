@@ -43,6 +43,13 @@ struct Order_STRUCT
 	char WTBH[32];	// 146_委托编号
 };
 
+struct CancelOrder_STRUCT
+{
+	char GDDM[32];	// 123_股东代码
+	char WTBH[32];	// 146_委托编号
+	char JYSDM[32];	// 100_交易所代码
+};
+
 // 股东列表
 struct GDLB_STRUCT
 {
