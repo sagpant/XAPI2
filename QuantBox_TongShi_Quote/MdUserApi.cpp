@@ -306,8 +306,8 @@ void CMdUserApi::OnRspQryInstrument(DepthMarketDataNField* _pField,RCV_REPORT_ST
 		pField->PriceTick = InstrumentID_2_PriceTick_SSE(instrumentInt);
 		break;
 	case SZ_MARKET_EX:
-		pField->Type = InstrumentID_2_InstrumentType_SZE(instrumentInt);
-		pField->PriceTick = InstrumentID_2_PriceTick_SZE(instrumentInt);
+		pField->Type = InstrumentID_2_InstrumentType_SZSE(instrumentInt);
+		pField->PriceTick = InstrumentID_2_PriceTick_SZSE(instrumentInt);
 		break;
 	case SB_MARKET_EX:
 		pField->Type = InstrumentID_2_InstrumentType_NEEQ(instrumentInt);

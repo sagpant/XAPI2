@@ -3,10 +3,17 @@
 
 #include <stdlib.h>
 
+//http://www.jisilu.cn/question/37830
+//提问：如何识别哪些分级是上海分级基金？
+//回答：上海分级母基、A和B份额的代码是以50开头的，深交所的分级A和B类的代码以15开头，母基的代码以16开头。
+
+//http://www.sse.com.cn/assortment/fund/list/
+//http://lefu.szse.cn/
 InstrumentType InstrumentID_2_InstrumentType_SSE(int In)
 {
 	// 只有6位，8位的期权已经提前过滤
 	int prefix1 = In / 100000;
+	int prefix2 = In / 10000;
 	int prefix3 = In / 1000;
 	switch (prefix1)
 	{
@@ -32,6 +39,13 @@ InstrumentType InstrumentID_2_InstrumentType_SSE(int In)
 	case 3:
 		return InstrumentType::InstrumentType_Future;
 	case 5:
+		switch (prefix2)
+		{
+		case 50:
+			return InstrumentType::InstrumentType_LOF; //
+		case 51:
+			return InstrumentType::InstrumentType_ETF; //
+		}
 		switch (prefix3)
 		{
 		case 500:
@@ -57,11 +71,12 @@ InstrumentType InstrumentID_2_InstrumentType_SSE(int In)
 	}
 }
 
-InstrumentType InstrumentID_2_InstrumentType_SZE(int In)
+InstrumentType InstrumentID_2_InstrumentType_SZSE(int In)
 {
 	// 只有6位，取前2
 	int prefix1 = In / 100000;
 	int prefix2 = In / 10000;
+	int prefix3 = In / 1000;
 	switch (prefix2)
 	{
 	case 0:
@@ -76,6 +91,15 @@ InstrumentType InstrumentID_2_InstrumentType_SZE(int In)
 	case 12:
 	case 13:
 		return InstrumentType::InstrumentType_Bond;
+	case 15:// AB
+		switch (prefix3)
+		{
+		case 159:
+			return InstrumentType::InstrumentType_ETF;
+		}
+		return InstrumentType::InstrumentType_LOF;
+	case 16:// 母基
+		return InstrumentType::InstrumentType_LOF;
 	case 17:
 	case 18:
 		return InstrumentType::InstrumentType_ETF;
@@ -104,6 +128,7 @@ PriceType InstrumentID_2_PriceTick_SSE(int In)
 {
 	// 只有6位，8位的期权已经提前过滤
 	int prefix1 = In / 100000;
+	int prefix2 = In / 10000;
 	int prefix3 = In / 1000;
 	switch (prefix1)
 	{
@@ -132,11 +157,12 @@ PriceType InstrumentID_2_PriceTick_SSE(int In)
 	return 0.01;
 }
 
-PriceType InstrumentID_2_PriceTick_SZE(int In)
+PriceType InstrumentID_2_PriceTick_SZSE(int In)
 {
 	// 只有6位，取前2
 	int prefix1 = In / 100000;
 	int prefix2 = In / 10000;
+	int prefix3 = In / 1000;
 	switch (prefix2)
 	{
 	case 0:
@@ -150,6 +176,9 @@ PriceType InstrumentID_2_PriceTick_SZE(int In)
 	case 11:
 	case 12:
 	case 13:
+		return 0.001;
+	case 15:
+	case 16:
 		return 0.001;
 	case 17:
 	case 18:
