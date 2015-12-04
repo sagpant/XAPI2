@@ -11,9 +11,9 @@
 
 
 InstrumentType InstrumentID_2_InstrumentType_SSE(int In);
-InstrumentType InstrumentID_2_InstrumentType_SZE(int In);
+InstrumentType InstrumentID_2_InstrumentType_SZSE(int In);
 InstrumentType InstrumentID_2_InstrumentType_NEEQ(int In);
 PriceType InstrumentID_2_PriceTick_SSE(int In);
-PriceType InstrumentID_2_PriceTick_SZE(int In);
+PriceType InstrumentID_2_PriceTick_SZSE(int In);
 PriceType InstrumentID_2_PriceTick_NEEQ(int In);
 #endif

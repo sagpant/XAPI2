@@ -88,6 +88,7 @@
 #define ZTSM_PartiallyCancelled	7	// 7-部成部撤，部撤
 #define ZTSM_AllCancelled		8	// 8-全部撤单,已撤,全部撤单
 #define ZTSM_CancelRejected		9	// 9-撤单未成					只会出现撤单记录中
+#define ZTSM_WaitingForReport	10	// 10-等待人工申报	
 
 // 已成,部成,废单,已撤,部撤
 

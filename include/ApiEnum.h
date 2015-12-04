@@ -86,6 +86,8 @@ enum OrderSide :char
 	OrderSide_Redemption,	///赎回
 	OrderSide_Merge,		///合并
 	OrderSide_Split,		///拆分
+	OrderSide_CBConvert,	///可转债转股，参考于https://en.wikipedia.org/wiki/Convertible_bond
+	OrderSide_CBRedemption,	///可转债回售，参考于https://en.wikipedia.org/wiki/Convertible_bond
 };
 
 /// 报单类型，与OpenQuant2014中的值一样
@@ -179,6 +181,7 @@ enum InstrumentType :char
 	InstrumentType_ETF,
 	InstrumentType_MultiLeg,
 	InstrumentType_Synthetic,
+	InstrumentType_LOF,		///多加LOF
 };
 
 //////////////////////////////////////////////////////////////////////////

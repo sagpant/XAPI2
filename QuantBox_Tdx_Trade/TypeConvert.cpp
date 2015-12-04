@@ -44,6 +44,12 @@ int ZTSM_str_2_int(char* pIn)
 		return ZTSM_Illegal;
 	}
 
+	char* pDeng = strstr(pIn, "等");
+	if (pDeng)
+	{
+		return ZTSM_WaitingForReport;
+	}
+
 	//char* pQ = strstr(pIn, "全");
 	//char* pY = strstr(pIn, "已");
 	//char* pBao = strstr(pIn, "报");
@@ -136,6 +142,16 @@ int WTLB_str_2_int(char* pIn)
 	if (pChe)
 	{
 		return MMBZ_Cancel;
+	}
+	char* pHe = strstr(pIn, "合");
+	if (pHe)
+	{
+		return MMBZ_Merge;
+	}
+	char* pChai = strstr(pIn, "拆");
+	if (pChai)
+	{
+		return MMBZ_Split;
 	}
 
 	return MMBZ_Buy_Limit;
@@ -712,6 +728,8 @@ OrderStatus ZTSM_2_OrderStatus(int In)
 		return OrderStatus::OrderStatus_Cancelled;
 	case ZTSM_PartiallyFilled:
 			return OrderStatus::OrderStatus_PartiallyFilled;
+	case ZTSM_WaitingForReport:
+		return OrderStatus::OrderStatus_New;
 	default:
 		return OrderStatus::OrderStatus_NotSent;
 	}
@@ -733,8 +751,8 @@ ExecType ZTSM_2_ExecType(int In)
 	case ZTSM_AllCancelled:
 	case ZTSM_PartiallyCancelled:
 		return ExecType::ExecType_Cancelled;
-	
-		return ExecType::ExecType_Trade;
+	case ZTSM_WaitingForReport:
+		return ExecType::ExecType_New;
 	default:
 		return ExecType::ExecType_New;
 	}
