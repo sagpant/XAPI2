@@ -65,7 +65,8 @@ xcopy "$(SolutionDir)include\Tdx\win32\*.dll"  "$(SolutionDir)XAPI\Tdx\x86\" /Y
 xcopy "$(SolutionDir)include\Tdx\win32\*.exe"  "$(SolutionDir)XAPI\Tdx\x86\" /Y
 xcopy "$(SolutionDir)include\Tdx\win32\*.ini"  "$(SolutionDir)XAPI\Tdx\x86\" /Y
 xcopy "$(SolutionDir)include\Tdx\win32\*.doc"  "$(SolutionDir)XAPI\Tdx\x86\" /Y
-xcopy "$(SolutionDir)include\Tdx\win32\*.license"  "$(SolutionDir)XAPI\Tdx\x86\" /Y</Command>
+xcopy "$(SolutionDir)include\Tdx\win32\*.license"  "$(SolutionDir)XAPI\Tdx\x86\" /Y
+xcopy  "$(SolutionDir)XAPI\Tdx\x86\*.*"  "$(OutDir)" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

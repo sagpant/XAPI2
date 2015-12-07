@@ -117,50 +117,62 @@ int BJFS_str_2_int(char* pIn)
 ///发现不管你下的什么单，只要是特殊的单，买卖标志都是3，所以需要另行处理
 int WTLB_str_2_int(char* pIn)
 {
-	// 有没有ETF，或融资融券部分，或
+	char* pChe = strstr(pIn, "撤");
 	char* pBuy = strstr(pIn, "买");
 	if (pBuy)
 	{
-		return MMBZ_Buy_Limit;
+		if (pChe)
+		{
+			return WTLB_Buy_Cancel;
+		}
+		return WTLB_Buy;
 	}
 	char* pSell = strstr(pIn, "卖");
 	if (pSell)
 	{
-		return MMBZ_Sell_Limit;
+		if (pChe)
+		{
+			return WTLB_Sell_Cancel;
+		}
+		return WTLB_Sell;
 	}
+
+
+	char* pETF = strstr(pIn, "ETF");
 	char* pShen = strstr(pIn, "申");
 	if (pShen)
 	{
-		return MMBZ_Creation;
+		if (pETF)
+		{
+			return WTLB_ETFCreation;
+		}
+		return WTLB_LOFCreation;
 	}
 	char* pShu = strstr(pIn, "赎");
 	if (pShu)
 	{
-		return MMBZ_Redemption;
+		if (pETF)
+		{
+			return WTLB_ETFRedemption;
+		}
+		return WTLB_LOFRedemption;
 	}
-	char* pChe = strstr(pIn, "撤");
-	if (pChe)
-	{
-		return MMBZ_Cancel;
-	}
+	
 	char* pHe = strstr(pIn, "合");
 	if (pHe)
 	{
-		return MMBZ_Merge;
+		return WTLB_Merge;
 	}
 	char* pChai = strstr(pIn, "拆");
 	if (pChai)
 	{
-		return MMBZ_Split;
+		return WTLB_Split;
 	}
 
-	return MMBZ_Buy_Limit;
+	return WTLB_Buy;
 }
 
 //////////////////////////////////////////////////////////////////////////
-
-
-
 
 void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults)
 {
@@ -277,11 +289,11 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 
 		ppResults[i]->BJFS_ = BJFS_str_2_int(ppResults[i]->BJFS);
 
-		// 华宝没有这个字段，广发有，下单时其实是用它的
-		if (col_166 >= 0)
-		{
-			ppResults[i]->WTFS_ = ppResults[i]->BJFS_;
-		}
+		//// 华宝没有这个字段，广发有，下单时其实是用它的
+		//if (col_166 >= 0)
+		//{
+		//	ppResults[i]->WTFS_ = ppResults[i]->BJFS_;
+		//}
 
 		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
 	}
@@ -363,9 +375,7 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 
 
 		ppResults[i]->CJRQ_ = atoi(ppResults[i]->CJRQ);
-		//ppResults[i]->CJSJ_ = atoi(ppResults[i]->CJSJ);
 		ppResults[i]->MMBZ_ = atoi(ppResults[i]->MMBZ);
-		ppResults[i]->WTLB_ = atoi(ppResults[i]->WTLB);
 		ppResults[i]->CJJG_ = atof(ppResults[i]->CJJG);
 		ppResults[i]->CJSL_ = atoi(ppResults[i]->CJSL);
 		ppResults[i]->SYJE_ = atof(ppResults[i]->SYJE);
@@ -374,8 +384,6 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 		ppResults[i]->GHF_ = atof(ppResults[i]->GHF);
 		ppResults[i]->CJF_ = atof(ppResults[i]->CJF);
 		ppResults[i]->CDBZ_ = atoi(ppResults[i]->CDBZ);
-
-		// 可能没有
 		ppResults[i]->FSJE_ = atof(ppResults[i]->FSJE);
 
 
@@ -389,6 +397,8 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 		{
 			ppResults[i]->CJSJ_ = atoi(ppResults[i]->CJSJ);
 		}
+
+		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
 	}
 }
 
@@ -781,52 +791,62 @@ bool ZTSM_IsNotSent(int In)
 	return false;
 }
 
+
 // 将买卖方式转成买卖方向
 OrderSide MMBZ_2_OrderSide(int In)
 {
-	switch (In)
+	switch (In / 100)
 	{
-	case MMBZ_Buy_Limit:
-		return OrderSide::OrderSide_Buy;
-	case MMBZ_Sell_Limit:
-		return OrderSide::OrderSide_Sell;
-	case MMBZ_Buy_Market:
-		return OrderSide::OrderSide_Buy;
-	case MMBZ_Sell_Market:
-		return OrderSide::OrderSide_Sell;
-	case MMBZ_Creation:
-		return OrderSide::OrderSide_Creation;
-	case MMBZ_Redemption:
-		return OrderSide::OrderSide_Redemption;
-	case MMBZ_Merge:
-		return OrderSide::OrderSide_Merge;
-	case MMBZ_Split:
-		return OrderSide::OrderSide_Split;
+	case REQUEST_ETF_SGSH:
+		switch (In % 100)
+		{
+		case JYLX_Creation:
+			return OrderSide::OrderSide_ETFCreation;
+		case JYLX_Redemption:
+			return OrderSide::OrderSide_ETFRedemption;
+		default:
+			break;
+		}
+		break;
+	case REQUEST_WT:
+		switch (In % 100)
+		{
+		case MMBZ_Buy_Limit:
+			return OrderSide::OrderSide_Buy;
+		case MMBZ_Sell_Limit:
+			return OrderSide::OrderSide_Sell;
+		case MMBZ_Buy_Market:
+			return OrderSide::OrderSide_Buy;
+		case MMBZ_Sell_Market:
+			return OrderSide::OrderSide_Sell;
+		case MMBZ_Creation:
+			return OrderSide::OrderSide_LOFCreation;
+		case MMBZ_Redemption:
+			return OrderSide::OrderSide_LOFRedemption;
+		case MMBZ_Merge:
+			return OrderSide::OrderSide_Merge;
+		case MMBZ_Split:
+			return OrderSide::OrderSide_Split;
+		default:
+			break;
+		}
+		break;
+	case REQUEST_ZGHS:
+		switch (In % 100)
+		{
+		case MMBZ_CB_Conv:
+			return OrderSide::OrderSide_CBConvert;
+		case MMBZ_CB_Red:
+			return OrderSide::OrderSide_CBRedemption;
+		default:
+			break;
+		}
+		break;
 	default:
 		break;
 	}
-	return OrderSide::OrderSide_Buy;
-}
-
-// 将买卖方式转成开平
-OpenCloseType MMBZ_2_OpenCloseType(int In)
-{
-	switch (In)
-	{
-	case MMBZ_Buy_Limit:
-	case MMBZ_Buy_Market:
-	case MMBZ_Creation:
-	case MMBZ_Merge:
-		return OpenCloseType::OpenCloseType_Open;
-	case MMBZ_Sell_Limit:
-	case MMBZ_Sell_Market:
-	case MMBZ_Redemption:
-	case MMBZ_Split:
-		return OpenCloseType::OpenCloseType_Close;
-	default:
-		break;
-	}
-	return OpenCloseType::OpenCloseType_Open;
+	
+	return OrderSide::OrderSide_Unknown;
 }
 
 void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
@@ -837,13 +857,13 @@ void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 	pOut->Qty = pIn->CJSL_;
 	pOut->Date = pIn->CJRQ_;
 	pOut->Time = pIn->CJSJ_;
-	pOut->Side = MMBZ_2_OrderSide(pIn->MMBZ_);
+	pOut->Side = MMBZ_2_OrderSide(pIn->WTLB_);
 
 	strcpy(pOut->TradeID, pIn->CJBH);
 
 	pOut->Commission = pIn->YJ_ + pIn->YHS_ + pIn->GHF_ + pIn->CJF_;
 
-	pOut->OpenClose = pOut->Side == OrderSide::OrderSide_Buy ? OpenCloseType::OpenCloseType_Open : OpenCloseType::OpenCloseType_Close;
+	pOut->OpenClose = pOut->Side % 2 == 0 ? OpenCloseType::OpenCloseType_Open : OpenCloseType::OpenCloseType_Close;
 	pOut->HedgeFlag = HedgeFlagType::HedgeFlagType_Speculation;
 	
 }
@@ -865,7 +885,7 @@ void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
 	pOut->Status = ZTSM_2_OrderStatus(pIn->ZTSM_);
 	pOut->ExecType = ZTSM_2_ExecType(pIn->ZTSM_);
 
-	pOut->OpenClose = MMBZ_2_OpenCloseType(pIn->WTLB_);
+	pOut->OpenClose = pOut->Side % 2 == 0 ? OpenCloseType::OpenCloseType_Open : OpenCloseType::OpenCloseType_Close;
 	pOut->HedgeFlag = HedgeFlagType::HedgeFlagType_Speculation;
 
 	strcpy(pOut->AccountID, pIn->GDDM);
@@ -904,6 +924,7 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 	pOut->Qty = pIn->Qty;
 	pOut->WTFS = OrderType_2_WTFS(pIn->Type);
 	pOut->RZRQBS = RZRQBS_NO;
+	pOut->request = REQUEST_WT;
 
 	// 这个地方后期要再改，因为没有处理基金等情况
 	switch (pIn->Side)
@@ -920,17 +941,33 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 		else
 			pOut->MMBZ = MMBZ_Sell_Limit;
 		break;
-	case OrderSide::OrderSide_Creation:
+	case OrderSide::OrderSide_LOFCreation:
 		pOut->MMBZ = MMBZ_Creation;
 		break;
-	case OrderSide::OrderSide_Redemption:
+	case OrderSide::OrderSide_LOFRedemption:
 		pOut->MMBZ = MMBZ_Redemption;
+		break;
+	case OrderSide::OrderSide_ETFCreation:
+		pOut->MMBZ = JYLX_Creation;
+		pOut->request = REQUEST_ETF_SGSH;
+		break;
+	case OrderSide::OrderSide_ETFRedemption:
+		pOut->MMBZ = JYLX_Redemption;
+		pOut->request = REQUEST_ETF_SGSH;
 		break;
 	case OrderSide::OrderSide_Merge:
 		pOut->MMBZ = MMBZ_Merge;
 		break;
 	case OrderSide::OrderSide_Split:
 		pOut->MMBZ = MMBZ_Split;
+		break;
+	case OrderSide::OrderSide_CBConvert:
+		pOut->MMBZ = MMBZ_CB_Conv;
+		pOut->request = REQUEST_ZGHS;
+		break;
+	case OrderSide::OrderSide_CBRedemption:
+		pOut->MMBZ = MMBZ_CB_Red;
+		pOut->request = REQUEST_ZGHS;
 		break;
 	}
 }

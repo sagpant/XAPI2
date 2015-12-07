@@ -16,10 +16,6 @@ TDXAPI_API FieldInfo_STRUCT** CopyTableHeader(FieldInfo_STRUCT** ppHeader);
 #define TDXAPI_API __declspec(dllimport)
 #endif
 
-
-// 得到时间
-//TDXAPI_API void GetUpdateTime_HH_mm_ss(char* UpdateTime, int* _HH, int* _mm, int* _ss);
-
 //////////////////////////////////////////////////////////////////////////
 // 表头处理
 

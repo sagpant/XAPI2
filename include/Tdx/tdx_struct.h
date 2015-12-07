@@ -3,6 +3,7 @@
 #ifndef _TDX_STRUCT_H_
 #define _TDX_STRUCT_H_
 
+#define COL_EACH_ROW	(64) //每行多少例，相当重要
 
 // 字段信息,通达信内部定义的，非自定义
 struct FieldInfo_STRUCT
@@ -41,6 +42,9 @@ struct Order_STRUCT
 	char ZHLB_[2];	// 125_帐号类别
 	// 下完单后用来回填
 	char WTBH[32];	// 146_委托编号
+
+	int	request;	// 请求类型
+	void* Client;	// 多账号
 };
 
 struct CancelOrder_STRUCT
@@ -48,6 +52,18 @@ struct CancelOrder_STRUCT
 	char GDDM[32];	// 123_股东代码
 	char WTBH[32];	// 146_委托编号
 	char JYSDM[32];	// 100_交易所代码
+
+	void* Client;	// 多账号
+};
+
+struct ReqQueryData_STRUCT
+{
+	char ZJZH[32];	// 121_资金帐号
+	char KSRQ[32];
+	char ZZRQ[32];
+	char ZQDM[32];
+
+	void* Client;	// 多账号
 };
 
 // 股东列表
@@ -64,6 +80,8 @@ struct GDLB_STRUCT
 
 	int ZHLB_;		// 125_帐号类别
 	int RZRQBS_;	// 281_融资融券标识
+
+	void* Client;	// 多账号
 };
 
 // 当日委托/历史委托=委托列表
@@ -92,9 +110,9 @@ struct WTLB_STRUCT
 
 	int WTRQ_;
 	int WTSJ_;
-	char MMBZ_;
-	char WTLB_;
-	char JYSDM_;
+	int MMBZ_;
+	int WTLB_;
+	int JYSDM_;
 	double WTJG_;
 	int WTSL_;
 	double CJJG_;
@@ -130,8 +148,8 @@ struct CJLB_STRUCT
 
 	int CJRQ_;
 	int CJSJ_;
-	char MMBZ_;
-	char WTLB_;
+	int MMBZ_;
+	int WTLB_;
 	double CJJG_;
 	int CJSL_;
 	double FSJE_;
@@ -140,7 +158,7 @@ struct CJLB_STRUCT
 	double YHS_;
 	double GHF_;
 	double CJF_;
-	char CDBZ_;
+	int CDBZ_;
 };
 
 

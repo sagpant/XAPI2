@@ -76,18 +76,21 @@ enum OrderStatus :char
 	OrderStatus_Replaced,
 };
 
-/// 方向，没有区分ETF与开放式基金的申购赎回
+/// 方向
 /// 新股申购、回购，质押都暂时不写入，等业务掌握熟了后再加
 enum OrderSide :char
 {
 	OrderSide_Buy,
 	OrderSide_Sell,
-	OrderSide_Creation,		///申购
-	OrderSide_Redemption,	///赎回
-	OrderSide_Merge,		///合并
-	OrderSide_Split,		///拆分
-	OrderSide_CBConvert,	///可转债转股，参考于https://en.wikipedia.org/wiki/Convertible_bond
-	OrderSide_CBRedemption,	///可转债回售，参考于https://en.wikipedia.org/wiki/Convertible_bond
+	OrderSide_LOFCreation,		///申购,LOF申购
+	OrderSide_LOFRedemption,	///赎回,LOF赎回
+	OrderSide_ETFCreation,		///ETF申购
+	OrderSide_ETFRedemption,	///ETF赎回
+	OrderSide_Merge,			///合并
+	OrderSide_Split,			///拆分
+	OrderSide_CBConvert,		///可转债转股，参考于https://en.wikipedia.org/wiki/Convertible_bond
+	OrderSide_CBRedemption,		///可转债回售，参考于https://en.wikipedia.org/wiki/Convertible_bond
+	OrderSide_Unknown,			///出现这个输出时，需要技术人员去查找原因修正代码
 };
 
 /// 报单类型，与OpenQuant2014中的值一样
