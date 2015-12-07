@@ -342,10 +342,6 @@ int CTraderApi::_ReqQryInvestor(char type, void* pApi1, void* pApi2, double doub
 
 	if (IsErrorRspInfo("ReqQryInvestor", pErr))
 	{
-		//int _queryTime = QUERY_TIME_MIN;
-		//m_QueryGDLBTime = time(nullptr) + _queryTime;
-		//OutputQueryTime(m_QueryGDLBTime, _queryTime, "NextQueryInvestor_ReqQryInvestor");
-
 		DeleteTableBody(ppResults);
 		DeleteError(pErr);
 
@@ -671,6 +667,15 @@ char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 			unordered_map<string, OrderField*>::iterator it = m_id_platform_order.find(szId[i]);
 			if (it != m_id_platform_order.end())
 				ppOrders[i] = it->second;
+			else
+			{
+				OrderField* pField = new OrderField();
+				ppOrders[i] = pField;
+				strcpy(pField->ID, szId[i]);
+				strcpy(pField->Symbol, "*.*");
+				strcpy(pField->InstrumentID, "*");
+				strcpy(pField->ExchangeID, "*");
+			}
 		}
 		
 		{

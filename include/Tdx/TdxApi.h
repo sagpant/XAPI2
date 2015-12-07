@@ -50,17 +50,17 @@ public:
 	// 有些请求是当日数据，后面的起始和结束日期自动忽略
 	// 对于历史数据，需要查询的区别，格式“yyyyMMdd”，客户端上有60天或90天的时间限制，这里没有，但如果数据太多，间隔设成一周或一月
 	// 订阅行情时只需要最后的股票代码
-	virtual void* ReqQueryData(int requestType, FieldInfo_STRUCT*** pppFieldInfos, char*** pppResults, Error_STRUCT** ppErr, char * szKSRQ = "", char* szZZRQ = "", char* szZQDM = "") = 0;
+	virtual void* ReqQueryData(int requestType, FieldInfo_STRUCT*** pppFieldInfos, char*** pppResults, Error_STRUCT** ppErr, ReqQueryData_STRUCT* query) = 0;
 
 public:
-	// 设置会话
-	virtual void SetClient(void* client) = 0;
+	//// 设置会话
+	//virtual void SetClient(void* client) = 0;
 
-	virtual void* GetClient() = 0;
-	// 设置资金账号
-	virtual void SetAccount(const char* szAccount) = 0;
-	// 得到资金账号
-	virtual const char* GetAccount() = 0;
+	//virtual void* GetClient() = 0;
+	//// 设置资金账号
+	//virtual void SetAccount(const char* szAccount) = 0;
+	//// 得到资金账号
+	//virtual const char* GetAccount() = 0;
 
 	virtual int GetTableHeader(int request, FieldInfo_STRUCT*** pppResults) = 0;
 

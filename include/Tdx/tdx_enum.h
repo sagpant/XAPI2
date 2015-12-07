@@ -3,7 +3,7 @@
 #ifndef _TDX_ENUM_H_
 #define _TDX_ENUM_H_
 
-#define COL_EACH_ROW	(64) //每行多少例，相当重要
+#include "tdx_request.h"
 
 // 125_帐号类别
 // 37 期权
@@ -13,8 +13,8 @@
 // 130_买卖标志
 // 下单时使用买卖标志来指定报单类型
 // 查询时，单子只简单的表示了买卖方向，是否要启用委托类别？
-#define MMBZ_Buy_Limit			0	// 限价买,		可转债转股
-#define MMBZ_Sell_Limit			1	// 限价卖
+#define MMBZ_Buy_Limit			0	// 限价买,		204下:可转债转股
+#define MMBZ_Sell_Limit			1	// 限价卖,		204下:债券回售
 #define MMBZ_Cancel				2	// 撤买/撤卖
 #define MMBZ_3					3	// ?融券
 #define MMBZ_Merge				12	// 基金合并
@@ -32,26 +32,33 @@
 #define MMBZ_Redemption			80	// 基金赎回
 #define MMBZ_86					86	// 权证行权
 
+// 131_委托类别，这是自己定定义的，用来将字符串转成数字
+#define WTLB_Buy				REQUEST_WT*100+ MMBZ_Buy_Limit		// 买入
+#define WTLB_Sell				REQUEST_WT*100+ MMBZ_Sell_Limit		// 卖出
+#define WTLB_Buy_Cancel			REQUEST_WT*100+ 2		// 撤买
+#define WTLB_Sell_Cancel		REQUEST_WT*100+ 3		// 撤卖
+#define WTLB_LOFCreation		REQUEST_WT*100+ 79		// 基金申购
+#define WTLB_LOFRedemption		REQUEST_WT*100+ 80		// 基金赎回
+#define WTLB_ETFCreation		REQUEST_ETF_SGSH*100+ MMBZ_Creation	// ETF申购
+#define WTLB_ETFRedemption		REQUEST_ETF_SGSH*100+ MMBZ_Redemption	// ETF赎回
+#define WTLB_Merge				REQUEST_WT*100+ MMBZ_Merge		// 合并
+#define WTLB_Split				REQUEST_WT*100+ MMBZ_Split		// 分拆
+
+#define MMBZ_CB_Conv	 		0	// 204下:可转债转股
+#define MMBZ_CB_Red				1	// 204下:债券回售
+
+//	603_交易类型
+#define JYLX_Creation			0	// ETF申购
+#define JYLX_Redemption			1	// ETF赎回
+
 
 // 5565_委托类别
 #define WTLB_MM	0;	// 买卖
 #define WTLB_CD	1;	// 撤单
 
-// 131_委托类别
-// 3|投票
-// 3|融券
-// 0|买入
-// 1|卖出
 
 // 166_委托方式
 // 上海只有046,深圳只有012345,所以市价只发4最简单
-// 0	限1，买卖
-// 1	对
-// 2	本
-// 3	剩 撤
-// 4	五 撤
-// 5	全 撤
-// 6	转
 #define WTFS_Limit				0 // 限价,限价委托,买卖
 #define WTFS_Best_Reverse		1 // 对手方最优价格委托,对方最优价格,对手方最优价格委托,
 #define WTFS_Best_Forward		2 // 本方最优价格委托,本方最优价格,本方最优价格委托,
