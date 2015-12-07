@@ -11,30 +11,30 @@ namespace QuantBox.XAPI.Event
 {
     public class XApiWrapper:XApi
     {
-        public new event EventHandler OnConnectionStatus;
-        public new event EventHandler OnRtnError;
-        public new event EventHandler OnLog;
+        public new event EventHandler<OnConnectionStatusEventArgs> OnConnectionStatus;
+        public new event EventHandler<OnRtnErrorEventArgs> OnRtnError;
+        public new event EventHandler<OnLogEventArgs> OnLog;
 
-        public new event EventHandler OnRtnDepthMarketData;
-        public new event EventHandler OnRtnQuoteRequest;
+        public new event EventHandler<OnRtnDepthMarketDataNEventArgs> OnRtnDepthMarketData;
+        public new event EventHandler<OnRtnQuoteRequestEventArgs> OnRtnQuoteRequest;
 
-        public new event EventHandler OnRspQryInstrument;
-        public new event EventHandler OnRspQryTradingAccount;
-        public new event EventHandler OnRspQryInvestorPosition;
-        public new event EventHandler OnRspQrySettlementInfo;
+        public new event EventHandler<OnRspQryInstrumentEventArgs> OnRspQryInstrument;
+        public new event EventHandler<OnRspQryTradingAccountEventArgs> OnRspQryTradingAccount;
+        public new event EventHandler<OnRspQryInvestorPositionEventArgs> OnRspQryInvestorPosition;
+        public new event EventHandler<OnRspQrySettlementInfoEventArgs> OnRspQrySettlementInfo;
 
-        public new event EventHandler OnRspQryOrder;
-        public new event EventHandler OnRspQryTrade;
-        public new event EventHandler OnRspQryQuote;
+        public new event EventHandler<OnRspQryOrderEventArgs> OnRspQryOrder;
+        public new event EventHandler<OnRspQryTradeEventArgs> OnRspQryTrade;
+        public new event EventHandler<OnRspQryQuoteEventArgs> OnRspQryQuote;
 
-        public new event EventHandler OnRtnOrder;
-        public new event EventHandler OnRtnTrade;
-        public new event EventHandler OnRtnQuote;
+        public new event EventHandler<OnRtnOrderEventArgs> OnRtnOrder;
+        public new event EventHandler<OnRtnTradeEventArgs> OnRtnTrade;
+        public new event EventHandler<OnRtnQuoteEventArgs> OnRtnQuote;
 
-        public new event EventHandler OnRspQryHistoricalTicks;
-        public new event EventHandler OnRspQryHistoricalBars;
+        public new event EventHandler<OnRspQryHistoricalTicksEventArgs> OnRspQryHistoricalTicks;
+        public new event EventHandler<OnRspQryHistoricalBarsEventArgs> OnRspQryHistoricalBars;
 
-        public new event EventHandler OnRspQryInvestor;
+        public new event EventHandler<OnRspQryInvestorEventArgs> OnRspQryInvestor;
 
 
         public XApiWrapper(string path):this()
