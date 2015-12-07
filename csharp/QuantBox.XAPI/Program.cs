@@ -7,6 +7,7 @@ using System.Text;
 
 using System.IO;
 using System.Threading;
+using QuantBox.XAPI.Event;
 
 namespace QuantBox.XAPI
 {
@@ -329,6 +330,43 @@ namespace QuantBox.XAPI
             Console.ReadKey();
 
             Console.ReadKey();
+        }
+
+        static void test_Tdx_Event_Main(string[] args)
+        {
+            XApiWrapper api = new XApiWrapper(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\Tdx\x86\QuantBox_Tdx_Trade.dll");
+
+            api.Server.BrokerID = "";
+            api.Server.Address = @"D:\new_hbzq_qq\Login.lua";
+            api.Server.ExtInfoChar128 = @"D:\new_hbzq_qq\";
+
+            api.User.UserID = "05000000000";
+            api.User.Password = "123456";
+
+            api.OnConnectionStatus += api_OnConnectionStatus;
+            api.OnRtnDepthMarketData += api_OnRtnDepthMarketData;
+
+            api.Connect();
+
+            Console.ReadKey();
+
+            Console.ReadKey();
+
+            api.Dispose();
+
+            Console.ReadKey();
+
+            Console.ReadKey();
+        }
+
+        static void api_OnRtnDepthMarketData(object sender, OnRtnDepthMarketDataNEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        static void api_OnConnectionStatus(object sender, OnConnectionStatusEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }
