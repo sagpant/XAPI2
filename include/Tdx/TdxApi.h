@@ -17,6 +17,8 @@
 #include "tdx_request.h"
 #include "tdx_field.h"
 
+//////////////////////////////////////////////////////////////////////////
+//支持同券商多账号登录、下单、撤单
 class TDXAPI_API CTdxApi
 {
 public:
@@ -53,15 +55,7 @@ public:
 	virtual void* ReqQueryData(int requestType, FieldInfo_STRUCT*** pppFieldInfos, char*** pppResults, Error_STRUCT** ppErr, ReqQueryData_STRUCT* query) = 0;
 
 public:
-	//// 设置会话
-	//virtual void SetClient(void* client) = 0;
-
-	//virtual void* GetClient() = 0;
-	//// 设置资金账号
-	//virtual void SetAccount(const char* szAccount) = 0;
-	//// 得到资金账号
-	//virtual const char* GetAccount() = 0;
-
+	// 没有指定同账号
 	virtual int GetTableHeader(int request, FieldInfo_STRUCT*** pppResults) = 0;
 
 protected:

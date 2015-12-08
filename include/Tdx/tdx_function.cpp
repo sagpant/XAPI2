@@ -485,7 +485,7 @@ int GetCountErrors(Error_STRUCT** pErrs)
 
 //////////////////////////////////////////////////////////////////////////
 
-void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults)
+void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -528,6 +528,8 @@ void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT
 
 		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
 		ppResults[i]->RZRQBS_ = atoi(ppResults[i]->RZRQBS);
+
+		ppResults[i]->Client = Client;
 	}
 }
 
@@ -569,7 +571,7 @@ A341083000|LK|1|                         |主股东|
 E015976151|HT|1|88500918|		12982|1|	|主股东|
 0601605823|HT|0|88500918|		354000|1|	|主股东|
 */
-void String2GDLB(char* szString, GDLB_STRUCT*** pppResults)
+void String2GDLB(char* szString, GDLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (szString == nullptr)
@@ -646,12 +648,14 @@ void String2GDLB(char* szString, GDLB_STRUCT*** pppResults)
 
 		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
 		ppResults[i]->RZRQBS_ = atoi(ppResults[i]->RZRQBS);
+
+		ppResults[i]->Client = Client;
 	}
 
 	delete[] pBuf;
 }
 
-void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults)
+void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -666,7 +670,7 @@ void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults)
 		int requstid = atoi(p);
 		if (requstid == REQUEST_GDLB + 1)
 		{
-			String2GDLB(ppTable[i * COL_EACH_ROW + 2], pppResults);
+			String2GDLB(ppTable[i * COL_EACH_ROW + 2], pppResults, Client);
 		}
 
 		++i;

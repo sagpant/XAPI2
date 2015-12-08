@@ -174,7 +174,7 @@ int WTLB_str_2_int(char* pIn)
 
 //////////////////////////////////////////////////////////////////////////
 
-void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults)
+void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -296,10 +296,12 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		//}
 
 		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
+
+		ppResults[i]->Client = Client;
 	}
 }
 
-void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT*** pppResults)
+void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -399,10 +401,12 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 		}
 
 		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
+
+		ppResults[i]->Client = Client;
 	}
 }
 
-void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT*** pppResults)
+void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -474,10 +478,12 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 		ppResults[i]->DQJ_ = atof(ppResults[i]->DQJ);
 		ppResults[i]->ZXSZ_ = atof(ppResults[i]->ZXSZ);
 		ppResults[i]->DJSL_ = atof(ppResults[i]->DJSL);
+
+		ppResults[i]->Client = Client;
 	}
 }
 
-void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT*** pppResults)
+void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -524,10 +530,12 @@ void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT
 		ppResults[i]->ZZC_ = atof(ppResults[i]->ZZC);
 		ppResults[i]->KQZJ_ = atof(ppResults[i]->KQZJ);
 		ppResults[i]->ZXSZ_ = atof(ppResults[i]->ZXSZ);
+
+		ppResults[i]->Client = Client;
 	}
 }
 
-void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults)
+void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -686,6 +694,8 @@ void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** 
 		ppResults[i]->ZXMCBDJW_ = atof(ppResults[i]->ZXMCBDJW);
 		ppResults[i]->ZTJG_ = atof(ppResults[i]->ZTJG);
 		ppResults[i]->DTJG_ = atof(ppResults[i]->DTJG);
+
+		ppResults[i]->Client = Client;
 	}
 }
 
@@ -919,6 +929,9 @@ int OrderType_2_WTFS(OrderType In)
 
 void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 {
+	strcpy(pOut->KHH, pIn->ClientID);
+	strcpy(pOut->GDDM, pIn->AccountID);
+
 	strcpy(pOut->ZQDM, pIn->InstrumentID);
 	pOut->Price = pIn->Price;
 	pOut->Qty = pIn->Qty;
