@@ -95,20 +95,11 @@ public:
 
 	void ReqQuery(QueryType type, ReqQueryField* pQuery);
 
-	//void ReqQryTradingAccount();
-	//void ReqQryInvestorPosition();
-	//void ReqQryInvestorPositionDetail(const string& szInstrumentId);
-	//void ReqQryInstrument(const string& szInstrumentId, const string& szExchange);
-	//void ReqQryInstrumentCommissionRate(const string& szInstrumentId);
-	////void ReqQryInstrumentMarginRate(const string& szInstrumentId,TThostFtdcHedgeFlagType HedgeFlag = THOST_FTDC_HF_Speculation);
-	//void ReqQryDepthMarketData(const string& szInstrumentId);
-	//void ReqQrySettlementInfo(const string& szTradingDay);
-
 	void ReqQryOrder();
 	void ReqQryTrade();
 	//void ReqQryQuote();
 
-	void ReqQryInvestor();
+	
 
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 

@@ -23,11 +23,14 @@ struct Error_STRUCT
 	int ErrType;
 	int ErrCode;
 	char ErrInfo[256];
+
+	void* Client;	// 多账号
 };
 
 // 委托
 struct Order_STRUCT
 {
+	char KHH[32];	// 120_客户号
 	char ZJZH[32];	// 121_资金帐号
 	char GDDM[32];	// 123_股东代码
 	char ZQDM[32];	// 140_证券代码
@@ -44,6 +47,7 @@ struct Order_STRUCT
 	char WTBH[32];	// 146_委托编号
 
 	int	request;	// 请求类型
+
 	void* Client;	// 多账号
 };
 
@@ -58,7 +62,9 @@ struct CancelOrder_STRUCT
 
 struct ReqQueryData_STRUCT
 {
+	char KHH[32];	// 120_客户号
 	char ZJZH[32];	// 121_资金帐号
+	char GDDM[32];	// 123_股东代码
 	char KSRQ[32];
 	char ZZRQ[32];
 	char ZQDM[32];
@@ -122,6 +128,8 @@ struct WTLB_STRUCT
 	int ZTSM_;
 	int BJFS_;
 	int WTFS_;
+
+	void* Client;	// 多账号
 };
 
 // 成交列表
@@ -159,6 +167,8 @@ struct CJLB_STRUCT
 	double GHF_;
 	double CJF_;
 	int CDBZ_;
+
+	void* Client;	// 多账号
 };
 
 
@@ -187,6 +197,8 @@ struct GFLB_STRUCT
 	double DQJ_;
 	double ZXSZ_;
 	double DJSL_;
+
+	void* Client;	// 多账号
 };
 
 // 资金余额
@@ -205,6 +217,8 @@ struct ZJYE_STRUCT
 	double ZZC_;
 	double KQZJ_;
 	double ZXSZ_;
+
+	void* Client;	// 多账号
 };
 
 struct HQ_STRUCT
@@ -276,6 +290,8 @@ struct HQ_STRUCT
 	double ZXMCBDJW_;		// 227_最小卖出变动价位
 	double ZTJG_;		// 940_涨停价格
 	double DTJG_;		// 941_跌停价格
+
+	void* Client;	// 多账号
 };
 
 //
@@ -290,6 +306,8 @@ struct DLJG_STRUCT
 	char COL1[128];
 	char COL2[128];
 	char COL3[128];
+
+	void* Client;	// 多账号
 };
 
 #endif

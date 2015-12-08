@@ -120,7 +120,6 @@ void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double
 	int iRet = 0;
 	bool bQryOrder = false;
 	bool bQryTrade = false;
-	//bool bQryInvestor = false;
 
 	time_t _now = time(nullptr);
 
@@ -144,23 +143,6 @@ void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double
 
 	}
 
-	//if (_now > m_QueryGDLBTime)
-	//{
-	//	bQryInvestor = true;
-	//}
-	//else
-	//{
-
-	//}
-
-	//if (bQryInvestor)
-	//{
-	//	double _queryTime = QUERY_TIME_MAX * 60;
-	//	m_QueryGDLBTime = time(nullptr) + _queryTime;
-	//	OutputQueryTime(m_QueryGDLBTime, _queryTime, "QueryInvestor");
-
-	//	ReqQryInvestor();
-	//}
 
 	if (bQryOrder)
 	{
@@ -260,14 +242,11 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 		}
 
 		m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logined, 0, pField, sizeof(pField), nullptr, 0, nullptr, 0);
-		
-		// 以后支持多账号时这地方要改
-		m_pApi->SetClient(m_pClient);
-		m_pApi->SetAccount(m_UserInfo.UserID);
+
 
 		// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
 		GDLB_STRUCT** ppRS = nullptr;
-		CharTable2Login(ppResults, &ppRS);
+		CharTable2Login(ppResults, &ppRS, m_pClient);
 
 		int count = GetCountStructs((void**)ppRS);
 
@@ -285,7 +264,9 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 		else
 		{
 			// 查通达信仿真实验室账号不直接返回股东列表，需要主动查询
-			ReqQryInvestor();
+			ReqQueryField query = { 0 };
+			strcpy(query.ClientID, m_UserInfo.UserID);
+			ReqQuery(QueryType::ReqQryInvestor, &query);
 		}
 		
 		// 启动定时查询功能使用
@@ -323,11 +304,7 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 		pQuery, sizeof(ReqQueryField), nullptr, 0, nullptr, 0);
 }
 
-void CTraderApi::ReqQryInvestor()
-{
-	m_msgQueue_Query->Input_NoCopy(QueryType::ReqQryInvestor, m_msgQueue_Query, this, 0, 0,
-		nullptr, 0, nullptr, 0, nullptr, 0);
-}
+
 
 int CTraderApi::_ReqQryInvestor(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
@@ -338,7 +315,13 @@ int CTraderApi::_ReqQryInvestor(char type, void* pApi1, void* pApi2, double doub
 	char** ppResults = nullptr;
 	Error_STRUCT* pErr = nullptr;
 
-	m_pApi->ReqQueryData(REQUEST_GDLB, &ppFieldInfos, &ppResults, &pErr);
+	ReqQueryField* pQuery = (ReqQueryField*)ptr1;
+
+	ReqQueryData_STRUCT query = { 0 };
+	strcpy(query.KHH, pQuery->ClientID);
+	strcpy(query.GDDM, pQuery->AccountID);
+
+	m_pApi->ReqQueryData(REQUEST_GDLB, &ppFieldInfos, &ppResults, &pErr, &query);
 
 	if (IsErrorRspInfo("ReqQryInvestor", pErr))
 	{
@@ -349,7 +332,7 @@ int CTraderApi::_ReqQryInvestor(char type, void* pApi1, void* pApi2, double doub
 	}
 
 	GDLB_STRUCT** ppRS = nullptr;
-	CharTable2GDLB(ppFieldInfos, ppResults, &ppRS);
+	CharTable2GDLB(ppFieldInfos, ppResults, &ppRS, query.Client);
 
 	int count = GetCountStructs((void**)ppRS);
 
@@ -375,7 +358,6 @@ CTraderApi::CTraderApi(void)
 	m_pClient = nullptr;
 	m_lRequestID = 0;
 	m_nSleep = 1;
-	//m_FirstTradeID[0] = 0;
 	m_TradeListReverse = false;
 	m_LastIsMerge = false;
 
@@ -586,6 +568,7 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		strcpy(pWTOrders->GDDM, ppTdxOrders[i]->GDDM);
 		strcpy(pWTOrders->WTBH, ppTdxOrders[i]->WTBH);
 		strcpy(pWTOrders->JYSDM, ppTdxOrders[i]->ZHLB_);
+		pWTOrders->Client = ppTdxOrders[i]->Client;
 
 		m_id_api_order.insert(pair<string, WTLB_STRUCT*>(ppOrders[i]->LocalID, pWTOrders));
 		// 处理错误
@@ -777,7 +760,13 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 	char** ppResults = nullptr;
 	Error_STRUCT* pErr = nullptr;
 
-	m_pApi->ReqQueryData(REQUEST_DRWT, &ppFieldInfos, &ppResults, &pErr);
+	ReqQueryField* pQuery = (ReqQueryField*)ptr1;
+
+	ReqQueryData_STRUCT query = { 0 };
+	strcpy(query.KHH, pQuery->ClientID);
+	//strcpy(query.GDDM, pQuery->AccountID);
+
+	m_pApi->ReqQueryData(REQUEST_DRWT, &ppFieldInfos, &ppResults, &pErr, &query);
 
 	if (IsErrorRspInfo("ReqQryOrder", pErr))
 	{
@@ -791,7 +780,7 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 	}
 
 	WTLB_STRUCT** ppRS = nullptr;
-	CharTable2WTLB(ppFieldInfos, ppResults, &ppRS);
+	CharTable2WTLB(ppFieldInfos, ppResults, &ppRS, query.Client);
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewOrderList.clear();
@@ -1098,7 +1087,13 @@ int CTraderApi::_ReqQryTrade(char type, void* pApi1, void* pApi2, double double1
 	char** ppResults = nullptr;
 	Error_STRUCT* pErr = nullptr;
 
-	m_pApi->ReqQueryData(REQUEST_DRCJ, &ppFieldInfos, &ppResults, &pErr);
+	ReqQueryField* pQuery = (ReqQueryField*)ptr1;
+
+	ReqQueryData_STRUCT query = { 0 };
+	strcpy(query.KHH, pQuery->ClientID);
+	strcpy(query.GDDM, pQuery->AccountID);
+
+	m_pApi->ReqQueryData(REQUEST_DRCJ, &ppFieldInfos, &ppResults, &pErr, &query);
 
 	if (IsErrorRspInfo("ReqQryTrade", pErr))
 	{
@@ -1112,7 +1107,7 @@ int CTraderApi::_ReqQryTrade(char type, void* pApi1, void* pApi2, double double1
 	}
 
 	CJLB_STRUCT** ppRS = nullptr;
-	CharTable2CJLB(ppFieldInfos, ppResults, &ppRS);
+	CharTable2CJLB(ppFieldInfos, ppResults, &ppRS, query.Client);
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewTradeList.clear();
@@ -1251,17 +1246,6 @@ int CTraderApi::_ReqQryTrade(char type, void* pApi1, void* pApi2, double double1
 	return 0;
 }
 
-//void CTraderApi::ReqQryInstrument(const string& szInstrumentId, const string& szExchange)
-//{
-//
-//}
-
-//void CTraderApi::ReqQryTradingAccount()
-//{
-//	m_msgQueue_Query->Input_NoCopy(QueryType::ReqQryTrade, m_msgQueue_Query, this, 0, 0,
-//		nullptr, 0, nullptr, 0, nullptr, 0);
-//}
-
 int CTraderApi::_ReqQryTradingAccount(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	if (m_pApi == nullptr)
@@ -1271,7 +1255,13 @@ int CTraderApi::_ReqQryTradingAccount(char type, void* pApi1, void* pApi2, doubl
 	char** ppResults = nullptr;
 	Error_STRUCT* pErr = nullptr;
 
-	m_pApi->ReqQueryData(REQUEST_ZJYE, &ppFieldInfos, &ppResults, &pErr);
+	ReqQueryField* pQuery = (ReqQueryField*)ptr1;
+
+	ReqQueryData_STRUCT query = { 0 };
+	strcpy(query.KHH, pQuery->ClientID);
+	strcpy(query.GDDM, pQuery->AccountID);
+
+	m_pApi->ReqQueryData(REQUEST_ZJYE, &ppFieldInfos, &ppResults, &pErr, &query);
 
 	if (IsErrorRspInfo("ReqQryTradingAccount", pErr))
 	{
@@ -1282,7 +1272,7 @@ int CTraderApi::_ReqQryTradingAccount(char type, void* pApi1, void* pApi2, doubl
 	}
 
 	ZJYE_STRUCT** ppRS = nullptr;
-	CharTable2ZJYE(ppFieldInfos, ppResults, &ppRS);
+	CharTable2ZJYE(ppFieldInfos, ppResults, &ppRS, query.Client);
 
 	int count = GetCountStructs((void**)ppRS);
 	for (int i = 0; i < count; ++i)
@@ -1291,12 +1281,12 @@ int CTraderApi::_ReqQryTradingAccount(char type, void* pApi1, void* pApi2, doubl
 
 		ZJYE_2_AccountField(ppRS[i], pField);
 
-		// 可能资金账号查不出来，手工填上
-		if (strlen(pField->AccountID) <= 0)
-		{
-			// 多账户会有问题
-			strcpy(pField->AccountID, m_pApi->GetAccount());
-		}
+		//// 可能资金账号查不出来，手工填上
+		//if (strlen(pField->AccountID) <= 0)
+		//{
+		//	// 多账户会有问题
+		//	strcpy(pField->AccountID, m_pApi->GetAccount());
+		//}
 
 		m_msgQueue->Input_NoCopy(ResponeType::OnRspQryTradingAccount, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
 	}
@@ -1322,7 +1312,13 @@ int CTraderApi::_ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, dou
 	char** ppResults = nullptr;
 	Error_STRUCT* pErr = nullptr;
 
-	m_pApi->ReqQueryData(REQUEST_GFLB, &ppFieldInfos, &ppResults, &pErr);
+	ReqQueryField* pQuery = (ReqQueryField*)ptr1;
+
+	ReqQueryData_STRUCT query = { 0 };
+	strcpy(query.KHH, pQuery->ClientID);
+	strcpy(query.GDDM, pQuery->AccountID);
+
+	m_pApi->ReqQueryData(REQUEST_GFLB, &ppFieldInfos, &ppResults, &pErr, &query);
 
 	if (IsErrorRspInfo("ReqQryInvestorPosition", pErr))
 	{
@@ -1333,7 +1329,7 @@ int CTraderApi::_ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, dou
 	}
 
 	GFLB_STRUCT** ppRS = nullptr;
-	CharTable2GFLB(ppFieldInfos, ppResults, &ppRS);
+	CharTable2GFLB(ppFieldInfos, ppResults, &ppRS, query.Client);
 
 	int count = GetCountStructs((void**)ppRS);
 	for (int i = 0; i < count; ++i)
@@ -1370,7 +1366,10 @@ int CTraderApi::_Subscribe(char type, void* pApi1, void* pApi2, double double1, 
 	char** ppResults = nullptr;
 	Error_STRUCT* pErr = nullptr;
 
-	m_pApi->ReqQueryData(REQUEST_HQ, &ppFieldInfos, &ppResults, &pErr, "", "", (char*)ptr1);
+	ReqQueryData_STRUCT query = { 0 };
+	strcpy(query.ZQDM, (char*)ptr1);
+
+	m_pApi->ReqQueryData(REQUEST_HQ, &ppFieldInfos, &ppResults, &pErr, &query);
 
 	if (IsErrorRspInfo("Subscribe", pErr))
 	{
@@ -1381,7 +1380,7 @@ int CTraderApi::_Subscribe(char type, void* pApi1, void* pApi2, double double1, 
 	}
 
 	HQ_STRUCT** ppRS = nullptr;
-	CharTable2HQ(ppFieldInfos, ppResults, &ppRS);
+	CharTable2HQ(ppFieldInfos, ppResults, &ppRS, query.Client);
 
 	int count = GetCountStructs((void**)ppRS);
 
