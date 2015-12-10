@@ -13,6 +13,7 @@
 #pragma comment(lib, "../lib/QuantBox_Queue_x86.lib")
 #endif
 
+#include "SingleUser.h"
 
 #include <set>
 #include <list>
@@ -79,33 +80,18 @@ public:
 		int count,
 		char* pszLocalIDBuf);
 
-	//char* ReqParkedOrderInsert(int OrderRef,
-	//	OrderField* pOrder1,
-	//	OrderField* pOrder2);
-
 	char* ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn);
-	//char* ReqOrderAction(Order_STRUCT *pOrder, int count, char* pzsRtn);
 
-	//char* ReqQuoteInsert(
-	//	int QuoteRef,
-	//	QuoteField* pQuote);
-
-	//int ReqQuoteAction(CThostFtdcQuoteField *pQuote);
-	////int ReqQuoteAction(const string& szId);
 
 	void ReqQuery(QueryType type, ReqQueryField* pQuery);
 
 	void ReqQryOrder();
 	void ReqQryTrade();
-	//void ReqQryQuote();
-
-	
 
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
 private:
-	//static void __stdcall OnReadPushData(ETX_APP_FUNCNO FuncNO, void* pEtxPushData);
-	//void _OnReadPushData(ETX_APP_FUNCNO FuncNO, void* pEtxPushData);
+
 
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
@@ -222,7 +208,6 @@ private:
 	unordered_map<string, OrderField*>				m_id_platform_order;
 	unordered_map<string, WTLB_STRUCT*>				m_id_api_order;
 
-	unordered_map<string, string>					m_cust_acc_no;
 
 	CMsgQueue*					m_msgQueue;				//消息队列指针
 	CMsgQueue*					m_msgQueue_Query;		//发送消息队列指针
@@ -251,5 +236,8 @@ private:
 	int							m_OrderNotUpdateCount;
 	bool						m_TradeListReverse;
 	bool						m_LastIsMerge;
+
+	unordered_map<void*, CSingleUser*> m_Client_SingleUser;
+	unordered_map<string, void*> m_UserID_Client;
 };
 

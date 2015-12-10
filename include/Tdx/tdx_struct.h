@@ -27,6 +27,33 @@ struct Error_STRUCT
 	void* Client;	// 多账号
 };
 
+// 请求
+// 响应，有两种类型
+// 一个请求只返回一行数据
+// 一个请求返回多行数据
+struct RequestRespone_STRUCT
+{
+	//请求类型
+	int	request;
+	// 多行内容
+	char pContent[1024];
+	// 请求大小
+	int size;
+
+	void* Client;	// 多账号
+
+	// 表头
+	FieldInfo_STRUCT** ppFieldInfo;
+	// 错误
+	Error_STRUCT* pErr;
+	// 多行内容
+	char** ppResults;
+
+	void* pSend;
+
+	void* pUserData;
+};
+
 // 委托
 struct Order_STRUCT
 {

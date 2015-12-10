@@ -275,6 +275,10 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 		m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 
+		CSingleUser* pUser = new CSingleUser();
+		m_Client_SingleUser.insert(pair<void*, CSingleUser*>(m_pClient, pUser));
+		m_UserID_Client.insert(pair<string, void*>(m_UserInfo.UserID, m_pClient));
+
 		// 登录下一个账号
 		//++m_UserInfo_Pos;
 		//ReqUserLogin();
@@ -550,6 +554,7 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 	{
 		ppTdxOrders[i] = (Order_STRUCT*)m_msgQueue->new_block(sizeof(Order_STRUCT));
 		OrderField_2_Order_STRUCT(ppOrders[i], ppTdxOrders[i]);
+		// 更新到正确的指针，也可以不更新，由底层根据KHH找到对应的Client
 	}
 
 	FieldInfo_STRUCT** ppFieldInfos = nullptr;
@@ -559,8 +564,6 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 	// 注意：pTdxOrders在这里被修改了，需要使用修改后的东西
 	int n = m_pApi->SendMultiOrders(ppTdxOrders, count, &ppFieldInfos, &ppResults, &ppErrs);
 
-	// 标记批量下单是否有发成功过单的
-	bool bSuccess = false;
 	// 将结果立即取出来
 	for (int i = 0; i < count;++i)
 	{
@@ -570,7 +573,9 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		strcpy(pWTOrders->JYSDM, ppTdxOrders[i]->ZHLB_);
 		pWTOrders->Client = ppTdxOrders[i]->Client;
 
+		// 记录下临时的ID
 		m_id_api_order.insert(pair<string, WTLB_STRUCT*>(ppOrders[i]->LocalID, pWTOrders));
+
 		// 处理错误
 		if (ppErrs && ppErrs[i])
 		{
@@ -581,16 +586,28 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		// 处理结果
 		if (ppResults && ppResults[i*COL_EACH_ROW + 0])
 		{
-			bSuccess = true;
 			// 写上柜台的ID，以后将基于此进行定位
-			//strcpy(ppOrders[i]->ID, ppResults[i*COL_EACH_ROW + 0]);
 			CreateID(ppOrders[i]->ID, nullptr, ppTdxOrders[i]->GDDM, ppResults[i*COL_EACH_ROW + 0]);
 
 			m_id_api_order.erase(ppOrders[i]->LocalID);
 			m_id_api_order.insert(pair<string, WTLB_STRUCT*>(ppOrders[i]->ID, pWTOrders));
-
 			m_id_platform_order.erase(ppOrders[i]->LocalID);
 			m_id_platform_order.insert(pair<string, OrderField*>(ppOrders[i]->ID, ppOrders[i]));
+
+			unordered_map<void*, CSingleUser*>::iterator it = m_Client_SingleUser.find(ppTdxOrders[i]->Client);
+			if (it == m_Client_SingleUser.end())
+			{
+				assert(false);
+			}
+			else
+			{
+				// 有挂单的，需要进行查询了
+				CSingleUser* pUser = it->second;
+
+				double  _queryTime = QUERY_TIME_MIN;
+				double _queryOrderTime = time(nullptr) + _queryTime;
+				pUser->UpdateQueryOrderTime(_queryOrderTime, _queryTime, "NextQueryOrder_Send");
+			}
 		}
 
 		// 现在有两个结构体，需要进行操作了
@@ -611,25 +628,12 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		
 		m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
 	}
-
-	// 测试用，不能写这，太快了，要等一下
-	//ReqQryTrade();
 	
 	// 复制完了，可以删了以前东西
 	delete[] ppTdxOrders;
 
 	DeleteTableBody(ppResults, count);
 	DeleteErrors(ppErrs, count);
-
-	if (bSuccess)
-	{
-		// 有挂单的，需要进行查询了
-		
-		double  _queryTime = QUERY_TIME_MIN;
-
-		m_QueryOrderTime = time(nullptr) + _queryTime;
-		OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_Send");
-	}
 
 	return 0;
 }
@@ -713,7 +717,20 @@ int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double doub
 			}
 			else
 			{
-				bSuccess = true;
+				unordered_map<void*, CSingleUser*>::iterator it = m_Client_SingleUser.find(ppTdxOrders[i]->Client);
+				if (it == m_Client_SingleUser.end())
+				{
+					assert(false);
+				}
+				else
+				{
+					// 有挂单的，需要进行查询了
+					CSingleUser* pUser = it->second;
+
+					double  _queryTime = QUERY_TIME_MIN;
+					double _queryOrderTime = time(nullptr) + _queryTime;
+					pUser->UpdateQueryOrderTime(_queryOrderTime, _queryTime, "NextQueryOrder_Cancel");
+				}
 
 				// 会不会出现撤单时，当时不知道是否成功撤单，查询才得知没有撤成功？
 				//ppOrders[i]->ExecType = ExecType::ExecCancelled;
@@ -736,20 +753,13 @@ int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double doub
 	DeleteTableBody(ppResults, count);
 	DeleteErrors(ppErrs, count);
 
-	if (bSuccess)
-	{
-		// 需要进行查询了
-		double  _queryTime = QUERY_TIME_MIN;
-
-		m_QueryOrderTime = time(nullptr) + _queryTime;
-		OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_Cancel");
-	}
-
 	return 0;
 }
 
 void CTraderApi::ReqQryOrder()
 {
+
+
 	m_msgQueue_Query->Input_NoCopy(QueryType::ReqQryOrder, m_msgQueue_Query, this, 0, 0,
 		nullptr, 0, nullptr, 0, nullptr, 0);
 }
