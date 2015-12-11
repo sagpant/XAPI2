@@ -23,6 +23,11 @@ public:
 	void UpdateQueryOrderTime(time_t t, double db, const char* szSource);
 	void UpdateQueryTradeTime(time_t t, double db, const char* szSource);
 
+	void ReqQryOrder();
+	void ReqQryTrade();
+
+	int OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone, WTLB_STRUCT** ppRS);
+	int OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone, CJLB_STRUCT** ppRS);
 private:
 	void CompareTradeMapAndEmit(unordered_map<string, TradeField*> &oldMap, unordered_map<string, TradeField*> &newMap);
 	void CompareTradeListAndEmit(list<TradeField*> &oldList, list<TradeField*> &newList);
@@ -34,6 +39,9 @@ private:
 	CMsgQueue*					m_msgQueue;
 	void*						m_pClass;
 
+	//unordered_map<string, OrderField*>				m_id_platform_order;
+	//unordered_map<string, WTLB_STRUCT*>				m_id_api_order;
+
 	list<TradeField*>			m_OldTradeList;
 	list<TradeField*>			m_NewTradeList;
 	unordered_map<string, TradeField*> m_NewTradeMap;
@@ -43,13 +51,14 @@ private:
 	list<OrderField*>			m_OldOrderList;
 	list<OrderField*>			m_NewOrderList;
 
-	time_t						m_QueryTradeTime;
-	time_t						m_QueryOrderTime;
 	int							m_OrderNotUpdateCount;
 	bool						m_TradeListReverse;
 	bool						m_LastIsMerge;
 
 public:
+	time_t						m_QueryTradeTime;
+	time_t						m_QueryOrderTime;
+
 	bool						m_bSendSuccess;
 };
 
