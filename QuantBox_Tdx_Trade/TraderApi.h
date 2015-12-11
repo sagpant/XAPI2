@@ -24,14 +24,13 @@
 #include <thread>
 #include <unordered_map>
 
-#define QUERY_TIME_MIN	(3)
-#define QUERY_TIME_MAX	(60)
+
 
 using namespace std;
 
 class CMsgQueue;
 
-class CTraderApi
+class CTraderApi:public CTdxSpi
 {
 	//请求数据包类型
 	enum RequestType
@@ -91,7 +90,7 @@ public:
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
 private:
-
+	virtual void OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
@@ -106,19 +105,23 @@ private:
 	int _ReqUserLogin(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	int _ReqQryInvestor(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-
+	int OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
 	int _ReqQryOrder(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 	int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
 	int _ReqOrderInsert(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int _ReqOrderAction(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	int _ReqQryTradingAccount(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 	int _ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-
+	int OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
 	int _Subscribe(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int OnRespone_Subscribe(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
 
 	//检查是否出错
@@ -183,9 +186,7 @@ private:
 	////其它
 	//virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	//virtual void OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrumentStatus);
-private:
-	void CompareTradeMapAndEmit(unordered_map<string, TradeField*> &oldMap, unordered_map<string, TradeField*> &newMap);
-	void CompareTradeListAndEmit(list<TradeField*> &oldList, list<TradeField*> &newList);
+
 
 private:
 	atomic<int>					m_lRequestID;			//请求ID,得保持自增
@@ -222,7 +223,7 @@ private:
 
 	CIDGenerator*				m_pIDGenerator;
 
-	list<TradeField*>			m_OldTradeList;
+	/*list<TradeField*>			m_OldTradeList;
 	list<TradeField*>			m_NewTradeList;
 	unordered_map<string, TradeField*> m_NewTradeMap;
 	unordered_map<string, TradeField*> m_OldTradeMap;
@@ -235,7 +236,7 @@ private:
 	time_t						m_QueryOrderTime;
 	int							m_OrderNotUpdateCount;
 	bool						m_TradeListReverse;
-	bool						m_LastIsMerge;
+	bool						m_LastIsMerge;*/
 
 	unordered_map<void*, CSingleUser*> m_Client_SingleUser;
 	unordered_map<string, void*> m_UserID_Client;
