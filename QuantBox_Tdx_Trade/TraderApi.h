@@ -30,6 +30,14 @@ using namespace std;
 
 class CMsgQueue;
 
+/*
+多账号支持的问题
+1.由于不同账号查询的时间间隔需要不一样，所以这个交给子对象处理
+2.撤单时只根据一个撤单的ID，所以要在主对象中维护可撤表
+3.股东、股份、资金由于只是回报，并不存储，所以可以写在主对象中，也可以写在子对象中，但有可能以后要维护，还是写在子对象中吧
+4.行情查询，建议直接都通过主连接又快又好
+
+*/
 class CTraderApi:public CTdxSpi
 {
 	//请求数据包类型
@@ -99,27 +107,24 @@ private:
 	virtual void TestInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	int _Init();
+	int _ReqQuery(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+
 
 	//登录请求
 	void ReqUserLogin();
 	int _ReqUserLogin(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	int _ReqQryInvestor(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-
-	int _ReqQryOrder(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-
+	
+	/*int _ReqQryOrder(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);*/
+	
 	int _ReqOrderInsert(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int _ReqOrderAction(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-
-	int _ReqQryTradingAccount(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int _ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-
+	
+	/*int _ReqQryTradingAccount(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int _ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);*/
+	
 	int _Subscribe(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int OnRespone_Subscribe(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
@@ -129,64 +134,11 @@ private:
 	bool IsErrorRspInfo(const char* szSource, Error_STRUCT *pRspInfo);//不输出信息
 	void OutputQueryTime(time_t t, double db,const char* szSource);
 
-	////连接
-	//virtual void OnFrontConnected();
-	//virtual void OnFrontDisconnected(int nReason);
+	CSingleUser* Fill_UserID_Client(char* khh, void** Client);
 
-	////认证
-	//virtual void OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthenticateField, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-
-	////下单
-	//virtual void OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo);
-
-	////撤单
-	//virtual void OnRspOrderAction(CThostFtdcInputOrderActionField *pInputOrderAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnErrRtnOrderAction(CThostFtdcOrderActionField *pOrderAction, CThostFtdcRspInfoField *pRspInfo);
-
-	////报单回报
-	//virtual void OnRspQryOrder(CThostFtdcOrderField *pOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRtnOrder(CThostFtdcOrderField *pOrder);
-
-	////成交回报
-	//virtual void OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRtnTrade(CThostFtdcTradeField *pTrade);
-
-	////报价录入
-	//virtual void OnRspQuoteInsert(CThostFtdcInputQuoteField *pInputQuote, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnErrRtnQuoteInsert(CThostFtdcInputQuoteField *pInputQuote, CThostFtdcRspInfoField *pRspInfo);
-	//virtual void OnRspQryQuote(CThostFtdcQuoteField *pQuote, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRtnQuote(CThostFtdcQuoteField *pQuote);
-
-	////报价撤单
-	//virtual void OnRspQuoteAction(CThostFtdcInputQuoteActionField *pInputQuoteAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnErrRtnQuoteAction(CThostFtdcQuoteActionField *pQuoteAction, CThostFtdcRspInfoField *pRspInfo);
-
-	////仓位
-	//virtual void OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInvestorPosition, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspQryInvestorPositionDetail(CThostFtdcInvestorPositionDetailField *pInvestorPositionDetail, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspQryInvestorPositionCombineDetail(CThostFtdcInvestorPositionCombineDetailField *pInvestorPositionCombineDetail, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast) {};
-
-	////资金
-	//virtual void OnRspQryTradingAccount(CThostFtdcTradingAccountField *pTradingAccount, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-
-	////合约、手续费
-	//virtual void OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspQryInstrumentMarginRate(CThostFtdcInstrumentMarginRateField *pInstrumentMarginRate, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspQryInstrumentCommissionRate(CThostFtdcInstrumentCommissionRateField *pInstrumentCommissionRate, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-
-	////查询行情响应
-	//virtual void OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-
-	////请求查询投资者结算结果响应
-	//virtual void OnRspQrySettlementInfo(CThostFtdcSettlementInfoField *pSettlementInfo, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-
-	////其它
-	//virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrumentStatus);
-
+public:
+	unordered_map<string, OrderField*>				m_id_platform_order;
+	unordered_map<string, WTLB_STRUCT*>				m_id_api_order;
 
 private:
 	atomic<int>					m_lRequestID;			//请求ID,得保持自增
@@ -197,7 +149,6 @@ private:
 	int							m_nMaxOrderRef;			//报单引用，用于区分报单，保持自增
 
 	CTdxApi*					m_pApi;					//交易API
-	void*						m_pClient;
 
 
 	string						m_szPath;				//生成配置文件的路径
@@ -206,8 +157,7 @@ private:
 
 	int							m_nSleep;
 
-	unordered_map<string, OrderField*>				m_id_platform_order;
-	unordered_map<string, WTLB_STRUCT*>				m_id_api_order;
+
 
 
 	CMsgQueue*					m_msgQueue;				//消息队列指针
@@ -223,22 +173,9 @@ private:
 
 	CIDGenerator*				m_pIDGenerator;
 
-	/*list<TradeField*>			m_OldTradeList;
-	list<TradeField*>			m_NewTradeList;
-	unordered_map<string, TradeField*> m_NewTradeMap;
-	unordered_map<string, TradeField*> m_OldTradeMap;
+	unordered_map<void*, CSingleUser*> m_Client_User_Map;
+	unordered_map<string, CSingleUser*> m_UserID_User_Map;
 
-
-	list<OrderField*>			m_OldOrderList;
-	list<OrderField*>			m_NewOrderList;
-
-	time_t						m_QueryTradeTime;
-	time_t						m_QueryOrderTime;
-	int							m_OrderNotUpdateCount;
-	bool						m_TradeListReverse;
-	bool						m_LastIsMerge;*/
-
-	unordered_map<void*, CSingleUser*> m_Client_SingleUser;
-	unordered_map<string, void*> m_UserID_Client;
+	CSingleUser*				m_pDefaultUser;
 };
 

@@ -937,7 +937,7 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 	pOut->Qty = pIn->Qty;
 	pOut->WTFS = OrderType_2_WTFS(pIn->Type);
 	pOut->RZRQBS = RZRQBS_NO;
-	pOut->request = REQUEST_WT;
+	pOut->requestType = REQUEST_WT;
 
 	// 这个地方后期要再改，因为没有处理基金等情况
 	switch (pIn->Side)
@@ -962,11 +962,11 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 		break;
 	case OrderSide::OrderSide_ETFCreation:
 		pOut->MMBZ = JYLX_Creation;
-		pOut->request = REQUEST_ETF_SGSH;
+		pOut->requestType = REQUEST_ETF_SGSH;
 		break;
 	case OrderSide::OrderSide_ETFRedemption:
 		pOut->MMBZ = JYLX_Redemption;
-		pOut->request = REQUEST_ETF_SGSH;
+		pOut->requestType = REQUEST_ETF_SGSH;
 		break;
 	case OrderSide::OrderSide_Merge:
 		pOut->MMBZ = MMBZ_Merge;
@@ -976,11 +976,11 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 		break;
 	case OrderSide::OrderSide_CBConvert:
 		pOut->MMBZ = MMBZ_CB_Conv;
-		pOut->request = REQUEST_ZGHS;
+		pOut->requestType = REQUEST_ZGHS;
 		break;
 	case OrderSide::OrderSide_CBRedemption:
 		pOut->MMBZ = MMBZ_CB_Red;
-		pOut->request = REQUEST_ZGHS;
+		pOut->requestType = REQUEST_ZGHS;
 		break;
 	}
 }

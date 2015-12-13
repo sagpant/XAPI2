@@ -3,6 +3,7 @@
 
 #include "../QuantBox_Queue/MsgQueue.h"
 #include "TypeConvert.h"
+#include "TraderApi.h"
 
 #define QUERY_TIME_MIN	(3)
 #define QUERY_TIME_MAX	(60)
@@ -30,8 +31,11 @@ void CreateID(char* pOut, char* pDate, char*pZh, char* wtbh)
 	}
 }
 
-CSingleUser::CSingleUser()
+CSingleUser::CSingleUser(CTraderApi* pApi)
 {
+	m_pApi = pApi;
+	m_pClient = nullptr;
+	memset(m_UserID, 0, sizeof(m_UserID));
 }
 
 
@@ -39,14 +43,41 @@ CSingleUser::~CSingleUser()
 {
 }
 
-void CSingleUser::UpdateQueryOrderTime(time_t t, double db, const char* szSource)
+void CSingleUser::OutputQueryTime(time_t t, double db, const char* szSource)
 {
-	m_QueryOrderTime = t;
+	LogField* pField = (LogField*)m_msgQueue->new_block(sizeof(LogField));
+
+	sprintf(pField->Message, "UserID:%s,Source:%s,Add:%d,Time:%s", m_UserID, szSource, (int)db, ctime(&t));
+
+	// 去了最后的回车
+	int len = strlen(pField->Message);
+	pField->Message[len - 1] = 0;
+
+	m_msgQueue->Input_NoCopy(ResponeType::OnLog, m_msgQueue, m_pClass, true, 0, pField, sizeof(LogField), nullptr, 0, nullptr, 0);
 }
 
-void CSingleUser::UpdateQueryTradeTime(time_t t, double db, const char* szSource)
+void CSingleUser::CheckThenQueryOrder(time_t _now)
 {
-	m_QueryTradeTime = t;
+	if (_now > m_QueryOrderTime)
+	{
+		double _queryTime = QUERY_TIME_MAX;
+		m_QueryOrderTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryOrderTime, _queryTime, "QueryOrder");
+
+		ReqQryOrder();
+	}
+}
+
+void CSingleUser::CheckThenQueryTrade(time_t _now)
+{
+	if (_now > m_QueryTradeTime)
+	{
+		double _queryTime = QUERY_TIME_MAX;
+		m_QueryOrderTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryOrderTime, _queryTime, "QueryOrder");
+
+		ReqQryOrder();
+	}
 }
 
 void CSingleUser::ReqQryOrder()
@@ -54,8 +85,17 @@ void CSingleUser::ReqQryOrder()
 
 }
 
-int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone, WTLB_STRUCT** ppRS)
+
+void CSingleUser::ReqQryTrade()
 {
+
+}
+
+int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	WTLB_STRUCT** ppRS = nullptr;
+	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewOrderList.clear();
 
@@ -92,12 +132,12 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 				}
 
 				// 需要将其保存起来，是只保存一次，还是每次都更新呢？个人认为只保存一次即可，反正是用来撤单的
-				unordered_map<string, WTLB_STRUCT*>::iterator it = m_id_api_order.find(pField->ID);
-				if (it == m_id_api_order.end())
+				unordered_map<string, WTLB_STRUCT*>::iterator it = m_pApi->m_id_api_order.find(pField->ID);
+				if (it == m_pApi->m_id_api_order.end())
 				{
 					WTLB_STRUCT* pWTField = (WTLB_STRUCT*)m_msgQueue->new_block(sizeof(WTLB_STRUCT));
 					memcpy(pWTField, ppRS[i], sizeof(WTLB_STRUCT));
-					m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pField->ID, pWTField));
+					m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pField->ID, pWTField));
 				}
 			}
 			++i;
@@ -136,14 +176,14 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 			m_OrderNotUpdateCount = 0;
 
 			// 如果能找到下单时的委托，就修改后发出来
-			unordered_map<string, OrderField*>::iterator it = m_id_platform_order.find(pField->ID);
-			if (it == m_id_platform_order.end())
+			unordered_map<string, OrderField*>::iterator it = m_pApi->m_id_platform_order.find(pField->ID);
+			if (it == m_pApi->m_id_platform_order.end())
 			{
 				// 因为上次生成的可能在后期删了，所以要复制一份
 				OrderField* pField_ = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 				memcpy(pField_, pField, sizeof(OrderField));
 
-				m_id_platform_order.insert(pair<string, OrderField*>(pField_->ID, pField_));
+				m_pApi->m_id_platform_order.insert(pair<string, OrderField*>(pField_->ID, pField_));
 			}
 			else
 			{
@@ -207,32 +247,28 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		_queryTime = 5 * QUERY_TIME_MAX;
 	}
 
-	//m_QueryOrderTime = time(nullptr) + _queryTime;
-	//OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_QueryOrder");
+	m_QueryOrderTime = time(nullptr) + _queryTime;
+	OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_QueryOrder");
 
-	//// 决定成交查询间隔
-	//if (IsUpdated)
-	//{
-	//	// 委托可能是撤单，也有可能是成交了，赶紧查一下
-	//	_queryTime = 0;
-	//	m_QueryTradeTime = time(nullptr) + _queryTime;
-	//	OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
-	//}
-	//else
-	//{
-	//	// 委托没有变化，那成交就没有必要查那么快了
-	//	_queryTime = 5 * QUERY_TIME_MAX;
-	//	m_QueryTradeTime = time(nullptr) + _queryTime;
-	//	OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
-	//}
+	// 决定成交查询间隔
+	if (IsUpdated)
+	{
+		// 委托可能是撤单，也有可能是成交了，赶紧查一下
+		_queryTime = 0;
+		m_QueryTradeTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
+	}
+	else
+	{
+		// 委托没有变化，那成交就没有必要查那么快了
+		_queryTime = 5 * QUERY_TIME_MAX;
+		m_QueryTradeTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
+	}
 
 	return 0;
 }
 
-void CSingleUser::ReqQryTrade()
-{
-
-}
 
 double GetTradeListQty(list<TradeField*> &tradeList, int count)
 {
@@ -282,8 +318,11 @@ void TradeList2TradeMap(list<TradeField*> &tradeList, unordered_map<string, Trad
 	}
 }
 
-int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone, CJLB_STRUCT** ppRS)
+int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	CJLB_STRUCT** ppRS = nullptr;
+	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewTradeList.clear();
 
@@ -480,4 +519,105 @@ void CSingleUser::CompareTradeListAndEmit(list<TradeField*> &oldList, list<Trade
 
 		++i;
 	}
+}
+
+
+
+int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
+	GDLB_STRUCT** ppRS = nullptr;
+	CharTable2Login(pRespone->ppResults, &ppRS, pRespone->Client);
+
+	int count = GetCountStructs((void**)ppRS);
+
+	if (count > 0)
+	{
+		for (int i = 0; i < count; ++i)
+		{
+			InvestorField* pField = (InvestorField*)m_msgQueue->new_block(sizeof(InvestorField));
+
+			GDLB_2_InvestorField(ppRS[i], pField);
+
+			m_msgQueue->Input_NoCopy(ResponeType::OnRspQryInvestor, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(InvestorField), nullptr, 0, nullptr, 0);
+		}
+	}
+
+	return 0;
+}
+
+int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	GDLB_STRUCT** ppRS = nullptr;
+	CharTable2GDLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+
+	int count = GetCountStructs((void**)ppRS);
+
+	for (int i = 0; i < count; ++i)
+	{
+		InvestorField* pField = (InvestorField*)m_msgQueue->new_block(sizeof(InvestorField));
+
+		GDLB_2_InvestorField(ppRS[i], pField);
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRspQryInvestor, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(InvestorField), nullptr, 0, nullptr, 0);
+	}
+
+	return 0;
+}
+
+int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	ZJYE_STRUCT** ppRS = nullptr;
+	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+
+	int count = GetCountStructs((void**)ppRS);
+	for (int i = 0; i < count; ++i)
+	{
+		AccountField* pField = (AccountField*)m_msgQueue->new_block(sizeof(AccountField));
+
+		ZJYE_2_AccountField(ppRS[i], pField);
+
+		//// 可能资金账号查不出来，手工填上
+		//if (strlen(pField->AccountID) <= 0)
+		//{
+		//	// 多账户会有问题
+		//	strcpy(pField->AccountID, m_pApi->GetAccount());
+		//}
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRspQryTradingAccount, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
+	}
+
+	return 0;
+}
+
+int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	GFLB_STRUCT** ppRS = nullptr;
+	CharTable2GFLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+
+	int count = GetCountStructs((void**)ppRS);
+	for (int i = 0; i < count; ++i)
+	{
+		PositionField* pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
+
+		// 应当处理一下，可能一个账号对应的有多个，如信用账户
+		GFLB_2_PositionField(ppRS[i], pField);
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRspQryInvestorPosition, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
+	}
+
+	return 0;
+}
+
+int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	pRespone->ppResults;
+	pRespone->pErr;
+
+	return 0;
+}
+
+int CSingleUser::OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+{
+	return 0;
 }

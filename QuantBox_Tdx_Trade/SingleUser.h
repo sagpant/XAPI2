@@ -10,34 +10,42 @@
 using namespace std;
 
 class CMsgQueue;
+class CTraderApi;
 
 //////////////////////////////////////////////////////////////////////////
 // 只是用来维护单账号的信息用
-// 不支持在此类中主动调用API，而是交上层统一控制
 class CSingleUser
 {
 public:
-	CSingleUser();
+	CSingleUser(CTraderApi* pApi);
 	~CSingleUser();
 
-	void UpdateQueryOrderTime(time_t t, double db, const char* szSource);
-	void UpdateQueryTradeTime(time_t t, double db, const char* szSource);
+	void CheckThenQueryOrder(time_t _now);
+	void CheckThenQueryTrade(time_t _now);
+
+	void OutputQueryTime(time_t t, double db, const char* szSource);
 
 	void ReqQryOrder();
 	void ReqQryTrade();
 
-	int OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone, WTLB_STRUCT** ppRS);
-	int OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone, CJLB_STRUCT** ppRS);
+	int OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+
+	int OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+
+	int OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+
 private:
 	void CompareTradeMapAndEmit(unordered_map<string, TradeField*> &oldMap, unordered_map<string, TradeField*> &newMap);
 	void CompareTradeListAndEmit(list<TradeField*> &oldList, list<TradeField*> &newList);
 
 private:
-	//CTdxApi*					m_pApi;					//交易API
-	//void*						m_pClient;
-
-	CMsgQueue*					m_msgQueue;
-	void*						m_pClass;
+	CTraderApi*					m_pApi;
+	
 
 	//unordered_map<string, OrderField*>				m_id_platform_order;
 	//unordered_map<string, WTLB_STRUCT*>				m_id_api_order;
@@ -58,7 +66,9 @@ private:
 public:
 	time_t						m_QueryTradeTime;
 	time_t						m_QueryOrderTime;
-
-	bool						m_bSendSuccess;
+	void*						m_pClient;
+	void*						m_pClass;
+	CMsgQueue*					m_msgQueue;
+	char						m_UserID[64];
 };
 
