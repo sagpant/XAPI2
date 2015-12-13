@@ -16,7 +16,7 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case GetApiType:
 		return (void*)(ApiType::ApiType_Trade | ApiType::ApiType_MarketData | ApiType::ApiType_Query);
 	case GetApiVersion:
-		return (void*)"0.2.0.20151124";
+		return (void*)"0.3.0.20151212";
 	case GetApiName:
 		return (void*)"Tdx";
 	case Create:
@@ -53,12 +53,6 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case ReqQryInvestor:
 		pApi->ReqQuery((QueryType)type, (ReqQueryField*)ptr1);
 		break;
-	/*case ReqQryInstrument:
-		pApi->ReqQryInstrument((const char*)ptr1, (const char*)ptr2);
-		break;
-	case ReqQrySettlementInfo:
-		pApi->ReqQrySettlementInfo((const char*)ptr1);
-		break;*/
 	case ReqOrderInsert:
 		return (void*)pApi->ReqOrderInsert((OrderField*)ptr1, size1, (char*)ptr2);
 	case ReqOrderAction:
@@ -66,9 +60,6 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case Subscribe:
 		pApi->Subscribe((const char*)ptr1, (const char*)ptr2);
 		break;
-	//case Unsubscribe:
-	//	pApi->Unsubscribe((const char*)ptr1, (const char*)ptr2);
-	//	break;
 	default:
 		break;
 	}
