@@ -40,8 +40,8 @@ namespace QuantBox.XAPI.COM
         public string Char64ID;
         public int Int32ID;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-        public string Char64RefID;
-        public int Int32RefID;
+        public string Char64PositionIndex;
+        public int Int32PositionIndex;
     }
 
     ///持仓

@@ -73,26 +73,49 @@ void CSingleUser::CheckThenQueryTrade(time_t _now)
 	if (_now > m_QueryTradeTime)
 	{
 		double _queryTime = QUERY_TIME_MAX;
-		m_QueryOrderTime = time(nullptr) + _queryTime;
-		OutputQueryTime(m_QueryOrderTime, _queryTime, "QueryOrder");
+		m_QueryTradeTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryTradeTime, _queryTime, "QueryTrade");
 
-		ReqQryOrder();
+		ReqQryTrade();
 	}
 }
 
 void CSingleUser::ReqQryOrder()
 {
-
+	// 进行查询
+	ReqQueryData_STRUCT query = { 0 };
+	query.Client = m_pClient;
+	strcpy(query.KHH, m_UserID);
+	query.requestType = REQUEST_DRWT;
+	query.bAll = false;
+	m_pApi->ReqQuery(&query);
 }
 
 
 void CSingleUser::ReqQryTrade()
 {
-
+	// 进行查询
+	ReqQueryData_STRUCT query = { 0 };
+	query.Client = m_pClient;
+	strcpy(query.KHH, m_UserID);
+	query.requestType = REQUEST_DRCJ;
+	query.bAll = false;
+	m_pApi->ReqQuery(&query);
 }
 
 int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	if (pRespone->pErr)
+	{
+		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
+
+		pField->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pField->Text, pRespone->pErr->ErrInfo);
+		strcpy(pField->Source, "OnRespone_ReqQryOrder");
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+	}
+
 	WTLB_STRUCT** ppRS = nullptr;
 	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
@@ -320,6 +343,17 @@ void TradeList2TradeMap(list<TradeField*> &tradeList, unordered_map<string, Trad
 
 int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	if (pRespone->pErr)
+	{
+		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
+
+		pField->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pField->Text, pRespone->pErr->ErrInfo);
+		strcpy(pField->Source, "OnRespone_ReqQryTrade");
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+	}
+
 	CJLB_STRUCT** ppRS = nullptr;
 	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
@@ -522,9 +556,26 @@ void CSingleUser::CompareTradeListAndEmit(list<TradeField*> &oldList, list<Trade
 }
 
 
-
 int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	if (pRespone->pErr)
+	{
+		RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+
+		pField->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pField->Text, pRespone->pErr->ErrInfo);
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+
+		m_pApi->RemoveUser((CSingleUser*)pRespone->pUserData_Public);
+	}
+	else
+	{
+		m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+
+		m_pApi->StartQueryThread();
+	}
+	
 	// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
 	GDLB_STRUCT** ppRS = nullptr;
 	CharTable2Login(pRespone->ppResults, &ppRS, pRespone->Client);
@@ -548,6 +599,17 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 
 int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	if (pRespone->pErr)
+	{
+		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
+
+		pField->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pField->Text, pRespone->pErr->ErrInfo);
+		strcpy(pField->Source, "OnRespone_ReqQryInvestor");
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+	}
+
 	GDLB_STRUCT** ppRS = nullptr;
 	CharTable2GDLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
@@ -567,6 +629,17 @@ int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* 
 
 int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	if (pRespone->pErr)
+	{
+		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
+
+		pField->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pField->Text, pRespone->pErr->ErrInfo);
+		strcpy(pField->Source, "OnRespone_ReqQryTradingAccount");
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+	}
+
 	ZJYE_STRUCT** ppRS = nullptr;
 	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
@@ -592,6 +665,17 @@ int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_ST
 
 int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	if (pRespone->pErr)
+	{
+		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
+
+		pField->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pField->Text, pRespone->pErr->ErrInfo);
+		strcpy(pField->Source, "OnRespone_ReqQryInvestorPosition");
+
+		m_msgQueue->Input_NoCopy(ResponeType::OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+	}
+
 	GFLB_STRUCT** ppRS = nullptr;
 	CharTable2GFLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
@@ -611,13 +695,88 @@ int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_
 
 int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
-	pRespone->ppResults;
-	pRespone->pErr;
+	Order_STRUCT* pTdxOrder = (Order_STRUCT*)pRespone->pContent;
+	OrderField* pOrder = (OrderField*)pRespone->pUserData_Public2;
+
+	WTLB_STRUCT* pWTOrders = new WTLB_STRUCT;
+	strcpy(pWTOrders->GDDM, pTdxOrder->GDDM);
+	strcpy(pWTOrders->WTBH, pTdxOrder->WTBH);
+	strcpy(pWTOrders->JYSDM, pTdxOrder->ZHLB_);
+	pWTOrders->Client = m_pClient;
+
+	m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pOrder->LocalID, pWTOrders));
+	// 处理错误
+	if (pRespone->pErr)
+	{
+		pOrder->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pOrder->Text, pRespone->pErr->ErrInfo);
+	}
+
+	// 处理结果
+	if (pRespone->ppResults&&pRespone->ppResults[0 * COL_EACH_ROW + 0])
+	{
+		// 写上柜台的ID，以后将基于此进行定位
+		CreateID(pOrder->ID, nullptr, pTdxOrder->GDDM, pRespone->ppResults[0 * COL_EACH_ROW + 0]);
+
+		m_pApi->m_id_api_order.erase(pOrder->LocalID);
+		m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pOrder->ID, pWTOrders));
+
+		m_pApi->m_id_platform_order.erase(pOrder->LocalID);
+		m_pApi->m_id_platform_order.insert(pair<string, OrderField*>(pOrder->ID, pOrder));
+
+		// 有挂单的，需要进行查询了
+
+		double  _queryTime = QUERY_TIME_MIN;
+		m_QueryOrderTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_Send");
+	}
+
+	// 现在有两个结构体，需要进行操作了
+	// 1.通知下单的结果
+	// 2.记录下单
+
+	OrderField* pField = pOrder;
+	if (pField->RawErrorID != 0)
+	{
+		pField->ExecType = ExecType::ExecType_Rejected;
+		pField->Status = OrderStatus::OrderStatus_Rejected;
+	}
+	else
+	{
+		pField->ExecType = ExecType::ExecType_New;
+		pField->Status = OrderStatus::OrderStatus_New;
+	}
+
+	m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
 
 	return 0;
 }
 
 int CSingleUser::OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	WTLB_STRUCT* pTdxOrder = (WTLB_STRUCT*)pRespone->pContent;
+	OrderField* pOrder = (OrderField*)pRespone->pUserData_Public2;
+
+	if (pRespone->pErr)
+	{
+		pOrder->RawErrorID = pRespone->pErr->ErrCode;
+		strcpy(pOrder->Text, pRespone->pErr->ErrInfo);
+
+		pOrder->ExecType = ExecType::ExecType_CancelReject;
+		// 注意报单状态问题，交给报单查询来处理
+	}
+	else
+	{
+		double  _queryTime = QUERY_TIME_MIN;
+		m_QueryOrderTime = time(nullptr) + _queryTime;
+		OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_Cancel");
+
+		// 会不会出现撤单时，当时不知道是否成功撤单，查询才得知没有撤成功？
+		//ppOrders[i]->ExecType = ExecType::ExecCancelled;
+		//ppOrders[i]->Status = OrderStatus::Cancelled;
+	}
+
+	m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pOrder, sizeof(OrderField), nullptr, 0, nullptr, 0);
+
 	return 0;
 }

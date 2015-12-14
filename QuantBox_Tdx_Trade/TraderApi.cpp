@@ -49,11 +49,12 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 		iRet = _Subscribe(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
 
-	case QueryType::ReqQryOrder :
-	case QueryType::ReqQryTrade:
-	case QueryType::ReqQryInvestor:
-	case QueryType::ReqQryTradingAccount:
-	case QueryType::ReqQryInvestorPosition:
+	//case QueryType::ReqQryOrder :
+	//case QueryType::ReqQryTrade:
+	//case QueryType::ReqQryInvestor:
+	//case QueryType::ReqQryTradingAccount:
+	//case QueryType::ReqQryInvestorPosition:
+	case E_ReqQueryData_STRUCT:
 		iRet = _ReqQuery(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
 	
@@ -105,6 +106,20 @@ void CTraderApi::OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 		return;
 
 	CSingleUser* pUser = (CSingleUser*)pRespone->pUserData_Public;
+	if (pUser == nullptr)
+	{
+		// 这个地方主要是因为Login时立即发送了登录结果出来，这个地方如果改一下也许会好一些
+		unordered_map<void*, CSingleUser*>::iterator it = m_Client_User_Map.find(pRespone->Client);
+		if (it == m_Client_User_Map.end())
+		{
+			pUser = m_pDefaultUser;
+		}
+		else
+		{
+			pUser = it->second;
+		}
+		pRespone->pUserData_Public = pUser;
+	}
 
 	switch (pRespone->requestType)
 	{
@@ -145,6 +160,7 @@ int CTraderApi::_Init()
 	if (m_pApi == nullptr)
 	{
 		m_pApi = CTdxApi::CreateApi(m_ServerInfo.ExtInfoChar128);
+		m_pApi->RegisterSpi(this);
 	}
 
 	Error_STRUCT* pErr = nullptr;
@@ -184,57 +200,70 @@ void CTraderApi::ReqUserLogin()
 
 int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
-	RequestRespone_STRUCT LoginRespone = { 0 };
+	Error_STRUCT* pErr = nullptr;
 
 	m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logining, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
-	void* pClient = m_pApi->Login(m_UserInfo.UserID, m_UserInfo.Password, m_UserInfo.ExtInfoChar64, &LoginRespone);
+	CSingleUser* pUser = new CSingleUser(this);
+	pUser->m_pClass = m_pClass;
+	pUser->m_msgQueue = m_msgQueue;
+	strcpy(pUser->m_UserID, m_UserInfo.UserID);
+	m_UserID_User_Map.insert(pair<string, CSingleUser*>(m_UserInfo.UserID, pUser));
+
+	if (m_pDefaultUser == nullptr)
+	{
+		m_pDefaultUser = pUser;
+	}
+
+	void* pClient = m_pApi->Login(m_UserInfo.UserID, m_UserInfo.Password, m_UserInfo.ExtInfoChar64, &pErr);
+	pUser->m_pClient = pClient;
+	m_Client_User_Map.insert(pair<void*, CSingleUser*>(pClient, pUser));
 
 	if (pClient)
 	{
 		// 有授权信息要输出
 		RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
-		if (LoginRespone.pErr)
+		if (pErr)
 		{
-			pField->RawErrorID = LoginRespone.pErr->ErrCode;
-			strcpy(pField->Text, LoginRespone.pErr->ErrInfo);
+			pField->RawErrorID = pErr->ErrCode;
+			strcpy(pField->Text, pErr->ErrInfo);
 		}
 
 		m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logined, 0, pField, sizeof(pField), nullptr, 0, nullptr, 0);
-		m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 		
-		CSingleUser* pUser = new CSingleUser(this);
-		pUser->m_pClient = pClient;
-		pUser->m_pClass = m_pClass;
-		pUser->m_msgQueue = m_msgQueue;
-		strcpy(pUser->m_UserID,m_UserInfo.UserID);
-		m_Client_User_Map.insert(pair<void*, CSingleUser*>(pClient, pUser));
-		m_UserID_User_Map.insert(pair<string, CSingleUser*>(m_UserInfo.UserID, pUser));
-
-		// 启动定时查询功能使用
-		m_msgQueue_Test->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue_Test, this, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
-
-
+		
 		// 登录下一个账号
 		//++m_UserInfo_Pos;
 		//ReqUserLogin();
 	}
 	else
 	{
-		if (LoginRespone.pErr)
+		if (pErr)
 		{
 			RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
 
-			pField->RawErrorID = LoginRespone.pErr->ErrCode;
-			strcpy(pField->Text, LoginRespone.pErr->ErrInfo);
+			pField->RawErrorID = pErr->ErrCode;
+			strcpy(pField->Text, pErr->ErrInfo);
 
 			m_msgQueue->Input_NoCopy(ResponeType::OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 		}
 	}
 
-	DeleteRequestRespone(&LoginRespone);
+	DeleteError(pErr);
 
 	return 0;
+}
+
+void CTraderApi::StartQueryThread()
+{
+	// 启动定时查询功能使用
+	m_msgQueue_Test->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue_Test, this, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+}
+
+void CTraderApi::RemoveUser(CSingleUser* pUser)
+{
+	m_UserID_User_Map.erase(pUser->m_UserID);
+	m_Client_User_Map.erase(pUser->m_pClient);
 }
 
 void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
@@ -245,6 +274,7 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 	strcpy(query.ZQDM, pQuery->InstrumentID);
 	sprintf_s(query.KSRQ,"%d",pQuery->DateStart);
 	sprintf_s(query.ZZRQ, "%d", pQuery->DateEnd);
+	query.bAll = pQuery->Int32ID == -1;
 
 	switch (type)
 	{
@@ -256,10 +286,10 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 	case ReqQryInvestorPosition:
 		query.requestType = REQUEST_GFLB;
 		break;
-	case ReqQryOrder:
+	case QueryType::ReqQryOrder:
 		query.requestType = REQUEST_DRWT;
 		break;
-	case ReqQryTrade:
+	case QueryType::ReqQryTrade:
 		query.requestType = REQUEST_DRCJ;
 		break;
 	case ReqQryQuote:
@@ -281,31 +311,35 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 		break;
 	}
 
-	CSingleUser* pUser = Fill_UserID_Client(query.KHH, &query.Client);
-	RequestRespone_STRUCT* pRequest = m_pApi->MakeQueryData(&query);
-	pRequest->pUserData_Public = pUser;
-	m_pApi->SendRequest(pRequest);
-
-	// 直接转发请求，不进行处理
-	m_msgQueue_Query->Input_Copy(type, m_msgQueue_Query, this, 0, 0,
-		&query, sizeof(ReqQueryData_STRUCT), nullptr, 0, nullptr, 0);
+	ReqQuery(&query);
 
 	return;
 }
+
+void CTraderApi::ReqQuery(ReqQueryData_STRUCT* pQuery)
+{
+	// 直接转发请求，不进行处理
+	m_msgQueue_Query->Input_Copy(E_ReqQueryData_STRUCT, m_msgQueue_Query, this, 0, 0,
+		pQuery, sizeof(ReqQueryData_STRUCT), nullptr, 0, nullptr, 0);
+
+	return;
+}
+
+
 int CTraderApi::_ReqQuery(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	if (m_pApi == nullptr)
 		return 0;
 
-	ReqQueryField* pQuery = (ReqQueryField*)ptr1;
+	ReqQueryData_STRUCT* pQuery = (ReqQueryData_STRUCT*)ptr1;
 
-	ReqQueryData_STRUCT query = { 0 };
-	strcpy(query.KHH, pQuery->ClientID);
-	strcpy(query.GDDM, pQuery->AccountID);
+	CSingleUser* pUser = Fill_UserID_Client(pQuery->KHH, &pQuery->Client);
+	RequestRespone_STRUCT* pRequest = m_pApi->MakeQueryData(pQuery);
+	pRequest->Client = pQuery->Client;
+	pRequest->pUserData_Public = pUser;
+	strcpy(pRequest->khh,pQuery->KHH);
 
-	Fill_UserID_Client(query.KHH, &query.Client);
-
-	m_pApi->SendRequest(m_pApi->MakeQueryData(&query));
+	m_pApi->SendRequest(pRequest);
 
 	return 0;
 }
@@ -483,8 +517,6 @@ char* CTraderApi::ReqOrderInsert(
 
 		ppOrders[i] = pNewOrder;
 
-
-
 		// 注意这里保存了最开始发单的结构体的备份
 		m_id_platform_order.insert(pair<string, OrderField*>(pNewOrder->LocalID, pNewOrder));
 	}
@@ -512,17 +544,16 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		OrderField_2_Order_STRUCT(ppOrders[i], &order);
 
 		// 主要是账号定位问题
-		Fill_UserID_Client(order.KHH, &order.Client);
+		CSingleUser* pUser = Fill_UserID_Client(order.KHH, &order.Client);
 
 		RequestRespone_STRUCT* pRequest = m_pApi->MakeOrder(&order);
-
+		pRequest->pUserData_Public = pUser;
+		pRequest->pUserData_Public2 = ppOrders[i];
 		m_pApi->SendRequest(pRequest);
 	}
 
 	return 0;
 }
-
-
 
 char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 {
@@ -574,82 +605,25 @@ char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 
 int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
-	//if (m_pApi == nullptr)
-	//	return 0;
+	if (m_pApi == nullptr)
+		return 0;
 
-	//int count = (int)size1 / sizeof(OrderField*);
-	//// 通过ID找到原始结构，用于撤单
-	//// 通过ID找到通用结构，用于接收回报
-	//// 这里传过来的的是已经被复制过的内容
-	//OrderField** ppOrders = (OrderField**)ptr1;
-	//WTLB_STRUCT** ppTdxOrders = (WTLB_STRUCT**)ptr2;
+	int count = (int)size1 / sizeof(OrderField*);
+	// 通过ID找到原始结构，用于撤单
+	// 通过ID找到通用结构，用于接收回报
+	// 这里传过来的的是已经被复制过的内容
+	OrderField** ppOrders = (OrderField**)ptr1;
+	WTLB_STRUCT** ppTdxOrders = (WTLB_STRUCT**)ptr2;
 
-	//for (int i = 0; i < count; ++i)
-	//{
-	//	RequestRespone_STRUCT* pRequest = (RequestRespone_STRUCT*)m_msgQueue->new_block(sizeof(RequestRespone_STRUCT));
-	//	OrderField_2_Order_STRUCT(ppOrders[i], (Order_STRUCT*)pRequest->pContent);
-	//	// 这地方需要对一些值进行修正
+	for (int i = 0; i < count; ++i)
+	{
+		CSingleUser* pUser = Fill_UserID_Client(ppTdxOrders[i]->KHH, &ppTdxOrders[i]->Client);
 
-	//	m_pApi->SendRequest(m_pApi->MakeCancelOrder((Order_STRUCT*)pRequest->pContent));
-	//}
-
-	//FieldInfo_STRUCT** ppFieldInfos = nullptr;
-	//char** ppResults = nullptr;
-	//Error_STRUCT** ppErrs = nullptr;
-
-	//int n = m_pApi->CancelMultiOrders(ppTdxOrders, count, &ppFieldInfos, &ppResults, &ppErrs);
-
-	//bool bSuccess = false;
-	//// 将结果立即取出来
-	//for (int i = 0; i < count; ++i)
-	//{
-	//	if (ppErrs)
-	//	{
-	//		if (ppErrs[i])
-	//		{
-	//			ppOrders[i]->RawErrorID = ppErrs[i]->ErrCode;
-	//			strcpy(ppOrders[i]->Text, ppErrs[i]->ErrInfo);
-
-	//			ppOrders[i]->ExecType = ExecType::ExecType_CancelReject;
-	//			// 注意报单状态问题，交给报单查询来处理
-	//		}
-	//		else
-	//		{
-	//			unordered_map<void*, CSingleUser*>::iterator it = m_Client_SingleUser.find(ppTdxOrders[i]->Client);
-	//			if (it == m_Client_SingleUser.end())
-	//			{
-	//				assert(false);
-	//			}
-	//			else
-	//			{
-	//				// 有挂单的，需要进行查询了
-	//				CSingleUser* pUser = it->second;
-
-	//				double  _queryTime = QUERY_TIME_MIN;
-	//				double _queryOrderTime = time(nullptr) + _queryTime;
-	//				pUser->UpdateQueryOrderTime(_queryOrderTime, _queryTime, "NextQueryOrder_Cancel");
-	//			}
-
-	//			// 会不会出现撤单时，当时不知道是否成功撤单，查询才得知没有撤成功？
-	//			//ppOrders[i]->ExecType = ExecType::ExecCancelled;
-	//			//ppOrders[i]->Status = OrderStatus::Cancelled;
-	//			continue;
-	//		}
-	//	}
-	//	// 撤单成功时，返回的东西还是null,所以这里使用错误信息来进行区分
-	//	
-	//	//if (ppResults)
-	//	//{	
-	//	//	if (ppResults[i*COL_EACH_ROW + 0])
-	//	//	{
-	//	//	}
-	//	//}
-
-	//	m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, ppOrders[i], sizeof(OrderField), nullptr, 0, nullptr, 0);
-	//}
-
-	//DeleteTableBody(ppResults, count);
-	//DeleteErrors(ppErrs, count);
+		RequestRespone_STRUCT* pRequest = m_pApi->MakeCancelOrder(ppTdxOrders[i]);
+		pRequest->pUserData_Public = pUser;
+		pRequest->pUserData_Public2 = ppOrders[i];
+		m_pApi->SendRequest(pRequest);
+	}
 
 	return 0;
 }
@@ -777,9 +751,9 @@ int CTraderApi::_Subscribe(char type, void* pApi1, void* pApi2, double double1, 
 	ReqQueryData_STRUCT query = { 0 };
 
 	strcpy(query.ZQDM, (char*)ptr1);
-	
+	query.requestType = REQUEST_HQ;
 	CSingleUser* pUser = Fill_UserID_Client(query.KHH, &query.Client);
-	RequestRespone_STRUCT* pRequest = m_pApi->MakeQueryData(REQUEST_HQ, &query);
+	RequestRespone_STRUCT* pRequest = m_pApi->MakeQueryData(&query);
 	pRequest->pUserData_Public = pUser;
 	m_pApi->SendRequest(pRequest);
 
