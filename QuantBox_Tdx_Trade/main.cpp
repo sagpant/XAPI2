@@ -51,6 +51,7 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case ReqQryInvestorPosition:
 	case ReqQryTradingAccount:
 	case ReqQryInvestor:
+		// 由外部调用的查询
 		pApi->ReqQuery((QueryType)type, (ReqQueryField*)ptr1);
 		break;
 	case ReqOrderInsert:

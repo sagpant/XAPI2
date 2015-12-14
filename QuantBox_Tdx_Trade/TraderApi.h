@@ -66,6 +66,8 @@ class CTraderApi:public CTdxSpi
 		E_QryInstrumentMarginRateField,
 		E_QrySettlementInfoField,
 		E_QryQuoteField,
+
+		E_ReqQueryData_STRUCT,
 	};
 
 public:
@@ -91,11 +93,15 @@ public:
 
 
 	void ReqQuery(QueryType type, ReqQueryField* pQuery);
+	void ReqQuery(ReqQueryData_STRUCT* pQuery);
 
 	void ReqQryOrder();
 	void ReqQryTrade();
 
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
+
+	void StartQueryThread();
+	void RemoveUser(CSingleUser* pUser);
 
 private:
 	virtual void OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
@@ -178,4 +184,3 @@ private:
 
 	CSingleUser*				m_pDefaultUser;
 };
-

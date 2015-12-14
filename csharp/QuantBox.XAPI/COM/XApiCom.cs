@@ -176,8 +176,8 @@ namespace QuantBox.XAPI.COM
             field.TimeEnd = cls.TimeEnd;
             field.Char64ID = cls.Char64ID;
             field.Int32ID = cls.Int32ID;
-            field.Char64RefID = cls.Char64RefID;
-            field.Int32RefID = cls.Int32RefID;
+            field.Char64PositionIndex = cls.Char64PositionIndex;
+            field.Int32PositionIndex = cls.Int32PositionIndex;
 
             api.ReqQuery((XAPI.QueryType)type,ref field);
         }
