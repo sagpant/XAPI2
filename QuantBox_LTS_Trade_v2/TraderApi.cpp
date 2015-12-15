@@ -581,7 +581,7 @@ void CTraderApi::OnErrRtnOrderInsert(CSecurityFtdcInputOrderField *pInputOrder, 
 
 void CTraderApi::OnRtnTrade(CSecurityFtdcTradeField *pTrade)
 {
-	OnTrade(pTrade,false);
+	OnTrade(pTrade, 0, true);
 }
 
 char* CTraderApi::ReqOrderAction(OrderIDType* szIds, int count, char* pzsRtn)
@@ -702,7 +702,7 @@ void CTraderApi::OnErrRtnOrderAction(CSecurityFtdcOrderActionField *pOrderAction
 
 void CTraderApi::OnRtnOrder(CSecurityFtdcOrderField *pOrder)
 {
-	OnOrder(pOrder,false);
+	OnOrder(pOrder, 0, true);
 }
 
 void CTraderApi::OnRspError(CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
@@ -710,7 +710,7 @@ void CTraderApi::OnRspError(CSecurityFtdcRspInfoField *pRspInfo, int nRequestID,
 	IsErrorRspInfo("OnRspError", pRspInfo, nRequestID, bIsLast);
 }
 
-void CTraderApi::OnOrder(CSecurityFtdcOrderField *pOrder, bool bFromQry)
+void CTraderApi::OnOrder(CSecurityFtdcOrderField *pOrder, int nRequestID, bool bIsLast)
 {
 	if (nullptr == pOrder)
 		return;
@@ -745,59 +745,61 @@ void CTraderApi::OnOrder(CSecurityFtdcOrderField *pOrder, bool bFromQry)
 
 	{
 		// 从API的订单转换成自己的结构体
-
-		OrderField* pField = nullptr;
-		unordered_map<string, OrderField*>::iterator it = m_id_platform_order.find(orderId);
-		if (it == m_id_platform_order.end())
+		if (nRequestID == 0)
 		{
-			// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
-			pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
+			OrderField* pField = nullptr;
+			unordered_map<string, OrderField*>::iterator it = m_id_platform_order.find(orderId);
+			if (it == m_id_platform_order.end())
+			{
+				// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
+				pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 
-			strcpy(pField->ID, orderId);
-			strcpy(pField->LocalID, pField->ID);
-			strcpy(pField->InstrumentID, pOrder->InstrumentID);
-			strcpy(pField->ExchangeID, pOrder->ExchangeID);
-			pField->HedgeFlag = TSecurityFtdcHedgeFlagType_2_HedgeFlagType(pOrder->CombHedgeFlag[0]);
-			pField->Side = TSecurityFtdcDirectionType_2_OrderSide(pOrder->Direction);
-			pField->Price = atof(pOrder->LimitPrice);
-			pField->StopPx = pOrder->StopPrice;
-			strncpy(pField->Text, pOrder->StatusMsg, sizeof(Char256Type));
-			pField->OpenClose = TSecurityFtdcOffsetFlagType_2_OpenCloseType(pOrder->CombOffsetFlag[0]);
-			pField->Status = CSecurityFtdcOrderField_2_OrderStatus(pOrder);
-			pField->Qty = pOrder->VolumeTotalOriginal;
-			pField->Type = CSecurityFtdcOrderField_2_OrderType(pOrder);
-			pField->TimeInForce = CSecurityFtdcOrderField_2_TimeInForce(pOrder);
-			pField->ExecType = ExecType::ExecType_New;
-			strcpy(pField->OrderID, pOrder->OrderSysID);
+				// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
+				CSecurityFtdcOrderField_2_OrderField_0(orderId, pOrder, pField);
 
 
-			// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
-			m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));
+				// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
+				m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));
+			}
+			else
+			{
+				pField = it->second;
+				strcpy(pField->ID, orderId);
+				strcpy(pField->LocalID, pField->ID);
+				pField->LeavesQty = pOrder->VolumeTotal;
+				pField->Price = atof(pOrder->LimitPrice);
+				pField->Status = CSecurityFtdcOrderField_2_OrderStatus(pOrder);
+				pField->ExecType = CSecurityFtdcOrderField_2_ExecType(pOrder);
+				strcpy(pField->OrderID, pOrder->OrderSysID);
+				strncpy(pField->Text, pOrder->StatusMsg, sizeof(Char256Type));
+			}
+
+			m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
 		}
 		else
 		{
-			pField = it->second;
-			strcpy(pField->ID, orderId);
-			strcpy(pField->LocalID, pField->ID);
-			pField->LeavesQty = pOrder->VolumeTotal;
-			pField->Price = atof(pOrder->LimitPrice);
-			pField->Status = CSecurityFtdcOrderField_2_OrderStatus(pOrder);
-			pField->ExecType = CSecurityFtdcOrderField_2_ExecType(pOrder);
-			strcpy(pField->OrderID, pOrder->OrderSysID);
-			strncpy(pField->Text, pOrder->StatusMsg, sizeof(Char256Type));
-		}
+			OrderField* pField = nullptr;
+			pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 
-		m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
+			// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
+			CSecurityFtdcOrderField_2_OrderField_0(orderId, pOrder, pField);
+
+			// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
+			//m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));
+
+			m_msgQueue->Input_Copy(ResponeType::OnRspQryOrder, m_msgQueue, m_pClass, bIsLast, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
+
+			m_msgQueue->delete_block(pField);
+		}
 	}
 }
 
-void CTraderApi::OnTrade(CSecurityFtdcTradeField *pTrade, bool bFromQry)
+void CTraderApi::OnTrade(CSecurityFtdcTradeField *pTrade, int nRequestID, bool bIsLast)
 {
 	if (nullptr == pTrade)
 		return;
 
 	TradeField* pField = (TradeField*)m_msgQueue->new_block(sizeof(TradeField));
-
 	strcpy(pField->InstrumentID, pTrade->InstrumentID);
 	strcpy(pField->ExchangeID, pTrade->ExchangeID);
 	pField->Side = TSecurityFtdcDirectionType_2_OrderSide(pTrade->Direction);
@@ -809,39 +811,49 @@ void CTraderApi::OnTrade(CSecurityFtdcTradeField *pTrade, bool bFromQry)
 	pField->Time = GetTime(pTrade->TradeTime);
 	strcpy(pField->TradeID, pTrade->TradeID);
 
-	OrderIDType orderSysId = { 0 };
-	sprintf(orderSysId, "%s:%s", pTrade->ExchangeID, pTrade->OrderSysID);
-	unordered_map<string, string>::iterator it = m_sysId_orderId.find(orderSysId);
-	if (it == m_sysId_orderId.end())
+	if (nRequestID == 0)
 	{
-		// 此成交找不到对应的报单
-		//assert(false);
-	}
-	else
-	{
-		// 找到对应的报单
-		strcpy(pField->ID, it->second.c_str());
-
-		m_msgQueue->Input_Copy(ResponeType::OnRtnTrade, m_msgQueue, m_pClass, 0, 0, pField, sizeof(TradeField), nullptr, 0, nullptr, 0);
-
-		unordered_map<string, OrderField*>::iterator it2 = m_id_platform_order.find(it->second);
-		if (it2 == m_id_platform_order.end())
+		OrderIDType orderSysId = { 0 };
+		sprintf(orderSysId, "%s:%s", pTrade->ExchangeID, pTrade->OrderSysID);
+		unordered_map<string, string>::iterator it = m_sysId_orderId.find(orderSysId);
+		if (it == m_sysId_orderId.end())
 		{
 			// 此成交找不到对应的报单
 			//assert(false);
 		}
 		else
 		{
-			// 更新订单的状态
-			// 是否要通知接口
-		}
+			// 找到对应的报单
+			strcpy(pField->ID, it->second.c_str());
 
-		// 查询与交易分离，所以本地计算更新持仓的功能失效
-		//OnTrade(pField, bFromQry);
+			m_msgQueue->Input_Copy(ResponeType::OnRtnTrade, m_msgQueue, m_pClass, 0, 0, pField, sizeof(TradeField), nullptr, 0, nullptr, 0);
+
+			unordered_map<string, OrderField*>::iterator it2 = m_id_platform_order.find(it->second);
+			if (it2 == m_id_platform_order.end())
+			{
+				// 此成交找不到对应的报单
+				//assert(false);
+			}
+			else
+			{
+				// 更新订单的状态
+				// 是否要通知接口
+			}
+
+			// 本地更新持仓的功能失效
+			//OnTrade(pField);
+		}
 	}
+	else
+	{
+		m_msgQueue->Input_Copy(ResponeType::OnRspQryTrade, m_msgQueue, m_pClass, bIsLast, 0, pField, sizeof(TradeField), nullptr, 0, nullptr, 0);
+	}
+
+	// 清理内存
+	m_msgQueue->delete_block(pField);
 }
 
-void CTraderApi::OnTrade(TradeField *pTrade, bool bFromQry)
+void CTraderApi::OnTrade(TradeField *pTrade)
 {
 	PositionIDType positionId = { 0 };
 	sprintf(positionId, "%s:%s:%d:%d",

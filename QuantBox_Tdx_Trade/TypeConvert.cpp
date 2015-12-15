@@ -241,8 +241,8 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 			strcpy_s(ppResults[i]->CDSL, ppTable[i * COL_EACH_ROW + col_162]);
 		//if (col_146 >= 0)
 		strcpy_s(ppResults[i]->WTBH, ppTable[i * COL_EACH_ROW + col_146]);
-		//if (col_194 >= 0)
-		strcpy_s(ppResults[i]->BJFS, ppTable[i * COL_EACH_ROW + col_194]);
+		if (col_194 >= 0)
+			strcpy_s(ppResults[i]->BJFS, ppTable[i * COL_EACH_ROW + col_194]);
 		if (col_147 >= 0)
 			strcpy_s(ppResults[i]->ZTSM, ppTable[i * COL_EACH_ROW + col_147]);
 		if (col_161 >= 0)

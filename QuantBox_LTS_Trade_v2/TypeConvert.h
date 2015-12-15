@@ -30,3 +30,5 @@ PriceType CSecurityFtdcInstrumentField_2_PriceTick(CSecurityFtdcInstrumentField*
 IdCardType TSecurityFtdcIdCardTypeType_2_IdCardType(TSecurityFtdcIdCardTypeType In);
 
 ExchangeType TSecurityFtdcExchangeIDType_2_ExchangeType(TSecurityFtdcExchangeIDType In);
+
+void CSecurityFtdcOrderField_2_OrderField_0(OrderIDType OrderID, CSecurityFtdcOrderField* pIn, OrderField* pOut);

@@ -30,7 +30,7 @@ class CTraderApi :
 	//请求数据包类型
 	enum RequestType
 	{
-		E_Init,
+		E_Init = 100,
 
 		E_ReqAuthenticateField,
 		E_ReqUserLoginField,
@@ -120,9 +120,9 @@ private:
 	//int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	//int _ReqQryQuote(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
-	void OnOrder(CSecurityFtdcOrderField *pOrder, bool bFromQry);
-	void OnTrade(CSecurityFtdcTradeField *pTrade, bool bFromQry);
-	void OnTrade(TradeField *pTrade, bool bFromQry);
+	void OnOrder(CSecurityFtdcOrderField *pOrder, int nRequestID, bool bIsLast);
+	void OnTrade(CSecurityFtdcTradeField *pTrade, int nRequestID, bool bIsLast);
+	void OnTrade(TradeField *pTrade);
 
 	//检查是否出错
 	bool IsErrorRspInfo(const char* szSource, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//向消息队列输出信息
