@@ -307,3 +307,26 @@ ExchangeType TSecurityFtdcExchangeIDType_2_ExchangeType(TSecurityFtdcExchangeIDT
 		return ExchangeType::ExchangeType_Undefined;
 	}
 }
+
+void CSecurityFtdcOrderField_2_OrderField_0(OrderIDType OrderID, CSecurityFtdcOrderField* pIn, OrderField* pOut)
+{
+	strcpy(pOut->ID, OrderID);
+	strcpy(pOut->LocalID, pOut->ID);
+	strcpy(pOut->InstrumentID, pIn->InstrumentID);
+	strcpy(pOut->ExchangeID, pIn->ExchangeID);
+	pOut->HedgeFlag = TSecurityFtdcHedgeFlagType_2_HedgeFlagType(pIn->CombHedgeFlag[0]);
+	pOut->Side = TSecurityFtdcDirectionType_2_OrderSide(pIn->Direction);
+	pOut->Price = atof(pIn->LimitPrice);
+	pOut->StopPx = pIn->StopPrice;
+	strncpy(pOut->Text, pIn->StatusMsg, sizeof(Char256Type));
+	pOut->OpenClose = TSecurityFtdcOffsetFlagType_2_OpenCloseType(pIn->CombOffsetFlag[0]);
+	pOut->Status = CSecurityFtdcOrderField_2_OrderStatus(pIn);
+	pOut->Qty = pIn->VolumeTotalOriginal;
+	pOut->CumQty = pIn->VolumeTraded;
+	pOut->LeavesQty = pIn->VolumeTotal;
+	pOut->Type = CSecurityFtdcOrderField_2_OrderType(pIn);
+	pOut->TimeInForce = CSecurityFtdcOrderField_2_TimeInForce(pIn);
+	pOut->ExecType = CSecurityFtdcOrderField_2_ExecType(pIn);
+	strcpy(pOut->OrderID, pIn->OrderSysID);
+	strncpy(pOut->Text, pIn->StatusMsg, sizeof(Char256Type));
+}

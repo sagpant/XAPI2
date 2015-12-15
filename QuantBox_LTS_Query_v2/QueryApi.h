@@ -30,7 +30,7 @@ class CQueryApi :
 	//请求数据包类型
 	enum RequestType
 	{
-		E_Init,
+		E_Init = 100,
 
 		E_ReqAuthenticateField,
 		E_ReqUserLoginField,
@@ -83,19 +83,21 @@ public:
 	//int ReqQuoteAction(CSecurityFtdcQuoteField *pQuote);
 	//int ReqQuoteAction(const string& szId);
 
-	void ReqQryTradingAccount();
-	void ReqQryInvestorPosition(const string& szInstrumentId, const string& szExchange);
-	void ReqQryInvestorPositionDetail(const string& szInstrumentId);
-	void ReqQryInstrument(const string& szInstrumentId, const string& szExchange);
-	void ReqQryInstrumentCommissionRate(const string& szInstrumentId);
-	void ReqQryInstrumentMarginRate(const string& szInstrumentId, TSecurityFtdcHedgeFlagType HedgeFlag = SECURITY_FTDC_HF_Speculation);
-	void ReqQryDepthMarketData(const string& szInstrumentId);
-	void ReqQrySettlementInfo(const string& szTradingDay);
+	void ReqQuery(QueryType type, ReqQueryField* pQuery);
 
-	void ReqQryOrder();
-	void ReqQryTrade();
+	//void ReqQryTradingAccount();
+	//void ReqQryInvestorPosition(const string& szInstrumentId, const string& szExchange);
+	//void ReqQryInvestorPositionDetail(const string& szInstrumentId);
+	//void ReqQryInstrument(const string& szInstrumentId, const string& szExchange);
+	//void ReqQryInstrumentCommissionRate(const string& szInstrumentId);
+	//void ReqQryInstrumentMarginRate(const string& szInstrumentId, TSecurityFtdcHedgeFlagType HedgeFlag = SECURITY_FTDC_HF_Speculation);
+	//void ReqQryDepthMarketData(const string& szInstrumentId);
+	//void ReqQrySettlementInfo(const string& szTradingDay);
 
-	void ReqQryInvestor();
+	//void ReqQryOrder();
+	//void ReqQryTrade();
+
+	//void ReqQryInvestor();
 
 private:
 	friend void* __stdcall Query_Q(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
@@ -120,12 +122,13 @@ private:
 	int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	//int _ReqQryQuote(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
-	void OnOrder(CSecurityFtdcOrderField *pOrder, bool bFromQry);
-	void OnTrade(CSecurityFtdcTradeField *pTrade, bool bFromQry);
-	void OnTrade(TradeField *pTrade, bool bFromQry);
+	void OnOrder(CSecurityFtdcOrderField *pOrder, int nRequestID, bool bIsLast);
+	void OnTrade(CSecurityFtdcTradeField *pTrade, int nRequestID, bool bIsLast);
+	
+	void OnTrade(TradeField *pTrade);
 
 	//检查是否出错
-	bool IsErrorRspInfo(CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//向消息队列输出信息
+	bool IsErrorRspInfo(const char* szSource, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//向消息队列输出信息
 	bool IsErrorRspInfo(CSecurityFtdcRspInfoField *pRspInfo);//不输出信息
 
 	//连接
