@@ -127,6 +127,9 @@ void CTraderApi::OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 		pUser->OnRespone_ReqUserLogin(pApi, pRespone);
 		break;
 	case REQUEST_WT:
+	case REQUEST_ETF_SGSH:
+	case REQUEST_ZGHS:
+	case REQUEST_WT_QQ:
 		pUser->OnRespone_ReqOrderInsert(pApi, pRespone);
 		break;
 	case REQUEST_CD:
