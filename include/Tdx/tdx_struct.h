@@ -34,13 +34,15 @@ struct Error_STRUCT
 struct RequestRespone_STRUCT
 {
 	//请求类型
-	int	request;
+	int	requestType;
+	int requestID;
 	// 多行内容
 	char pContent[1024];
 	// 请求大小
 	int size;
 
 	void* Client;	// 多账号
+	char khh[64];
 
 	// 表头
 	FieldInfo_STRUCT** ppFieldInfo;
@@ -50,8 +52,12 @@ struct RequestRespone_STRUCT
 	char** ppResults;
 
 	void* pSend;
-
-	void* pUserData;
+	// API内部使用的字段，请不要动
+	void* pUserData_Private;
+	// API外部使用的字段，用来方便开发
+	void* pUserData_Public;
+	// API外部使用的字段，用来方便开发
+	void* pUserData_Public2;
 };
 
 // 委托
@@ -73,13 +79,14 @@ struct Order_STRUCT
 	// 下完单后用来回填
 	char WTBH[32];	// 146_委托编号
 
-	int	request;	// 请求类型
+	int	requestType;	// 请求类型
 
 	void* Client;	// 多账号
 };
 
 struct CancelOrder_STRUCT
 {
+	char KHH[32];	// 120_客户号
 	char GDDM[32];	// 123_股东代码
 	char WTBH[32];	// 146_委托编号
 	char JYSDM[32];	// 100_交易所代码
@@ -96,7 +103,11 @@ struct ReqQueryData_STRUCT
 	char ZZRQ[32];
 	char ZQDM[32];
 
+	bool bAll;
+
 	void* Client;	// 多账号
+	//请求类型
+	int	requestType;
 };
 
 // 股东列表
@@ -120,6 +131,7 @@ struct GDLB_STRUCT
 // 当日委托/历史委托=委托列表
 struct WTLB_STRUCT
 {
+	char KHH[32];	// 120_客户号
 	char WTRQ[32];	// 142_委托日期
 	char WTSJ[32];	// 143_委托时间
 	char GDDM[32];  // 123_股东代码

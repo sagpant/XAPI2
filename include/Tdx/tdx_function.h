@@ -73,3 +73,4 @@ TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, 
 
 TDXAPI_API void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
 
+TDXAPI_API void DeleteRequestRespone(RequestRespone_STRUCT* pRespone);

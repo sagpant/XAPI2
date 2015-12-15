@@ -46,8 +46,8 @@ struct ReqQueryField
 	Int32Type			Int32ID;
 
 	///一般是由API底层查询预留
-	OrderIDType			Char64RefID;
-	Int32Type			Int32RefID;
+	OrderIDType			Char64PositionIndex;
+	Int32Type			Int32PositionIndex;
 };
 
 ///持仓

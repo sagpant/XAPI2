@@ -695,5 +695,14 @@ int GetCountStructs(void** ppResults)
 	return i;
 }
 
+void DeleteRequestRespone(RequestRespone_STRUCT* pRespone)
+{
+	if (pRespone == nullptr)
+		return;
+
+	DeleteTableBody(pRespone->ppResults);
+	DeleteError(pRespone->pErr);
+}
+
 #else
 #endif
