@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../include/Tdx/TdxApi.h"
 #include "../include/ApiStruct.h"
@@ -13,7 +13,7 @@ class CMsgQueue;
 class CTraderApi;
 
 //////////////////////////////////////////////////////////////////////////
-// Ö»ÊÇÓÃÀ´Î¬»¤µ¥ÕËºÅµÄĞÅÏ¢ÓÃ
+// åªæ˜¯ç”¨æ¥ç»´æŠ¤å•è´¦å·çš„ä¿¡æ¯ç”¨
 class CSingleUser
 {
 public:

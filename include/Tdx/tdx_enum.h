@@ -16,7 +16,8 @@
 #define MMBZ_Buy_Limit			0	// 限价买,		204下:可转债转股
 #define MMBZ_Sell_Limit			1	// 限价卖,		204下:债券回售
 #define MMBZ_Cancel				2	// 撤买/撤卖
-#define MMBZ_3					3	// ?融券
+#define MMBZ_Buy_Cancel			3	// 撤买，没有测的
+#define MMBZ_Sell_Cancel		4	// 撤卖，信达证券结果
 #define MMBZ_Merge				12	// 基金合并
 #define MMBZ_Split				13	// 基金分拆
 #define MMBZ_Buy_Market			67	// 市价买

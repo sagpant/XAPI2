@@ -15,7 +15,7 @@
 using namespace KingstarAPI;
 
 #ifdef _WIN64
-#pragma comment(lib, "../include/CTP/win64/thostmduserapi.lib")
+#pragma comment(lib, "../include/Kingstar/win64/KSMarketDataAPI.lib")
 #pragma comment(lib, "../lib/QuantBox_Queue_x64.lib")
 #else
 #pragma comment(lib, "../include/Kingstar/win32/KSMarketDataAPI.lib")

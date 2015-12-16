@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "SingleUser.h"
 
 #include "../QuantBox_Queue/MsgQueue.h"
@@ -49,7 +49,7 @@ void CSingleUser::OutputQueryTime(time_t t, double db, const char* szSource)
 
 	sprintf(pField->Message, "UserID:%s,Source:%s,Add:%d,Time:%s", m_UserID, szSource, (int)db, ctime(&t));
 
-	// È¥ÁË×îºóµÄ»Ø³µ
+	// å»äº†æœ€åçš„å›è½¦
 	int len = strlen(pField->Message);
 	pField->Message[len - 1] = 0;
 
@@ -82,7 +82,7 @@ void CSingleUser::CheckThenQueryTrade(time_t _now)
 
 void CSingleUser::ReqQryOrder()
 {
-	// ½øĞĞ²éÑ¯
+	// è¿›è¡ŒæŸ¥è¯¢
 	ReqQueryData_STRUCT query = { 0 };
 	query.Client = m_pClient;
 	strcpy(query.KHH, m_UserID);
@@ -94,7 +94,7 @@ void CSingleUser::ReqQryOrder()
 
 void CSingleUser::ReqQryTrade()
 {
-	// ½øĞĞ²éÑ¯
+	// è¿›è¡ŒæŸ¥è¯¢
 	ReqQueryData_STRUCT query = { 0 };
 	query.Client = m_pClient;
 	strcpy(query.KHH, m_UserID);
@@ -119,14 +119,14 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	WTLB_STRUCT** ppRS = nullptr;
 	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
-	// ²Ù×÷Ç°Çå¿Õ£¬°´ËµÖ®Ç°ÒÑ¾­Çå¿Õ¹ıÒ»´ÎÁË
+	// æ“ä½œå‰æ¸…ç©ºï¼ŒæŒ‰è¯´ä¹‹å‰å·²ç»æ¸…ç©ºè¿‡ä¸€æ¬¡äº†
 	m_NewOrderList.clear();
 
-	// ÓĞÎ´Íê³ÉµÄ£¬±ê¼ÇÎªtrue
+	// æœ‰æœªå®Œæˆçš„ï¼Œæ ‡è®°ä¸ºtrue
 	bool IsDone = true;
-	// ÓĞÎ´Éê±¨µÄ£¬±ê¼ÇÎªtrue
+	// æœ‰æœªç”³æŠ¥çš„ï¼Œæ ‡è®°ä¸ºtrue
 	bool IsNotSent = false;
-	// ÓĞ¸üĞÂµÄ
+	// æœ‰æ›´æ–°çš„
 	bool IsUpdated = false;
 
 	if (ppRS)
@@ -134,10 +134,10 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		int i = 0;
 		while (ppRS[i])
 		{
-			// ½«³·µ¥Î¯ÍĞ¹ıÂË
-			if (ppRS[i]->MMBZ_ != MMBZ_Cancel)
+			// å°†æ’¤å•å§”æ‰˜è¿‡æ»¤
+			if (ppRS[i]->MMBZ_ != MMBZ_Cancel && ppRS[i]->MMBZ_ != MMBZ_Buy_Cancel && ppRS[i]->MMBZ_ != MMBZ_Sell_Cancel)
 			{
-				// ĞèÒª½«ËüÊäÈëµ½Ò»¸öµØ·½ÓÃÓÚ¼ÆËã£¬Õâ¸öÊÇÁÙÊ±µÄ£¬ĞèÒªÉ¾³ı
+				// éœ€è¦å°†å®ƒè¾“å…¥åˆ°ä¸€ä¸ªåœ°æ–¹ç”¨äºè®¡ç®—ï¼Œè¿™ä¸ªæ˜¯ä¸´æ—¶çš„ï¼Œéœ€è¦åˆ é™¤
 				OrderField* pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 
 				WTLB_2_OrderField_0(ppRS[i], pField);
@@ -154,7 +154,7 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 					IsNotSent = true;
 				}
 
-				// ĞèÒª½«Æä±£´æÆğÀ´£¬ÊÇÖ»±£´æÒ»´Î£¬»¹ÊÇÃ¿´Î¶¼¸üĞÂÄØ£¿¸öÈËÈÏÎªÖ»±£´æÒ»´Î¼´¿É£¬·´ÕıÊÇÓÃÀ´³·µ¥µÄ
+				// éœ€è¦å°†å…¶ä¿å­˜èµ·æ¥ï¼Œæ˜¯åªä¿å­˜ä¸€æ¬¡ï¼Œè¿˜æ˜¯æ¯æ¬¡éƒ½æ›´æ–°å‘¢ï¼Ÿä¸ªäººè®¤ä¸ºåªä¿å­˜ä¸€æ¬¡å³å¯ï¼Œåæ­£æ˜¯ç”¨æ¥æ’¤å•çš„
 				unordered_map<string, WTLB_STRUCT*>::iterator it = m_pApi->m_id_api_order.find(pField->ID);
 				if (it == m_pApi->m_id_api_order.end())
 				{
@@ -167,9 +167,9 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		}
 	}
 
-	// Î¯ÍĞÁĞ±í
-	// 1.ĞÂÔöµÄ¶¼ĞèÒªÊä³ö
-	// 2.ÀÏµÄ¿´ÊÇ·ñÓĞ±ä»¯
+	// å§”æ‰˜åˆ—è¡¨
+	// 1.æ–°å¢çš„éƒ½éœ€è¦è¾“å‡º
+	// 2.è€çš„çœ‹æ˜¯å¦æœ‰å˜åŒ–
 	++m_OrderNotUpdateCount;
 
 	int i = 0;
@@ -185,7 +185,7 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		}
 		else
 		{
-			// ÏàÍ¬Î»ÖÃµÄ²¿·Ö
+			// ç›¸åŒä½ç½®çš„éƒ¨åˆ†
 			OrderField* pOldField = *it2;
 			if (pOldField->LeavesQty != pField->LeavesQty || pOldField->Status != pField->Status)
 			{
@@ -198,11 +198,11 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 			IsUpdated = true;
 			m_OrderNotUpdateCount = 0;
 
-			// Èç¹ûÄÜÕÒµ½ÏÂµ¥Ê±µÄÎ¯ÍĞ£¬¾ÍĞŞ¸Äºó·¢³öÀ´
+			// å¦‚æœèƒ½æ‰¾åˆ°ä¸‹å•æ—¶çš„å§”æ‰˜ï¼Œå°±ä¿®æ”¹åå‘å‡ºæ¥
 			unordered_map<string, OrderField*>::iterator it = m_pApi->m_id_platform_order.find(pField->ID);
 			if (it == m_pApi->m_id_platform_order.end())
 			{
-				// ÒòÎªÉÏ´ÎÉú³ÉµÄ¿ÉÄÜÔÚºóÆÚÉ¾ÁË£¬ËùÒÔÒª¸´ÖÆÒ»·İ
+				// å› ä¸ºä¸Šæ¬¡ç”Ÿæˆçš„å¯èƒ½åœ¨åæœŸåˆ äº†ï¼Œæ‰€ä»¥è¦å¤åˆ¶ä¸€ä»½
 				OrderField* pField_ = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
 				memcpy(pField_, pField, sizeof(OrderField));
 
@@ -217,7 +217,7 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 			m_msgQueue->Input_Copy(ResponeType::OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
 		}
 
-		// Ç°Ò»¸ö¿ÉÄÜÎª¿Õ£¬ÒÆ¶¯µ½ÏÂÒ»¸öÊ±ĞèÒª×¢Òâ
+		// å‰ä¸€ä¸ªå¯èƒ½ä¸ºç©ºï¼Œç§»åŠ¨åˆ°ä¸‹ä¸€ä¸ªæ—¶éœ€è¦æ³¨æ„
 		if (it2 != m_OldOrderList.end())
 		{
 			++it2;
@@ -226,14 +226,14 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		++i;
 	}
 
-	// ½«ÀÏÊı¾İÇåÀí£¬·ÀÖ¹ÄÚ´æĞ¹Â©
+	// å°†è€æ•°æ®æ¸…ç†ï¼Œé˜²æ­¢å†…å­˜æ³„æ¼
 	for (list<OrderField*>::iterator it = m_OldOrderList.begin(); it != m_OldOrderList.end(); ++it)
 	{
 		OrderField* pField = *it;
 		m_msgQueue->delete_block(pField);
 	}
 
-	// ×ö½»»»
+	// åšäº¤æ¢
 	m_OldOrderList.clear();
 	m_OldOrderList = m_NewOrderList;
 	m_NewOrderList.clear();
@@ -243,21 +243,21 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	{
 		if (!IsUpdated)
 		{
-			// Ã»ÓĞ¸üĞÂ£¬ÊÇ·ñÒªÂıµã²é
+			// æ²¡æœ‰æ›´æ–°ï¼Œæ˜¯å¦è¦æ…¢ç‚¹æŸ¥
 			_queryTime = 0.5 * QUERY_TIME_MAX + QUERY_TIME_MIN;
 		}
 
-		// ÓĞÃ»ÓĞÍê³ÉµÄ£¬ĞèÒª¶¨Ê±²éÑ¯
+		// æœ‰æ²¡æœ‰å®Œæˆçš„ï¼Œéœ€è¦å®šæ—¶æŸ¥è¯¢
 		if (IsNotSent)
 		{
-			// ÓĞÃ»Éê±¨µÄ£¬ÊÇ·ñÃ»ÔÚ½»Ò×Ê±¼ä£¿Âıµã²é
+			// æœ‰æ²¡ç”³æŠ¥çš„ï¼Œæ˜¯å¦æ²¡åœ¨äº¤æ˜“æ—¶é—´ï¼Ÿæ…¢ç‚¹æŸ¥
 			_queryTime = 0.5 * QUERY_TIME_MAX + QUERY_TIME_MIN;
 		}
 		else
 		{
-			// ¿ÉÄÜÊÇ½»Ò×Ê±¼äÁË£¬ÊÇ·ñĞèÒª¿¼ÂÇ
+			// å¯èƒ½æ˜¯äº¤æ˜“æ—¶é—´äº†ï¼Œæ˜¯å¦éœ€è¦è€ƒè™‘
 			_queryTime = 2 * QUERY_TIME_MIN;
-			// ¿ÉÄÜÓĞĞ©¹Òµ¥Ò»Ìì¶¼²»»á³É½»£¬¹ÒÔÚÕâÒ»Ö±µ¼ÖÂ²éÌ«¶à£¬¼ÓÒ»ÏÂ²éÑ¯¼ÆÊı
+			// å¯èƒ½æœ‰äº›æŒ‚å•ä¸€å¤©éƒ½ä¸ä¼šæˆäº¤ï¼ŒæŒ‚åœ¨è¿™ä¸€ç›´å¯¼è‡´æŸ¥å¤ªå¤šï¼ŒåŠ ä¸€ä¸‹æŸ¥è¯¢è®¡æ•°
 			if (m_OrderNotUpdateCount >= 3)
 			{
 				_queryTime = 0.5 * QUERY_TIME_MAX + QUERY_TIME_MIN;
@@ -266,24 +266,24 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	}
 	else
 	{
-		// È«Íê³ÉÁË£¬¿ÉÒÔ²»²é»òÂı²é
+		// å…¨å®Œæˆäº†ï¼Œå¯ä»¥ä¸æŸ¥æˆ–æ…¢æŸ¥
 		_queryTime = 5 * QUERY_TIME_MAX;
 	}
 
 	m_QueryOrderTime = time(nullptr) + _queryTime;
 	OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_QueryOrder");
 
-	// ¾ö¶¨³É½»²éÑ¯¼ä¸ô
+	// å†³å®šæˆäº¤æŸ¥è¯¢é—´éš”
 	if (IsUpdated)
 	{
-		// Î¯ÍĞ¿ÉÄÜÊÇ³·µ¥£¬Ò²ÓĞ¿ÉÄÜÊÇ³É½»ÁË£¬¸Ï½ô²éÒ»ÏÂ
+		// å§”æ‰˜å¯èƒ½æ˜¯æ’¤å•ï¼Œä¹Ÿæœ‰å¯èƒ½æ˜¯æˆäº¤äº†ï¼Œèµ¶ç´§æŸ¥ä¸€ä¸‹
 		_queryTime = 0;
 		m_QueryTradeTime = time(nullptr) + _queryTime;
 		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
 	}
 	else
 	{
-		// Î¯ÍĞÃ»ÓĞ±ä»¯£¬ÄÇ³É½»¾ÍÃ»ÓĞ±ØÒª²éÄÇÃ´¿ìÁË
+		// å§”æ‰˜æ²¡æœ‰å˜åŒ–ï¼Œé‚£æˆäº¤å°±æ²¡æœ‰å¿…è¦æŸ¥é‚£ä¹ˆå¿«äº†
 		_queryTime = 5 * QUERY_TIME_MAX;
 		m_QueryTradeTime = time(nullptr) + _queryTime;
 		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
@@ -313,7 +313,7 @@ double GetTradeListQty(list<TradeField*> &tradeList, int count)
 
 void TradeList2TradeMap(list<TradeField*> &tradeList, unordered_map<string, TradeField*> &tradeMap)
 {
-	// Ö»ÔÚÕâ¸öº¯ÊıÖĞnewºÍdeleteÓ¦µ±Ã»ÓĞÎÊÌâ
+	// åªåœ¨è¿™ä¸ªå‡½æ•°ä¸­newå’Œdeleteåº”å½“æ²¡æœ‰é—®é¢˜
 	for (unordered_map<string, TradeField*>::iterator it = tradeMap.begin(); it != tradeMap.end(); ++it)
 	{
 		TradeField* pNewField = it->second;
@@ -321,7 +321,7 @@ void TradeList2TradeMap(list<TradeField*> &tradeList, unordered_map<string, Trad
 	}
 	tradeMap.clear();
 
-	// ½«¶à¸öºÏÔ¼Æ´½Ó³É
+	// å°†å¤šä¸ªåˆçº¦æ‹¼æ¥æˆ
 	for (list<TradeField*>::iterator it = tradeList.begin(); it != tradeList.end(); ++it)
 	{
 		TradeField* pField = *it;
@@ -357,18 +357,18 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	CJLB_STRUCT** ppRS = nullptr;
 	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
-	// ²Ù×÷Ç°Çå¿Õ£¬°´ËµÖ®Ç°ÒÑ¾­Çå¿Õ¹ıÒ»´ÎÁË
+	// æ“ä½œå‰æ¸…ç©ºï¼ŒæŒ‰è¯´ä¹‹å‰å·²ç»æ¸…ç©ºè¿‡ä¸€æ¬¡äº†
 	m_NewTradeList.clear();
 
 	if (ppRS)
 	{
-		// ÀûÓÃ³É½»±àºÅµÄ´óĞ¡À´ÅĞ¶ÏÕı·´Ğò
+		// åˆ©ç”¨æˆäº¤ç¼–å·çš„å¤§å°æ¥åˆ¤æ–­æ­£ååº
 		if (!m_TradeListReverse)
 		{
 			int count = GetCountStructs((void**)ppRS);
 			if (count > 1)
 			{
-				// ×ª³ÉÊı×ÖµÄ±È½Ï£¬ÊÇ·ñ»áÓĞ·ÇÊı×ÖµÄÇé¿ö³öÏÖ£¿
+				// è½¬æˆæ•°å­—çš„æ¯”è¾ƒï¼Œæ˜¯å¦ä¼šæœ‰éæ•°å­—çš„æƒ…å†µå‡ºç°ï¼Ÿ
 				long CJBH0 = atol(ppRS[0]->CJBH);
 				long CJBH1 = atol(ppRS[count - 1]->CJBH);
 				if (CJBH0 > CJBH1)
@@ -381,13 +381,20 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		int i = 0;
 		while (ppRS[i])
 		{
+			// æœ‰éƒ¨åˆ†åˆ¸å•†ï¼Œæ’¤å•ä¹Ÿè®¡æˆäº¤äº†ï¼ŒçœŸæ— è¯­äº†ï¼Œéœ€è¦è¿‡æ»¤
+			if (ppRS[i]->CJSL_ <= 0)
+			{
+				++i;
+				continue;
+			}
+
 			TradeField* pField = (TradeField*)m_msgQueue->new_block(sizeof(TradeField));
 
 			CJLB_2_TradeField(ppRS[i], pField);
 
 			if (m_TradeListReverse)
 			{
-				// »ªÌ©²é³öÀ´µÄ±íºóÉú³ÉµÄÅÅµÚÒ»£¬ËùÒÔÒª´¦ÀíÒ»ÏÂ
+				// åæ³°æŸ¥å‡ºæ¥çš„è¡¨åç”Ÿæˆçš„æ’ç¬¬ä¸€ï¼Œæ‰€ä»¥è¦å¤„ç†ä¸€ä¸‹
 				m_NewTradeList.push_front(pField);
 			}
 			else
@@ -399,37 +406,37 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		}
 	}
 
-	// ĞÂ²é³öÀ´µÄ·´¶øÉÙÁË£¬»ªÌ©ÓĞºÏ²¢³É½»µÄÇé¿ö£¬ÕâÖÖÈçºÎ´¦Àí£¿
-	// ¶ÔÍ¬IDµÄĞèÒªÀÛ¼Ó£¬ÓĞ·¢ÏÖÀÛ¼Ó²»¶ÔÓ¦µÄ£¬Ó¦µ±´¦Àí
-	// Í¬ÑùÌõÊıµÄ£¬Ò²ÓĞ¿ÉÄÜÆäÖĞµÄÓĞ±ä»¯£¬ÈçºÎ´¦Àí£¿
+	// æ–°æŸ¥å‡ºæ¥çš„åè€Œå°‘äº†ï¼Œåæ³°æœ‰åˆå¹¶æˆäº¤çš„æƒ…å†µï¼Œè¿™ç§å¦‚ä½•å¤„ç†ï¼Ÿ
+	// å¯¹åŒIDçš„éœ€è¦ç´¯åŠ ï¼Œæœ‰å‘ç°ç´¯åŠ ä¸å¯¹åº”çš„ï¼Œåº”å½“å¤„ç†
+	// åŒæ ·æ¡æ•°çš„ï¼Œä¹Ÿæœ‰å¯èƒ½å…¶ä¸­çš„æœ‰å˜åŒ–ï¼Œå¦‚ä½•å¤„ç†ï¼Ÿ
 	bool bTryMerge = false;
 	int OldTradeListCount = m_OldTradeList.size();
 	int NewTradeListCount = m_NewTradeList.size();
 
 	if (NewTradeListCount < OldTradeListCount)
 	{
-		// ĞĞÊı±äÉÙÁË£¬Ó¦µ±ÊÇºÏ²¢ÁË
+		// è¡Œæ•°å˜å°‘äº†ï¼Œåº”å½“æ˜¯åˆå¹¶äº†
 		bTryMerge = true;
 	}
 	else if (OldTradeListCount == 0)
 	{
-		// Èç¹ûÉÏÒ»´ÎµÄÎª¿Õ£¬²»¹ÜÕâ´Î²é³öÀ´µÄÊÇºÏ²¢»¹ÊÇÃ»ÓĞºÏ²¢£¬¶¼Ã»ÓĞ¹ØÏµ£¬µ±³ÉÃ»ºÏ²¢´¦Àí¼´¿É
+		// å¦‚æœä¸Šä¸€æ¬¡çš„ä¸ºç©ºï¼Œä¸ç®¡è¿™æ¬¡æŸ¥å‡ºæ¥çš„æ˜¯åˆå¹¶è¿˜æ˜¯æ²¡æœ‰åˆå¹¶ï¼Œéƒ½æ²¡æœ‰å…³ç³»ï¼Œå½“æˆæ²¡åˆå¹¶å¤„ç†å³å¯
 	}
 	else if (NewTradeListCount == OldTradeListCount)
 	{
-		// ĞĞÊı²»±ä£¬µ«ÓĞ¿ÉÄÜÊÇÆäÖĞµÄÒ»Ìõ²¿·Ö³É½»µÄ¸üĞÂ£¬ËùÒÔ¼ì²éÒ»ÏÂ
+		// è¡Œæ•°ä¸å˜ï¼Œä½†æœ‰å¯èƒ½æ˜¯å…¶ä¸­çš„ä¸€æ¡éƒ¨åˆ†æˆäº¤çš„æ›´æ–°ï¼Œæ‰€ä»¥æ£€æŸ¥ä¸€ä¸‹
 
 		double OldQty = GetTradeListQty(m_OldTradeList, m_OldTradeList.size());
 		double NewQty = GetTradeListQty(m_NewTradeList, m_NewTradeList.size());
 		if (NewQty != OldQty)
 		{
-			// Í¬Ñù³¤¶È³É½»Á¿·¢ÉúÁË±ä»¯£¬¿ÉÄÜÊÇºÏ²¢µÄÁĞ±íÆäÖĞÒ»¸öĞÂ³É½»ÁË
+			// åŒæ ·é•¿åº¦æˆäº¤é‡å‘ç”Ÿäº†å˜åŒ–ï¼Œå¯èƒ½æ˜¯åˆå¹¶çš„åˆ—è¡¨å…¶ä¸­ä¸€ä¸ªæ–°æˆäº¤äº†
 			bTryMerge = true;
 		}
 	}
 	else
 	{
-		// ĞĞÊı±ä¶àÁË£¬Ö»ÒªÆäÖĞÉÏ´ÎµÄ²¿·ÖÓĞ±ä»¯¾ÍĞèÒª¼ì²éÒ»ÏÂ
+		// è¡Œæ•°å˜å¤šäº†ï¼Œåªè¦å…¶ä¸­ä¸Šæ¬¡çš„éƒ¨åˆ†æœ‰å˜åŒ–å°±éœ€è¦æ£€æŸ¥ä¸€ä¸‹
 		double OldQty = GetTradeListQty(m_OldTradeList, m_OldTradeList.size());
 		double NewQty = GetTradeListQty(m_NewTradeList, m_NewTradeList.size());
 		if (NewQty != OldQty)
@@ -440,8 +447,8 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 
 	if (bTryMerge)
 	{
-		// ºÏ²¢ÁĞ±íµÄ´¦Àí·½·¨
-		// Èç¹ûÉÏ´ÎÊÇºÏ²¢£¬Õâ´Î¾ÍÃ»ÓĞ±ØÒªÔÙÉú³ÉÒ»´ÎÁË
+		// åˆå¹¶åˆ—è¡¨çš„å¤„ç†æ–¹æ³•
+		// å¦‚æœä¸Šæ¬¡æ˜¯åˆå¹¶ï¼Œè¿™æ¬¡å°±æ²¡æœ‰å¿…è¦å†ç”Ÿæˆä¸€æ¬¡äº†
 		if (m_OldTradeMap.size() == 0 || !m_LastIsMerge)
 		{
 			for (unordered_map<string, TradeField*>::iterator it = m_OldTradeMap.begin(); it != m_OldTradeMap.end(); ++it)
@@ -456,7 +463,7 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		TradeList2TradeMap(m_NewTradeList, m_NewTradeMap);
 		CompareTradeMapAndEmit(m_OldTradeMap, m_NewTradeMap);
 
-		// ½»»»
+		// äº¤æ¢
 		for (unordered_map<string, TradeField*>::iterator it = m_OldTradeMap.begin(); it != m_OldTradeMap.end(); ++it)
 		{
 			TradeField* pField = it->second;
@@ -469,19 +476,19 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	}
 	else
 	{
-		// ÆÕÍ¨µÄ´¦Àí·½·¨
+		// æ™®é€šçš„å¤„ç†æ–¹æ³•
 		CompareTradeListAndEmit(m_OldTradeList, m_NewTradeList);
 		m_LastIsMerge = false;
 	}
 
-	// ½«ÀÏÊı¾İÇåÀí£¬·ÀÖ¹ÄÚ´æĞ¹Â©
+	// å°†è€æ•°æ®æ¸…ç†ï¼Œé˜²æ­¢å†…å­˜æ³„æ¼
 	for (list<TradeField*>::iterator it = m_OldTradeList.begin(); it != m_OldTradeList.end(); ++it)
 	{
 		TradeField* pField = *it;
 		m_msgQueue->delete_block(pField);
 	}
 
-	// ×ö½»»»
+	// åšäº¤æ¢
 	m_OldTradeList.clear();
 	m_OldTradeList = m_NewTradeList;
 	m_NewTradeList.clear();
@@ -497,7 +504,7 @@ void CSingleUser::CompareTradeMapAndEmit(unordered_map<string, TradeField*> &old
 		unordered_map<string, TradeField*>::iterator it2 = oldMap.find(pNewField->ID);
 		if (it2 == oldMap.end())
 		{
-			// Ã»ÕÒµ½,ÊÇĞÂµ¥
+			// æ²¡æ‰¾åˆ°,æ˜¯æ–°å•
 			m_msgQueue->Input_Copy(ResponeType::OnRtnTrade, m_msgQueue, m_pClass, 0, 0, pNewField, sizeof(TradeField), nullptr, 0, nullptr, 0);
 		}
 		else
@@ -506,7 +513,7 @@ void CSingleUser::CompareTradeMapAndEmit(unordered_map<string, TradeField*> &old
 			int Qty = pNewField->Qty - pOldField->Qty;
 			if (Qty > 0)
 			{
-				// ÓĞ±ä»¯µÄµ¥
+				// æœ‰å˜åŒ–çš„å•
 				TradeField* pField = new TradeField;
 				memcpy(pField, pNewField, sizeof(TradeField));
 				pField->Qty = Qty;
@@ -532,7 +539,7 @@ void CSingleUser::CompareTradeListAndEmit(list<TradeField*> &oldList, list<Trade
 		}
 		//else
 		//{
-		//	// ÏàÍ¬Î»ÖÃµÄ²¿·Ö
+		//	// ç›¸åŒä½ç½®çš„éƒ¨åˆ†
 		//	TradeField* pOldField = *it2;
 		//	if (pOldField->Qty != pField->Qty)
 		//	{
@@ -545,7 +552,7 @@ void CSingleUser::CompareTradeListAndEmit(list<TradeField*> &oldList, list<Trade
 			m_msgQueue->Input_Copy(ResponeType::OnRtnTrade, m_msgQueue, m_pClass, 0, 0, pField, sizeof(TradeField), nullptr, 0, nullptr, 0);
 		}
 
-		// Ç°Ò»¸ö¿ÉÄÜÎª¿Õ£¬ÒÆ¶¯µ½ÏÂÒ»¸öÊ±ĞèÒª×¢Òâ
+		// å‰ä¸€ä¸ªå¯èƒ½ä¸ºç©ºï¼Œç§»åŠ¨åˆ°ä¸‹ä¸€ä¸ªæ—¶éœ€è¦æ³¨æ„
 		if (it2 != oldList.end())
 		{
 			++it2;
@@ -576,7 +583,7 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 		m_pApi->StartQueryThread();
 	}
 	
-	// ²éÑ¯¹É¶«ÁĞ±í£¬»ªÌ©Ö¤È¯¿ÉÄÜÒ»¿ªÊ¼²é»á·µ»Ø·ÇÖªÇëÇó[1122]
+	// æŸ¥è¯¢è‚¡ä¸œåˆ—è¡¨ï¼Œåæ³°è¯åˆ¸å¯èƒ½ä¸€å¼€å§‹æŸ¥ä¼šè¿”å›éçŸ¥è¯·æ±‚[1122]
 	GDLB_STRUCT** ppRS = nullptr;
 	CharTable2Login(pRespone->ppResults, &ppRS, pRespone->Client);
 
@@ -650,10 +657,10 @@ int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_ST
 
 		ZJYE_2_AccountField(ppRS[i], pField);
 
-		//// ¿ÉÄÜ×Ê½ğÕËºÅ²é²»³öÀ´£¬ÊÖ¹¤ÌîÉÏ
+		//// å¯èƒ½èµ„é‡‘è´¦å·æŸ¥ä¸å‡ºæ¥ï¼Œæ‰‹å·¥å¡«ä¸Š
 		//if (strlen(pField->AccountID) <= 0)
 		//{
-		//	// ¶àÕË»§»áÓĞÎÊÌâ
+		//	// å¤šè´¦æˆ·ä¼šæœ‰é—®é¢˜
 		//	strcpy(pField->AccountID, m_pApi->GetAccount());
 		//}
 
@@ -684,7 +691,7 @@ int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_
 	{
 		PositionField* pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
 
-		// Ó¦µ±´¦ÀíÒ»ÏÂ£¬¿ÉÄÜÒ»¸öÕËºÅ¶ÔÓ¦µÄÓĞ¶à¸ö£¬ÈçĞÅÓÃÕË»§
+		// åº”å½“å¤„ç†ä¸€ä¸‹ï¼Œå¯èƒ½ä¸€ä¸ªè´¦å·å¯¹åº”çš„æœ‰å¤šä¸ªï¼Œå¦‚ä¿¡ç”¨è´¦æˆ·
 		GFLB_2_PositionField(ppRS[i], pField);
 
 		m_msgQueue->Input_NoCopy(ResponeType::OnRspQryInvestorPosition, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
@@ -705,17 +712,17 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 	pWTOrders->Client = m_pClient;
 
 	m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pOrder->LocalID, pWTOrders));
-	// ´¦Àí´íÎó
+	// å¤„ç†é”™è¯¯
 	if (pRespone->pErr)
 	{
 		pOrder->RawErrorID = pRespone->pErr->ErrCode;
 		strcpy(pOrder->Text, pRespone->pErr->ErrInfo);
 	}
 
-	// ´¦Àí½á¹û
+	// å¤„ç†ç»“æœ
 	if (pRespone->ppResults&&pRespone->ppResults[0 * COL_EACH_ROW + 0])
 	{
-		// Ğ´ÉÏ¹ñÌ¨µÄID£¬ÒÔºó½«»ùÓÚ´Ë½øĞĞ¶¨Î»
+		// å†™ä¸ŠæŸœå°çš„IDï¼Œä»¥åå°†åŸºäºæ­¤è¿›è¡Œå®šä½
 		CreateID(pOrder->ID, nullptr, pTdxOrder->GDDM, pRespone->ppResults[0 * COL_EACH_ROW + 0]);
 
 		m_pApi->m_id_api_order.erase(pOrder->LocalID);
@@ -724,16 +731,16 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 		m_pApi->m_id_platform_order.erase(pOrder->LocalID);
 		m_pApi->m_id_platform_order.insert(pair<string, OrderField*>(pOrder->ID, pOrder));
 
-		// ÓĞ¹Òµ¥µÄ£¬ĞèÒª½øĞĞ²éÑ¯ÁË
+		// æœ‰æŒ‚å•çš„ï¼Œéœ€è¦è¿›è¡ŒæŸ¥è¯¢äº†
 
 		double  _queryTime = QUERY_TIME_MIN;
 		m_QueryOrderTime = time(nullptr) + _queryTime;
 		OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_Send");
 	}
 
-	// ÏÖÔÚÓĞÁ½¸ö½á¹¹Ìå£¬ĞèÒª½øĞĞ²Ù×÷ÁË
-	// 1.Í¨ÖªÏÂµ¥µÄ½á¹û
-	// 2.¼ÇÂ¼ÏÂµ¥
+	// ç°åœ¨æœ‰ä¸¤ä¸ªç»“æ„ä½“ï¼Œéœ€è¦è¿›è¡Œæ“ä½œäº†
+	// 1.é€šçŸ¥ä¸‹å•çš„ç»“æœ
+	// 2.è®°å½•ä¸‹å•
 
 	OrderField* pField = pOrder;
 	if (pField->RawErrorID != 0)
@@ -763,7 +770,7 @@ int CSingleUser::OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* 
 		strcpy(pOrder->Text, pRespone->pErr->ErrInfo);
 
 		pOrder->ExecType = ExecType::ExecType_CancelReject;
-		// ×¢Òâ±¨µ¥×´Ì¬ÎÊÌâ£¬½»¸ø±¨µ¥²éÑ¯À´´¦Àí
+		// æ³¨æ„æŠ¥å•çŠ¶æ€é—®é¢˜ï¼Œäº¤ç»™æŠ¥å•æŸ¥è¯¢æ¥å¤„ç†
 	}
 	else
 	{
@@ -771,7 +778,7 @@ int CSingleUser::OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* 
 		m_QueryOrderTime = time(nullptr) + _queryTime;
 		OutputQueryTime(m_QueryOrderTime, _queryTime, "NextQueryOrder_Cancel");
 
-		// »á²»»á³öÏÖ³·µ¥Ê±£¬µ±Ê±²»ÖªµÀÊÇ·ñ³É¹¦³·µ¥£¬²éÑ¯²ÅµÃÖªÃ»ÓĞ³·³É¹¦£¿
+		// ä¼šä¸ä¼šå‡ºç°æ’¤å•æ—¶ï¼Œå½“æ—¶ä¸çŸ¥é“æ˜¯å¦æˆåŠŸæ’¤å•ï¼ŒæŸ¥è¯¢æ‰å¾—çŸ¥æ²¡æœ‰æ’¤æˆåŠŸï¼Ÿ
 		//ppOrders[i]->ExecType = ExecType::ExecCancelled;
 		//ppOrders[i]->Status = OrderStatus::Cancelled;
 	}

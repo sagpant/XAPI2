@@ -198,11 +198,11 @@ OrderStatus CThostFtdcQuoteField_2_OrderStatus(CThostFtdcQuoteField* pIn)
 		// 这个地方要改
 
 		//if (pIn->VolumeTotal == 0)
-		//	return OrderStatus::Filled;
+		//	return OrderStatus::OrderStatus_Filled;
 		//else if (pIn->VolumeTotal == pIn->VolumeTotalOriginal)
 			return OrderStatus::OrderStatus_New;
 		//else
-		//	return OrderStatus::PartiallyFilled;
+		//	return OrderStatus::OrderStatus_PartiallyFilled;
 	}
 }
 
