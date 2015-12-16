@@ -262,7 +262,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		ppResults[i]->DJZJ_ = atof(ppResults[i]->DJZJ);
 		ppResults[i]->WTFS_ = atof(ppResults[i]->WTFS);
 
-		// 可能没有，怎么办
+		// 可能没有，怎么办?那就只好不用它了
 		ppResults[i]->CDSL_ = atoi(ppResults[i]->CDSL);
 
 		if (strstr(ppResults[i]->WTSJ, ":"))
@@ -277,24 +277,41 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		}
 
 
-		// 第一个的字符，并转成数字，其实也可以全走文本比较的方式，但认为这样更快
-		if (ppResults[i]->ZTSM[1] == '-')
+		if (col_147>=0)
 		{
-			ppResults[i]->ZTSM_ = ppResults[i]->ZTSM[0] - '0';
+			// 第一个的字符，并转成数字，其实也可以全走文本比较的方式，但认为这样更快
+			if (ppResults[i]->ZTSM[1] == '-')
+			{
+				ppResults[i]->ZTSM_ = ppResults[i]->ZTSM[0] - '0';
+			}
+			else
+			{
+				ppResults[i]->ZTSM_ = ZTSM_str_2_int(ppResults[i]->ZTSM);
+			}
 		}
 		else
 		{
-			ppResults[i]->ZTSM_ = ZTSM_str_2_int(ppResults[i]->ZTSM);
+			// 信达证券没有状态说明，需要模拟计算出来，这种情况下，撤单数量怎么都要有
+			if (ppResults[i]->CDSL_>0)
+			{
+				ppResults[i]->ZTSM_ = ZTSM_AllCancelled;
+			}
+			else if (ppResults[i]->CJSL_ == ppResults[i]->WTSL_)
+			{
+				ppResults[i]->ZTSM_ = ZTSM_AllFilled;
+			}
+			else if (ppResults[i]->CJSL_ == 0)
+			{
+				ppResults[i]->ZTSM_ = ZTSM_New;
+			}
+			else
+			{
+				ppResults[i]->ZTSM_ = ZTSM_PartiallyFilled;
+			}
 		}
+		
 
 		ppResults[i]->BJFS_ = BJFS_str_2_int(ppResults[i]->BJFS);
-
-		//// 华宝没有这个字段，广发有，下单时其实是用它的
-		//if (col_166 >= 0)
-		//{
-		//	ppResults[i]->WTFS_ = ppResults[i]->BJFS_;
-		//}
-
 		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
 
 		ppResults[i]->Client = Client;
