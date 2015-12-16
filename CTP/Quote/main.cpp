@@ -1,8 +1,10 @@
 #include "stdafx.h"
-#include "../include/ApiHeader.h"
+#include "../../include/ApiHeader.h"
+#include "../../include/QueueEnum.h"
 
-#include "../include/QueueEnum.h"
 #include "MdUserApi.h"
+
+#include "Include.h"
 
 inline CMdUserApi* GetApi(void* pApi)
 {
@@ -17,9 +19,9 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case GetApiType:
 		return (void*)(ApiType::ApiType_MarketData | ApiType::ApiType_QuoteRequest);
 	case GetApiVersion:
-		return (void*)"0.3.0.20151214";
+		return (void*)API_VERSION;
 	case GetApiName:
-		return (void*)"Kingstar";
+		return (void*)API_NAME;
 	case Create:
 		return new CMdUserApi();
 	default:
@@ -39,12 +41,12 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 		delete pApi;
 		return 0;
 	case Register:
-		pApi->Register(ptr1, ptr2);
+		pApi->Register(ptr1,ptr2);
 		break;
 	case Config:
 		return (void*)pApi->Config((ConfigInfoField*)ptr1);
 	case Connect:
-		pApi->Connect((const char*)ptr3, (ServerInfoField*)ptr1, (UserInfoField*)ptr2, size2);
+		pApi->Connect((const char*)ptr3, (ServerInfoField*)ptr1, (UserInfoField*)ptr2,size2);
 		break;
 	case Disconnect:
 		pApi->Disconnect();

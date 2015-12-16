@@ -11,7 +11,7 @@
 
 #include "../QuantBox_Queue/MsgQueue.h"
 
-#include "TypeConvert.h"
+#include "../TypeConvert.h"
 
 #include <cstring>
 #include <assert.h>

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "../include/Kingstar/IncEx/KSUserApiDataTypeEx.h"
-#include "../include/Kingstar/IncEx/KSUserApiStructEx.h"
 #include "../include/ApiStruct.h"
 
-using namespace KingstarAPI;
+// 由于这个Include.h需要使用每个项目自己的文件，所以需要在VC++ Directories->Include Directories中添加一个"./"
+#include "Include.h"
 
 PutCall TThostFtdcOptionsTypeType_2_PutCall(TThostFtdcOptionsTypeType In);
 

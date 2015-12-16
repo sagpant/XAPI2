@@ -1,15 +1,8 @@
 #pragma once
 
-#include "../include/Kingstar/inc/KSTradeAPI.h"
-#include "../include/ApiStruct.h"
-
-#ifdef _WIN64
-#pragma comment(lib, "../include/CTP/win64/thosttraderapi.lib")
-#pragma comment(lib, "../lib/QuantBox_Queue_x64.lib")
-#else
-#pragma comment(lib, "../include/Kingstar/win32/KSTradeAPI.lib")
-#pragma comment(lib, "../lib/QuantBox_Queue_x86.lib")
-#endif
+#include "../../include/ApiStruct.h"
+// 由于这个Include.h需要使用每个项目自己的文件，所以需要在VC++ Directories->Include Directories中添加一个"./"
+#include "Include.h"
 
 
 #include <set>
@@ -22,8 +15,6 @@
 #include <unordered_map>
 
 using namespace std;
-using namespace KingstarAPI;
-
 
 class CMsgQueue;
 
@@ -63,7 +54,7 @@ public:
 	CTraderApi(void);
 	virtual ~CTraderApi(void);
 
-	void Register(void* pCallback, void* pClass);
+	void Register(void* pCallback,void* pClass);
 
 	void Connect(const string& szPath,
 		ServerInfoField* pServerInfo,
@@ -96,7 +87,7 @@ public:
 	//void ReqQryInvestorPosition(const string& szInstrumentId, const string& szExchange);
 	////void ReqQryInvestorPositionDetail(const string& szInstrumentId);
 	//void ReqQryInstrument(ReqQueryField* pQuery);
-	void ReqQuery(QueryType type, ReqQueryField* pQuery);
+	void ReqQuery(QueryType type,ReqQueryField* pQuery);
 	//void ReqQryInstrumentCommissionRate(const string& szInstrumentId);
 	//void ReqQryInstrumentMarginRate(const string& szInstrumentId,TThostFtdcHedgeFlagType HedgeFlag = THOST_FTDC_HF_Speculation);
 	//void ReqQryDepthMarketData(const string& szInstrumentId);
@@ -215,12 +206,12 @@ private:
 	int							m_nMaxOrderRef;			//报单引用，用于区分报单，保持自增
 
 	CThostFtdcTraderApi*		m_pApi;					//交易API
-
+	
 	string						m_szPath;				//生成配置文件的路径
 	ServerInfoField				m_ServerInfo;
 	UserInfoField				m_UserInfo;
 	int							m_nSleep;
-
+	
 	unordered_map<string, OrderField*>				m_id_platform_order;
 	unordered_map<string, CThostFtdcOrderField*>		m_id_api_order;
 	unordered_map<string, string>					m_sysId_orderId;
@@ -235,3 +226,4 @@ private:
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 };
+
