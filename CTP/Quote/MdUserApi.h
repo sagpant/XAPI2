@@ -1,16 +1,9 @@
 #pragma once
 
-#include "../include/ApiStruct.h"
-#include "../include/CTP/ThostFtdcMdApi.h"
+#include "../../include/ApiStruct.h"
 
-
-#ifdef _WIN64
-#pragma comment(lib, "../include/CTP/win64/thostmduserapi.lib")
-#pragma comment(lib, "../lib/QuantBox_Queue_x64.lib")
-#else
-#pragma comment(lib, "../include/CTP/win32/thostmduserapi.lib")
-#pragma comment(lib, "../lib/QuantBox_Queue_x86.lib")
-#endif
+// 由于这个Include.h需要使用每个项目自己的文件，所以需要在VC++ Directories->Include Directories中添加一个"./"
+#include "Include.h"
 
 #include <set>
 #include <string>
