@@ -225,6 +225,7 @@ xcopy "$(SolutionDir)include\CTP\win32\*.dll"  "$(SolutionDir)XAPI\CTP\x86\" /Y<
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\CTP\dllmain.cpp" />
+    <ClCompile Include="..\CTP\Trade\main.cpp" />
     <ClCompile Include="..\CTP\Trade\TraderApi.cpp" />
     <ClCompile Include="..\CTP\TypeConvert.cpp" />
     <ClCompile Include="..\include\toolkit.cpp">
