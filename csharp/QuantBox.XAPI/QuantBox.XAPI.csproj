@@ -125,6 +125,7 @@
     <Compile Include="GB2312Marshaler.cs" />
     <Compile Include="Interface\IXApi.cs" />
     <Compile Include="InvokeBase.cs" />
+    <Compile Include="IObjectSafety.cs" />
     <Compile Include="OptimizedEnum.cs" />
     <Compile Include="PInvokeUtility.cs" />
     <Compile Include="PositionFieldEx.cs" />

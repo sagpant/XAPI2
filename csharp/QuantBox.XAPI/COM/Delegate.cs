@@ -6,6 +6,7 @@ using System.Text;
 
 namespace QuantBox.XAPI.COM
 {
+    public delegate void DelegateOnTest(int status);
     public delegate void DelegateOnConnectionStatus(object sender, int status, string status_String, [In] ref RspUserLoginClass userLogin, int size1);
     //public delegate void DelegateOnRtnError(object sender, [In] ref ErrorField error);
     //public delegate void DelegateOnLog(object sender, [In] ref LogField log);
