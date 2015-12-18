@@ -62,5 +62,8 @@
     <ClCompile Include="..\CTP\Trade\TraderApi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\CTP\Trade\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
