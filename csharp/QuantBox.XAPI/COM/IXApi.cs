@@ -14,9 +14,9 @@ namespace QuantBox.XAPI.COM
         [DispId(1)]
         void SetLibPath(string LibPath);
         [DispId(2)]
-        void SetServerInfo(ref ServerInfoClass ServerInfo);
+        void SetServerInfo(string key,object value);
         [DispId(3)]
-        void SetUserInfo(ref UserInfoClass UserInfo);
+        void SetUserInfo(string key, object value);
 
 
         [DispId(10)]
@@ -37,6 +37,9 @@ namespace QuantBox.XAPI.COM
             
         [DispId(100)]
         void ReqQuery(int type, ref ReqQueryClass query);
-        
+
+        [DispId(200)]
+        void SetOnTest(Delegate del);
+
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.EnterpriseServices;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,12 +13,38 @@ using System.Windows.Forms;
 namespace QuantBox.XAPI.COM
 {
     [ComVisible(true)]
-    [Guid("825E3182-8444-4580-8A8C-965485FBF451"), ClassInterface(ClassInterfaceType.None), ComSourceInterfaces(typeof(IXApiEvents))]
+    [Guid("825E3182-8444-4580-8A8C-965485FBF451")]
+    [ClassInterface(ClassInterfaceType.None)]
+    [ComSourceInterfaces(typeof(IXApiEvents))]
     [ProgId("XApiCom")]
     [EventTrackingEnabled(true)]
     [Description("Interface Serviced Component")]
-    public class XApiCom : ServicedComponent, IXApi
+    public class XApiCom : ServicedComponent, IXApi,
+        IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
+                       // warning message
     {
+        #region Constants
+        // Constants for implementation of the IObjectSafety interface.
+        private const int INTERFACESAFE_FOR_UNTRUSTED_CALLER = 0x00000001;
+        private const int INTERFACESAFE_FOR_UNTRUSTED_DATA = 0x00000002;
+        private const int S_OK = 0;
+        #endregion
+
+        #region IObjectSafety Methods
+        public int GetInterfaceSafetyOptions(ref Guid riid, out int pdwSupportedOptions, out int pdwEnabledOptions)
+        {
+            pdwSupportedOptions = INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA;
+            pdwEnabledOptions = INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA;
+            return S_OK;   // return S_OK
+        }
+
+        public int SetInterfaceSafetyOptions(ref Guid riid, int dwOptionSetMask, int dwEnabledOptions)
+        {
+            return S_OK;   // return S_OK
+        }
+        #endregion
+
+        public event DelegateOnTest OnTest;
         public event DelegateOnConnectionStatus OnConnectionStatus;
         public event DelegateOnRtnDepthMarketData OnRtnDepthMarketData;
         public event DelegateOnRspQryInstrument OnRspQryInstrument;
@@ -63,30 +90,49 @@ namespace QuantBox.XAPI.COM
             api.LibPath = LibPath;
         }
 
-        public void SetServerInfo(ref ServerInfoClass ServerInfo)
+        public void SetServerInfo(string key, object value)
         {
-            api.Server.IsUsingUdp = ServerInfo.IsUsingUdp;
-            api.Server.IsMulticast = ServerInfo.IsMulticast;
-            api.Server.TopicId = ServerInfo.TopicId;
-            api.Server.Port = ServerInfo.Port;
-            api.Server.MarketDataTopicResumeType = (QuantBox.ResumeType)ServerInfo.MarketDataTopicResumeType;
-            api.Server.PrivateTopicResumeType = (QuantBox.ResumeType)ServerInfo.PrivateTopicResumeType;
-            api.Server.PublicTopicResumeType = (QuantBox.ResumeType)ServerInfo.PublicTopicResumeType;
-            api.Server.UserTopicResumeType = (QuantBox.ResumeType)ServerInfo.UserTopicResumeType;
-            api.Server.BrokerID = ServerInfo.BrokerID;
-            api.Server.UserProductInfo = ServerInfo.UserProductInfo;
-            api.Server.AuthCode = ServerInfo.AuthCode;
-            api.Server.Address = ServerInfo.Address;
-            api.Server.ConfigPath = ServerInfo.ConfigPath;
-            api.Server.ExtInfoChar128 = ServerInfo.ExtInfoChar128;
+            Type type = typeof(ServerInfoField);
+            FieldInfo field = type.GetField(key,BindingFlags.Public | BindingFlags.Instance);
+            if (field == null)
+            {
+                throw new ArgumentException(key +" is not exist!", key);
+            }
+            field.SetValue(api.Server, value);
+            //api.Server.IsUsingUdp = ServerInfo.IsUsingUdp;
+            //api.Server.IsMulticast = ServerInfo.IsMulticast;
+            //api.Server.TopicId = ServerInfo.TopicId;
+            //api.Server.Port = ServerInfo.Port;
+            //api.Server.MarketDataTopicResumeType = (QuantBox.ResumeType)ServerInfo.MarketDataTopicResumeType;
+            //api.Server.PrivateTopicResumeType = (QuantBox.ResumeType)ServerInfo.PrivateTopicResumeType;
+            //api.Server.PublicTopicResumeType = (QuantBox.ResumeType)ServerInfo.PublicTopicResumeType;
+            //api.Server.UserTopicResumeType = (QuantBox.ResumeType)ServerInfo.UserTopicResumeType;
+            //api.Server.BrokerID = ServerInfo.BrokerID;
+            //api.Server.UserProductInfo = ServerInfo.UserProductInfo;
+            //api.Server.AuthCode = ServerInfo.AuthCode;
+            //api.Server.Address = ServerInfo.Address;
+            //api.Server.ConfigPath = ServerInfo.ConfigPath;
+            //api.Server.ExtInfoChar128 = ServerInfo.ExtInfoChar128;
         }
 
-        public void SetUserInfo(ref UserInfoClass UserInfo)
+        public void SetUserInfo(string key, object value)
         {
-            api.User.UserID = UserInfo.UserID;
-            api.User.Password = UserInfo.Password;
-            api.User.ExtInfoChar64 = UserInfo.ExtInfoChar64;
-            api.User.ExtInfoInt32 = UserInfo.ExtInfoInt32;
+            Type type = typeof(UserInfoField);
+            FieldInfo field = type.GetField(key, BindingFlags.Public | BindingFlags.Instance);
+            if (field == null)
+            {
+                throw new ArgumentException(key + " is not exist!", key);
+            }
+            field.SetValue(api.User, value);
+            //api.User.UserID = UserInfo.UserID;
+            //api.User.Password = UserInfo.Password;
+            //api.User.ExtInfoChar64 = UserInfo.ExtInfoChar64;
+            //api.User.ExtInfoInt32 = UserInfo.ExtInfoInt32;
+        }
+
+        public void SetOnTest(Delegate del)
+        {
+            OnTest += (DelegateOnTest)del;
         }
 
         public void Connect()
@@ -181,6 +227,8 @@ namespace QuantBox.XAPI.COM
 
             api.ReqQuery((XAPI.QueryType)type,ref field);
         }
+
+        
 
 
         private void OnConnectionStatus_callback(object sender, QuantBox.ConnectionStatus status, ref RspUserLoginField userLogin, int size1)

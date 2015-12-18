@@ -12,6 +12,8 @@ namespace QuantBox.XAPI.COM
     [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
     public interface IXApiEvents
     {
+        [DispId(1)]
+        void OnTest(int status);
         void OnConnectionStatus(object sender, int status, string status_String, [In] ref RspUserLoginClass userLogin, int size1);
         //public delegate void DelegateOnRtnError(object sender, [In] ref ErrorField error);
         //public delegate void DelegateOnLog(object sender, [In] ref LogField log);
