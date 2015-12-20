@@ -8,6 +8,7 @@ using System.Text;
 
 namespace QuantBox.XAPI.Callback
 {
+    [ComVisible(false)]
     public partial class XApi : BaseApi, IDisposable, IXApi
     {
         public XApi(string path)

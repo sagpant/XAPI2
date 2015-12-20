@@ -9,6 +9,7 @@ namespace QuantBox.XAPI
     [ComVisible(false)]
     public class DllInvoke:InvokeBase
     {
+        [ComVisible(false)]
         [System.Flags]
         public enum LoadLibraryFlags : uint
         {

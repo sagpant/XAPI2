@@ -30,16 +30,19 @@ namespace QuantBox.XAPI.COM
         void Unsubscribe(string szInstrument, string szExchange);
 
         [DispId(31)]
-        string SendOrder(ref OrderClass[] orders);
+        void NewOrder();
         [DispId(32)]
-        string CancelOrder(ref string[] ids);
-        
-            
-        [DispId(100)]
-        void ReqQuery(int type, ref ReqQueryClass query);
+        void SetOrder(string key, object value);
+        [DispId(33)]
+        string SendOrder();
+        [DispId(34)]
+        string CancelOrder(string id);
 
-        [DispId(200)]
-        void SetOnTest(Delegate del);
-
+        [DispId(40)]
+        void NewQuery();
+        [DispId(41)]
+        void SetQuery(string key, object value);
+        [DispId(42)]
+        void ReqQuery(XAPI.QueryType type);
     }
 }

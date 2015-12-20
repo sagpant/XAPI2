@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 
 namespace QuantBox.XAPI
 {
+    [ComVisible(false)]
     public class PositionFieldEx
     {
         public string Symbol { get; private set; }

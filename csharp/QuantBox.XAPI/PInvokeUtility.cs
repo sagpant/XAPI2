@@ -7,6 +7,7 @@ using System.Text;
 
 namespace QuantBox.XAPI
 {
+    [ComVisible(false)]
     public class PInvokeUtility
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]

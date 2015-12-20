@@ -7,6 +7,7 @@ using System.Text;
 
 namespace QuantBox.XAPI
 {
+    [ComVisible(false)]
     public class SoInvoke : InvokeBase
     {
         [DllImport("libdl.so")]

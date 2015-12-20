@@ -382,7 +382,7 @@ namespace QuantBox.XAPI
     /// <summary>
     /// 登录回报
     /// </summary>
-    [ComVisible(false)]
+    [ComVisible(true)]
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     public struct RspUserLoginField
     {
@@ -449,6 +449,7 @@ namespace QuantBox.XAPI
     /// <summary>
     /// 合约信息
     /// </summary>
+    [ComVisible(false)]
     [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
     public struct InstrumentField
     {
@@ -591,8 +592,6 @@ namespace QuantBox.XAPI
         /// </summary>
         public double CashIn;
     }
-
-
 
     /// <summary>
     /// 发给做市商的询价请求

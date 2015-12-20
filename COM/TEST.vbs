@@ -1,13 +1,13 @@
 Run32()
 
 Dim XApi
-Set XApi = CreateObject("XApiCom")
+Set XApi = CreateObject("QuantBox.XApiCom")
 XApi.SetLibPath "C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86\QuantBox_CTP_Quote.dll"
 XApi.SetServerInfo "Address","tcp://180.168.146.187:10010"
 XApi.SetServerInfo "BrokerID","9999"
 XApi.SetUserInfo "UserID","037505"
 XApi.SetUserInfo "Password","123456"
-XApi.OnTest = GetRef("OnTest")
+XApi.OnConnectionStatus = GetRef("TdApi_OnConnectionStatus")
 XApi.Connect
 
 Function OnTest(ByVal status)
