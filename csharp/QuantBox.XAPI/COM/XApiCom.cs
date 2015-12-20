@@ -16,10 +16,10 @@ namespace QuantBox.XAPI.COM
     [Guid("825E3182-8444-4580-8A8C-965485FBF451")]
     [ClassInterface(ClassInterfaceType.None)]
     [ComSourceInterfaces(typeof(IXApiEvents))]
-    [ProgId("XApiCom")]
-    [EventTrackingEnabled(true)]
+    [ProgId("QuantBox.XApiCom")]
+    //[EventTrackingEnabled(true)]
     [Description("Interface Serviced Component")]
-    public class XApiCom : ServicedComponent, IXApi,
+    public class XApiCom : /*ServicedComponent,*/ IXApi,
         IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
                        // warning message
     {
@@ -44,7 +44,6 @@ namespace QuantBox.XAPI.COM
         }
         #endregion
 
-        public event DelegateOnTest OnTest;
         public event DelegateOnConnectionStatus OnConnectionStatus;
         public event DelegateOnRtnDepthMarketData OnRtnDepthMarketData;
         public event DelegateOnRspQryInstrument OnRspQryInstrument;
@@ -52,8 +51,14 @@ namespace QuantBox.XAPI.COM
         public event DelegateOnRspQryInvestorPosition OnRspQryInvestorPosition;
         public event DelegateOnRtnOrder OnRtnOrder;
         public event DelegateOnRtnTrade OnRtnTrade;
+        public event DelegateOnStatus OnStatus;
+        public event DelegateOnTest OnTest;
 
         private XApi api;
+        private ServerInfoField _Server;
+        private UserInfoField _User;
+        private OrderField _Order;
+        private ReqQueryField _Query;
 
         public XApiCom()
         {
@@ -98,21 +103,15 @@ namespace QuantBox.XAPI.COM
             {
                 throw new ArgumentException(key +" is not exist!", key);
             }
-            field.SetValue(api.Server, value);
-            //api.Server.IsUsingUdp = ServerInfo.IsUsingUdp;
-            //api.Server.IsMulticast = ServerInfo.IsMulticast;
-            //api.Server.TopicId = ServerInfo.TopicId;
-            //api.Server.Port = ServerInfo.Port;
-            //api.Server.MarketDataTopicResumeType = (QuantBox.ResumeType)ServerInfo.MarketDataTopicResumeType;
-            //api.Server.PrivateTopicResumeType = (QuantBox.ResumeType)ServerInfo.PrivateTopicResumeType;
-            //api.Server.PublicTopicResumeType = (QuantBox.ResumeType)ServerInfo.PublicTopicResumeType;
-            //api.Server.UserTopicResumeType = (QuantBox.ResumeType)ServerInfo.UserTopicResumeType;
-            //api.Server.BrokerID = ServerInfo.BrokerID;
-            //api.Server.UserProductInfo = ServerInfo.UserProductInfo;
-            //api.Server.AuthCode = ServerInfo.AuthCode;
-            //api.Server.Address = ServerInfo.Address;
-            //api.Server.ConfigPath = ServerInfo.ConfigPath;
-            //api.Server.ExtInfoChar128 = ServerInfo.ExtInfoChar128;
+            try
+            {
+                object obj = Helper.ChangeType(value, field.FieldType);
+                field.SetValueForValueType(ref _Server, obj);
+            }
+            catch(Exception ex)
+            {
+                throw new InvalidCastException(ex.Message);
+            }
         }
 
         public void SetUserInfo(string key, object value)
@@ -123,20 +122,21 @@ namespace QuantBox.XAPI.COM
             {
                 throw new ArgumentException(key + " is not exist!", key);
             }
-            field.SetValue(api.User, value);
-            //api.User.UserID = UserInfo.UserID;
-            //api.User.Password = UserInfo.Password;
-            //api.User.ExtInfoChar64 = UserInfo.ExtInfoChar64;
-            //api.User.ExtInfoInt32 = UserInfo.ExtInfoInt32;
-        }
-
-        public void SetOnTest(Delegate del)
-        {
-            OnTest += (DelegateOnTest)del;
+            try
+            {
+                object obj = Helper.ChangeType(value, field.FieldType);
+                field.SetValueForValueType(ref _User, obj);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException(ex.Message);
+            }
         }
 
         public void Connect()
         {
+            api.Server = _Server;
+            api.User = _User;
             api.Connect();
         }
 
@@ -155,81 +155,69 @@ namespace QuantBox.XAPI.COM
             api.Unsubscribe(szInstrument, szExchange);
         }
 
-        public string SendOrder(ref OrderClass[] orders)
+        public void NewOrder()
         {
-            int len = orders.Length;
-
-            OrderField[] fields = new OrderField[len];
-            for (int i = 0; i < len; i++)
+            _Order = default(OrderField);
+        }
+        public void SetOrder(string key, object value)
+        {
+            Type type = typeof(OrderField);
+            FieldInfo field = type.GetField(key, BindingFlags.Public | BindingFlags.Instance);
+            if (field == null)
             {
-                OrderField field = fields[i];
-                OrderClass cls = orders[i];
-
-                field.InstrumentID = cls.InstrumentID;
-                field.ExchangeID = cls.ExchangeID;
-                
-                field.Side = (QuantBox.OrderSide)Enum.Parse(typeof(QuantBox.OrderSide), cls.Side_String);
-                field.Qty = cls.Qty;
-                field.Price = cls.Price;
-                field.OpenClose = (QuantBox.OpenCloseType)Enum.Parse(typeof(QuantBox.OpenCloseType), cls.OpenClose_String);
-                field.HedgeFlag = (QuantBox.HedgeFlagType)cls.HedgeFlag;
-                //field.Date = cls.Date;
-                //field.Time = cls.Time;
-                //field.ID = cls.ID;
-                //field.OrderID = cls.OrderID;
-                //field.LocalID = cls.LocalID;
-                field.Type = (QuantBox.OrderType)Enum.Parse(typeof(QuantBox.OrderType), cls.Type_String);
-                field.StopPx = cls.StopPx;
-                field.TimeInForce = QuantBox.TimeInForce.Day;
-                //field.Status = (QuantBox.OrderStatus)cls.Status;
-                //field.ExecType = (QuantBox.ExecType)cls.ExecType;
-                //field.LeavesQty = cls.LeavesQty;
-                //field.CumQty = cls.CumQty;
-                //field.AvgPx = cls.AvgPx;
-                //field.XErrorID = cls.XErrorID;
-                
-                field.ReserveInt32 = cls.ReserveInt32;
-                field.ReserveChar64 = cls.ReserveChar64;
-                field.ClientID = cls.ClientID;
-                field.AccountID = cls.AccountID;
-
-                fields[i] = field;
+                throw new ArgumentException(key + " is not exist!", key);
             }
-
-            return api.SendOrder(ref fields);
+            try
+            {
+                object obj = Helper.ChangeType(value, field.FieldType);
+                field.SetValueForValueType(ref _Order, obj);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException(ex.Message);
+            }
         }
 
-        public string CancelOrder(ref string[] ids)
+        public string SendOrder()
         {
+            OrderField[] fields = new OrderField[1];
+            fields[0] = _Order;
+            return api.SendOrder(ref fields);
+        }
+        public string CancelOrder(string id)
+        {
+            string[] ids = new string[1];
+            ids[0] = id;
             return api.CancelOrder(ids);
         }
 
-        public void ReqQuery(int type, ref ReqQueryClass query)
+        public void NewQuery()
         {
-            ReqQueryField field = default(ReqQueryField);
-            ReqQueryClass cls = query;
-
-            //field.InstrumentName = cls.InstrumentName;
-            field.Symbol = cls.Symbol;
-            field.InstrumentID = cls.InstrumentID;
-            field.ExchangeID = cls.ExchangeID;
-            field.ClientID = cls.ClientID;
-            field.AccountID = cls.AccountID;
-            field.CurrencyID = cls.CurrencyID;
-            field.DateStart = cls.DateStart;
-            field.DateEnd = cls.DateEnd;
-            field.TimeStart = cls.TimeStart;
-            field.TimeEnd = cls.TimeEnd;
-            field.Char64ID = cls.Char64ID;
-            field.Int32ID = cls.Int32ID;
-            field.Char64PositionIndex = cls.Char64PositionIndex;
-            field.Int32PositionIndex = cls.Int32PositionIndex;
-
-            api.ReqQuery((XAPI.QueryType)type,ref field);
+            _Query = default(ReqQueryField);
+        }
+        public void SetQuery(string key, object value)
+        {
+            Type type = typeof(ReqQueryField);
+            FieldInfo field = type.GetField(key, BindingFlags.Public | BindingFlags.Instance);
+            if (field == null)
+            {
+                throw new ArgumentException(key + " is not exist!", key);
+            }
+            try
+            {
+                object obj = Helper.ChangeType(value, field.FieldType);
+                field.SetValueForValueType(ref _Query, obj);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException(ex.Message);
+            }
         }
 
-        
-
+        public void ReqQuery(XAPI.QueryType type)
+        {
+            api.ReqQuery(type, ref _Query);
+        }
 
         private void OnConnectionStatus_callback(object sender, QuantBox.ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
         {

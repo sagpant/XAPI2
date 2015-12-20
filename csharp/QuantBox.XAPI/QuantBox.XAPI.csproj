@@ -48,6 +48,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -110,10 +111,8 @@
     <Compile Include="Callback\XApi.Query.cs" />
     <Compile Include="Callback\XApi.Trade.cs" />
     <Compile Include="COM\Delegate.cs" />
-    <Compile Include="COM\Enum.cs" />
     <Compile Include="COM\IXApi.cs" />
     <Compile Include="COM\IXApiEvents.cs" />
-    <Compile Include="COM\QueryType.cs" />
     <Compile Include="COM\Struct.cs" />
     <Compile Include="COM\XApiCom.cs" />
     <Compile Include="Delegate.cs" />
@@ -137,6 +136,7 @@
     <Compile Include="ResponeType.cs" />
     <Compile Include="SoInvoke.cs" />
     <Compile Include="Struct.cs" />
+    <Compile Include="Helper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

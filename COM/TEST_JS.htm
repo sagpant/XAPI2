@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<title>My Com Component</title>
+		<object id="XApi" name="XApi" classid="clsid:825E3182-8444-4580-8A8C-965485FBF451"></object>
+		<script language="javascript" type="text/javascript">
+		    function myButton_click() {
+                XApi.SetLibPath("C:\\Program Files\\SmartQuant Ltd\\OpenQuant 2014\\XAPI\\CTP\\x86\\QuantBox_CTP_Trade.dll");
+                XApi.SetServerInfo("Address","tcp://180.168.146.187:10000");
+                XApi.SetServerInfo("BrokerID","9999");
+                XApi.SetUserInfo("UserID","037505");
+                XApi.SetUserInfo("Password","1234561");
+                XApi.Connect();
+		    }
+		    
+		    function setText(txt) {
+		        myTextBox.value = txt;
+		    }
+		    
+		    function appendText(txt) {
+		        myTextBox.value = myTextBox.value + txt;
+		    }
+		    
+		    /* MyComComponent_onload() {
+		        setText("");
+		        XApi.MyFirstComCommand("Hi");
+		    }
+		    
+		    function MyComComponent_onunload() {
+		        XApi.Dispose();
+                
+                onload="MyComComponent_onload();" onunload="MyComComponent_onunload();"
+		    }*/
+		</script>
+	</head>
+	<body >
+	    <h1>My Com Component</h1>
+	    <table>
+	        <tr>
+	            <td>
+	                <button id="myButton" onclick="myButton_click();">Com Method</button>
+	                <label>Args</label>
+	                <textarea id="myArgs" rows="1" cols="16">Hello World!</textarea>
+	            </td>
+	        </tr>
+	        <tr>
+	            <td>
+	                <textarea id="myTextBox" rows="10" cols="80"></textarea>
+	            </td>
+	        </tr>
+	    </table>
+        <script for="XApi" event="OnConnectionStatus(sender,status,status_String,userLogin,size1)" language="javascript">
+        function XApi::OnConnectionStatus(sender,status,status_String,userLogin,size1) {
+            appendText(status);
+            appendText("\r\n");
+            if(size1>0)
+                appendText(userLogin.Text);
+        }
+        </script>
+	</body>
+</html>

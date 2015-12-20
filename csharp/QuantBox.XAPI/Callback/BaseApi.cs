@@ -8,6 +8,7 @@ using System.Text;
 
 namespace QuantBox.XAPI.Callback
 {
+    [ComVisible(false)]
     public class BaseApi : IDisposable
     {
         public Logger Log;

@@ -11,6 +11,7 @@ namespace QuantBox.XAPI
     /// Custom marshalers cannot be used on fields of structures
     /// 无语，本想实现中文直接的正常使用，后来发现这个不能用在结构体上还是没办法使用
     /// </summary>
+    [ComVisible(false)]
     public class GB2312Marshaler : ICustomMarshaler
     {
         static Encoding encodingGB2312 = Encoding.GetEncoding(936);

@@ -7,6 +7,7 @@ using System.Text;
 
 namespace QuantBox.XAPI
 {
+    [ComVisible(false)]
     public static class Extensions_GBK
     {
         public static string InstrumentName([In]this InstrumentField field)
@@ -78,6 +79,7 @@ CZC
 	TradeDay: 行情日
 	ActionDay:行情日
      */
+    [ComVisible(false)]
     public static class Extensions_Misc
     {
         public static DateTime ExchangeDateTime([In]this DepthMarketDataNClass field)
@@ -138,6 +140,7 @@ CZC
         }
     }
 
+    [ComVisible(false)]
     public static class Extensions_Output
     {
         public static string ToFormattedString([In]this ErrorField field)

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace QuantBox.XAPI.Event
 {
+    [ComVisible(false)]
     public class OnConnectionStatusEventArgs:EventArgs
     {
         public readonly ConnectionStatus status;
@@ -18,7 +20,7 @@ namespace QuantBox.XAPI.Event
             this.size1 = size1;
         }
     }
-
+    [ComVisible(false)]
     public class OnRtnErrorEventArgs : EventArgs
     {
         public readonly ErrorField error;
@@ -28,7 +30,7 @@ namespace QuantBox.XAPI.Event
             this.error = error;
         }
     }
-
+    [ComVisible(false)]
     public class OnLogEventArgs : EventArgs
     {
         public readonly LogField log;
@@ -38,7 +40,7 @@ namespace QuantBox.XAPI.Event
             this.log = log;
         }
     }
-
+    [ComVisible(false)]
     public class OnRtnDepthMarketDataNEventArgs : EventArgs
     {
         public readonly DepthMarketDataNClass marketData;
@@ -48,7 +50,7 @@ namespace QuantBox.XAPI.Event
             this.marketData = marketData;
         }
     }
-
+    [ComVisible(false)]
     public class OnRtnQuoteRequestEventArgs : EventArgs
     {
         public readonly QuoteRequestField quoteRequest;
@@ -58,7 +60,7 @@ namespace QuantBox.XAPI.Event
             this.quoteRequest = quoteRequest;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryInstrumentEventArgs : EventArgs
     {
         public readonly InstrumentField instrument;
@@ -72,7 +74,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryTradingAccountEventArgs : EventArgs
     {
         public readonly AccountField account;
@@ -86,7 +88,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryInvestorPositionEventArgs : EventArgs
     {
         public readonly PositionField position;
@@ -100,7 +102,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQrySettlementInfoEventArgs : EventArgs
     {
         public readonly SettlementInfoClass settlementInfo;
@@ -114,7 +116,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryOrderEventArgs : EventArgs
     {
         public readonly OrderField order;
@@ -128,7 +130,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryTradeEventArgs : EventArgs
     {
         public readonly TradeField trade;
@@ -142,7 +144,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryQuoteEventArgs : EventArgs
     {
         public readonly QuoteField quote;
@@ -156,7 +158,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRtnOrderEventArgs : EventArgs
     {
         public readonly OrderField order;
@@ -166,7 +168,7 @@ namespace QuantBox.XAPI.Event
             this.order = order;
         }
     }
-
+    [ComVisible(false)]
     public class OnRtnTradeEventArgs : EventArgs
     {
         public readonly TradeField trade;
@@ -176,7 +178,7 @@ namespace QuantBox.XAPI.Event
             this.trade = trade;
         }
     }
-
+    [ComVisible(false)]
     public class OnRtnQuoteEventArgs : EventArgs
     {
         public readonly QuoteField quote;
@@ -186,7 +188,7 @@ namespace QuantBox.XAPI.Event
             this.quote = quote;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryHistoricalTicksEventArgs : EventArgs
     {
         public readonly IntPtr pTicks;
@@ -204,7 +206,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryHistoricalBarsEventArgs : EventArgs
     {
         public readonly IntPtr pTicks;
@@ -222,7 +224,7 @@ namespace QuantBox.XAPI.Event
             this.bIsLast = bIsLast;
         }
     }
-
+    [ComVisible(false)]
     public class OnRspQryInvestorEventArgs : EventArgs
     {
         public readonly InvestorField investor;
