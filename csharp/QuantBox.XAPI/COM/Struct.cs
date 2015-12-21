@@ -375,7 +375,8 @@ namespace QuantBox.XAPI.COM
     /// 日志信息
     /// </summary>
     [ComVisible(true)]
-    public class LogField
+    [Guid("4A4FDEFA-AEA6-496E-AE92-F00FD28A2075")]
+    public class LogClass
     {
         /// <summary>
         /// 日志级别

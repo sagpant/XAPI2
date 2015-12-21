@@ -1,21 +1,23 @@
-Run32()
+'Run32()
 
 MsgBox "点我开始"
 
 Dim XApi
-Set XApi = WScript.CreateObject("QuantBox.XApiCom","XApi_")
+Set XApi = CreateObject("QuantBox.XApiCom")
 XApi.SetLibPath "C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86\QuantBox_CTP_Quote.dll"
 XApi.SetServerInfo "Address","tcp://180.168.146.187:10010"
 XApi.SetServerInfo "BrokerID","9999"
 XApi.SetUserInfo "UserID","037505"
 XApi.SetUserInfo "Password","123456"
+XApi.TEST = GetRef("XApi_OnConnectionStatus")
+'XApi.OnConnectionStatus = GetRef("XApi_OnConnectionStatus")
 XApi.Connect
 
 MsgBox "不要点我，等着反馈"
 
-Sub XApi_OnConnectionStatus(sender, status, status_String, userLogin, size1)
+Function XApi_OnConnectionStatus(sender, status, status_String, userLogin, size1)
     MsgBox status_String
-End Sub
+End Function
 
 Sub Run32()
     'Author: Demon
