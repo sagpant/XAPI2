@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace QuantBox.XAPI.COM
 {
@@ -19,7 +20,7 @@ namespace QuantBox.XAPI.COM
     [ProgId("QuantBox.XApiCom")]
     //[EventTrackingEnabled(true)]
     [Description("Interface Serviced Component")]
-    public class XApiCom : /*ServicedComponent,*/ IXApi,
+    public class XApiCom : UserControl,/*ServicedComponent,*/ IXApi,
         IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
                        // warning message
     {
@@ -27,6 +28,7 @@ namespace QuantBox.XAPI.COM
         // Constants for implementation of the IObjectSafety interface.
         private const int INTERFACESAFE_FOR_UNTRUSTED_CALLER = 0x00000001;
         private const int INTERFACESAFE_FOR_UNTRUSTED_DATA = 0x00000002;
+        private Label label1;
         private const int S_OK = 0;
         #endregion
 
@@ -45,14 +47,16 @@ namespace QuantBox.XAPI.COM
         #endregion
 
         public event DelegateOnConnectionStatus OnConnectionStatus;
+        public event DelegateOnRtnError OnRtnError;
+        public event DelegateOnLog OnLog;
         public event DelegateOnRtnDepthMarketData OnRtnDepthMarketData;
         public event DelegateOnRspQryInstrument OnRspQryInstrument;
         public event DelegateOnRspQryTradingAccount OnRspQryTradingAccount;
         public event DelegateOnRspQryInvestorPosition OnRspQryInvestorPosition;
         public event DelegateOnRtnOrder OnRtnOrder;
         public event DelegateOnRtnTrade OnRtnTrade;
-        public event DelegateOnStatus OnStatus;
-        public event DelegateOnTest OnTest;
+        public event DelegateOnRspQryOrder OnRspQryOrder;
+        public event DelegateOnRspQryTrade OnRspQryTrade;
 
         private XApi api;
         private ServerInfoField _Server;
@@ -60,13 +64,71 @@ namespace QuantBox.XAPI.COM
         private OrderField _Order;
         private ReqQueryField _Query;
 
+        [ComVisible(true)]
+        public int TEST { get; set; }
+        // http://www.codeproject.com/Articles/24089/Create-ActiveX-in-NET-Step-by-Step
+        // http://www.codeproject.com/Articles/1256/Exposing-Windows-Forms-Controls-as-ActiveX-control
+        ///<summary>
+        ///Register the class as a control and set its CodeBase entry
+        ///</summary>
+        ///<param name="key">The registry key of the control</param>
+        [ComRegisterFunction()]
+        public static void RegisterClass(string key)
+        {
+            // Strip off HKEY_CLASSES_ROOT\ from the passed key as I don't need it
+            StringBuilder sb = new StringBuilder(key);
+            sb.Replace(@"HKEY_CLASSES_ROOT\", "");
+
+            // Open the CLSID\{guid} key for write access
+            RegistryKey k = Registry.ClassesRoot.OpenSubKey(sb.ToString(), true);
+
+            // And create the 'Control' key - this allows it to show up in 
+            // the ActiveX control container 
+            RegistryKey ctrl = k.CreateSubKey("Control");
+            ctrl.Close();
+
+            // Next create the CodeBase entry - needed if not string named and GACced.
+            RegistryKey inprocServer32 = k.OpenSubKey("InprocServer32", true);
+            inprocServer32.SetValue("CodeBase", Assembly.GetExecutingAssembly().CodeBase);
+            inprocServer32.Close();
+
+            // Finally close the main key
+            k.Close();
+        }
+
+        ///<summary>
+        ///Called to unregister the control
+        ///</summary>
+        ///<param name="key">The registry key</param>
+        [ComUnregisterFunction()]
+        public static void UnregisterClass(string key)
+        {
+            StringBuilder sb = new StringBuilder(key);
+            sb.Replace(@"HKEY_CLASSES_ROOT\", "");
+
+            // Open HKCR\CLSID\{guid} for write access
+            RegistryKey k = Registry.ClassesRoot.OpenSubKey(sb.ToString(), true);
+
+            // Delete the 'Control' key, but don't throw an exception if it does not exist
+            k.DeleteSubKey("Control", false);
+
+            // Next open up InprocServer32
+            RegistryKey inprocServer32 = k.OpenSubKey("InprocServer32", true);
+
+            // And delete the CodeBase key, again not throwing if missing 
+            k.DeleteSubKey("CodeBase", false);
+
+            // Finally close the main key 
+            k.Close();
+        }
+
         public XApiCom()
         {
             api = new XApi();
 
             api.OnConnectionStatus = OnConnectionStatus_callback;
-            //base.OnRtnError = OnRtnError_callback;
-            //base.OnLog = OnLog_callback;
+            api.OnRtnError = OnRtnError_callback;
+            api.OnLog = OnLog_callback;
 
             api.OnRtnDepthMarketData = OnRtnDepthMarketData_callback;
             //base.OnRtnQuoteRequest = OnRtnQuoteRequest_callback;
@@ -76,8 +138,8 @@ namespace QuantBox.XAPI.COM
             api.OnRspQryInvestorPosition = OnRspQryInvestorPosition_callback;
             //base.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
 
-            //base.OnRspQryOrder = OnRspQryOrder_callback;
-            //base.OnRspQryTrade = OnRspQryTrade_callback;
+            api.OnRspQryOrder = OnRspQryOrder_callback;
+            api.OnRspQryTrade = OnRspQryTrade_callback;
             //base.OnRspQryQuote = OnRspQryQuote_callback;
 
             api.OnRtnOrder = OnRtnOrder_callback;
@@ -242,7 +304,43 @@ namespace QuantBox.XAPI.COM
                 cls.Text = field.Text();
             }
 
+            //a.Invoke(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
             OnConnectionStatus(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
+        }
+
+        private void OnRtnError_callback(object sender, [In] ref ErrorField error)
+        {
+            if (null == OnRtnError)
+                return;
+
+            ErrorClass cls = null;
+
+            cls = new ErrorClass();
+            ErrorField field = error;
+
+            cls.XErrorID = field.XErrorID;
+            cls.RawErrorID = field.RawErrorID;
+            cls.Text = field.Text();
+            cls.Source = field.Source;
+
+            OnRtnError(this, ref cls);
+        }
+
+        private void OnLog_callback(object sender, [In] ref LogField log)
+        {
+            if (null == OnLog)
+                return;
+
+            LogClass cls = null;
+
+            cls = new LogClass();
+            LogField field = log;
+
+            cls.Level = (int)field.Level;
+            cls.Level_String = Enum<QuantBox.LogLevel>.ToString(field.Level);
+            cls.Message = field.Message();
+
+            OnLog(this, ref cls);
         }
 
         private void OnRtnDepthMarketData_callback(object sender, ref QuantBox.XAPI.DepthMarketDataNClass marketData)
@@ -470,6 +568,122 @@ namespace QuantBox.XAPI.COM
             cls.CashIn = field.CashIn;
 
             OnRspQryTradingAccount(this, ref cls, size1, bIsLast);
+        }
+
+        private void OnRspQryOrder_callback(object sender, ref OrderField order, int size1, bool bIsLast)
+        {
+            if (null == OnRspQryOrder)
+                return;
+
+            OrderClass cls = null;
+
+            if (size1 > 0)
+            {
+                OrderField field = order;
+
+                cls = new OrderClass();
+
+                cls.InstrumentName = field.InstrumentName();
+                cls.Symbol = field.Symbol;
+                cls.InstrumentID = field.InstrumentID;
+                cls.ExchangeID = field.ExchangeID;
+                cls.ClientID = field.ClientID;
+                cls.AccountID = field.AccountID;
+                cls.Side = (int) field.Side;
+                cls.Side_String = Enum<QuantBox.OrderSide>.ToString(field.Side);
+                cls.Qty = field.Qty;
+                cls.Price = field.Price;
+                cls.OpenClose = (int) field.OpenClose;
+                cls.OpenClose_String = Enum<QuantBox.OpenCloseType>.ToString(field.OpenClose);
+                cls.HedgeFlag = (int) field.HedgeFlag;
+                cls.HedgeFlag_String = Enum<QuantBox.HedgeFlagType>.ToString(field.HedgeFlag);
+                cls.Date = field.Date;
+                cls.Time = field.Time;
+                cls.ID = field.ID;
+                cls.OrderID = field.OrderID;
+                cls.LocalID = field.LocalID;
+                cls.Type = (int) field.Type;
+                cls.Type_String = Enum<QuantBox.OrderType>.ToString(field.Type);
+                cls.StopPx = field.StopPx;
+                cls.TimeInForce = (int) field.TimeInForce;
+                cls.TimeInForce_String = Enum<QuantBox.TimeInForce>.ToString(field.TimeInForce);
+                cls.Status = (int) field.Status;
+                cls.Status_String = Enum<QuantBox.OrderStatus>.ToString(field.Status);
+                cls.ExecType = (int) field.ExecType;
+                cls.ExecType_String = Enum<QuantBox.ExecType>.ToString(field.ExecType);
+                cls.LeavesQty = field.LeavesQty;
+                cls.CumQty = field.CumQty;
+                cls.AvgPx = field.AvgPx;
+                cls.XErrorID = field.XErrorID;
+                cls.RawErrorID = field.RawErrorID;
+                cls.Text = field.Text();
+                cls.ReserveInt32 = field.ReserveInt32;
+                cls.ReserveChar64 = field.ReserveChar64;
+            }
+
+            OnRspQryOrder(this, ref cls, size1, bIsLast);
+        }
+
+        private void OnRspQryTrade_callback(object sender, ref TradeField trade, int size1, bool bIsLast)
+        {
+            if (null == OnRspQryTrade)
+                return;
+
+            TradeClass cls = null;
+
+            if (size1 > 0)
+            {
+                TradeField field = trade;
+
+                cls = new TradeClass();
+
+                cls.InstrumentName = field.InstrumentName();
+                cls.Symbol = field.Symbol;
+                cls.InstrumentID = field.InstrumentID;
+                cls.ExchangeID = field.ExchangeID;
+                cls.ClientID = field.ClientID;
+                cls.AccountID = field.AccountID;
+                cls.Side = (int)field.Side;
+                cls.Side_String = Enum<QuantBox.OrderSide>.ToString(field.Side);
+                cls.Qty = field.Qty;
+                cls.Price = field.Price;
+                cls.OpenClose = (int)field.OpenClose;
+                cls.OpenClose_String = Enum<QuantBox.OpenCloseType>.ToString(field.OpenClose);
+                cls.HedgeFlag = (int)field.HedgeFlag;
+                cls.HedgeFlag_String = Enum<QuantBox.HedgeFlagType>.ToString(field.HedgeFlag);
+                cls.Date = field.Date;
+                cls.Time = field.Time;
+                cls.ID = field.ID;
+                cls.TradeID = field.TradeID;
+                cls.ReserveInt32 = field.ReserveInt32;
+                cls.ReserveChar64 = field.ReserveChar64;
+            }
+
+            OnRspQryTrade(this, ref cls, size1, bIsLast);
+        }
+
+        private void InitializeComponent()
+        {
+            this.label1 = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(20, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "XAPI";
+            // 
+            // XApiCom
+            // 
+            this.Controls.Add(this.label1);
+            this.Name = "XApiCom";
+            this.Size = new System.Drawing.Size(122, 33);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
     }
 }

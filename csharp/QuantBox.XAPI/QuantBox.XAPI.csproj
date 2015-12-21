@@ -86,7 +86,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>XAPI.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>XAPI.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -95,6 +95,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -114,7 +115,9 @@
     <Compile Include="COM\IXApi.cs" />
     <Compile Include="COM\IXApiEvents.cs" />
     <Compile Include="COM\Struct.cs" />
-    <Compile Include="COM\XApiCom.cs" />
+    <Compile Include="COM\XApiCom.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Delegate.cs" />
     <Compile Include="DllInvoke.cs" />
     <Compile Include="Enum.cs" />
@@ -141,6 +144,12 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="XAPI.pfx" />
+    <None Include="XAPI.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="COM\XApiCom.resx">
+      <DependentUpon>XApiCom.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
