@@ -459,7 +459,6 @@ void CTraderApi::Disconnect()
 	if(m_pApi)
 	{
 		// 还没有登出
-		
 		m_pApi->Exit();
 		
 		m_pApi->Release();

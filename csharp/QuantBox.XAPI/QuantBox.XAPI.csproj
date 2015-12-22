@@ -143,7 +143,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="XAPI.pfx" />
     <None Include="XAPI.snk" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using Ideafixxxer.Generics;
 using QuantBox.XAPI.Callback;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.EnterpriseServices;
 using System.Linq;
@@ -58,7 +59,9 @@ namespace QuantBox.XAPI.COM
         public event DelegateOnRspQryOrder OnRspQryOrder;
         public event DelegateOnRspQryTrade OnRspQryTrade;
 
-        private XApi api;
+        private readonly ConcurrentQueue<QueueData> MessageQueue;
+
+        private readonly XApi api;
         private ServerInfoField _Server;
         private UserInfoField _User;
         private OrderField _Order;
@@ -124,6 +127,8 @@ namespace QuantBox.XAPI.COM
 
         public XApiCom()
         {
+            MessageQueue = new ConcurrentQueue<QueueData>();
+
             api = new XApi();
 
             api.OnConnectionStatus = OnConnectionStatus_callback;
@@ -150,6 +155,10 @@ namespace QuantBox.XAPI.COM
             //base.OnRspQryHistoricalBars = OnRspQryHistoricalBars_callback;
 
             //base.OnRspQryInvestor = OnRspQryInvestor_callback;
+
+            InitializeComponent();
+
+            
         }
 
         public void SetLibPath(string LibPath)
@@ -281,11 +290,18 @@ namespace QuantBox.XAPI.COM
             api.ReqQuery(type, ref _Query);
         }
 
+        public QueueData TryDequeue()
+        {
+            QueueData qd;
+            if (MessageQueue.TryDequeue(out qd))
+            {
+                return qd;
+            }
+            return null;
+        }
+
         private void OnConnectionStatus_callback(object sender, QuantBox.ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
         {
-            if (null == OnConnectionStatus)
-                return;
-
             RspUserLoginClass cls = null;
 
             if (size1 > 0)
@@ -304,15 +320,27 @@ namespace QuantBox.XAPI.COM
                 cls.Text = field.Text();
             }
 
-            //a.Invoke(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
-            OnConnectionStatus(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
+            if (null == OnConnectionStatus)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnConnectionStatus;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnConnectionStatus);
+                qd.Sender = this;
+                qd.Data1 = status;
+                qd.Data2 = Enum<QuantBox.ConnectionStatus>.ToString(status);
+                qd.Data3 = cls;
+                qd.Data4 = size1;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnConnectionStatus(this, (int)status, Enum<QuantBox.ConnectionStatus>.ToString(status), ref cls, size1);
+            }
         }
 
         private void OnRtnError_callback(object sender, [In] ref ErrorField error)
         {
-            if (null == OnRtnError)
-                return;
-
             ErrorClass cls = null;
 
             cls = new ErrorClass();
@@ -323,14 +351,24 @@ namespace QuantBox.XAPI.COM
             cls.Text = field.Text();
             cls.Source = field.Source;
 
-            OnRtnError(this, ref cls);
+            if (null == OnRtnError)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRtnError;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRtnError);
+                qd.Sender = this;
+                qd.Data1 = cls;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRtnError(this, ref cls);
+            }
         }
 
         private void OnLog_callback(object sender, [In] ref LogField log)
         {
-            if (null == OnLog)
-                return;
-
             LogClass cls = null;
 
             cls = new LogClass();
@@ -340,14 +378,24 @@ namespace QuantBox.XAPI.COM
             cls.Level_String = Enum<QuantBox.LogLevel>.ToString(field.Level);
             cls.Message = field.Message();
 
-            OnLog(this, ref cls);
+            if (null == OnLog)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnLog;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnLog);
+                qd.Sender = this;
+                qd.Data1 = cls;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnLog(this, ref cls);
+            }
         }
 
         private void OnRtnDepthMarketData_callback(object sender, ref QuantBox.XAPI.DepthMarketDataNClass marketData)
         {
-            if (null == OnRtnDepthMarketData)
-                return;
-
             DepthMarketDataNClass cls = new DepthMarketDataNClass();
             QuantBox.XAPI.DepthMarketDataNClass field = marketData;
 
@@ -379,14 +427,24 @@ namespace QuantBox.XAPI.COM
             //cls.Bids = marketData.TradingDay;
             //cls.TradingDay = marketData.TradingDay;
 
-            OnRtnDepthMarketData(this, ref cls);
+            if (null == OnRtnDepthMarketData)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRtnDepthMarketData;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRtnDepthMarketData);
+                qd.Sender = this;
+                qd.Data1 = cls;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRtnDepthMarketData(this, ref cls);
+            }
         }
 
         private void OnRtnOrder_callback(object sender, ref OrderField order)
         {
-            if (null == OnRtnOrder)
-                return;
-
             OrderField field = order;
 
             OrderClass cls = new OrderClass();
@@ -428,7 +486,20 @@ namespace QuantBox.XAPI.COM
             cls.ReserveInt32 = field.ReserveInt32;
             cls.ReserveChar64 = field.ReserveChar64;
 
-            OnRtnOrder(this, ref cls);
+            if (null == OnRtnOrder)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRtnOrder;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRtnOrder);
+                qd.Sender = this;
+                qd.Data1 = cls;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRtnOrder(this, ref cls);
+            }
         }
 
         private void OnRtnTrade_callback(object sender, ref TradeField trade)
@@ -461,7 +532,20 @@ namespace QuantBox.XAPI.COM
             cls.ReserveInt32 = field.ReserveInt32;
             cls.ReserveChar64 = field.ReserveChar64;
 
-            OnRtnTrade(this, ref cls);
+            if (null == OnRtnTrade)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRtnTrade;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRtnTrade);
+                qd.Sender = this;
+                qd.Data1 = cls;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRtnTrade(this, ref cls);
+            }
         }
 
         private void OnRspQryInstrument_callback(object sender, ref InstrumentField instrument, int size1, bool bIsLast)
@@ -499,7 +583,22 @@ namespace QuantBox.XAPI.COM
             cls.InstLifePhase = (int)field.InstLifePhase;
             cls.InstLifePhase_String = Enum<QuantBox.InstLifePhaseType>.ToString(field.InstLifePhase);
 
-            OnRspQryInstrument(this, ref cls, size1, bIsLast);
+            if (null == OnRspQryInstrument)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRspQryInstrument;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRspQryInstrument);
+                qd.Sender = this;
+                qd.Data1 = cls;
+                qd.Data2 = size1;
+                qd.Data3 = bIsLast;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRspQryInstrument(this, ref cls, size1, bIsLast);
+            }
         }
 
         private void OnRspQryInvestorPosition_callback(object sender, ref PositionField position, int size1, bool bIsLast)
@@ -534,7 +633,22 @@ namespace QuantBox.XAPI.COM
             cls.TodayPRPosition = field.TodayPRPosition;
             cls.TodayPRFrozen = field.TodayPRFrozen;
 
-            OnRspQryInvestorPosition(this, ref cls, size1, bIsLast);
+            if (null == OnRspQryInvestorPosition)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRspQryInvestorPosition;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRspQryInvestorPosition);
+                qd.Sender = this;
+                qd.Data1 = cls;
+                qd.Data2 = size1;
+                qd.Data3 = bIsLast;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRspQryInvestorPosition(this, ref cls, size1, bIsLast);
+            }
         }
 
         private void OnRspQryTradingAccount_callback(object sender, ref AccountField account, int size1, bool bIsLast)
@@ -567,7 +681,22 @@ namespace QuantBox.XAPI.COM
             cls.Commission = field.Commission;
             cls.CashIn = field.CashIn;
 
-            OnRspQryTradingAccount(this, ref cls, size1, bIsLast);
+            if (null == OnRspQryTradingAccount)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRspQryTradingAccount;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRspQryTradingAccount);
+                qd.Sender = this;
+                qd.Data1 = cls;
+                qd.Data2 = size1;
+                qd.Data3 = bIsLast;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRspQryTradingAccount(this, ref cls, size1, bIsLast);
+            }
         }
 
         private void OnRspQryOrder_callback(object sender, ref OrderField order, int size1, bool bIsLast)
@@ -621,7 +750,22 @@ namespace QuantBox.XAPI.COM
                 cls.ReserveChar64 = field.ReserveChar64;
             }
 
-            OnRspQryOrder(this, ref cls, size1, bIsLast);
+            if (null == OnRspQryOrder)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRspQryOrder;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRspQryOrder);
+                qd.Sender = this;
+                qd.Data1 = cls;
+                qd.Data2 = size1;
+                qd.Data3 = bIsLast;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRspQryOrder(this, ref cls, size1, bIsLast);
+            }
         }
 
         private void OnRspQryTrade_callback(object sender, ref TradeField trade, int size1, bool bIsLast)
@@ -659,7 +803,22 @@ namespace QuantBox.XAPI.COM
                 cls.ReserveChar64 = field.ReserveChar64;
             }
 
-            OnRspQryTrade(this, ref cls, size1, bIsLast);
+            if (null == OnRspQryTrade)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponeType.OnRspQryTrade;
+                qd.Type_String = Enum<QuantBox.XAPI.ResponeType>.ToString(ResponeType.OnRspQryTrade);
+                qd.Sender = this;
+                qd.Data1 = cls;
+                qd.Data2 = size1;
+                qd.Data3 = bIsLast;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRspQryTrade(this, ref cls, size1, bIsLast);
+            }
         }
 
         private void InitializeComponent()

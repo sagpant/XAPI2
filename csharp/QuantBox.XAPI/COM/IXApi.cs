@@ -45,5 +45,7 @@ namespace QuantBox.XAPI.COM
         void SetQuery(string key, object value);
         [DispId(42)]
         void ReqQuery(XAPI.QueryType type);
+        [DispId(50)]
+        QueueData TryDequeue();
     }
 }
