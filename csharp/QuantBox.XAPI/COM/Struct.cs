@@ -965,4 +965,17 @@ namespace QuantBox.XAPI.COM
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 9)]
         public string ExchangeID;
     }
+
+    [ComVisible(true)]
+    [Guid("42AB7905-CC91-480A-AEF0-FF8795872FF4")]
+    public class QueueData
+    {
+        public int Type;
+        public string Type_String;
+        public object Sender;
+        public object Data1;
+        public object Data2;
+        public object Data3;
+        public object Data4;
+    }
 }

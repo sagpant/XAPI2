@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <vector>
 
 #include "TypeConvert.h"
 #include "../include/Tdx/tdx_enum.h"

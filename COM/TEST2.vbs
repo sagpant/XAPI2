@@ -1,4 +1,4 @@
-'Run32()
+Run32()
 
 MsgBox "点我开始"
 
@@ -9,9 +9,20 @@ XApi.SetServerInfo "Address","tcp://180.168.146.187:10010"
 XApi.SetServerInfo "BrokerID","9999"
 XApi.SetUserInfo "UserID","037505"
 XApi.SetUserInfo "Password","123456"
-XApi.TEST = GetRef("XApi_OnConnectionStatus")
-'XApi.OnConnectionStatus = GetRef("XApi_OnConnectionStatus")
 XApi.Connect
+
+Dim data
+For counter = 1 to 100
+Set data = XApi.TryDequeue
+IF data Is Nothing Then
+    WScript.Sleep 100'1000毫秒
+Else
+    Select Case data.Type_String
+    
+    Case "OnConnectionStatus" XApi_OnConnectionStatus data.Sender,data.Data1,data.Data2,data.Data3,data.Data4
+    End Select
+End If
+Next
 
 MsgBox "不要点我，等着反馈"
 
