@@ -105,6 +105,8 @@ void CSingleUser::ReqQryTrade()
 
 int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	ReqQueryData_STRUCT* pQuery = (ReqQueryData_STRUCT*)pRespone->pContent;
+
 	if (pRespone->pErr)
 	{
 		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
@@ -118,6 +120,8 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 
 	WTLB_STRUCT** ppRS = nullptr;
 	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+
+
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewOrderList.clear();
@@ -224,6 +228,18 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		}
 
 		++i;
+	}
+
+	if (pQuery->bAll)
+	{
+		int i = 0;
+		int count = m_NewOrderList.size();
+		for (list<OrderField*>::iterator it = m_NewOrderList.begin(); it != m_NewOrderList.end(); ++it)
+		{
+			OrderField* pField = *it;
+			m_msgQueue->Input_Copy(ResponeType::OnRspQryOrder, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
+			++i;
+		}
 	}
 
 	// 将老数据清理，防止内存泄漏
@@ -343,6 +359,8 @@ void TradeList2TradeMap(list<TradeField*> &tradeList, unordered_map<string, Trad
 
 int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
+	ReqQueryData_STRUCT* pQuery = (ReqQueryData_STRUCT*)pRespone->pContent;
+
 	if (pRespone->pErr)
 	{
 		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
@@ -479,6 +497,18 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		// 普通的处理方法
 		CompareTradeListAndEmit(m_OldTradeList, m_NewTradeList);
 		m_LastIsMerge = false;
+	}
+
+	if (pQuery->bAll)
+	{
+		int i = 0;
+		int count = m_NewTradeList.size();
+		for (list<TradeField*>::iterator it = m_NewTradeList.begin(); it != m_NewTradeList.end(); ++it)
+		{
+			TradeField* pField = *it;
+			m_msgQueue->Input_Copy(ResponeType::OnRspQryTrade, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(TradeField), nullptr, 0, nullptr, 0);
+			++i;
+		}
 	}
 
 	// 将老数据清理，防止内存泄漏

@@ -95,8 +95,8 @@ public:
 	void ReqQuery(QueryType type, ReqQueryField* pQuery);
 	void ReqQuery(ReqQueryData_STRUCT* pQuery);
 
-	void ReqQryOrder();
-	void ReqQryTrade();
+	//void ReqQryOrder();
+	//void ReqQryTrade();
 
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
