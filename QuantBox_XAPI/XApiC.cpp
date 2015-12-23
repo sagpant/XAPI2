@@ -14,7 +14,7 @@
 #endif
 
 
-void* X_LoadLib(char* libPath)
+void* X_LoadLib(const char* libPath)
 {
 	if (libPath == nullptr)
 		return nullptr;
@@ -26,7 +26,7 @@ void* X_LoadLib(char* libPath)
 #endif
 }
 
-char* X_GetLastError()
+const char* X_GetLastError()
 {
 #if defined WINDOWS || WIN32
     char szBuf[256] = {0};
@@ -39,7 +39,7 @@ char* X_GetLastError()
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPSTR)&lpMsgBuf,
 		0, NULL);
-    return (char*)lpMsgBuf;
+	return (const char*)lpMsgBuf;
 #else
     extern int errno;
     errno = 0;
@@ -47,7 +47,7 @@ char* X_GetLastError()
 #endif
 }
 
-void* X_GetFunction(void* lib,char* ProcName)
+void* X_GetFunction(void* lib, const char* ProcName)
 {
 	if (lib == nullptr)
 		return nullptr;
@@ -75,25 +75,25 @@ ApiType X_GetApiType(void* pFun)
 	if (pFun == nullptr)
 		return ApiType::ApiType_Nono;
 
-    void* p = ((fnOnRespone)pFun)(RequestType::GetApiType, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+    void* p = ((fnOnRespone)pFun)(RequestType::RequestType_GetApiType, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 	return (ApiType)(char)(long long)(p);
 }
 
-char* X_GetApiVersion(void* pFun)
+const char* X_GetApiVersion(void* pFun)
 {
 	if (pFun == nullptr)
 		return nullptr;
 
-	return (char*)((fnOnRespone)pFun)(RequestType::GetApiVersion, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	return (const char*)((fnOnRespone)pFun)(RequestType::RequestType_GetApiVersion, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 }
 
-char* X_GetApiName(void* pFun)
+const char* X_GetApiName(void* pFun)
 {
 	if (pFun == nullptr)
 		return nullptr;
 
-	return (char*)((fnOnRespone)pFun)(RequestType::GetApiName, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	return (const char*)((fnOnRespone)pFun)(RequestType::RequestType_GetApiName, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 }
 
 void* X_Create(void* pFun)
@@ -101,23 +101,23 @@ void* X_Create(void* pFun)
 	if (pFun == nullptr)
 		return nullptr;
 
-	return ((fnOnRespone)pFun)(RequestType::Create, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	return ((fnOnRespone)pFun)(RequestType::RequestType_Create, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 }
 
-void X_Register(void* pFun, void* pApi, void* pCallback, void* pClass)
+void X_Register(void* pFun, void* pApi, fnOnRespone pCallback, void* pClass)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::Register, pApi, nullptr, 0, 0, pCallback, 0, pClass, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_Register, pApi, nullptr, 0, 0, pCallback, 0, pClass, 0, nullptr, 0);
 }
 
-void X_Connect(void* pFun, void* pApi, char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count)
+void X_Connect(void* pFun, void* pApi, const char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::Connect, pApi, nullptr, 0, 0, pServerInfo, 0, pUserInfo, count, szPath, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_Connect, pApi, nullptr, 0, 0, pServerInfo, 0, pUserInfo, count, (void*)szPath, 0);
 }
 
 void X_Disconnect(void* pFun, void* pApi)
@@ -125,39 +125,39 @@ void X_Disconnect(void* pFun, void* pApi)
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::Disconnect, pApi, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_Disconnect, pApi, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 }
 
-void X_Subscribe(void* pFun, void* pApi, char* szInstrument, char* szExchange)
+void X_Subscribe(void* pFun, void* pApi, const char* szInstrument, const char* szExchange)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::Subscribe, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_Subscribe, pApi, nullptr, 0, 0, (void*)szInstrument, 0, (void*)szExchange, 0, nullptr, 0);
 }
 
-void X_Unsubscribe(void* pFun, void* pApi, char* szInstrument, char* szExchange)
+void X_Unsubscribe(void* pFun, void* pApi, const char* szInstrument, const char* szExchange)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::Unsubscribe, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_Unsubscribe, pApi, nullptr, 0, 0, (void*)szInstrument, 0, (void*)szExchange, 0, nullptr, 0);
 }
 
-void X_SubscribeQuote(void* pFun, void* pApi, char* szInstrument, char* szExchange)
+void X_SubscribeQuote(void* pFun, void* pApi, const char* szInstrument, const char* szExchange)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::SubscribeQuote, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_SubscribeQuote, pApi, nullptr, 0, 0, (void*)szInstrument, 0, (void*)szExchange, 0, nullptr, 0);
 }
 
-void X_UnsubscribeQuote(void* pFun, void* pApi, char* szInstrument, char* szExchange)
+void X_UnsubscribeQuote(void* pFun, void* pApi, const char* szInstrument, const char* szExchange)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::UnsubscribeQuote, pApi, nullptr, 0, 0, szInstrument, 0, szExchange, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_UnsubscribeQuote, pApi, nullptr, 0, 0, (void*)szInstrument, 0, (void*)szExchange, 0, nullptr, 0);
 }
 
 void X_ReqQuery(void* pFun, void* pApi, QueryType type, ReqQueryField* query)
@@ -168,34 +168,34 @@ void X_ReqQuery(void* pFun, void* pApi, QueryType type, ReqQueryField* query)
 	((fnOnRespone)pFun)(type, pApi, nullptr, 0, 0, query, sizeof(ReqQueryField), nullptr, 0, nullptr, 0);
 }
 
-char* X_SendOrder(void* pFun, void* pApi, OrderField* pOrder, int count, char* pOut)
+const char* X_SendOrder(void* pFun, void* pApi, OrderField* pOrder, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return nullptr;
 
-	return (char*)((fnOnRespone)pFun)(RequestType::ReqOrderInsert, pApi, nullptr, 0, 0, pOrder, count, pOut, 0, nullptr, 0);
+	return (const char*)((fnOnRespone)pFun)(RequestType::RequestType_ReqOrderInsert, pApi, nullptr, 0, 0, pOrder, count, pOut, 0, nullptr, 0);
 }
 
-char* X_CancelOrder(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut)
+const char* X_CancelOrder(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return nullptr;
 
-	return (char*)((fnOnRespone)pFun)(RequestType::ReqOrderAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
+	return (const char*)((fnOnRespone)pFun)(RequestType::RequestType_ReqOrderAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
 }
 
-char* X_SendQuote(void* pFun, void* pApi, QuoteField* pQuote, int count, char* pOut)
+const char* X_SendQuote(void* pFun, void* pApi, QuoteField* pQuote, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return nullptr;
 
-	return (char*)((fnOnRespone)pFun)(RequestType::ReqQuoteInsert, pApi, nullptr, 0, 0, pQuote, count, pOut, 0, nullptr, 0);
+	return (const char*)((fnOnRespone)pFun)(RequestType::RequestType_ReqQuoteInsert, pApi, nullptr, 0, 0, pQuote, count, pOut, 0, nullptr, 0);
 }
 
-char* X_CancelQuote(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut)
+const char* X_CancelQuote(void* pFun, void* pApi, OrderIDType* pIn, int count, char* pOut)
 {
 	if (pFun == nullptr || pApi == nullptr)
 		return nullptr;
 
-	return (char*)((fnOnRespone)pFun)(RequestType::ReqQuoteAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
+	return (const char*)((fnOnRespone)pFun)(RequestType::RequestType_ReqQuoteAction, pApi, nullptr, 0, 0, pIn, count, pOut, 0, nullptr, 0);
 }

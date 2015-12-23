@@ -1,13 +1,13 @@
-#ifndef _API_HEADER_H_
+ï»¿#ifndef _API_HEADER_H_
 #define _API_HEADER_H_
 
-#include "../include/CrossPlatform.h"
+#include "CrossPlatform.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-	//ÓÃÓÚ·Ö¸ôÊäÈëµÄºÏÁĞ±í£¬ÓëÇ°ÖÃ»úµØÖ·ÁĞ±í£¬ËùÒÔ²»ÄÜ³öÏÖ¡°:¡±Ò»ÀàµÄ
-	#define _QUANTBOX_SEPS_ ",;"
+	//ç”¨äºåˆ†éš”è¾“å…¥çš„åˆåˆ—è¡¨ï¼Œä¸å‰ç½®æœºåœ°å€åˆ—è¡¨ï¼Œæ‰€ä»¥ä¸èƒ½å‡ºç°â€œ:â€ä¸€ç±»çš„
+	#define _QUANTBOX_SEPS_ ";"
 
 	DLL_PUBLIC void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 #ifdef __cplusplus

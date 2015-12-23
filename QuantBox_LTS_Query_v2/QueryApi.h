@@ -2,6 +2,7 @@
 
 #include "../include/LTS_v2/SecurityFtdcQueryApi.h"
 #include "../include/ApiStruct.h"
+#include "../include/QueueEnum.h"
 
 #ifdef _WIN64
 #pragma comment(lib, "../include/LTS_v2/win64/securityqueryapi.lib")

@@ -1,86 +1,86 @@
-#ifndef _QUEUE_ENUM_H_
+ï»¿#ifndef _QUEUE_ENUM_H_
 #define _QUEUE_ENUM_H_
 
-/// »ù±¾ÇëÇó
+/// åŸºæœ¬è¯·æ±‚
 enum RequestType :char
 {
-	GetApiType = 0,
-	GetApiVersion,
-	GetApiName,
+	RequestType_GetApiType = 0,
+	RequestType_GetApiVersion,
+	RequestType_GetApiName,
 
-	Create, // ´´½¨
-	Release, // Ïú»Ù
-	Register, // ×¢²á½ÓÊÕ¶ÓÁÐ»Øµ÷
-	Config,		// ÅäÖÃ²ÎÊý
+	RequestType_Create, // åˆ›å»º
+	RequestType_Release, // é”€æ¯
+	RequestType_Register, // æ³¨å†ŒæŽ¥æ”¶é˜Ÿåˆ—å›žè°ƒ
+	RequestType_Config,		// é…ç½®å‚æ•°
 
-	Connect, // ¿ªÊ¼/Á¬½Ó
-	Disconnect, // Í£Ö¹/¶Ï¿ª
+	RequestType_Connect, // å¼€å§‹/è¿žæŽ¥
+	RequestType_Disconnect, // åœæ­¢/æ–­å¼€
 
-	Clear, // ÇåÀí
-	Process, // ´¦Àí
+	RequestType_Clear, // æ¸…ç†
+	RequestType_Process, // å¤„ç†
 
-	Subscribe,	// ¶©ÔÄ
-	Unsubscribe, // È¡Ïû¶©ÔÄ
+	RequestType_Subscribe,	// è®¢é˜…
+	RequestType_Unsubscribe, // å–æ¶ˆè®¢é˜…
 
-	SubscribeQuote, // ¶©ÔÄÑ¯¼Û
-	UnsubscribeQuote, // È¡Ïû¶©ÔÄÑ¯¼Û
+	RequestType_SubscribeQuote, // è®¢é˜…è¯¢ä»·
+	RequestType_UnsubscribeQuote, // å–æ¶ˆè®¢é˜…è¯¢ä»·
 
-	ReqOrderInsert,
-	ReqQuoteInsert,
-	ReqOrderAction,
-	ReqQuoteAction,
+	RequestType_ReqOrderInsert,
+	RequestType_ReqQuoteInsert,
+	RequestType_ReqOrderAction,
+	RequestType_ReqQuoteAction,
 };
 
-///²éÑ¯
+///æŸ¥è¯¢
 enum QueryType :char
 {
-	ReqQryInstrument = 32,
-	ReqQryTradingAccount,
-	ReqQryInvestorPosition,
+	QueryType_ReqQryInstrument = 32,
+	QueryType_ReqQryTradingAccount,
+	QueryType_ReqQryInvestorPosition,
 
-	ReqQryOrder,
-	ReqQryTrade,
-	ReqQryQuote,
+	QueryType_ReqQryOrder,
+	QueryType_ReqQryTrade,
+	QueryType_ReqQryQuote,
 
-	ReqQryInstrumentCommissionRate,
-	ReqQryInstrumentMarginRate,
-	ReqQrySettlementInfo,
-	ReqQryInvestor,
+	QueryType_ReqQryInstrumentCommissionRate,
+	QueryType_ReqQryInstrumentMarginRate,
+	QueryType_ReqQrySettlementInfo,
+	QueryType_ReqQryInvestor,
 
-	ReqQryHistoricalTicks,
-	ReqQryHistoricalBars,
+	QueryType_ReqQryHistoricalTicks,
+	QueryType_ReqQryHistoricalBars,
 };
 
-///ÏìÓ¦
+///å“åº”
 enum ResponeType :char
 {
-	OnConnectionStatus = 64,
-	OnRtnError,
-	OnLog,
+	ResponeType_OnConnectionStatus = 64,
+	ResponeType_OnRtnError,
+	ResponeType_OnLog,
 
-	OnRtnDepthMarketData,
-	OnRspQryInstrument,
-	OnRspQryTradingAccount,
-	OnRspQryInvestorPosition,
-	OnRspQrySettlementInfo,
+	ResponeType_OnRtnDepthMarketData,
+	ResponeType_OnRspQryInstrument,
+	ResponeType_OnRspQryTradingAccount,
+	ResponeType_OnRspQryInvestorPosition,
+	ResponeType_OnRspQrySettlementInfo,
 
-	OnRspQryOrder,
-	OnRspQryTrade,
-	OnRspQryQuote,
+	ResponeType_OnRspQryOrder,
+	ResponeType_OnRspQryTrade,
+	ResponeType_OnRspQryQuote,
 
-	OnRtnOrder,
-	OnRtnTrade,
-	OnRtnQuote,
+	ResponeType_OnRtnOrder,
+	ResponeType_OnRtnTrade,
+	ResponeType_OnRtnQuote,
 
-	OnRtnQuoteRequest,
+	ResponeType_OnRtnQuoteRequest,
 
-	OnRspQryHistoricalTicks,
-	OnRspQryHistoricalBars,
-	OnRspQryInvestor,
+	ResponeType_OnRspQryHistoricalTicks,
+	ResponeType_OnRspQryHistoricalBars,
+	ResponeType_OnRspQryInvestor,
 
-	OnFilterSubscribe,
+	ResponeType_OnFilterSubscribe,
 };
 
-// >=100±íÊ¾API×Ô¶¨Òå
+// >=100è¡¨ç¤ºAPIè‡ªå®šä¹‰
 
 #endif

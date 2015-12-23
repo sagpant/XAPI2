@@ -7,7 +7,7 @@ CXApi::CXApi()
 {
 }
 
-CXApi* CXApi::CreateApi(char* libPath)
+CXApi* CXApi::CreateApi(const char* libPath)
 {
 	return new CXApiImpl(libPath);
 }
