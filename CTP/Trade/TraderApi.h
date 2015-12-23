@@ -1,7 +1,8 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../../include/ApiStruct.h"
-// ÓÉÓÚÕâ¸öInclude.hĞèÒªÊ¹ÓÃÃ¿¸öÏîÄ¿×Ô¼ºµÄÎÄ¼ş£¬ËùÒÔĞèÒªÔÚVC++ Directories->Include DirectoriesÖĞÌí¼ÓÒ»¸ö"./"
+#include "../../include/QueueEnum.h"
+// ç”±äºè¿™ä¸ªInclude.héœ€è¦ä½¿ç”¨æ¯ä¸ªé¡¹ç›®è‡ªå·±çš„æ–‡ä»¶ï¼Œæ‰€ä»¥éœ€è¦åœ¨VC++ Directories->Include Directoriesä¸­æ·»åŠ ä¸€ä¸ª"./"
 #include "Include.h"
 
 
@@ -21,7 +22,7 @@ class CMsgQueue;
 class CTraderApi :
 	public CThostFtdcTraderSpi
 {
-	//ÇëÇóÊı¾İ°üÀàĞÍ
+	//è¯·æ±‚æ•°æ®åŒ…ç±»å‹
 	enum RequestType
 	{
 		E_Init = 100,
@@ -132,82 +133,82 @@ private:
 
 	void OnTrade(TradeField *pTrade);
 
-	//¼ì²éÊÇ·ñ³ö´í
-	bool IsErrorRspInfo(const char* szSource, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//ÏòÏûÏ¢¶ÓÁĞÊä³öĞÅÏ¢
-	bool IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo);//²»Êä³öĞÅÏ¢
+	//æ£€æŸ¥æ˜¯å¦å‡ºé”™
+	bool IsErrorRspInfo(const char* szSource, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//å‘æ¶ˆæ¯é˜Ÿåˆ—è¾“å‡ºä¿¡æ¯
+	bool IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo);//ä¸è¾“å‡ºä¿¡æ¯
 
-	//Á¬½Ó
+	//è¿æ¥
 	virtual void OnFrontConnected();
 	virtual void OnFrontDisconnected(int nReason);
 
-	//ÈÏÖ¤
+	//è®¤è¯
 	virtual void OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthenticateField, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspQryInvestor(CThostFtdcInvestorField *pInvestor, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//ÏÂµ¥
+	//ä¸‹å•
 	virtual void OnRspOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnErrRtnOrderInsert(CThostFtdcInputOrderField *pInputOrder, CThostFtdcRspInfoField *pRspInfo);
 
-	//³·µ¥
+	//æ’¤å•
 	virtual void OnRspOrderAction(CThostFtdcInputOrderActionField *pInputOrderAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnErrRtnOrderAction(CThostFtdcOrderActionField *pOrderAction, CThostFtdcRspInfoField *pRspInfo);
 
-	//±¨µ¥»Ø±¨
+	//æŠ¥å•å›æŠ¥
 	virtual void OnRspQryOrder(CThostFtdcOrderField *pOrder, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnOrder(CThostFtdcOrderField *pOrder);
 
-	//³É½»»Ø±¨
+	//æˆäº¤å›æŠ¥
 	virtual void OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnTrade(CThostFtdcTradeField *pTrade);
 
-	//±¨¼ÛÂ¼Èë
+	//æŠ¥ä»·å½•å…¥
 	virtual void OnRspQuoteInsert(CThostFtdcInputQuoteField *pInputQuote, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnErrRtnQuoteInsert(CThostFtdcInputQuoteField *pInputQuote, CThostFtdcRspInfoField *pRspInfo);
 	virtual void OnRspQryQuote(CThostFtdcQuoteField *pQuote, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnQuote(CThostFtdcQuoteField *pQuote);
 
-	//±¨¼Û³·µ¥
+	//æŠ¥ä»·æ’¤å•
 	virtual void OnRspQuoteAction(CThostFtdcInputQuoteActionField *pInputQuoteAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnErrRtnQuoteAction(CThostFtdcQuoteActionField *pQuoteAction, CThostFtdcRspInfoField *pRspInfo);
 
-	//²ÖÎ»
+	//ä»“ä½
 	virtual void OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInvestorPosition, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//×Ê½ğ
+	//èµ„é‡‘
 	virtual void OnRspQryTradingAccount(CThostFtdcTradingAccountField *pTradingAccount, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//ºÏÔ¼¡¢ÊÖĞø·Ñ
+	//åˆçº¦ã€æ‰‹ç»­è´¹
 	virtual void OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	//virtual void OnRspQryInstrumentMarginRate(CThostFtdcInstrumentMarginRateField *pInstrumentMarginRate, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	//virtual void OnRspQryInstrumentCommissionRate(CThostFtdcInstrumentCommissionRateField *pInstrumentCommissionRate, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//²éÑ¯ĞĞÇéÏìÓ¦
+	//æŸ¥è¯¢è¡Œæƒ…å“åº”
 	//virtual void OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//ÇëÇó²éÑ¯Í¶×ÊÕß½áËã½á¹ûÏìÓ¦
+	//è¯·æ±‚æŸ¥è¯¢æŠ•èµ„è€…ç»“ç®—ç»“æœå“åº”
 	virtual void OnRspQrySettlementInfo(CThostFtdcSettlementInfoField *pSettlementInfo, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//ÆäËü
+	//å…¶å®ƒ
 	virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrumentStatus);
 
 private:
-	atomic<int>					m_lRequestID;			//ÇëÇóID,µÃ±£³Ö×ÔÔö
+	atomic<int>					m_lRequestID;			//è¯·æ±‚ID,å¾—ä¿æŒè‡ªå¢
 
-	CThostFtdcRspUserLoginField m_RspUserLogin;			//·µ»ØµÄµÇÂ¼³É¹¦ÏìÓ¦£¬Ä¿Ç°ÀûÓÃ´ËÄÚ³ÉÔ±½øĞĞ±¨µ¥ËùÊôÇø·Ö
+	CThostFtdcRspUserLoginField m_RspUserLogin;			//è¿”å›çš„ç™»å½•æˆåŠŸå“åº”ï¼Œç›®å‰åˆ©ç”¨æ­¤å†…æˆå‘˜è¿›è¡ŒæŠ¥å•æ‰€å±åŒºåˆ†
 	CThostFtdcInvestorField		m_Investor;
 
 	OrderIDType					m_orderInsert_Id;
 	OrderIDType					m_orderAction_Id;
 
 	mutex						m_csOrderRef;
-	int							m_nMaxOrderRef;			//±¨µ¥ÒıÓÃ£¬ÓÃÓÚÇø·Ö±¨µ¥£¬±£³Ö×ÔÔö
+	int							m_nMaxOrderRef;			//æŠ¥å•å¼•ç”¨ï¼Œç”¨äºåŒºåˆ†æŠ¥å•ï¼Œä¿æŒè‡ªå¢
 
-	CThostFtdcTraderApi*		m_pApi;					//½»Ò×API
+	CThostFtdcTraderApi*		m_pApi;					//äº¤æ˜“API
 	
-	string						m_szPath;				//Éú³ÉÅäÖÃÎÄ¼şµÄÂ·¾¶
+	string						m_szPath;				//ç”Ÿæˆé…ç½®æ–‡ä»¶çš„è·¯å¾„
 	ServerInfoField				m_ServerInfo;
 	UserInfoField				m_UserInfo;
 	int							m_nSleep;
@@ -222,7 +223,7 @@ private:
 
 	unordered_map<string, PositionField*>			m_id_platform_position;
 
-	CMsgQueue*					m_msgQueue;				//ÏûÏ¢¶ÓÁĞÖ¸Õë
+	CMsgQueue*					m_msgQueue;				//æ¶ˆæ¯é˜Ÿåˆ—æŒ‡é’ˆ
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 };

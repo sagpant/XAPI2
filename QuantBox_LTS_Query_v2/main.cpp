@@ -13,13 +13,13 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	RequestType rt = (RequestType)type;
 	switch (rt)
 	{
-	case GetApiType:
+	case RequestType_GetApiType:
 		return (void*)(ApiType::ApiType_Query | ApiType::ApiType_Instrument);
-	case GetApiVersion:
+	case RequestType_GetApiVersion:
 		return (void*)"0.1.0.20151116";
-	case GetApiName:
+	case RequestType_GetApiName:
 		return (void*)"LTS2";
-	case Create:
+	case RequestType_Create:
 		return new CQueryApi();
 	default:
 		break;
@@ -34,22 +34,22 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 
 	switch (rt)
 	{
-	case Release:
+	case RequestType_Release:
 		delete pApi;
 		return nullptr;
-	case Register:
+	case RequestType_Register:
 		pApi->Register(ptr1, ptr2);
 		break;
-	case Connect:
+	case RequestType_Connect:
 		pApi->Connect((const char*)ptr3, (ServerInfoField*)ptr1, (UserInfoField*)ptr2);
 		break;
-	case Disconnect:
+	case RequestType_Disconnect:
 		pApi->Disconnect();
 		break;
-	case ReqQryInstrument:
-	case ReqQryInvestorPosition:
-	case ReqQryTradingAccount:
-	case ReqQrySettlementInfo:
+	case QueryType_ReqQryInstrument:
+	case QueryType_ReqQryInvestorPosition:
+	case QueryType_ReqQryTradingAccount:
+	case QueryType_ReqQrySettlementInfo:
 		pApi->ReqQuery((QueryType)type, (ReqQueryField*)ptr1);
 		break;
 	default:

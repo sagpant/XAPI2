@@ -3,7 +3,6 @@
 
 #include "ApiDataType.h"
 #include "ApiEnum.h"
-#include "QueueEnum.h"
 
 #pragma pack(push,1)
 

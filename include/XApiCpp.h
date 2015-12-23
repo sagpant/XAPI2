@@ -5,9 +5,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include "../include/CrossPlatform.h"
+#include "CrossPlatform.h"
 
-#include "../include/ApiStruct.h"
+#include "ApiStruct.h"
+#include "QueueEnum.h"
 
 class CXApi;
 
@@ -38,29 +39,29 @@ public:
 class DLL_PUBLIC CXApi
 {
 public:
-	static CXApi* CreateApi(char* libPath);
+	static CXApi* CreateApi(const char* libPath);
 	virtual bool Init() = 0;
-	virtual char* GetLastError() = 0;
+	virtual const char* GetLastError() = 0;
 
 	virtual ApiType GetApiType() = 0;
-	virtual char* GetApiVersion() = 0;
-	virtual char* GetApiName() = 0;
+	virtual const char* GetApiVersion() = 0;
+	virtual const char* GetApiName() = 0;
 
 	virtual void RegisterSpi(CXSpi *pSpi) = 0;
 
-	virtual void Connect(char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count) = 0;
+	virtual void Connect(const char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count) = 0;
 	virtual void Disconnect() = 0;
 
-	virtual void Subscribe(char* szInstrument, char* szExchange) = 0;
-	virtual void Unsubscribe(char* szInstrument, char* szExchange) = 0;
+	virtual void Subscribe(const char* szInstrument, const char* szExchange) = 0;
+	virtual void Unsubscribe(const char* szInstrument, const char* szExchange) = 0;
 
 	virtual void ReqQuery(QueryType type, ReqQueryField* query) = 0;
 
-	virtual char* SendOrder(OrderField* pOrder, int count, char* pOut) = 0;
-	virtual char* CancelOrder(OrderIDType* pIn, int count, char* pOut) = 0;
+	virtual const char* SendOrder(OrderField* pOrder, int count, char* pOut) = 0;
+	virtual const char* CancelOrder(OrderIDType* pIn, int count, char* pOut) = 0;
 
-	virtual char* SendQuote(QuoteField* pQuote, int count, char* pOut) = 0;
-	virtual char* CancelQuote(OrderIDType* pIn, int count, char* pOut) = 0;
+	virtual const char* SendQuote(QuoteField* pQuote, int count, char* pOut) = 0;
+	virtual const char* CancelQuote(OrderIDType* pIn, int count, char* pOut) = 0;
 protected:
 	CXApi();
 	~CXApi(){};

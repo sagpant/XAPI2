@@ -1,7 +1,7 @@
 #ifndef _QUEUE_HEADER_H_
 #define _QUEUE_HEADER_H_
 
-#include "../include/CrossPlatform.h"
+//#include "CrossPlatform.h"
 
 #ifdef __cplusplus
 extern "C" {

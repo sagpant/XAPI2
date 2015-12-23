@@ -23,53 +23,53 @@ void* CXApiImpl::_OnRespone(char type, void* pApi1, void* pApi2, double double1,
 	ResponeType rt = (ResponeType)type;
 	switch (rt)
 	{
-	case OnConnectionStatus:
+	case ResponeType_OnConnectionStatus:
 		m_pSpi->OnConnectionStatus(this, (ConnectionStatus)(char)double1, (RspUserLoginField*)ptr1, size1);
 		break;
-	case OnRtnError:
+	case ResponeType_OnRtnError:
 		m_pSpi->OnRtnError(this, (ErrorField*)ptr1);
 		break;
-	case OnRtnDepthMarketData:
+	case ResponeType_OnRtnDepthMarketData:
 		m_pSpi->OnRtnDepthMarketDataN(this, (DepthMarketDataNField*)ptr1);
 		break;
-	case OnRspQryInstrument:
+	case ResponeType_OnRspQryInstrument:
 		m_pSpi->OnRspQryInstrument(this, (InstrumentField*)ptr1, size1, double1 != 0);
 		break;
-	case OnRspQryTradingAccount:
+	case ResponeType_OnRspQryTradingAccount:
 		m_pSpi->OnRspQryTradingAccount(this, (AccountField*)ptr1, size1, double1 != 0);
 		break;
-	case OnRspQryInvestorPosition:
+	case ResponeType_OnRspQryInvestorPosition:
 		m_pSpi->OnRspQryInvestorPosition(this, (PositionField*)ptr1, size1, double1 != 0);
 		break;
-	case OnRspQrySettlementInfo:
+	case ResponeType_OnRspQrySettlementInfo:
 		m_pSpi->OnRspQrySettlementInfo(this, (SettlementInfoField*)ptr1, size1, double1 != 0);
 		break;
 
-	case OnRtnOrder:
+	case ResponeType_OnRtnOrder:
 		m_pSpi->OnRtnOrder(this, (OrderField*)ptr1);
 		break;
-	case OnRtnTrade:
+	case ResponeType_OnRtnTrade:
 		m_pSpi->OnRtnTrade(this, (TradeField*)ptr1);
 		break;
 
-	case OnRtnQuote:
+	case ResponeType_OnRtnQuote:
 		m_pSpi->OnRtnQuote(this, (QuoteField*)ptr1);
 		break;
-	case OnRtnQuoteRequest:
+	case ResponeType_OnRtnQuoteRequest:
 		m_pSpi->OnRtnQuoteRequest(this, (QuoteRequestField*)ptr1);
 		break;
 
-	case OnRspQryHistoricalTicks:
+	case ResponeType_OnRspQryHistoricalTicks:
 		m_pSpi->OnRspQryHistoricalTicks(this, (TickField*)ptr1, size1, (HistoricalDataRequestField*)ptr2, size2, double1 != 0);
 		break;
-	case OnRspQryHistoricalBars:
+	case ResponeType_OnRspQryHistoricalBars:
 		m_pSpi->OnRspQryHistoricalBars(this, (BarField*)ptr1, size1, (HistoricalDataRequestField*)ptr2, size2, double1 != 0);
 		break;
 
-	case OnRspQryInvestor:
+	case ResponeType_OnRspQryInvestor:
 		m_pSpi->OnRspQryInvestor(this, (InvestorField*)ptr1, size1, double1 != 0);
 		break;
-	case OnFilterSubscribe:
+	case ResponeType_OnFilterSubscribe:
 		return (void*)m_pSpi->OnFilterSubscribe(this, (ExchangeType)(char)double1, (int)size1, (int)size1, (int)size3, (char*)ptr1);
 	default:
 		break;
@@ -77,7 +77,7 @@ void* CXApiImpl::_OnRespone(char type, void* pApi1, void* pApi2, double double1,
 	return nullptr;
 }
 
-CXApiImpl::CXApiImpl(char* libPath) :CXApi()
+CXApiImpl::CXApiImpl(const char* libPath) :CXApi()
 {
 	m_pLib = nullptr;
 	m_pFun = nullptr;
@@ -98,12 +98,12 @@ ApiType CXApiImpl::GetApiType()
 	return X_GetApiType(m_pFun);
 }
 
-char* CXApiImpl::GetApiVersion()
+const char* CXApiImpl::GetApiVersion()
 {
 	return X_GetApiVersion(m_pFun);
 }
 
-char* CXApiImpl::GetApiName()
+const char* CXApiImpl::GetApiName()
 {
 	return X_GetApiName(m_pFun);
 }
@@ -127,15 +127,15 @@ bool CXApiImpl::Init()
 	return false;
 }
 
-char* CXApiImpl::GetLastError()
+const char* CXApiImpl::GetLastError()
 {
 	return X_GetLastError();
 }
 
-void CXApiImpl::Connect(char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count)
+void CXApiImpl::Connect(const char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count)
 {
 	m_pApi = X_Create(m_pFun);
-	X_Register(m_pFun, m_pApi, (void*)OnRespone, this);
+	X_Register(m_pFun, m_pApi, (fnOnRespone)OnRespone, this);
 	X_Connect(m_pFun, m_pApi, szPath, pServerInfo, pUserInfo, count);
 }
 
@@ -150,12 +150,12 @@ void CXApiImpl::Disconnect()
 	m_pSpi = nullptr;
 }
 
-void CXApiImpl::Subscribe(char* szInstrument, char* szExchange)
+void CXApiImpl::Subscribe(const char* szInstrument, const char* szExchange)
 {
 	X_Subscribe(m_pFun, m_pApi, szInstrument, szExchange);
 }
 
-void CXApiImpl::Unsubscribe(char* szInstrument, char* szExchange)
+void CXApiImpl::Unsubscribe(const char* szInstrument, const char* szExchange)
 {
 	X_Unsubscribe(m_pFun, m_pApi, szInstrument, szExchange);
 }
@@ -165,22 +165,22 @@ void CXApiImpl::ReqQuery(QueryType type, ReqQueryField* query)
 	X_ReqQuery(m_pFun, m_pApi, type, query);
 }
 
-char* CXApiImpl::SendOrder(OrderField* pOrder, int count, char* pOut)
+const char* CXApiImpl::SendOrder(OrderField* pOrder, int count, char* pOut)
 {
 	return X_SendOrder(m_pFun, m_pApi, pOrder, count, pOut);
 }
 
-char* CXApiImpl::CancelOrder(OrderIDType* pIn, int count, char* pOut)
+const char* CXApiImpl::CancelOrder(OrderIDType* pIn, int count, char* pOut)
 {
 	return X_CancelOrder(m_pFun, m_pApi, pIn, count, pOut);
 }
 
-char* CXApiImpl::SendQuote(QuoteField* pQuote, int count, char* pOut)
+const char* CXApiImpl::SendQuote(QuoteField* pQuote, int count, char* pOut)
 {
 	return X_SendQuote(m_pFun, m_pApi, pQuote, count, pOut);
 }
 
-char* CXApiImpl::CancelQuote(OrderIDType* pIn, int count, char* pOut)
+const char* CXApiImpl::CancelQuote(OrderIDType* pIn, int count, char* pOut)
 {
 	return X_CancelQuote(m_pFun, m_pApi, pIn, count, pOut);
 }

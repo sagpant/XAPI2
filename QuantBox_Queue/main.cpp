@@ -17,13 +17,13 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	RequestType rt = (RequestType)type;
 	switch (rt)
 	{
-	case GetApiType:
+	case RequestType_GetApiType:
 		return nullptr;
-	case GetApiVersion:
+	case RequestType_GetApiVersion:
 		return (void*)"0.4.0.20150526";
-	case GetApiName:
+	case RequestType_GetApiName:
 		return (void*)"Queue";
-	case Create:
+	case RequestType_Create:
 		return new CMsgQueue();
 	default:
 		break;
@@ -38,24 +38,24 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 
 	switch (rt)
 	{
-	case Release:
+	case RequestType_Release:
 		delete pQueue;
 		return 0;
-	case Register:
+	case RequestType_Register:
 		pQueue->Register(ptr1,ptr2);
 		break;
-	case Config:
+	case RequestType_Config:
 		return (void*)pQueue->Config((ConfigInfoField*)ptr1);
-	case Connect:
+	case RequestType_Connect:
 		pQueue->StartThread();
 		break;
-	case Disconnect:
+	case RequestType_Disconnect:
 		pQueue->StopThread();
 		break;
-	case Clear:
+	case RequestType_Clear:
 		pQueue->Clear();
 		break;
-	case Process:
+	case RequestType_Process:
 		pQueue->Process();
 		break;
 	default:
