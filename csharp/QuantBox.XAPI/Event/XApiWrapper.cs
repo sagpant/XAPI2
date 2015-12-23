@@ -77,20 +77,6 @@ namespace QuantBox.XAPI.Event
             MessageBox.Show("123456789");
         }
 
-        public string SendOrder(OrderField order)
-        {
-            OrderField[] orders = new OrderField[1];
-            orders[0] = order;
-            return base.SendOrder(ref orders);
-        }
-
-        public string CancelOrder(string szId)
-        {
-            string[] szIds = new string[1];
-            szIds[0] = szId;
-            return base.CancelOrder(szIds);
-        }
-
         private void OnConnectionStatus_callback(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
         {
             if (null != OnConnectionStatus)
