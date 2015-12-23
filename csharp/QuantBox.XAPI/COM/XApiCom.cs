@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
@@ -251,15 +250,11 @@ namespace QuantBox.XAPI.COM
 
         public string SendOrder()
         {
-            OrderField[] fields = new OrderField[1];
-            fields[0] = _Order;
-            return api.SendOrder(ref fields);
+            return api.SendOrder(ref _Order);
         }
         public string CancelOrder(string id)
         {
-            string[] ids = new string[1];
-            ids[0] = id;
-            return api.CancelOrder(ids);
+            return api.CancelOrder(id);
         }
 
         public void NewQuery()
