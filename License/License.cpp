@@ -3,9 +3,11 @@
 
 #include <time.h>
 
+
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
+#include "../include/inirw.h"
 
 #define APP_NAME_USER		"User"
 #define KEY_NAME_ACCOUNT	"Account"
@@ -93,23 +95,39 @@ int CLicense::Today(int day)
 		+ ptmNow->tm_mday;
 }
 
+void CLicense::SetLicensePath(const char* licPath)
+{
+	// 授权文件的路径是生成签名和验证都需要，所以最核心
+	char szPath[_MAX_PATH] = { 0 };
+	char drive[_MAX_DRIVE] = {0};
+	char dir[_MAX_DIR] = { 0 };
+	char fname[_MAX_FNAME] = { 0 };
+	char ext[_MAX_EXT] = { 0 };
+	_splitpath(licPath, drive, dir, fname, ext);
+	_makepath(m_LicensePath, drive, dir, fname, FILE_EXT_LIC);
+	_makepath(m_PublicKeyPath, drive, dir, fname, FILE_EXT_PUB);
+	_makepath(m_PrivateKeyPath, drive, dir, fname, FILE_EXT_PRIV);
+	_makepath(m_SignaturePath, drive, dir, fname, FILE_EXT_SIGN);
+}
+
+void CLicense::SetPublicKey(const char* pubKey)
+{
+	strncpy(m_PublicKeyString, pubKey, sizeof(m_PublicKeyString));
+}
+
 void CLicense::LoadIni()
 {
-	// 过期时间，要想长期有效就改大，比如说改成20991231
-	m_ExpireDate = ::GetPrivateProfileIntA(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, -1, m_LicPath);
-	m_bLoaded = m_ExpireDate > 0;
-	if (!m_bLoaded)
-	{
-		m_ExpireDate = 19860901;
-	}
+	m_bLoaded = iniFileLoad(m_LicensePath);
 
-	// 试用时每次下单次数，默认给5次，如果为0表示没有限制
-	m_Trial = ::GetPrivateProfileIntA(APP_NAME_LICENSE, KEY_NAME_TRIAL, 5, m_LicPath);
-	//::GetPrivateProfileStringA(APP_NAME_LICENSE, KEY_NAME_SERIAL_NUMBER, "#", m_SerialNumber, sizeof(m_SerialNumber), m_LicPath);
+	// 无所谓是否加载成功，反正有默认
+	m_ExpireDate = iniGetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, -1);
+	m_Trial = iniGetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, 5);
 
-	::GetPrivateProfileStringA(APP_NAME_USER, KEY_NAME_ACCOUNT, "*|", m_Account, sizeof(m_Account), m_LicPath);
-	::GetPrivateProfileStringA(APP_NAME_USER, KEY_NAME_USERNAME, "*|", m_UserName, sizeof(m_UserName), m_LicPath);
-	::GetPrivateProfileStringA(APP_NAME_LICENSE, KEY_NAME_MAC, "*|", m_MAC, sizeof(m_MAC), m_LicPath);
+	iniGetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account, sizeof(m_Account), "*|");
+	iniGetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName, sizeof(m_UserName), "*|");
+	iniGetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC, sizeof(m_MAC), "*|");
+
+	iniFileFree();
 
 	vector<string> vct1;
 	{
@@ -166,13 +184,10 @@ void CLicense::AddUser(const char* account, const char* name)
 
 bool CLicense::SaveIni()
 {
-	char tmp[32] = { 0 };
-	_itoa(m_ExpireDate, tmp, 10);
-	BOOL bRet = ::WritePrivateProfileStringA(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, tmp, m_LicPath);
-	_itoa(m_Trial, tmp, 10);
-	::WritePrivateProfileStringA(APP_NAME_LICENSE, KEY_NAME_TRIAL, tmp, m_LicPath);
+	bool bRet = iniFileLoad(m_LicensePath);
 
-	//::WritePrivateProfileStringA(APP_NAME_LICENSE, KEY_NAME_SERIAL_NUMBER, m_SerialNumber, m_LicPath);
+	iniSetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, m_ExpireDate, 10);
+	iniSetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, m_Trial, 10);
 
 	m_Account[0] = 0;
 	m_UserName[0] = 0;
@@ -184,9 +199,8 @@ bool CLicense::SaveIni()
 		strcat(m_UserName, it->second.c_str());
 		strcat(m_UserName, "|");
 	}
-
-	::WritePrivateProfileStringA(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account, m_LicPath);
-	::WritePrivateProfileStringA(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName, m_LicPath);
+	iniSetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account);
+	iniSetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName);
 
 	m_MAC[0] = 0;
 	for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
@@ -194,8 +208,9 @@ bool CLicense::SaveIni()
 		strcat(m_MAC, it->c_str());
 		strcat(m_MAC, "|");
 	}
+	iniSetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC);
 
-	::WritePrivateProfileStringA(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC, m_LicPath);
+	iniFileFree();
 
 	if (!bRet)
 	{
@@ -206,14 +221,6 @@ bool CLicense::SaveIni()
 	return bRet;
 }
 
-//void CLicense::SaveSerialNumber()
-//{
-//	char buf[512] = { 0 };
-//	CreateContent(buf);
-//	char md5[64] = { 0 };
-//	CreateMD5(buf, md5);
-//	strcpy(m_SerialNumber, md5);
-//}
 
 void CLicense::CreateDefault()
 {
@@ -227,66 +234,6 @@ void CLicense::CreateDefault()
 	m_MacSet.insert("*");
 	m_MacSet.insert(m_RealMAC);
 }
-
-//void CLicense::CreateContent(char buf[])
-//{
-//	strcat(buf, "#");
-//	m_Account[0] = 0;
-//	m_UserName[0] = 0;
-//	for (map<string, string>::iterator it = m_UserMap.begin(); it != m_UserMap.end(); ++it)
-//	{
-//		strcat(m_Account, it->first.c_str());
-//		strcat(m_Account, "|");
-//		strcat(m_UserName, it->second.c_str());
-//		strcat(m_UserName, "|");
-//	}
-//	strcat(buf, m_Account);
-//	strcat(buf, m_UserName);
-//	strcat(buf, "#");
-//	m_MAC[0] = 0;
-//	for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
-//	{
-//		strcat(m_MAC, it->c_str());
-//		strcat(m_MAC, "|");
-//	}
-//	strcat(buf, m_MAC);
-//	strcat(buf, "#");
-//	char tmp[32] = { 0 };
-//	_itoa(m_Trial, tmp, 10);
-//	strcat(buf, tmp);
-//	strcat(buf, "#");
-//	_itoa(m_ExpireDate, tmp, 16);// 注意，这里乱搞了一个16
-//	strcat(buf, tmp);
-//	strcat(buf, "#");
-//
-//	// 发现没有什么功能限制，时间不能太长
-//	m_bHasStarAccount = strstr(m_Account, "*");
-//	m_bHasStarUserName = strstr(m_UserName, "*");
-//	m_bHasStarMAC = strstr(m_MAC, "*");
-//}
-//
-//void CLicense::CreateMD5(char input[], char output[])
-//{
-//	char priKey[128] = { 0 };
-//	char pubKey[128] = { 0 };
-//	char seed[1024] = { 0 };
-//
-//	// 生成 RSA 密钥对
-//	strcpy(priKey, "pri");  // 生成的私钥文件
-//	strcpy(pubKey, "pub");  // 生成的公钥文件
-//	strcpy(seed, "seed");
-//	GenerateRSAKey(1024, priKey, pubKey, seed);
-//
-//	// RSA 加解密
-//	char message[1024] = { 0 };
-//	cout << "Origin Text:\t" << "Hello World!" << endl << endl;
-//	strcpy(message, "Hello World!");
-//	string encryptedText = RSAEncryptString(pubKey, seed, message);  // RSA 加密
-//	cout << "Encrypted Text:\t" << encryptedText << endl << endl;
-//	string decryptedText = RSADecryptString(priKey, encryptedText.c_str());  // RSA 解密
-//	//string decryptedText = RSADecryptString(priKey, "6014655DB01F43C33B292ADB2AD6BA567EF156BD8380CC1C3C79987523BB9416EE87970CA99BE79E958D0AF3FB5B17F43A52E12EEDDD3B23C07FD2EE4C3D9ACFBE10BD9B4B752B1ADD738ED74E9ED76650AB8ED76E76767F77DD311F88BCD2B15E4C106A552DED2D241910F1EDF881095DF34F8CDA16B502BF51FF3DE56FC37E");  // RSA 解密
-//	cout << "Decrypted Text:\t" << decryptedText << endl << endl;
-//}
 
 int CLicense::GetErrorCode()
 {
@@ -353,22 +300,19 @@ int CLicense::GetErrorCode()
 			sprintf(m_ErrorInfo, ERROR_CODE_3, m_ExpireDate);
 			break;
 		}
-		
-		//char buf[1024] = { 0 };
-		//CreateContent(buf);
-		//char md5[1024] = { 0 };
-		//CreateMD5(buf, md5);
 
-		/*if (_stricmp(md5, m_SerialNumber) == 0)
+		string s = LoadStringFromFile(m_LicensePath);
+		
+		if (Verify(s.c_str(), m_PublicKeyString))
 		{
-			
+
 		}
 		else
 		{
 			m_ErrorCode = -2;
 			strcpy(m_ErrorInfo, ERROR_CODE_2);
 			break;
-		}*/
+		}
 
 	} while (false);
 
@@ -488,6 +432,40 @@ const char* CLicense::GetErrorInfo()
 	return m_ErrorInfo;
 }
 
+string CLicense::LoadStringFromFile(const char *filename)
+{
+	string result;
+	FileSource(filename, true, new StringSink(result));
+	return result;
+}
+
+void CLicense::Sign(const char* message)
+{
+	if (strlen(message) <= 0)
+	{
+		return;
+	}
+	if (strlen(m_PrivateKeyPath) <= 0)
+	{
+		return;
+	}
+	RSASignString(m_PrivateKeyPath, message, m_SignaturePath);
+}
+
+bool CLicense::Verify(const char* message, const char* pubKey)
+{
+	if (strlen(message) <= 0)
+	{
+		return false;
+	}
+	if (strlen(pubKey) <= 0)
+	{
+		return false;
+	}
+
+	return RSAVerifyStringString(pubKey, message, m_SignaturePath);
+}
+
 //------------------------
 // 定义全局的随机数池
 //------------------------
@@ -571,6 +549,24 @@ void RSASignString(const char *privFilename, const char *messageFilename, const 
 bool RSAVerifyString(const char *pubFilename, const char *messageFilename, const char *signatureFilename)
 {
 	FileSource pubFile(pubFilename, true, new HexDecoder);
+	RSASS<PKCS1v15, SHA>::Verifier pub(pubFile);
+
+	FileSource signatureFile(signatureFilename, true, new HexDecoder);
+	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		return false;
+	SecByteBlock signature(pub.SignatureLength());
+	signatureFile.Get(signature, signature.size());
+
+	VerifierFilter *verifierFilter = new VerifierFilter(pub);
+	verifierFilter->Put(signature, pub.SignatureLength());
+	StringSource f(messageFilename, true, verifierFilter);
+
+	return verifierFilter->GetLastResult();
+}
+
+bool RSAVerifyStringString(const char *pubFilename, const char *messageFilename, const char *signatureFilename)
+{
+	StringSource pubFile(pubFilename, true, new HexDecoder);
 	RSASS<PKCS1v15, SHA>::Verifier pub(pubFile);
 
 	FileSource signatureFile(signatureFilename, true, new HexDecoder);

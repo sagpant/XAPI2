@@ -1,41 +1,116 @@
-// License.cpp : Defines the entry point for the console application.
+ï»¿// License.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
+#include <conio.h>
+#include <iostream>
 
 #include "License.h"
 
-int _tmain(int argc, _TCHAR* argv[])
-{
-	cout << "=====ÊÚÈ¨Éú³É¹¤¾ßv1.0=====" << endl;
-	cout << endl;
-	cout << "!!!Èç¹ûÄ³°²È«ÎÀÊ¿Ò»ÀàµÄÈí¼ş·¢³ö¾¯¸æ¡£ÇëÔÊĞí£¬·ñÔòÎŞ·¨Â¼ÖÆ!!!" << endl;
-	cout << endl;
 
-	// 1.Éú³É¹«Ë½Ô¿
-	// 2.Ê¹ÓÃÒÑÓĞË½Ô¿Ç©ÃûÎÄ¼ş
+// æ–‡ä»¶é€‰æ‹©ä¿¡æ¯
+CHAR strFile[MAX_PATH] = { 0 };
+CHAR strFileTitle[MAX_PATH] = { 0 };
+
+CHAR strFilter[MAX_PATH] = "*.exe\0*.exe\0TdxW.exe\0TdxW.exe\0Tc.exe\0Tc.exe\0all\0*.*\0";
+
+BOOL OpenFileDlg()
+{
+	OPENFILENAMEA ofn;
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.lpstrFile = strFile;
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(strFile);
+	ofn.lpstrFilter = strFilter;
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = strFileTitle;
+	ofn.lpstrFileTitle[0] = ('\0');
+	ofn.nMaxFileTitle = sizeof(strFileTitle);
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	return GetOpenFileNameA(&ofn);
+}
+
+void Select1()
+{
 	char priKey[128] = { 0 };
 	char pubKey[128] = { 0 };
 	char seed[1024] = { 0 };
 
-	// Éú³É RSA ÃÜÔ¿¶Ô
-	strcpy(priKey, "1.PrivateKey");  // Éú³ÉµÄË½Ô¿ÎÄ¼ş
-	strcpy(pubKey, "1.PublicKey");  // Éú³ÉµÄ¹«Ô¿ÎÄ¼ş
+	char fname[64] = { 0 };
+
+	cout << "è¯·è¾“å…¥æ–‡ä»¶åï¼Œä¸è¦å¸¦æ‰©å±•åï¼Œç³»ç»Ÿå°†è‡ªåŠ¨æ·»åŠ æ‰©å±•å" << endl;
+	cin >> fname;
+
+	// ç”Ÿæˆ RSA å¯†é’¥å¯¹
+	sprintf_s(priKey, "%s.PrivateKey", fname);  // ç”Ÿæˆçš„ç§é’¥æ–‡ä»¶
+	sprintf_s(pubKey, "%s.PublicKey", fname);
 	strcpy(seed, "seed");
 	GenerateRSAKey(1024, priKey, pubKey, seed);
 
-	// RSA ¼Ó½âÃÜ
-	char message[1024] = { 0 };
-	cout << "Origin Text:\t" << "Hello World!" << endl << endl;
-	strcpy(message, "Hello World!");
-	string encryptedText = RSAEncryptString(pubKey, seed, message);  // RSA ¼ÓÃÜ
-	cout << "Encrypted Text:\t" << encryptedText << endl << endl;
-	string decryptedText = RSADecryptString(priKey, encryptedText.c_str());  // RSA ½âÃÜ
-	//string decryptedText = RSADecryptString(priKey, "6014655DB01F43C33B292ADB2AD6BA567EF156BD8380CC1C3C79987523BB9416EE87970CA99BE79E958D0AF3FB5B17F43A52E12EEDDD3B23C07FD2EE4C3D9ACFBE10BD9B4B752B1ADD738ED74E9ED76650AB8ED76E76767F77DD311F88BCD2B15E4C106A552DED2D241910F1EDF881095DF34F8CDA16B502BF51FF3DE56FC37E");  // RSA ½âÃÜ
-	cout << "Decrypted Text:\t" << decryptedText << endl << endl;
+	cout << "å·²ç»ç”Ÿæˆåœ¨å½“å‰ç›®å½•ä¸‹ï¼Œæ‚¨éœ€è¦è‡ªå·±ä¿®æ”¹æ–‡ä»¶å" << endl;
+}
 
-	RSASignFile(priKey, priKey, "a");
-	bool  b = RSAVerifyFile(pubKey,priKey,"a");
+void Select2()
+{
+	cout << "é€‰æ‹©æˆæƒæ–‡ä»¶ï¼š" << endl;
+
+	CLicense license;
+
+	memcpy(strFilter, "*.License\0*.License\0All\0*.*\0", sizeof(strFilter));
+	if (OpenFileDlg())
+	{
+		// è®¾ç½®æˆæƒæ–‡ä»¶
+		license.SetLicensePath(strFile);
+
+		string s = license.LoadStringFromFile(strFile);
+		
+		// ç­¾å
+		license.Sign(s.c_str());
+
+		/*string k = license.LoadStringFromFile(license.m_PublicKeyPath);
+
+		bool a = license.Verify(s.c_str(),k.c_str());
+		int  b = 1;*/
+	}
+
+	cout << "ç­¾åå·²ç»ç”Ÿæˆï¼Œè¯·æŸ¥çœ‹" << endl;
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	cout << "=====æˆæƒç”Ÿæˆå·¥å…·v1.0=====" << endl;
+SELECT:
+	cout << "è¯·é€‰æ‹©ï¼š" << endl;
+	cout << "  1.ç”Ÿæˆå…¬é’¥æ–‡ä»¶å’Œç§é’¥æ–‡ä»¶" << endl;	//
+	cout << "  2.ä½¿ç”¨å·²æœ‰ç§é’¥ç­¾åæ–‡ä»¶" << endl;//
+	cout << "  0.é€€å‡º" << endl;		//
+	cout << endl;
+
+	int select = _getch();
+	cout << (char)select << endl;
+	switch (select - '0')
+	{
+	case 1:
+		Select1();
+		goto SELECT;
+		break;
+	case 2:
+		Select2();
+		goto SELECT;
+		break;
+	case 0:
+		break;
+	default:
+		goto SELECT;
+		break;
+	}
+
+
+	printf("æŒ‰ä»»æ„é”®å…³é—­");
+	getchar();
 
 	return 0;
 }

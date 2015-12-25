@@ -43,6 +43,7 @@ string RSADecryptString(const char *privFilename, const char *ciphertext);
 //bool RSAVerifyFile(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
 void RSASignString(const char *privFilename, const char *messageFilename, const char *signatureFilename);
 bool RSAVerifyString(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
+bool RSAVerifyStringString(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
 
 RandomPool & GlobalRNG();
 
@@ -87,22 +88,37 @@ public:
 
 	void AddUser(const char* account, const char* name);
 
-	//void CreateContent(char buf[]);
-
-	//void CreateMD5(char input[],char output[]);
-
 	void CreateDefault();
+
+
+	// 只是简单的加载文件
+	string LoadStringFromFile(const char *filename);
+
+	// 对某个字符串进行签名，可以先对此字符串预处理
+	void Sign(const char* message);
+	// 对某个字符串进行验证，可以先对此字符串预处理
+	// 公钥可以保存在dll中，不便修改的模式，这样用户
+	bool Verify(const char* message, const char* pubKey);
+	// 设置证书路径，会同时再生成其它路径
+	void SetLicensePath(const char* licPath);
+	// 在进行GetErrorCode时，需要先设置公钥，这样好检查是否正确
+	void SetPublicKey(const char* pubKey);
+
+public:
+	char m_LicensePath[MAX_PATH];
+	char m_PublicKeyPath[MAX_PATH];
+	char m_PrivateKeyPath[MAX_PATH];
+	char m_SignaturePath[MAX_PATH];
+
+	char m_PublicKeyString[1024];
 
 private:
 	int m_ExpireDate;
 	int m_Trial;
 	int m_nCurrentTrial;
 	
-	char m_SerialNumber[128];
-
 	char m_RealMAC[32];
 
-	char m_LicPath[256];
 	char m_ErrorInfo[256];
 	int m_ErrorCode;
 
