@@ -879,6 +879,7 @@ void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 {
 	strcpy(pOut->ID, pIn->WTBH);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
+	strcpy(pOut->InstrumentName, pIn->ZQMC);
 	pOut->Price = pIn->CJJG_;
 	pOut->Qty = pIn->CJSL_;
 	pOut->Date = pIn->CJRQ_;
@@ -896,8 +897,10 @@ void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 
 void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
 {
-	strcpy(pOut->ID, pIn->WTBH);
+	strcpy(pOut->ID, pIn->WTBH);//将会被修正
+	strcpy(pOut->OrderID, pIn->WTBH);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
+	strcpy(pOut->InstrumentName, pIn->ZQMC);
 	pOut->Price = pIn->WTJG_;
 	pOut->Qty = pIn->WTSL_;
 	pOut->Date = pIn->WTRQ_;
@@ -947,7 +950,6 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 {
 	strcpy(pOut->KHH, pIn->ClientID);
 	strcpy(pOut->GDDM, pIn->AccountID);
-
 	strcpy(pOut->ZQDM, pIn->InstrumentID);
 	pOut->Price = pIn->Price;
 	pOut->Qty = pIn->Qty;
@@ -1025,6 +1027,7 @@ void GFLB_2_PositionField(GFLB_STRUCT* pIn, PositionField* pOut)
 	pOut->TodayPosition = pIn->DJSL_;
 	pOut->HistoryPosition = pIn->KMSL_;
 	pOut->HedgeFlag = HedgeFlagType::HedgeFlagType_Speculation;
+	strcpy(pOut->InstrumentName, pIn->ZQMC);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->Symbol, pIn->ZQDM);
 
