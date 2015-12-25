@@ -753,7 +753,9 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 	if (pRespone->ppResults&&pRespone->ppResults[0 * COL_EACH_ROW + 0])
 	{
 		// 写上柜台的ID，以后将基于此进行定位
-		CreateID(pOrder->ID, nullptr, pTdxOrder->GDDM, pRespone->ppResults[0 * COL_EACH_ROW + 0]);
+		strcpy(pOrder->OrderID, pRespone->ppResults[0 * COL_EACH_ROW + 0]);
+		CreateID(pOrder->ID, nullptr, pTdxOrder->GDDM, pOrder->OrderID);
+		
 
 		m_pApi->m_id_api_order.erase(pOrder->LocalID);
 		m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pOrder->ID, pWTOrders));
