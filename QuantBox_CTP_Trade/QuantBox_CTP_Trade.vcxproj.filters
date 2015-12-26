@@ -45,6 +45,12 @@
     <ClInclude Include="..\CTP\Trade\TraderApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\License\License.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\inirw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -63,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\CTP\Trade\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\License\License.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\inirw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

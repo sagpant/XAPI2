@@ -7,6 +7,8 @@
 
 #include "License.h"
 
+// BOOLEAN与asn.h中的冲突，不得不将asn.h中的改了，希望有人帮忙解决这个问题
+#include <windows.h>
 
 // 文件选择信息
 CHAR strFile[MAX_PATH] = { 0 };
