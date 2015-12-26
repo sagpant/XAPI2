@@ -13,9 +13,16 @@
 
 #include "../TypeConvert.h"
 
+
+
 #include <cstring>
 #include <assert.h>
 #include <cfloat>
+
+#ifdef ENABLE_LICENSE
+#include "../License/License.h"
+#endif
+
 
 void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
@@ -118,12 +125,32 @@ CTraderApi::CTraderApi(void)
 
 	m_msgQueue_Query->Register((void*)Query,this);
 	m_msgQueue_Query->StartThread();
+
+#ifdef ENABLE_LICENSE
+	// 为了这个加密库，居然把编译选项由/MDd改成了/MTd,以后一定要想办法改回去
+	m_pLicense = new CLicense();
+
+	char szPath[MAX_PATH] = { 0 };
+	m_pLicense->GetDllPathByFunctionName("XRequest", szPath);
+	m_pLicense->SetLicensePath(szPath);
+	// 这里选的是从文件中加载公钥，可以写死到资源或代码中，这样用户就没有那么容易自己生成公私钥对替换了
+	string publicKeyString = m_pLicense->LoadStringFromFile(m_pLicense->m_PublicKeyPath);
+	m_pLicense->SetPublicKeyString(publicKeyString.c_str());
+#endif
 }
 
 
 CTraderApi::~CTraderApi(void)
 {
 	Disconnect();
+
+#ifdef ENABLE_LICENSE
+	if (m_pLicense == nullptr)
+	{
+		delete m_pLicense;
+		m_pLicense = nullptr;
+	}
+#endif
 }
 
 bool CTraderApi::IsErrorRspInfo(const char* szSource, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
@@ -164,6 +191,52 @@ void CTraderApi::Connect(const string& szPath,
 
 int CTraderApi::_Init()
 {
+#ifdef ENABLE_LICENSE
+	int err = m_pLicense->LoadIni();
+	if (err != 0)
+	{
+		// 没有授权文件
+		m_pLicense->CreateDefault();
+		m_pLicense->AddUser(m_UserInfo.UserID, "*");
+		err = m_pLicense->SaveIni();
+	}
+
+	if (err == 0)
+	{
+		// 如果签名信息不存在，当然就是试用
+		err = m_pLicense->GetErrorCodeForSign();
+	}
+
+	if (err == 0)
+	{
+		err = m_pLicense->GetErrorCode();
+	}
+
+	if (err == 0)
+	{
+		err = m_pLicense->GetErrorCodeByAccount(m_UserInfo.UserID);
+	}
+
+	if (err != 0)
+	{
+		RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+
+		pField->RawErrorID = err;
+		strncpy(pField->Text, m_pLicense->GetErrorInfo(), sizeof(Char256Type));
+
+		// >0的错误表示不严重，可以继续
+		if (err > 0)
+		{
+			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+		}
+		else if (err < 0)
+		{
+			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+			return 0;
+		}
+	}
+#endif
+
 	char *pszPath = new char[m_szPath.length() + 1024];
 	srand((unsigned int)time(nullptr));
 	sprintf(pszPath, "%s/%s/%s/Td/%d/", m_szPath.c_str(), m_ServerInfo.BrokerID, m_UserInfo.UserID, rand());
@@ -567,6 +640,33 @@ char* CTraderApi::ReqOrderInsert(
 
 		// 测试平台穿越速度，用完后需要注释掉
 		//WriteLog("CTP:ReqOrderInsert:%s %d", body.InstrumentID, nRet);
+#ifdef ENABLE_LICENSE
+		int err = m_pLicense->GetErrorCodeByTrial();
+		if (err<0)
+		{
+			//sprintf(m_orderInsert_Id, "%d", -5);
+
+			//OrderField* pField = (OrderField*)m_msgQueue->new_block(sizeof(OrderField));
+			//memcpy(pField, pOrder, sizeof(OrderField));
+			//strcpy(pField->ID, m_orderInsert_Id);
+			//strcpy(pField->LocalID, pField->ID);
+			//m_id_platform_order.insert(pair<string, OrderField*>(pField->LocalID, pField));
+
+			////RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+			//pField->RawErrorID = err;
+			//strncpy(pField->Text, m_pLicense->GetErrorInfo(), sizeof(Char256Type));
+
+			//pField->Status = OrderStatus::OrderStatus_Rejected;
+			//pField->ExecType = ExecType::ExecType_Rejected;
+
+			//strncpy((char*)pszLocalIDBuf, m_orderInsert_Id, sizeof(OrderIDType));
+
+			//// 这个问题的关键是先到队列还是先返回
+			//m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
+			
+			return nullptr;
+		}
+#endif
 
 
 		//不保存到队列，而是直接发送
@@ -1860,6 +1960,21 @@ void CTraderApi::OnRspQryInvestor(CThostFtdcInvestorField *pInvestor, CThostFtdc
 			pField->IdentifiedCardType = TThostFtdcIdCardTypeType_2_IdCardType(pInvestor->IdentifiedCardType);
 
 			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInvestor, m_msgQueue, m_pClass, bIsLast, 0, pField, sizeof(InvestorField), nullptr, 0, nullptr, 0);
+
+#ifdef ENABLE_LICENSE
+			// 这里不使用pInvestor->InvestorID，因为有可能股东代码与登录账号不一样
+			int err = m_pLicense->GetErrorCodeByNameThenAccount(pField->InvestorName,m_UserInfo.UserID);
+			{
+				RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+				pField->RawErrorID = err;
+				strncpy(pField->Text, m_pLicense->GetErrorInfo(), sizeof(Char256Type));
+
+				if (err < 0)
+				{
+					m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+				}
+			}
+#endif
 		}
 		else
 		{

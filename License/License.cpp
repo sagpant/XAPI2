@@ -1,9 +1,13 @@
 ﻿#include "stdafx.h"
 #include "License.h"
 
+#ifdef ENABLE_LICENSE
+
+
 #include <time.h>
 
-
+// BOOLEAN与asn.h中的冲突，不得不将asn.h中的改了，希望有人帮忙解决这个问题
+#include <windows.h>
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
@@ -95,6 +99,14 @@ int CLicense::Today(int day)
 		+ ptmNow->tm_mday;
 }
 
+void CLicense::GetDllPathByFunctionName(const char* szFunctionName, char* szPath)
+{
+	HMODULE hModule = nullptr;
+	GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, szFunctionName, &hModule);
+
+	GetModuleFileNameA(hModule, szPath, MAX_PATH);
+}
+
 void CLicense::SetLicensePath(const char* licPath)
 {
 	// 授权文件的路径是生成签名和验证都需要，所以最核心
@@ -110,12 +122,12 @@ void CLicense::SetLicensePath(const char* licPath)
 	_makepath(m_SignaturePath, drive, dir, fname, FILE_EXT_SIGN);
 }
 
-void CLicense::SetPublicKey(const char* pubKey)
+void CLicense::SetPublicKeyString(const char* pubKey)
 {
 	strncpy(m_PublicKeyString, pubKey, sizeof(m_PublicKeyString));
 }
 
-void CLicense::LoadIni()
+int CLicense::LoadIni()
 {
 	m_bLoaded = iniFileLoad(m_LicensePath);
 
@@ -175,6 +187,13 @@ void CLicense::LoadIni()
 	{
 		AddUser(vct1[i].c_str(), vct2[i].c_str());
 	}
+
+	if (m_bLoaded != 0)
+		return 0;
+
+	sprintf(m_ErrorInfo, ERROR_CODE_1);
+	m_ErrorCode = 1;
+	return m_ErrorCode;
 }
 
 void CLicense::AddUser(const char* account, const char* name)
@@ -182,9 +201,9 @@ void CLicense::AddUser(const char* account, const char* name)
 	m_UserMap[string(account)] = string(name);
 }
 
-bool CLicense::SaveIni()
+int CLicense::SaveIni()
 {
-	bool bRet = iniFileLoad(m_LicensePath);
+	iniFileLoad(m_LicensePath);
 
 	iniSetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, m_ExpireDate, 10);
 	iniSetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, m_Trial, 10);
@@ -208,17 +227,16 @@ bool CLicense::SaveIni()
 		strcat(m_MAC, it->c_str());
 		strcat(m_MAC, "|");
 	}
-	iniSetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC);
+	int bRet = iniSetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC);
 
 	iniFileFree();
 
-	if (!bRet)
-	{
-		sprintf(m_ErrorInfo, ERROR_CODE_11);
-		m_ErrorCode = -11;
-	}
+	if (bRet != 0)
+		return 0;
 
-	return bRet;
+	sprintf(m_ErrorInfo, ERROR_CODE_11);
+	m_ErrorCode = -11;
+	return m_ErrorCode;
 }
 
 
@@ -235,6 +253,31 @@ void CLicense::CreateDefault()
 	m_MacSet.insert(m_RealMAC);
 }
 
+int CLicense::GetErrorCodeForSign()
+{
+	// 认证通过
+	m_ErrorCode = 0;
+
+	do
+	{
+		
+		if (strlen(m_PublicKeyString) <= 0)
+		{
+			m_ErrorCode = 12;
+			strcpy(m_ErrorInfo, ERROR_CODE_12);
+
+			// 只有试用次数和日期可以检查了
+			m_Trial = min(m_Trial, 5);
+			m_ExpireDate = min(m_ExpireDate,Today(7));
+
+			break;
+		}
+
+	} while (false);
+
+	return m_ErrorCode;
+}
+
 int CLicense::GetErrorCode()
 {
 	// 认证通过
@@ -242,13 +285,6 @@ int CLicense::GetErrorCode()
 
 	do
 	{
-		if (!m_bLoaded)
-		{
-			strcpy(m_ErrorInfo, ERROR_CODE_1);
-			m_ErrorCode = -1;
-			break;
-		}
-
 		// 检查机器码
 		for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
 		{
@@ -302,7 +338,18 @@ int CLicense::GetErrorCode()
 		}
 
 		string s = LoadStringFromFile(m_LicensePath);
-		
+
+		if (strlen(m_PublicKeyString) <= 0)
+		{
+			m_ErrorCode = 12;
+			strcpy(m_ErrorInfo, ERROR_CODE_12);
+
+			// 只有试用次数可以检查了，
+			m_Trial = min(m_Trial, 5);
+
+			break;
+		}
+
 		if (Verify(s.c_str(), m_PublicKeyString))
 		{
 
@@ -434,9 +481,16 @@ const char* CLicense::GetErrorInfo()
 
 string CLicense::LoadStringFromFile(const char *filename)
 {
-	string result;
-	FileSource(filename, true, new StringSink(result));
-	return result;
+	try
+	{
+		string result;
+		FileSource(filename, true, new StringSink(result));
+		return result;
+	}
+	catch (...)
+	{
+		return "";
+	}
 }
 
 void CLicense::Sign(const char* message)
@@ -581,3 +635,5 @@ bool RSAVerifyStringString(const char *pubFilename, const char *messageFilename,
 
 	return verifierFilter->GetLastResult();
 }
+
+#endif

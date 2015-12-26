@@ -411,10 +411,10 @@ int iniSetString(const char *section, const char *key, const char *value)
 	char *key0, *value0;
 	char *rem1, *rem2, *nextline;
 
-
-	if (gBuffer == NULL) {
-		return 0;
-	}
+	// 注了就可以创建文件了
+	//if (gBuffer == NULL) {
+	//	return 0;
+	//}
 
 	if (FindSection(section, &sect1, &sect2, &cont1, &cont2, &nextsect) == 0)
 	{

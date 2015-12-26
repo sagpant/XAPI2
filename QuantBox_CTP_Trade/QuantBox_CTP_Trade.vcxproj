@@ -95,7 +95,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86</OutDir>
-    <IncludePath>./;$(IncludePath)</IncludePath>
+    <IncludePath>./;../cryptopp/;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -121,6 +121,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;BUILDING_DLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -218,7 +219,9 @@ xcopy "$(SolutionDir)include\CTP\win32\*.dll"  "$(SolutionDir)XAPI\CTP\x86\" /Y<
     <ClInclude Include="..\CTP\TypeConvert.h" />
     <ClInclude Include="..\include\ApiEnum.h" />
     <ClInclude Include="..\include\ApiStruct.h" />
+    <ClInclude Include="..\include\inirw.h" />
     <ClInclude Include="..\include\toolkit.h" />
+    <ClInclude Include="..\License\License.h" />
     <ClInclude Include="Include.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -228,12 +231,14 @@ xcopy "$(SolutionDir)include\CTP\win32\*.dll"  "$(SolutionDir)XAPI\CTP\x86\" /Y<
     <ClCompile Include="..\CTP\Trade\main.cpp" />
     <ClCompile Include="..\CTP\Trade\TraderApi.cpp" />
     <ClCompile Include="..\CTP\TypeConvert.cpp" />
+    <ClCompile Include="..\include\inirw.cpp" />
     <ClCompile Include="..\include\toolkit.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\License\License.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

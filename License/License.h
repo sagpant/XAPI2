@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#ifdef ENABLE_LICENSE
+
 #include <list>
 #include <map>
 #include <set>
@@ -11,9 +13,7 @@
 #include "hex.h"
 #include "files.h"
 
-// BOOLEAN与asn.h中的冲突，不得不将asn.h中的改了，希望有人帮忙解决这个部题解决可以不用改动
-#include <windows.h>
-
+// 1
 #define ERROR_CODE_1	"没有读取到授权文件,将自动生成试用版授权到dll同目录下"
 #define ERROR_CODE_2	"授权认证失败"
 #define ERROR_CODE_3	"授权过期，过期时间：[%d]"
@@ -25,6 +25,8 @@
 #define ERROR_CODE_9	"没有[姓名:%s]的授权"
 #define ERROR_CODE_10	"授权范围太广时，到期时间不能过长"
 #define ERROR_CODE_11	"生成授权文件失败，请检查是否有权限写入。或以管理员方式再次启动"
+// 12
+#define ERROR_CODE_12	"未读取到签名信息，使用最小授权"
 
 #define FILE_EXT_LIC "License"
 #define FILE_EXT_PUB "PublicKey"
@@ -63,11 +65,15 @@ RandomPool & GlobalRNG();
 
 4.记录私钥.PrivateKey
 
-如果没有签名文件就使用临时授权，有签名文件就对照是否合有授权
-
 如何防止用户自己生成公私钥后再签名
 1.公钥不容易改，建议添加到资源中
-2.授权文件再加一次密后再用来签名
+2.授权文件可再加一次密后再来签名
+
+授权检查的逻辑
+1.所有相关文件都没有，使用临时授权，生成临时授权文件，不生成签名
+2.有授权文件，但没有签名，临时授权与本地授权文件取最小
+3.有授权文件，但签名是错的，直接拒绝
+4.有授权文件，签名也是正确的，按授权文件来
 */
 class CLicense
 {
@@ -75,14 +81,23 @@ public:
 	CLicense();
 	~CLicense();
 
-	void LoadIni();
-	bool SaveIni();
+	// 通过导出函数得到当前dll的路径
+	void GetDllPathByFunctionName(const char* szFunctionName, char* szPath);
+	// 设置证书路径，会同时再生成其它路径，这个函数会忽视后缀，生成自己的后缀
+	void SetLicensePath(const char* licPath);
+
+
+
+	int LoadIni();
+	int SaveIni();
 
 	const char* GetErrorInfo();
+	int GetErrorCodeForSign();
 	int GetErrorCode();
-	int GetErrorCodeByTrial();
 	int GetErrorCodeByAccount(const char* account);
 	int GetErrorCodeByNameThenAccount(const char* name, const char* account);
+	int GetErrorCodeByTrial();
+
 	
 	int Today(int day);
 
@@ -99,16 +114,16 @@ public:
 	// 对某个字符串进行验证，可以先对此字符串预处理
 	// 公钥可以保存在dll中，不便修改的模式，这样用户
 	bool Verify(const char* message, const char* pubKey);
-	// 设置证书路径，会同时再生成其它路径
-	void SetLicensePath(const char* licPath);
+	
+	
 	// 在进行GetErrorCode时，需要先设置公钥，这样好检查是否正确
-	void SetPublicKey(const char* pubKey);
+	void SetPublicKeyString(const char* pubKey);
 
 public:
-	char m_LicensePath[MAX_PATH];
-	char m_PublicKeyPath[MAX_PATH];
-	char m_PrivateKeyPath[MAX_PATH];
-	char m_SignaturePath[MAX_PATH];
+	char m_LicensePath[260];
+	char m_PublicKeyPath[260];
+	char m_PrivateKeyPath[260];
+	char m_SignaturePath[260];
 
 	char m_PublicKeyString[1024];
 
@@ -133,4 +148,6 @@ private:
 	bool m_bHasStarUserName;
 	bool m_bHasStarMAC;
 };
+
+#endif
 
