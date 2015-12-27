@@ -18,7 +18,7 @@ namespace QuantBox.XAPI.COM
     [ClassInterface(ClassInterfaceType.None)]
     [ComSourceInterfaces(typeof(IXApiEvents))]
     [ProgId("QuantBox.XApiCom")]
-    //[EventTrackingEnabled(true)]
+    [EventTrackingEnabled(true)]
     [Description("Interface Serviced Component")]
     public class XApiCom : UserControl,/*ServicedComponent,*/ IXApi,
         IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
@@ -66,8 +66,9 @@ namespace QuantBox.XAPI.COM
         private OrderField _Order;
         private ReqQueryField _Query;
 
-        [ComVisible(true)]
-        public int TEST { get; set; }
+        //private static int cookie;
+        //private static RegistrationServices msRegSvc = new RegistrationServices();
+
         // http://www.codeproject.com/Articles/24089/Create-ActiveX-in-NET-Step-by-Step
         // http://www.codeproject.com/Articles/1256/Exposing-Windows-Forms-Controls-as-ActiveX-control
         ///<summary>
@@ -94,8 +95,20 @@ namespace QuantBox.XAPI.COM
             inprocServer32.SetValue("CodeBase", Assembly.GetExecutingAssembly().CodeBase);
             inprocServer32.Close();
 
+            // 是否有必要将InprocServer32给删了来支持进程外呢？
+            RegistryKey localServer32 = k.CreateSubKey("LocalServer32");
+            localServer32.SetValue("", Assembly.GetExecutingAssembly().Location);
+            inprocServer32.Close();
+
             // Finally close the main key
             k.Close();
+
+            // 这里不知道如何使用
+            //Guid clsid = typeof(XApiCom).GUID;
+            //cookie = msRegSvc.RegisterTypeForComClients(
+            //    typeof(XApiCom),
+            //    RegistrationClassContext.LocalServer,
+            //    RegistrationConnectionType.SingleUse);
         }
 
         ///<summary>
@@ -122,6 +135,8 @@ namespace QuantBox.XAPI.COM
 
             // Finally close the main key 
             k.Close();
+
+            //msRegSvc.UnregisterTypeForComClients(cookie);
         }
 
         public XApiCom()
