@@ -103,11 +103,23 @@ namespace QuantBox.XAPI
 
         static void Main(string[] args)
         {
-            //for (int i = 0; i < 10000; ++i)
+            int i;
+            int iCount = args.Length;
+
+            for (i = 0; i < iCount; i++)
             {
-                test_Tdx_Main(args);
+                Console.Write("Argument : ");
+                Console.WriteLine(args[i]);
             }
-            Console.ReadKey();
+
+            Console.WriteLine("Press [ENTER] to exit.");
+            Console.ReadLine();
+
+            ////for (int i = 0; i < 10000; ++i)
+            //{
+            //    test_Tdx_Main(args);
+            //}
+            //Console.ReadKey();
         }
 
         static void test_Linux_Main(string[] args)
