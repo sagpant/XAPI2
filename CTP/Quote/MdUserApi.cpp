@@ -9,9 +9,9 @@
 #include "../../include/ApiProcess.h"
 #include "../TypeConvert.h"
 
-#include "../../QuantBox_Queue/MsgQueue.h"
+#include "../../Queue/MsgQueue.h"
 #ifdef _REMOTE
-#include "../../QuantBox_Queue/RemoteQueue.h"
+#include "../../Queue/RemoteQueue.h"
 #endif
 
 #include <string.h>

@@ -119,6 +119,8 @@ public:
 	// 在进行GetErrorCode时，需要先设置公钥，这样好检查是否正确
 	void SetPublicKeyString(const char* pubKey);
 
+	bool IsTrial();
+
 public:
 	char m_LicensePath[260];
 	char m_PublicKeyPath[260];

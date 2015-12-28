@@ -1,27 +1,27 @@
 ========================================================================
-    DYNAMIC LINK LIBRARY : QuantBox_Queue Project Overview
+    DYNAMIC LINK LIBRARY : CTP_Trade Project Overview
 ========================================================================
 
-AppWizard has created this QuantBox_Queue DLL for you.
+AppWizard has created this CTP_Trade DLL for you.
 
 This file contains a summary of what you will find in each of the files that
-make up your QuantBox_Queue application.
+make up your CTP_Trade application.
 
 
-QuantBox_Queue.vcxproj
+CTP_Trade.vcxproj
     This is the main project file for VC++ projects generated using an Application Wizard.
     It contains information about the version of Visual C++ that generated the file, and
     information about the platforms, configurations, and project features selected with the
     Application Wizard.
 
-QuantBox_Queue.vcxproj.filters
+CTP_Trade.vcxproj.filters
     This is the filters file for VC++ projects generated using an Application Wizard. 
     It contains information about the association between the files in your project 
     and the filters. This association is used in the IDE to show grouping of files with
     similar extensions under a specific node (for e.g. ".cpp" files are associated with the
     "Source Files" filter).
 
-QuantBox_Queue.cpp
+CTP_Trade.cpp
     This is the main DLL source file.
 
 	When created, this DLL does not export any symbols. As a result, it
@@ -37,7 +37,7 @@ Other standard files:
 
 StdAfx.h, StdAfx.cpp
     These files are used to build a precompiled header (PCH) file
-    named QuantBox_Queue.pch and a precompiled types file named StdAfx.obj.
+    named CTP_Trade.pch and a precompiled types file named StdAfx.obj.
 
 /////////////////////////////////////////////////////////////////////////////
 Other notes:

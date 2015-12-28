@@ -127,6 +127,11 @@ void CLicense::SetPublicKeyString(const char* pubKey)
 	strncpy(m_PublicKeyString, pubKey, sizeof(m_PublicKeyString));
 }
 
+bool CLicense::IsTrial()
+{
+	return (m_Trial == 0 || strlen(m_PublicKeyString) <= 0);
+}
+
 int CLicense::LoadIni()
 {
 	m_bLoaded = iniFileLoad(m_LicensePath);
@@ -260,7 +265,6 @@ int CLicense::GetErrorCodeForSign()
 
 	do
 	{
-		
 		if (strlen(m_PublicKeyString) <= 0)
 		{
 			m_ErrorCode = 12;
@@ -337,18 +341,20 @@ int CLicense::GetErrorCode()
 			break;
 		}
 
-		string s = LoadStringFromFile(m_LicensePath);
-
-		if (strlen(m_PublicKeyString) <= 0)
+		// 由于在前面已经有GetErrorCodeForSign()做了签名信息是否存在的检查
+		if (strlen(m_PublicKeyString)<=0)
 		{
-			m_ErrorCode = 12;
-			strcpy(m_ErrorInfo, ERROR_CODE_12);
-
-			// 只有试用次数可以检查了，
+			// 所以这里是以最小授权进行通过
+			// 由于担心开发者忘了做GetErrorCodeForSign，这里还是搞一次m_Trial修正
+			
+			// 只有试用次数和日期可以检查了
 			m_Trial = min(m_Trial, 5);
+			m_ExpireDate = min(m_ExpireDate, Today(7));
 
 			break;
 		}
+
+		string s = LoadStringFromFile(m_LicensePath);
 
 		if (Verify(s.c_str(), m_PublicKeyString))
 		{

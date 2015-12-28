@@ -14,8 +14,8 @@
 
 #ifdef _WIN64
 #pragma comment(lib, "../include/CTP/win64/thosttraderapi.lib")
-#pragma comment(lib, "../lib/QuantBox_Queue_x64.lib")
+#pragma comment(lib, "../lib/Queue_x64.lib")
 #else
 #pragma comment(lib, "../include/CTP/win32/thosttraderapi.lib")
-#pragma comment(lib, "../lib/QuantBox_Queue_x86.lib")
+#pragma comment(lib, "../lib/Queue_x86.lib")
 #endif
