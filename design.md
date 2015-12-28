@@ -75,4 +75,14 @@
 后来因为Femas必须前面填充为0，填满共12个。这样FrontID:SessionID:OrderRef实际拼接方法可能就各不一样
 后来又改成char* SendOrders(order)，也就是一开始就是传出的唯一的字符串，但这种方法需要解决内存释放的问题
 
-所有现在需要大家共同设计一下SendOrders与CacelOrders
+所有现在需要大家共同设计一下SendOrders与CacelOrders。
+
+####11 XAPI2的目录结构
+目录中的项目名称不应该包括QuantBox前缀，因为没有必要，同时QuantBox是一个比XAPI2更大的概念。
+
+解决方案：已经去掉了前缀。
+
+####12 XAPI2的编译输出路径
+XAPI2中各项目的输出路径都应该同一放到一个文件夹中。
+
+解决方案：所有编译输出放在XAPI2\bin中，其中子目录结构举例：XAPI2\bin\Debug\x64\CTP\($solution)_($project)_($arch).dll。
