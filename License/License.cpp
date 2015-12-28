@@ -81,6 +81,13 @@ CLicense::CLicense()
 	sprintf_s(m_RealMAC, "%ld", GetMACaddress());
 
 	CreateDefault();
+
+	memset(m_LicensePath, 0, sizeof(m_LicensePath));
+	memset(m_PublicKeyPath, 0, sizeof(m_PublicKeyPath));
+	memset(m_PrivateKeyPath, 0, sizeof(m_PrivateKeyPath));
+	memset(m_SignaturePath, 0, sizeof(m_SignaturePath));
+	memset(m_PublicKeyString, 0, sizeof(m_PublicKeyString));
+	memset(m_SignatureString, 0, sizeof(m_SignatureString));
 }
 
 
@@ -127,9 +134,19 @@ void CLicense::SetPublicKeyString(const char* pubKey)
 	strncpy(m_PublicKeyString, pubKey, sizeof(m_PublicKeyString));
 }
 
+void CLicense::SetSignatureString(const char* signature)
+{
+	strncpy(m_SignatureString, signature, sizeof(m_SignatureString));
+}
+
 bool CLicense::IsTrial()
 {
 	return (m_Trial == 0 || strlen(m_PublicKeyString) <= 0);
+}
+
+bool CLicense::HasSignature()
+{
+	return (strlen(m_SignatureString) > 0);
 }
 
 int CLicense::LoadIni()
@@ -265,7 +282,7 @@ int CLicense::GetErrorCodeForSign()
 
 	do
 	{
-		if (strlen(m_PublicKeyString) <= 0)
+		if (!HasSignature())
 		{
 			m_ErrorCode = 12;
 			strcpy(m_ErrorInfo, ERROR_CODE_12);
@@ -342,7 +359,7 @@ int CLicense::GetErrorCode()
 		}
 
 		// 由于在前面已经有GetErrorCodeForSign()做了签名信息是否存在的检查
-		if (strlen(m_PublicKeyString)<=0)
+		if (!HasSignature())
 		{
 			// 所以这里是以最小授权进行通过
 			// 由于担心开发者忘了做GetErrorCodeForSign，这里还是搞一次m_Trial修正
@@ -356,7 +373,7 @@ int CLicense::GetErrorCode()
 
 		string s = LoadStringFromFile(m_LicensePath);
 
-		if (Verify(s.c_str(), m_PublicKeyString))
+		if (Verify(s.c_str(), m_PublicKeyString, m_SignatureString))
 		{
 
 		}
@@ -509,10 +526,10 @@ void CLicense::Sign(const char* message)
 	{
 		return;
 	}
-	RSASignString(m_PrivateKeyPath, message, m_SignaturePath);
+	RSASignFileStringFile(m_PrivateKeyPath, message, m_SignaturePath);
 }
 
-bool CLicense::Verify(const char* message, const char* pubKey)
+bool CLicense::Verify(const char* message, const char* pubKey, const char* signature)
 {
 	if (strlen(message) <= 0)
 	{
@@ -523,7 +540,7 @@ bool CLicense::Verify(const char* message, const char* pubKey)
 		return false;
 	}
 
-	return RSAVerifyStringString(pubKey, message, m_SignaturePath);
+	return RSAVerifyStringStringString(pubKey, message, signature);
 }
 
 //------------------------
@@ -573,63 +590,20 @@ string RSADecryptString(const char *privFilename, const char *ciphertext)
 	StringSource(ciphertext, true, new HexDecoder(new PK_DecryptorFilter(GlobalRNG(), priv, new StringSink(result))));
 	return result;
 }
-//
-//void RSASignFile(const char *privFilename, const char *messageFilename, const char *signatureFilename)
-//{
-//	FileSource privFile(privFilename, true, new HexDecoder);
-//	RSASS<PKCS1v15, SHA>::Signer priv(privFile);
-//	FileSource f(messageFilename, true, new SignerFilter(GlobalRNG(), priv, new HexEncoder(new FileSink(signatureFilename))));
-//}
-//
-//bool RSAVerifyFile(const char *pubFilename, const char *messageFilename, const char *signatureFilename)
-//{
-//	FileSource pubFile(pubFilename, true, new HexDecoder);
-//	RSASS<PKCS1v15, SHA>::Verifier pub(pubFile);
-//
-//	FileSource signatureFile(signatureFilename, true, new HexDecoder);
-//	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
-//		return false;
-//	SecByteBlock signature(pub.SignatureLength());
-//	signatureFile.Get(signature, signature.size());
-//
-//	VerifierFilter *verifierFilter = new VerifierFilter(pub);
-//	verifierFilter->Put(signature, pub.SignatureLength());
-//	FileSource f(messageFilename, true, verifierFilter);
-//
-//	return verifierFilter->GetLastResult();
-//}
 
-void RSASignString(const char *privFilename, const char *messageFilename, const char *signatureFilename)
+void RSASignFileStringFile(const char *privFilename, const char *messageFilename, const char *signatureFilename)
 {
 	FileSource privFile(privFilename, true, new HexDecoder);
 	RSASS<PKCS1v15, SHA>::Signer priv(privFile);
 	StringSource f(messageFilename, true, new SignerFilter(GlobalRNG(), priv, new HexEncoder(new FileSink(signatureFilename))));
 }
 
-bool RSAVerifyString(const char *pubFilename, const char *messageFilename, const char *signatureFilename)
-{
-	FileSource pubFile(pubFilename, true, new HexDecoder);
-	RSASS<PKCS1v15, SHA>::Verifier pub(pubFile);
-
-	FileSource signatureFile(signatureFilename, true, new HexDecoder);
-	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
-		return false;
-	SecByteBlock signature(pub.SignatureLength());
-	signatureFile.Get(signature, signature.size());
-
-	VerifierFilter *verifierFilter = new VerifierFilter(pub);
-	verifierFilter->Put(signature, pub.SignatureLength());
-	StringSource f(messageFilename, true, verifierFilter);
-
-	return verifierFilter->GetLastResult();
-}
-
-bool RSAVerifyStringString(const char *pubFilename, const char *messageFilename, const char *signatureFilename)
+bool RSAVerifyStringStringString(const char *pubFilename, const char *messageFilename, const char *signatureFilename)
 {
 	StringSource pubFile(pubFilename, true, new HexDecoder);
 	RSASS<PKCS1v15, SHA>::Verifier pub(pubFile);
 
-	FileSource signatureFile(signatureFilename, true, new HexDecoder);
+	StringSource signatureFile(signatureFilename, true, new HexDecoder);
 	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
 		return false;
 	SecByteBlock signature(pub.SignatureLength());
