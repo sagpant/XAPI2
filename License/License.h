@@ -41,11 +41,8 @@ using namespace CryptoPP;
 void GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed);
 string RSAEncryptString(const char *pubFilename, const char *seed, const char *message);
 string RSADecryptString(const char *privFilename, const char *ciphertext);
-//void RSASignFile(const char *privFilename, const char *messageFilename, const char *signatureFilename);
-//bool RSAVerifyFile(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
-void RSASignString(const char *privFilename, const char *messageFilename, const char *signatureFilename);
-bool RSAVerifyString(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
-bool RSAVerifyStringString(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
+void RSASignFileStringFile(const char *privFilename, const char *messageFilename, const char *signatureFilename);
+bool RSAVerifyStringStringString(const char *pubFilename, const char *messageFilename, const char *signatureFilename);
 
 RandomPool & GlobalRNG();
 
@@ -113,13 +110,15 @@ public:
 	void Sign(const char* message);
 	// 对某个字符串进行验证，可以先对此字符串预处理
 	// 公钥可以保存在dll中，不便修改的模式，这样用户
-	bool Verify(const char* message, const char* pubKey);
+	bool Verify(const char* message, const char* pubKey, const char* signature);
 	
 	
 	// 在进行GetErrorCode时，需要先设置公钥，这样好检查是否正确
 	void SetPublicKeyString(const char* pubKey);
+	void SetSignatureString(const char* signature);
 
 	bool IsTrial();
+	bool HasSignature();
 
 public:
 	char m_LicensePath[260];
@@ -128,6 +127,7 @@ public:
 	char m_SignaturePath[260];
 
 	char m_PublicKeyString[1024];
+	char m_SignatureString[1024];
 
 private:
 	int m_ExpireDate;
