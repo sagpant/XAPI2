@@ -217,7 +217,7 @@ int main_2(int argc, char* argv[])
 {
 	CXSpiImpl* p = new CXSpiImpl();
 
-	char DLLPath1[250] = "C:\\Program Files\\SmartQuant Ltd\\OpenQuant 2014\\XAPI\\TongShi\\x86\\QuantBox_TongShi_Quote.dll";
+	char DLLPath1[250] = "C:\\Program Files\\SmartQuant Ltd\\OpenQuant 2014\\XAPI\\TongShi\\x86\\TongShi_Quote.dll";
 
 	ServerInfoField				m_ServerInfo1 = { 0 };
 	UserInfoField				m_UserInfo = { 0 };
