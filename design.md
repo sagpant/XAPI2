@@ -87,3 +87,7 @@ XAPI2中各项目的输出路径都应该同一放到一个文件夹中。
 
 解决方案：所有编译输出放在XAPI2\bin中，其中子目录结构举例：XAPI2\bin\Debug\x64\CTP\($solution)_($project)_($arch).dll。
 
+#### 13. XAPI与XAPI2名称的使用
+在XAPI2中的各项目中，XAPI和XAPI2不应该视为可混用(interchangable)。XAPI应该仅用来表达与之前XAPI相关的内容（如果有的话），否则应该一律使用XAPI2。
+
+比如在C#的接口中，名称空间应该是QuantBox.XAPI2，而不是QuantBox.XAPI。
