@@ -1,6 +1,6 @@
 function OnRtnOrder(sender,arg)
 
-import QuantBox.XAPI.*;
+import XAPI.*;
 
 % Î¯ÍÐ»Ø±¨
 global orders;

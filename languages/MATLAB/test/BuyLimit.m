@@ -1,18 +1,18 @@
 function OrderRef = BuyLimit(Instrument,Qty,Price)
 
-import QuantBox.XAPI.*;
+import XAPI.*;
 
 global td;
 
 % ÏÂµ¥
-order = QuantBox.XAPI.OrderField;
+order = XAPI.OrderField;
 order.InstrumentID = Instrument;
-order.Type = QuantBox.OrderType.Limit;
-order.Side = QuantBox.OrderSide.Buy;
+order.Type = XAPI.OrderType.Limit;
+order.Side = XAPI.OrderSide.Buy;
 order.Qty = Qty;
 order.Price = Price;
-order.OpenClose = QuantBox.OpenCloseType.Open;
-order.HedgeFlag = QuantBox.HedgeFlagType.Speculation;
+order.OpenClose = XAPI.OpenCloseType.Open;
+order.HedgeFlag = XAPI.HedgeFlagType.Speculation;
 
 OrderRef = td.SendOrder(order);
 

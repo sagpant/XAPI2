@@ -13,7 +13,7 @@ const char* X_GetLastError();
 void* X_GetFunction(void* lib, const char* ProcName = "XRequest");
 void X_FreeLib(void* lib);
 
-ApiType X_GetApiType(void* pFun);
+ApiType X_GetApiTypes(void* pFun);
 const char* X_GetApiVersion(void* pFun);
 const char* X_GetApiName(void* pFun);
 

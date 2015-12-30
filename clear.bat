@@ -5,9 +5,9 @@ rd Release64 /S /Q
 rd x64 /S /Q
 rd ipch /S /Q
 
-del apis.opensdf /S /Q
-del apis.sdf /S /Q
-del apis.v12.suo /S /Q
+del AllCppProjects.opensdf /S /Q
+del AllCppProjects.sdf /S /Q
+del AllCppProjects.v12.suo /S /Q /A H
 
 rd apis\CTP_Quote\Debug /S /Q
 rd apis\CTP_Quote\Release /S /Q
@@ -41,12 +41,20 @@ rd apis\Kingstar_Quote\Release64 /S /Q
 rd apis\Kingstar_Trade\Release64 /S /Q
 rd apis\TongShi_Quote\Release64 /S /Q
 
-rd core\Queue\Debug /S /Q
-rd core\Queue\Release /S /Q
-rd core\Queue\x64 /S /Q
+rd common\Queue\Debug /S /Q
+rd common\Queue\Release /S /Q
+rd common\Queue\x64 /S /Q
 
-rd languages\CSharp\QuantBox.XAPI\bin /S /Q
-rd languages\CSharp\QuantBox.XAPI\obj /S /Q
+rd tools\FakeAPI\Debug /S /Q
+rd tools\FakeAPI\Release /S /Q
+rd tools\FakeAPI\x64 /S /Q
+
+rd tests\CPP\Debug /S /Q
+rd tests\CPP\Release /S /Q
+rd tests\CPP\x64 /S /Q
+
+rd languages\CSharp\XAPI_CSharp\bin /S /Q
+rd languages\CSharp\XAPI_CSharp\obj /S /Q
 
 
 

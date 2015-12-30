@@ -43,7 +43,7 @@ public:
 	virtual bool Init() = 0;
 	virtual const char* GetLastError() = 0;
 
-	virtual ApiType GetApiType() = 0;
+	virtual ApiType GetApiTypes() = 0;
 	virtual const char* GetApiVersion() = 0;
 	virtual const char* GetApiName() = 0;
 

@@ -13,7 +13,7 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	RequestType rt = (RequestType)type;
 	switch (rt)
 	{
-	case RequestType_GetApiType:
+	case RequestType_GetApiTypes:
 		return (void*)(ApiType::ApiType_Trade | ApiType::ApiType_MarketData | ApiType::ApiType_Query);
 	case RequestType_GetApiVersion:
 		return (void*)"0.3.0.20151212";

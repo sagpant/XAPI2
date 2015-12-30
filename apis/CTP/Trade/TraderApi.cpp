@@ -9,7 +9,7 @@
 
 #include "../../include/toolkit.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 
 #include "../CTP/TypeConvert.h"
 
@@ -247,7 +247,15 @@ int CTraderApi::_Init()
 	m_pApi = CThostFtdcTraderApi::CreateFtdcTraderApi(pszPath);
 	delete[] pszPath;
 
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	HMODULE hModule = GetModuleHandleA(nullptr);
+	char szPath[MAX_PATH] = { 0 };
+	GetModuleFileNameA(hModule, szPath, MAX_PATH);
+
+	RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+	pField->RawErrorID = 0;
+	strncpy(pField->Text, szPath, sizeof(Char256Type));
+
+	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 
 	if (m_pApi)
 	{
