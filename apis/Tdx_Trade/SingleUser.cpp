@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "SingleUser.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 #include "TypeConvert.h"
 #include "TraderApi.h"
 

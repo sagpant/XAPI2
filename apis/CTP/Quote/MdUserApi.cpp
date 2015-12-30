@@ -9,7 +9,7 @@
 #include "../../include/ApiProcess.h"
 #include "../TypeConvert.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 #ifdef _REMOTE
 #include "../../Queue/RemoteQueue.h"
 #endif
@@ -162,7 +162,15 @@ int CMdUserApi::_Init()
 	m_pApi = CThostFtdcMdApi::CreateFtdcMdApi(pszPath, m_ServerInfo.IsUsingUdp, m_ServerInfo.IsMulticast);
 	delete[] pszPath;
 
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	HMODULE hModule = GetModuleHandleA(nullptr);
+	char szPath[MAX_PATH] = { 0 };
+	GetModuleFileNameA(hModule, szPath, MAX_PATH);
+
+	RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+	pField->RawErrorID = 0;
+	strncpy(pField->Text, szPath, sizeof(Char256Type));
+
+	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 
 	if (m_pApi)
 	{

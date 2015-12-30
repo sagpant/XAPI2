@@ -9,7 +9,7 @@
 
 #include "../../include/toolkit.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 
 // 这里用的是与交易同一个类型转换
 #include "../LTS_Trade_v2/TypeConvert.h"

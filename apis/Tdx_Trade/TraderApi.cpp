@@ -10,7 +10,7 @@
 #include "../../include/ApiProcess.h"
 #include "../../include/toolkit.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 
 #include "TypeConvert.h"
 

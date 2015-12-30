@@ -5,7 +5,7 @@ EXPORTS
 	X_GetFunction @3
 	X_FreeLib @4
 	
-	X_GetApiType @5
+	X_GetApiTypes @5
 	X_GetApiVersion @6
 	X_GetApiName @7
 	

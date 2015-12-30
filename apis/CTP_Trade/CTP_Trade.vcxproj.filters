@@ -45,10 +45,10 @@
     <ClInclude Include="..\..\include\toolkit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\core\License\License.h">
+    <ClInclude Include="..\..\include\inirw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\inirw.h">
+    <ClInclude Include="..\..\common\License\License.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,10 +71,10 @@
     <ClCompile Include="..\..\include\toolkit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\core\License\License.cpp">
+    <ClCompile Include="..\..\include\inirw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\include\inirw.cpp">
+    <ClCompile Include="..\..\common\License\License.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

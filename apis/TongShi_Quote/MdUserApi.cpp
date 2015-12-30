@@ -8,7 +8,7 @@
 #include "../../include/toolkit.h"
 #include "../../include/ApiProcess.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 
 #include "../../include/XApiC.h"
 

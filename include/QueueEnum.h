@@ -4,7 +4,7 @@
 /// 基本请求
 enum RequestType :char
 {
-	RequestType_GetApiType = 0,
+	RequestType_GetApiTypes = 0,
 	RequestType_GetApiVersion,
 	RequestType_GetApiName,
 

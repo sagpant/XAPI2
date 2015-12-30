@@ -9,9 +9,9 @@
 #include "../../include/toolkit.h"
 #include "../../include/ApiProcess.h"
 
-#include "../../core/Queue/MsgQueue.h"
+#include "../../common/Queue/MsgQueue.h"
 #ifdef _REMOTE
-#include "../../core/Queue/RemoteQueue.h"
+#include "../../common/Queue/RemoteQueue.h"
 #endif
 
 #include <string.h>
