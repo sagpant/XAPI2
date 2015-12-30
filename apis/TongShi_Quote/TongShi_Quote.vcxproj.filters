@@ -45,7 +45,7 @@
     <ClCompile Include="..\..\include\toolkit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\languages\CPP\QuantBox_XAPI\XApiC.cpp">
+    <ClCompile Include="..\..\languages\CPP\XAPI_CPP\XApiC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

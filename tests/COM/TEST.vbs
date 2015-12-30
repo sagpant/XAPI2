@@ -3,8 +3,8 @@ Run32()
 MsgBox "点我开始"
 
 Dim XApi
-Set XApi = WScript.CreateObject("QuantBox.XApiCom","XApi_")
-XApi.SetLibPath "C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86\QuantBox_CTP_Quote.dll"
+Set XApi = WScript.CreateObject("XAPI.COM","XApi_")
+XApi.SetLibPath "D:\Kan\Documents\GitHub\XAPI2\bin\Debug\x86\CTP\CTP_Quote_x86.dll"
 XApi.SetServerInfo "Address","tcp://180.168.146.187:10010"
 XApi.SetServerInfo "BrokerID","9999"
 XApi.SetUserInfo "UserID","037505"

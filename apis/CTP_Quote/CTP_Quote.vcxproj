@@ -122,7 +122,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
     <IncludePath>./;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
@@ -131,23 +131,23 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
     <IncludePath>./;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
     <IncludePath>./;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
     <IncludePath>./;$(IncludePath)</IncludePath>
   </PropertyGroup>
@@ -156,7 +156,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
     <IncludePath>./;$(IncludePath)</IncludePath>
   </PropertyGroup>

@@ -55,7 +55,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\LTS_v2</OutDir>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
