@@ -6,7 +6,7 @@ import XAPI.Event.*;
 
 %% 行情
 global md;
-md = XApiWrapper(fullfile(cd,'XAPI\x86\CTP_Quote\CTP_Quote_x86.dll'));
+md = XApiWrapper(fullfile(cd,'XAPI\x86\CTP\CTP_Quote_x86.dll'));
 md.Server.BrokerID = '9999';
 md.Server.Address = 'tcp://180.168.146.187:10010';
 
@@ -20,7 +20,7 @@ md.Connect();
 
 %% 交易
 global td;
-td = XApiWrapper(fullfile(cd,'XAPI\x86\CTP_Trade\CTP_Trade_x86.dll'));
+td = XApiWrapper(fullfile(cd,'XAPI\x86\CTP\CTP_Trade_x86.dll'));
 td.Server.BrokerID = '9999';
 td.Server.Address = 'tcp://180.168.146.187:10000';
 

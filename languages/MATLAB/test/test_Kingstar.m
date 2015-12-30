@@ -6,7 +6,7 @@ import XAPI.Event.*;
 
 %% 行情
 global md;
-md = XApiWrapper(fullfile(cd,'XAPI\x86\Kingstar_Quote\Kingstar_Quote_x86.dll'));
+md = XApiWrapper(fullfile(cd,'XAPI\x86\Kingstar\Kingstar_Quote_x86.dll'));
 md.Server.BrokerID = '06085DA2';
 md.Server.Address = 'tcp://124.74.248.211:17993';
 
@@ -20,7 +20,7 @@ md.Connect();
 
 %% 交易
 global td;
-td = XApiWrapper(fullfile(cd,'XAPI\x86\Kingstar_Trade\Kingstar_Trade_x86.dll'));
+td = XApiWrapper(fullfile(cd,'XAPI\x86\Kingstar\Kingstar_Trade_x86.dll'));
 td.Server.BrokerID = '06085DA2';
 td.Server.Address = 'tcp://180.168.146.187:10000';
 
