@@ -14,7 +14,7 @@
 3. 到jnaerator上下载最新版的jar并放到当前目录，注意，请下载jnaerator-X.XX-shaded.jar这个文件大小最大的版本。<br/>
 项目路径：[https://github.com/nativelibs4java/JNAerator/releases](https://github.com/nativelibs4java/JNAerator/releases)<br/>
 快速下载：[http://search.maven.org/#search%7Cga%7C1%7Cjnaerator](http://search.maven.org/#search%7Cga%7C1%7Cjnaerator)
-4. 复制C接口的QuantBox_XPI.dll到工程目录并改名成XAPI.dll
+4. 复制C接口的XAPI_CPP.dll到工程目录并改名成XAPI.dll
 5. 可能要修改jnaerator.bat中相应jar文件名
 6. 运行jnaerator.bat生成对应的目录或文件
 
