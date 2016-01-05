@@ -14,6 +14,17 @@ TDXAPI_API FieldInfo_STRUCT** CopyTableHeader(FieldInfo_STRUCT** ppHeader);
 
 #else
 #define TDXAPI_API __declspec(dllimport)
+
+// 在编写代码时发现FILE不能跨DLL
+void OutputCSVTableHeader(FILE* pFile, FieldInfo_STRUCT** ppHeader);
+
+void OutputCSVTableBody(FILE* pFile, char** ppTable);
+void OutputCSVTableBody(FILE* pFile, char** ppTable, int count);
+
+void OutputCSVError(FILE* pFile, Error_STRUCT* pErr);
+void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs);
+void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs, int count);
+
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -21,7 +32,6 @@ TDXAPI_API FieldInfo_STRUCT** CopyTableHeader(FieldInfo_STRUCT** ppHeader);
 
 // 打印表头信息，实际是一个指针数组，指针指向字段信息，数组最后一个指针为null
 TDXAPI_API void PrintTableHeader(FieldInfo_STRUCT** ppHeader);
-TDXAPI_API void OutputCSVTableHeader(FILE* pFile, FieldInfo_STRUCT** ppHeader);
 
 // 根据字段名得到列索引
 TDXAPI_API int GetIndexByFieldName(FieldInfo_STRUCT** ppHeader,char* FieldName);
@@ -37,9 +47,6 @@ TDXAPI_API int GetCountTableHeader(FieldInfo_STRUCT** ppHeader);
 TDXAPI_API void PrintTableBody(char** ppTable);
 TDXAPI_API void PrintTableBody(char** ppTable, int count);
 
-TDXAPI_API void OutputCSVTableBody(FILE* pFile, char** ppTable);
-TDXAPI_API void OutputCSVTableBody(FILE* pFile, char** ppTable, int count);
-
 // 取出的数据看情况是否要删除
 TDXAPI_API void DeleteTableBody(char**  ppTable);
 TDXAPI_API void DeleteTableBody(char** ppTable, int count);
@@ -53,10 +60,6 @@ TDXAPI_API int GetRowCountTableBody(char** ppTable);
 TDXAPI_API void PrintError(Error_STRUCT* pErr);
 TDXAPI_API void PrintErrors(Error_STRUCT** pErrs);
 TDXAPI_API void PrintErrors(Error_STRUCT** pErrs, int count);
-
-TDXAPI_API void OutputCSVError(FILE* pFile, Error_STRUCT* pErr);
-TDXAPI_API void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs);
-TDXAPI_API void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs, int count);
 
 TDXAPI_API void DeleteError(Error_STRUCT* pErr);
 TDXAPI_API void DeleteErrors(Error_STRUCT** pErrs);
@@ -74,3 +77,8 @@ TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, 
 TDXAPI_API void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
 
 TDXAPI_API void DeleteRequestRespone(RequestRespone_STRUCT* pRespone);
+
+
+
+
+

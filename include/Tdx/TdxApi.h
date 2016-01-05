@@ -59,10 +59,7 @@ public:
 	// 撤单
 	virtual RequestRespone_STRUCT* MakeCancelOrder(CancelOrder_STRUCT* pCancelOrder) = 0;
 	virtual RequestRespone_STRUCT* MakeCancelOrder(WTLB_STRUCT* pOrder) = 0;
-
-public:
-	//virtual void Fill_KHH_By_Client(void* Client, char* khh_zjzh) = 0;
-
+	
 protected:
 	CTdxApi();
 	~CTdxApi(){};

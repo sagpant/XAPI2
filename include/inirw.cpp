@@ -45,12 +45,12 @@ static char *StrStrip(char *s)
 
 	p2 = s + size - 1;
 
-	while ((p2 >= s) && isspace(*p2))
+	while ((p2 >= s) && isspace((unsigned char)*p2))
 		p2 --;
 	*(p2 + 1) = '\0';
 
 	p1 = s;
-	while (*p1 && isspace(*p1))
+	while (*p1 && isspace((unsigned char)*p1))
 		p1 ++;
 	if (s != p1)
 		memmove(s, p1, p2 - p1 + 2);
@@ -428,7 +428,7 @@ int iniSetString(const char *section, const char *key, const char *value)
 		file = fopen(gFilename, "ab");
 		if (file == NULL) 
 			return 0;
-		fprintf(file, "\n[%s]\n%s = %s\n", section, key, value);
+		fprintf(file, "\n[%s]\n%s=%s\n", section, key, value);
 		fclose(file);
 		iniFileLoad(gFilename);
 		return 1;
@@ -454,7 +454,7 @@ int iniSetString(const char *section, const char *key, const char *value)
 					len = (int)(nextline - gBuffer);			//整行连同注释一并删除
 				} else {
 					//value有效，改写
-					fprintf(file, "%s = %s", key, value);
+					fprintf(file, "%s=%s", key, value);
 					len = (int)(rem1 - gBuffer);				//保留尾部原注释!
 				}
 				fwrite(gBuffer + len, 1, gBuflen - len, file);	//写入key所在行含注释之后部分
@@ -480,7 +480,7 @@ int iniSetString(const char *section, const char *key, const char *value)
 		return 0;
 	len = (int)(cont2 - gBuffer);
 	fwrite(gBuffer, 1, len, file);					//写入key之前部分
-	fprintf(file, "%s = %s\n", key, value);
+	fprintf(file, "%s=%s\n", key, value);
 	fwrite(gBuffer + len, 1, gBuflen - len, file);	//写入key之后部分
 	fclose(file);
 	iniFileLoad(gFilename);

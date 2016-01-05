@@ -34,4 +34,11 @@ double my_round(float val, int x = 0);
 //根据OnFrontDisconnected(int nReason)的值填上错误消息
 void GetOnFrontDisconnectedMsg(int ErrorId, char* ErrorMsg);
 
+// 通过公开的函数名，得到当前的路径
+void GetDllPathByFunctionName(const char* szFunctionName, char* szPath);
+// 得到当前可执行程序的路径
+void GetExePath(char* szPath);
+// 传入路径，得到目录
+void GetDirectoryByPath(const char* szPath, char* szDirectory);
+
 #endif
