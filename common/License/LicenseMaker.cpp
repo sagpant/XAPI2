@@ -71,11 +71,6 @@ void Select2()
 		
 		// 签名
 		license.Sign(s.c_str());
-
-		/*string k = license.LoadStringFromFile(license.m_PublicKeyPath);
-
-		bool a = license.Verify(s.c_str(),k.c_str());
-		int  b = 1;*/
 	}
 
 	cout << "签名已经生成，请查看" << endl;
@@ -83,6 +78,37 @@ void Select2()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	// 如果带参数，按参数进行操作
+	if (argc == 5)
+	{
+		CLicense license;
+		string s;
+
+		int arg = 0;
+		/* Parse command line arguments.  */
+		while (++arg < argc) {
+			if (!strcmp(argv[arg], "--License") ||
+				!strcmp(argv[arg], "--license")) {
+				license.SetLicensePath(argv[arg + 1]);
+			}
+			else if (!strcmp(argv[arg], "--PrivateKey") ||
+				!strcmp(argv[arg], "--PrivateKey")) {
+				strcpy(license.m_PrivateKeyPath, argv[arg + 1]);
+				s = license.LoadStringFromFile(license.m_LicensePath);
+			}
+			else {
+				if (argc > 1)
+					fprintf(stderr, "Invalid command line argument: %s\n", argv[arg]);
+			}
+			arg++;
+		}
+
+		license.Sign(s.c_str());
+		printf("OK");
+		exit(1);
+		return 1;
+	}
+
 	cout << "=====授权生成工具v1.0=====" << endl;
 SELECT:
 	cout << "请选择：" << endl;
