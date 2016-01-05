@@ -159,18 +159,30 @@ int CMdUserApi::_Init()
 	sprintf(pszPath, "%s/%s/%s/Md/%d/", m_szPath.c_str(), m_ServerInfo.BrokerID, m_UserInfo.UserID, rand());
 	makedirs(pszPath);
 
-	m_pApi = CThostFtdcMdApi::CreateFtdcMdApi(pszPath, m_ServerInfo.IsUsingUdp, m_ServerInfo.IsMulticast);
-	delete[] pszPath;
+	char szExePath[MAX_PATH] = { 0 };
+	GetExePath(szExePath);
+	char szDllPath[MAX_PATH] = { 0 };
+	GetDllPathByFunctionName("XRequest", szDllPath);
+	char szDirectory[MAX_PATH] = { 0 };
+	GetDirectoryByPath(szDllPath, szDirectory);
+	char szCurrDir[MAX_PATH] = { 0 };
 
-	HMODULE hModule = GetModuleHandleA(nullptr);
-	char szPath[MAX_PATH] = { 0 };
-	GetModuleFileNameA(hModule, szPath, MAX_PATH);
+	if (SetCurrentDirectoryA(szDirectory))
+	{
+		LogField* pField = (LogField*)m_msgQueue->new_block(sizeof(LogField));
+
+		sprintf_s(pField->Message, "SetCurrentDirectory:%s", szDirectory);
+
+		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnLog, m_msgQueue, m_pClass, true, 0, pField, sizeof(LogField), nullptr, 0, nullptr, 0);
+	}
 
 	RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
 	pField->RawErrorID = 0;
-	strncpy(pField->Text, szPath, sizeof(Char256Type));
-
+	sprintf_s(pField->Text, "ExePath:%s", szExePath);
 	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+
+	m_pApi = CThostFtdcMdApi::CreateFtdcMdApi(pszPath, m_ServerInfo.IsUsingUdp, m_ServerInfo.IsMulticast);
+	delete[] pszPath;
 
 	if (m_pApi)
 	{

@@ -12,7 +12,6 @@
 using namespace std;
 
 #ifdef TDXAPI_EXPORTS
-
 /*
 注意：以下代码只是几个数据表的读写方式，当做示例使用
 此cpp请不要添加到项目中，而是只添加h文件
@@ -40,24 +39,6 @@ void PrintTableHeader(FieldInfo_STRUCT** ppHeader)
 	printf("\n");
 }
 
-void OutputCSVTableHeader(FILE* pFile, FieldInfo_STRUCT** ppHeader)
-{
-	if (ppHeader == nullptr || pFile == nullptr)
-		return;
-
-	int i = 0;
-	FieldInfo_STRUCT* pRow = ppHeader[i];
-	while (pRow != 0)
-	{
-		char buf[512] = { 0 };
-		fprintf(pFile,"%d_%s,",//"%d,%s,%d,%d,%d,%d,%d",
-			pRow->FieldID, pRow->FieldName, pRow->a, pRow->b, pRow->Len, pRow->d, pRow->e);
-
-		++i;
-		pRow = ppHeader[i];
-	}
-	fprintf(pFile, "\n");
-}
 
 FieldInfo_STRUCT** CopyTableHeader(FieldInfo_STRUCT** ppHeader)
 {
@@ -207,61 +188,6 @@ void PrintTableBody(char** ppTable, int count)
 	return;
 }
 
-void OutputCSVTableBody(FILE* pFile, char** ppTable)
-{
-	if (ppTable == nullptr || pFile == nullptr)
-		return;
-
-	// 如果有数据，第一列就不为空
-	int i = 0;
-	int j = 0;
-	char* p = ppTable[i * COL_EACH_ROW + j];
-	while (p != nullptr)
-	{
-		//printf("%d:", i);
-		for (j = 0; j < COL_EACH_ROW; ++j)
-		{
-			p = ppTable[i * COL_EACH_ROW + j];
-			if (p)
-			{
-				fprintf(pFile, "%s,", p);
-			}
-			else
-				break;
-		}
-		fprintf(pFile, "\n");
-		j = 0;
-		++i;
-		p = ppTable[i * COL_EACH_ROW + j];
-	}
-
-	return;
-}
-
-void OutputCSVTableBody(FILE* pFile, char** ppTable, int count)
-{
-	if (ppTable == nullptr || pFile == nullptr)
-		return;
-
-	for (int i = 0; i < count; ++i)
-	{
-		//printf("%d:", i);
-		for (int j = 0; j < COL_EACH_ROW; ++j)
-		{
-			char* p = ppTable[i * COL_EACH_ROW + j];
-			if (p)
-			{
-				fprintf(pFile, "%s,", p);
-
-			}
-			else
-				break;
-		}
-		fprintf(pFile, "\n");
-	}
-
-	return;
-}
 
 // 得到某一行某一列
 char* GetAtTableBody(char** ppTable, int row, int col)
@@ -389,50 +315,6 @@ void PrintErrors(Error_STRUCT** pErrs, int count)
 	}
 }
 
-void OutputCSVError(FILE* pFile, Error_STRUCT* pErr)
-{
-	if (pErr == nullptr)
-	{
-		return;
-	}
-
-	fprintf(pFile, "%d,%d,%s\n", pErr->ErrType, pErr->ErrCode, pErr->ErrInfo);
-}
-
-void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs)
-{
-	if (pErrs == nullptr)
-		return;
-
-	int i = 0;
-	Error_STRUCT* pErr = pErrs[i];
-	while (pErr != nullptr)
-	{
-		fprintf(pFile, "%d:%d,%d,%s\n", i, pErr->ErrType, pErr->ErrCode, pErr->ErrInfo);
-
-		++i;
-		pErr = pErrs[i];
-	}
-}
-
-void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs, int count)
-{
-	if (pErrs == nullptr)
-	{
-		return;
-	}
-
-	for (int i = 0; i < count; ++i)
-	{
-		Error_STRUCT* pErr = pErrs[i];
-		if (pErr)
-		{
-			fprintf(pFile, "%d:%d,%d,%s\n", i, pErr->ErrType, pErr->ErrCode, pErr->ErrInfo);
-		}
-		else
-			fprintf(pFile, "\n");
-	}
-}
 
 void DeleteError(Error_STRUCT* pErr)
 {
@@ -705,4 +587,131 @@ void DeleteRequestRespone(RequestRespone_STRUCT* pRespone)
 }
 
 #else
+
+
+void OutputCSVTableHeader(FILE* pFile, FieldInfo_STRUCT** ppHeader)
+{
+	if (ppHeader == nullptr || pFile == nullptr)
+		return;
+
+	int i = 0;
+	FieldInfo_STRUCT* pRow = ppHeader[i];
+	while (pRow != 0)
+	{
+		char buf[512] = { 0 };
+		fprintf(pFile, "%d_%s,",//"%d,%s,%d,%d,%d,%d,%d",
+			pRow->FieldID, pRow->FieldName, pRow->a, pRow->b, pRow->Len, pRow->d, pRow->e);
+
+		++i;
+		pRow = ppHeader[i];
+	}
+	fprintf(pFile, "\n");
+}
+
+
+void OutputCSVTableBody(FILE* pFile, char** ppTable)
+{
+	if (ppTable == nullptr || pFile == nullptr)
+		return;
+
+	// 如果有数据，第一列就不为空
+	int i = 0;
+	int j = 0;
+	char* p = ppTable[i * COL_EACH_ROW + j];
+	while (p != nullptr)
+	{
+		//printf("%d:", i);
+		for (j = 0; j < COL_EACH_ROW; ++j)
+		{
+			p = ppTable[i * COL_EACH_ROW + j];
+			if (p)
+			{
+				fprintf(pFile, "%s,", p);
+			}
+			else
+				break;
+		}
+		fprintf(pFile, "\n");
+		j = 0;
+		++i;
+		p = ppTable[i * COL_EACH_ROW + j];
+	}
+
+	return;
+}
+
+void OutputCSVTableBody(FILE* pFile, char** ppTable, int count)
+{
+	if (ppTable == nullptr || pFile == nullptr)
+		return;
+
+	for (int i = 0; i < count; ++i)
+	{
+		//printf("%d:", i);
+		for (int j = 0; j < COL_EACH_ROW; ++j)
+		{
+			char* p = ppTable[i * COL_EACH_ROW + j];
+			if (p)
+			{
+				fprintf(pFile, "%s,", p);
+
+			}
+			else
+				break;
+		}
+		fprintf(pFile, "\n");
+	}
+
+	return;
+}
+
+
+void OutputCSVError(FILE* pFile, Error_STRUCT* pErr)
+{
+	if (pErr == nullptr)
+	{
+		return;
+	}
+
+	fprintf(pFile, "%d,%d,%s\n", pErr->ErrType, pErr->ErrCode, pErr->ErrInfo);
+}
+
+void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs)
+{
+	if (pErrs == nullptr)
+		return;
+
+	int i = 0;
+	Error_STRUCT* pErr = pErrs[i];
+	while (pErr != nullptr)
+	{
+		fprintf(pFile, "%d:%d,%d,%s\n", i, pErr->ErrType, pErr->ErrCode, pErr->ErrInfo);
+
+		++i;
+		pErr = pErrs[i];
+	}
+}
+
+void OutputCSVErrors(FILE* pFile, Error_STRUCT** pErrs, int count)
+{
+	if (pErrs == nullptr)
+	{
+		return;
+	}
+
+	for (int i = 0; i < count; ++i)
+	{
+		Error_STRUCT* pErr = pErrs[i];
+		if (pErr)
+		{
+			fprintf(pFile, "%d:%d,%d,%s\n", i, pErr->ErrType, pErr->ErrCode, pErr->ErrInfo);
+		}
+		else
+			fprintf(pFile, "\n");
+	}
+}
+
+
+
+
 #endif

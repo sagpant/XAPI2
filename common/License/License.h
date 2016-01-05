@@ -119,6 +119,7 @@ public:
 
 	bool IsTrial();
 	bool HasSignature();
+	bool HasSaved();
 
 public:
 	char m_LicensePath[260];
@@ -130,6 +131,7 @@ public:
 	char m_SignatureString[1024];
 
 private:
+	bool m_bHasSaved;
 	int m_ExpireDate;
 	int m_Trial;
 	int m_nCurrentTrial;

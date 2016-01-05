@@ -469,3 +469,30 @@ void GetOnFrontDisconnectedMsg(int ErrorId, char* ErrorMsg)
 		break;
 	}
 }
+
+void GetDllPathByFunctionName(const char* szFunctionName, char* szPath)
+{
+	HMODULE hModule = nullptr;
+	GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, szFunctionName, &hModule);
+
+	GetModuleFileNameA(hModule, szPath, MAX_PATH);
+}
+
+void GetExePath(char* szPath)
+{
+	HMODULE hModule = GetModuleHandleA(nullptr);
+	//char szPath[MAX_PATH] = { 0 };
+	GetModuleFileNameA(hModule, szPath, MAX_PATH);
+}
+
+void GetDirectoryByPath(const char* szPath, char* szDirectory)
+{
+	//char szPath[_MAX_PATH] = { 0 };
+	char drive[_MAX_DRIVE] = { 0 };
+	char dir[_MAX_DIR] = { 0 };
+	char fname[_MAX_FNAME] = { 0 };
+	char ext[_MAX_EXT] = { 0 };
+
+	_splitpath(szPath, drive, dir, fname, ext);
+	_makepath(szDirectory, drive, dir, nullptr, nullptr);
+}

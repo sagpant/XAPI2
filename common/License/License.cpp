@@ -76,6 +76,7 @@ DWORD GetMACaddress()
 
 CLicense::CLicense()
 {
+	m_bHasSaved = false;
 	m_bLoaded = false;
 
 	sprintf_s(m_RealMAC, "%ld", GetMACaddress());
@@ -147,6 +148,11 @@ bool CLicense::IsTrial()
 bool CLicense::HasSignature()
 {
 	return (strlen(m_SignatureString) > 0);
+}
+
+bool CLicense::HasSaved()
+{
+	return m_bHasSaved;
 }
 
 int CLicense::LoadIni()
@@ -254,7 +260,10 @@ int CLicense::SaveIni()
 	iniFileFree();
 
 	if (bRet != 0)
+	{
+		m_bHasSaved = true;
 		return 0;
+	}
 
 	sprintf(m_ErrorInfo, ERROR_CODE_11);
 	m_ErrorCode = -11;
