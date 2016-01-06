@@ -122,7 +122,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
+    <OutDir>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP</OutDir>
     <IncludePath>./;../../include/cryptopp/;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>

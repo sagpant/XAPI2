@@ -134,7 +134,7 @@ CTraderApi::CTraderApi(void)
 	m_pLicense->GetDllPathByFunctionName("XRequest", szPath);
 	m_pLicense->SetLicensePath(szPath);
 	// 这里选的是从文件中加载公钥，可以写死到资源或代码中，这样用户就没有那么容易自己生成公私钥对替换了
-	m_pLicense->SetPublicKeyString("30819D300D06092A864886F70D010101050003818B0030818702818100E17434DC96FC6384E260C03953341E197CBBAF000DC81CA869FC3488B8BAA19F7E5ACDC2987951879A9CD61E7E053C53D2AC98BA8F5CEF4B7C92A0E1A571EF912A7F67905CEBA1AEFE58D886C32107501208FBDB84B1063FDF360DE7F6396F509E6AF161E2DECAA0AC4FF724C0F9B79DF12790FC0C61ADA5B4A242D3251FE77D020111");
+	m_pLicense->SetPublicKeyString(DLL_PUBLIC_KEY);
 
 	string signatureString = m_pLicense->LoadStringFromFile(m_pLicense->m_SignaturePath);
 	m_pLicense->SetSignatureString(signatureString.c_str());
@@ -205,18 +205,22 @@ int CTraderApi::_Init()
 
 	if (err == 0)
 	{
-		// 如果签名信息不存在，只给试用权限
-		err = m_pLicense->GetErrorCodeForSign();
-	}
-
-	if (err == 0)
-	{
-		err = m_pLicense->GetErrorCode();
+		err = m_pLicense->GetErrorCodeForMachineID();
 	}
 
 	if (err == 0)
 	{
 		err = m_pLicense->GetErrorCodeByAccount(m_UserInfo.UserID);
+	}
+
+	if (err == 0)
+	{
+		err = m_pLicense->GetErrorCodeForSign();
+	}
+
+	if (err == 0)
+	{
+		err = m_pLicense->GetErrorCodeForExpireDate();
 	}
 
 	if (err != 0)
