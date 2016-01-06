@@ -146,6 +146,7 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 
 				WTLB_2_OrderField_0(ppRS[i], pField);
 				CreateID(pField->ID, ppRS[i]->WTRQ, ppRS[i]->GDDM, ppRS[i]->WTBH);
+				pField->Date = ppRS[i]->WTRQ_ == 0 ? Today(0) : ppRS[i]->WTRQ_;//日期为0，重新赋值
 
 				m_NewOrderList.push_back(pField);
 
@@ -409,6 +410,7 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 			TradeField* pField = (TradeField*)m_msgQueue->new_block(sizeof(TradeField));
 
 			CJLB_2_TradeField(ppRS[i], pField);
+			pField->Date = ppRS[i]->CJRQ_ == 0 ? Today(0) : ppRS[i]->CJRQ_;//日期为0，重新赋值
 
 			if (m_TradeListReverse)
 			{
@@ -753,7 +755,8 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 	if (pRespone->ppResults&&pRespone->ppResults[0 * COL_EACH_ROW + 0])
 	{
 		// 写上柜台的ID，以后将基于此进行定位
-		strcpy(pOrder->OrderID, pRespone->ppResults[0 * COL_EACH_ROW + 0]);
+		strcpy(pOrder->OrderID, pRespone->ppResults[0 * COL_EACH_ROW + 0]);//订单号
+		strcpy(pWTOrders->WTBH, pOrder->OrderID);
 		CreateID(pOrder->ID, nullptr, pTdxOrder->GDDM, pOrder->OrderID);
 		
 
@@ -762,7 +765,7 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 
 		m_pApi->m_id_platform_order.erase(pOrder->LocalID);
 		m_pApi->m_id_platform_order.insert(pair<string, OrderField*>(pOrder->ID, pOrder));
-
+		
 		// 有挂单的，需要进行查询了
 
 		double  _queryTime = QUERY_TIME_MIN;
