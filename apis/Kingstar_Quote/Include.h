@@ -7,6 +7,7 @@
 
 #define API_VERSION	"0.3.0.20151216"
 #define API_NAME	"Kingstar"
+#define DLL_PUBLIC_KEY ""
 
 #include "../../include/Kingstar/IncEx/KSUserApiDataTypeEx.h"
 #include "../../include/Kingstar/IncEx/KSUserApiStructEx.h"

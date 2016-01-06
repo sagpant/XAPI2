@@ -3,7 +3,7 @@
 
 #ifdef ENABLE_LICENSE
 
-
+#include <regex>
 #include <time.h>
 
 // BOOLEAN与asn.h中的冲突，不得不将asn.h中的改了，希望有人帮忙解决这个问题
@@ -24,6 +24,9 @@
 #define KEY_NAME_TRIAL		"Trial"
 #define KEY_NAME_EXPIRE_DATE	"ExpireDate"
 #define KEY_NAME_SERIAL_NUMBER	"SerialNumber"
+#define KEY_NAME_INFO		"Info"
+
+using namespace std;
 
 // Prints the MAC address stored in a 6 byte array to stdout
 static void PrintMACaddress(unsigned char MACData[])
@@ -107,6 +110,25 @@ int CLicense::Today(int day)
 		+ ptmNow->tm_mday;
 }
 
+int CLicense::Date(int date, int day)
+{
+	time_t now = time(0);
+	struct tm *ptmNow = localtime(&now);
+
+	ptmNow->tm_year = date / 10000 - 1900;
+	ptmNow->tm_mon = date % 10000 / 100 - 1;
+	ptmNow->tm_mday = date % 100;
+
+	now = mktime(ptmNow);
+
+	now += day * 86400;
+	ptmNow = localtime(&now);
+
+	return (ptmNow->tm_year + 1900) * 10000
+		+ (ptmNow->tm_mon + 1) * 100
+		+ ptmNow->tm_mday;
+}
+
 void CLicense::GetDllPathByFunctionName(const char* szFunctionName, char* szPath)
 {
 	HMODULE hModule = nullptr;
@@ -163,58 +185,58 @@ int CLicense::LoadIni()
 	m_ExpireDate = iniGetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, -1);
 	m_Trial = iniGetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, 5);
 
-	iniGetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account, sizeof(m_Account), "*|");
-	iniGetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName, sizeof(m_UserName), "*|");
-	iniGetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC, sizeof(m_MAC), "*|");
+	iniGetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account, sizeof(m_Account), "A");
+	iniGetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName, sizeof(m_UserName), "B");
+	iniGetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC, sizeof(m_MAC), "C");
 
 	iniFileFree();
 
-	vector<string> vct1;
+	/*vector<string> vct1;
 	{
-		char* token = strtok(m_Account, "|");
-		while (token)
-		{
-			if (strlen(token) > 0)
-			{
-				vct1.push_back(string(token));
-			}
-			token = strtok(nullptr, "|");
-		}
+	char* token = strtok(m_Account, "|");
+	while (token)
+	{
+	if (strlen(token) > 0)
+	{
+	vct1.push_back(string(token));
+	}
+	token = strtok(nullptr, "|");
+	}
 	}
 
 	vector<string> vct2;
 	{
-		char* token = strtok(m_UserName, "|");
-		while (token)
-		{
-			if (strlen(token) > 0)
-			{
-				vct2.push_back(string(token));
-			}
-			token = strtok(nullptr, "|");
-		}
+	char* token = strtok(m_UserName, "|");
+	while (token)
+	{
+	if (strlen(token) > 0)
+	{
+	vct2.push_back(string(token));
+	}
+	token = strtok(nullptr, "|");
+	}
 	}
 
 	m_MacSet.clear();
 	vector<string> vct3;
 	{
-		char* token = strtok(m_MAC, "|");
-		while (token)
-		{
-			if (strlen(token) > 0)
-			{
-				m_MacSet.insert(string(token));
-			}
-			token = strtok(nullptr, "|");
-		}
+	char* token = strtok(m_MAC, "|");
+	while (token)
+	{
+	if (strlen(token) > 0)
+	{
+	m_MacSet.insert(string(token));
 	}
-	
+	token = strtok(nullptr, "|");
+	}
+	}
+
 	m_UserMap.clear();
 	int count = min(vct1.size(), vct2.size());
 	for (size_t i = 0; i < count; ++i)
 	{
-		AddUser(vct1[i].c_str(), vct2[i].c_str());
-	}
+	AddUser(vct1[i].c_str(), vct2[i].c_str());
+	}*/
 
 	if (m_bLoaded != 0)
 		return 0;
@@ -236,25 +258,27 @@ int CLicense::SaveIni()
 	iniSetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, m_ExpireDate, 10);
 	iniSetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, m_Trial, 10);
 
-	m_Account[0] = 0;
-	m_UserName[0] = 0;
-
-	for (map<string, string>::iterator it = m_UserMap.begin(); it != m_UserMap.end(); ++it)
-	{
-		strcat(m_Account, it->first.c_str());
-		strcat(m_Account, "|");
-		strcat(m_UserName, it->second.c_str());
-		strcat(m_UserName, "|");
-	}
 	iniSetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account);
 	iniSetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName);
 
-	m_MAC[0] = 0;
-	for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
+	//m_Account[0] = 0;
+	char szInfo[2048] = { 0 };
+
+	for (map<string, string>::iterator it = m_UserMap.begin(); it != m_UserMap.end(); ++it)
 	{
-		strcat(m_MAC, it->c_str());
-		strcat(m_MAC, "|");
+		strcat(szInfo, it->first.c_str());
+		strcat(szInfo, "|");
+		strcat(szInfo, it->second.c_str());
+		strcat(szInfo, "|");
 	}
+	iniSetString(APP_NAME_USER, KEY_NAME_INFO, szInfo);
+
+	//m_MAC[0] = 0;
+	//for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
+	//{
+	//	strcat(m_MAC, it->c_str());
+	//	strcat(m_MAC, "|");
+	//}
 	int bRet = iniSetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC);
 
 	iniFileFree();
@@ -276,12 +300,11 @@ void CLicense::CreateDefault()
 	m_Trial = 5;	// 默认5次
 	m_ExpireDate = Today(7);	// 7天
 	m_UserMap.clear();
-	m_MacSet.clear();
 	m_nCurrentTrial = 0;
 
-	AddUser("*", "*");
-	m_MacSet.insert("*");
-	m_MacSet.insert(m_RealMAC);
+	strncpy(m_Account, ".*", sizeof(m_Account));
+	strncpy(m_UserName, ".*", sizeof(m_UserName));
+	strncpy(m_MAC, ".*", sizeof(m_MAC));
 }
 
 int CLicense::GetErrorCodeForSign()
@@ -291,91 +314,17 @@ int CLicense::GetErrorCodeForSign()
 
 	do
 	{
-		if (!HasSignature())
-		{
-			m_ErrorCode = 12;
-			strcpy(m_ErrorInfo, ERROR_CODE_12);
-
-			// 只有试用次数和日期可以检查了
-			m_Trial = min(m_Trial, 5);
-			m_ExpireDate = min(m_ExpireDate,Today(7));
-
-			break;
-		}
-
-	} while (false);
-
-	return m_ErrorCode;
-}
-
-int CLicense::GetErrorCode()
-{
-	// 认证通过
-	m_ErrorCode = 0;
-
-	do
-	{
-		// 检查机器码
-		for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
-		{
-			const char *p = (it)->c_str();
-			if (strncmp(m_RealMAC, p, strlen(m_RealMAC)) == 0)
-			{
-				// 找到了
-				m_ErrorCode = 0;
-				break;
-			}
-			else if (p[0] == '*')
-			{
-				// *号就通过
-				m_ErrorCode = 0;
-				break;
-			}
-
-			strcpy(m_ErrorInfo, ERROR_CODE_5);
-			m_ErrorCode = -5;
-		}
-
-		//// 没有任何绑定的，不能超过90天
-		//// 只绑定名字的，不能超过180天
-		//int limitDay = 1000;
-		//if (m_bHasStarAccount&&m_bHasStarMAC)
-		//{
-		//	if (m_bHasStarUserName)
-		//	{
-		//		limitDay = 90;
-		//	}
-		//	else
-		//	{
-		//		limitDay = 180;
-		//	}
-		//}
-
-		//// 看授权时间是否合要求
-		//if (m_ExpireDate > Today(limitDay))
-		//{
-		//	m_ErrorCode = -10;
-		//	sprintf(m_ErrorInfo, ERROR_CODE_10);
-		//	break;
-		//}
-
-		// 是否过期了
-		if (m_ExpireDate < Today(0))
-		{
-			m_ErrorCode = -3;
-			sprintf(m_ErrorInfo, ERROR_CODE_3, m_ExpireDate);
-			break;
-		}
-
 		// 由于在前面已经有GetErrorCodeForSign()做了签名信息是否存在的检查
 		if (!HasSignature())
 		{
 			// 所以这里是以最小授权进行通过
-			// 由于担心开发者忘了做GetErrorCodeForSign，这里还是搞一次m_Trial修正
-			
-			// 只有试用次数和日期可以检查了
+			// 只有试用次数可以检查了
 			m_Trial = min(m_Trial, 5);
-			m_ExpireDate = min(m_ExpireDate, Today(7));
+			// 由于在这之前就已经检查过了过期时间了，所以这地方没有必要
+			//m_ExpireDate = min(m_ExpireDate, Today(7));
+
+			m_ErrorCode = 12;
+			sprintf_s(m_ErrorInfo, ERROR_CODE_12, m_Trial);
 
 			break;
 		}
@@ -398,6 +347,55 @@ int CLicense::GetErrorCode()
 	return m_ErrorCode;
 }
 
+int CLicense::GetErrorCodeForMachineID()
+{
+	// 认证通过
+	m_ErrorCode = 0;
+
+	do
+	{
+		// 检查机器码
+		regex pattern(m_MAC);
+		if (!regex_search(m_RealMAC, pattern))
+		{
+			strcpy(m_ErrorInfo, ERROR_CODE_5);
+			m_ErrorCode = -5;
+			break;
+		}
+
+	} while (false);
+
+	return m_ErrorCode;
+}
+
+int CLicense::GetErrorCodeForExpireDate()
+{
+	// 认证通过
+	m_ErrorCode = 0;
+
+	do
+	{
+		// 是否过期了
+		if (m_ExpireDate < Today(0))
+		{
+			m_ErrorCode = -3;
+			sprintf(m_ErrorInfo, ERROR_CODE_3, m_ExpireDate);
+			break;
+		}
+
+		// 看授权时间是否合要求
+		int metion = Date(m_ExpireDate, -15);
+		if (metion <= Today(0))
+		{
+			m_ErrorCode = 13;
+			sprintf_s(m_ErrorInfo, ERROR_CODE_13, m_ExpireDate, metion);
+			break;
+		}
+	} while (false);
+
+	return m_ErrorCode;
+}
+
 int CLicense::GetErrorCodeByAccount(const char* account)
 {
 	// 认证通过
@@ -405,25 +403,14 @@ int CLicense::GetErrorCodeByAccount(const char* account)
 
 	do
 	{
-		m_ErrorCode = -4;
-		sprintf(m_ErrorInfo, ERROR_CODE_4, account);
-
-		for (map<string, string>::iterator it = m_UserMap.begin(); it != m_UserMap.end(); ++it)
+		regex pattern(m_Account);
+		if (!regex_search(account, pattern))
 		{
-			const char *p = (it)->first.c_str();
-			if (strncmp(account, p, strlen(account)) == 0)
-			{
-				// 找到了
-				m_ErrorCode = 0;
-				break;
-			}
-			else if (p[0] == '*')
-			{
-				// *号就通过
-				m_ErrorCode = 0;
-				break;
-			}
+			m_ErrorCode = -4;
+			sprintf(m_ErrorInfo, ERROR_CODE_4, account);
+			break;
 		}
+
 	} while (false);
 
 	return m_ErrorCode;
@@ -436,44 +423,22 @@ int CLicense::GetErrorCodeByNameThenAccount(const char* name, const char* accoun
 
 	do
 	{
-		m_ErrorCode = -9;
-		sprintf(m_ErrorInfo, ERROR_CODE_9, name);
+		// 由于使用了正则，没办法做到一一对应了，所以这里只检查姓名
+		//regex pattern(m_Account);
+		//if (regex_search(account, pattern))
+		//{
+		//	m_ErrorCode = 0;
+		//	break;
+		//}
 
-		for (map<string, string>::iterator it = m_UserMap.begin(); it != m_UserMap.end(); ++it)
+		regex pattern(m_UserName);
+		if (!regex_search(name, pattern))
 		{
-			const char *p1 = (it)->first.c_str();
-			const char *p2 = (it)->second.c_str();
-			if (strncmp(name, p2, strlen(name)) == 0)
-			{
-				if (p1[0] == '*')
-				{
-					// *号就通过
-					m_ErrorCode = 0;
-					break;
-				}
-				else if (strncmp(account, p1, strlen(account)) == 0)
-				{
-					// 找到了
-					m_ErrorCode = 0;
-					break;
-				}
-			}
-			else if (p2[0] == '*')
-			{
-				if (p1[0] == '*')
-				{
-					// *号就通过
-					m_ErrorCode = 0;
-					break;
-				}
-				else if (strncmp(account, p1, strlen(account)) == 0)
-				{
-					// 找到了
-					m_ErrorCode = 0;
-					break;
-				}
-			}
+			m_ErrorCode = -9;
+			sprintf(m_ErrorInfo, ERROR_CODE_9, name);
+			break;
 		}
+
 	} while (false);
 
 	return m_ErrorCode;

@@ -7,6 +7,7 @@
 
 #define API_VERSION	"0.3.0.20151216"
 #define API_NAME	"CTP"
+#define DLL_PUBLIC_KEY ""
 
 #include "../../include/CTP/ThostFtdcUserApiDataType.h"
 #include "../../include/CTP/ThostFtdcUserApiStruct.h"

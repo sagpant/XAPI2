@@ -102,7 +102,8 @@ static int GetLine(char *buf, int buflen, char *content, char **rem1, char **rem
 		}
 		//2个CR或LF，行结束
 		if (cntCR == 2 || cntLF == 2) {
-			p --;	//回溯1
+			// 这个地方会导致两个LF时前一句读出来的"少一个
+			//p --;	//回溯1
 			break;
 		}
 		//CR或LF各1个之后任意字符，行结束
@@ -401,7 +402,7 @@ double iniGetDouble(const char *section, const char *key, double defvalue)
 
 
 //设置字符串：若value为NULL，则删除该key所在行，包括注释
-int iniSetString(const char *section, const char *key, const char *value)
+int iniSetString(const char *section, const char *key, const char *value, bool quote)
 {
 	FILE *file;
 	char *sect1, *sect2, *cont1, *cont2, *nextsect;
@@ -428,7 +429,14 @@ int iniSetString(const char *section, const char *key, const char *value)
 		file = fopen(gFilename, "ab");
 		if (file == NULL) 
 			return 0;
-		fprintf(file, "\n[%s]\n%s=%s\n", section, key, value);
+		if (quote)
+		{
+			fprintf(file, "\n[%s]\n%s=\"%s\"\n", section, key, value);
+		}
+		else
+		{
+			fprintf(file, "\n[%s]\n%s=%s\n", section, key, value);
+		}
 		fclose(file);
 		iniFileLoad(gFilename);
 		return 1;
@@ -454,7 +462,14 @@ int iniSetString(const char *section, const char *key, const char *value)
 					len = (int)(nextline - gBuffer);			//整行连同注释一并删除
 				} else {
 					//value有效，改写
-					fprintf(file, "%s=%s", key, value);
+					if (quote)
+					{
+						fprintf(file, "%s=\"%s\"", key, value);
+					}
+					else
+					{
+						fprintf(file, "%s=%s", key, value);
+					}
 					len = (int)(rem1 - gBuffer);				//保留尾部原注释!
 				}
 				fwrite(gBuffer + len, 1, gBuflen - len, file);	//写入key所在行含注释之后部分
@@ -480,7 +495,14 @@ int iniSetString(const char *section, const char *key, const char *value)
 		return 0;
 	len = (int)(cont2 - gBuffer);
 	fwrite(gBuffer, 1, len, file);					//写入key之前部分
-	fprintf(file, "%s=%s\n", key, value);
+	if (quote)
+	{
+		fprintf(file, "%s=\"%s\"\n", key, value);
+	}
+	else
+	{
+		fprintf(file, "%s=%s\n", key, value);
+	}
 	fwrite(gBuffer + len, 1, gBuflen - len, file);	//写入key之后部分
 	fclose(file);
 	iniFileLoad(gFilename);
@@ -496,12 +518,12 @@ int iniSetInt(const char *section, const char *key, int value, int base)
 	switch (base) {
 	case 16:
 		sprintf(valstr, "0x%x", value);
-		return iniSetString(section, key, valstr);
+		return iniSetString(section, key, valstr, false);
 	case 8:
 		sprintf(valstr, "0%o", value);
-		return iniSetString(section, key, valstr);
+		return iniSetString(section, key, valstr, false);
 	default:	//10
 		sprintf(valstr, "%d", value);
-		return iniSetString(section, key, valstr);
+		return iniSetString(section, key, valstr, false);
 	}
 }

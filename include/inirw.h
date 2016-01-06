@@ -39,7 +39,7 @@ int iniGetInt(const char *section, const char *key, int defvalue);
 double iniGetDouble(const char *section, const char *key, double defvalue);
 
 //设置字符串：若value为NULL，则删除该key所在行，包括注释
-int iniSetString(const char *section, const char *key, const char *value);
+int iniSetString(const char *section, const char *key, const char *value,bool quote = true);
 //设置整数值：base取值10、16、8，分别表示10、16、8进制，缺省为10进制
 int iniSetInt(const char *section, const char *key, int value, int base);
 
