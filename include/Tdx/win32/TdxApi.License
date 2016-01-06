@@ -1,0 +1,9 @@
+
+[License]
+ExpireDate = 20160301
+Trial = 10
+MachineID = *|
+
+[User]
+Account = *|
+UserName = *|

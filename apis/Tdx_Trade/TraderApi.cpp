@@ -162,7 +162,7 @@ int CTraderApi::_Init()
 {
 	if (m_pApi == nullptr)
 	{
-		m_pApi = CTdxApi::CreateApi(m_ServerInfo.ExtInfoChar128);
+		m_pApi = CTdxApi::CreateApi();
 		m_pApi->RegisterSpi(this);
 	}
 

@@ -32,15 +32,14 @@ class TDXAPI_API CTdxApi
 {
 public:
 	// 创建API
-	//		TdxPath*:通达信安装目录，需以"\\"结束。
-	static CTdxApi* CreateApi(const char* TdxPath);
+	static CTdxApi* CreateApi();
 	virtual void Release() = 0;
 
 public:
 	virtual void RegisterSpi(CTdxSpi *pSpi) = 0;
 
 	virtual void LoadScript(const char* LuaFileOrString, bool bFileOrString, bool bEncrypted) = 0;
-
+	//		TdxPath*:通达信安装目录，需以"\\"结束。
 	virtual void Init(const char* TdxPath, Error_STRUCT** ppErr) = 0;
 	virtual void Exit() = 0;
 
