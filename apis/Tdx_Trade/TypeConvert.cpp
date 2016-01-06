@@ -216,29 +216,29 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 			strcpy_s(ppResults[i]->WTRQ, ppTable[i * COL_EACH_ROW + col_142]);
 		if (col_143 >= 0)
 			strcpy_s(ppResults[i]->WTSJ, ppTable[i * COL_EACH_ROW + col_143]);
-		//if (col_123 >= 0)
+		if (col_123 >= 0)
 		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
-		//if (col_140 >= 0)
+		if (col_140 >= 0)
 		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		//if (col_141 >= 0)
+		if (col_141 >= 0)
 		strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		//if (col_130 >= 0)
+		if (col_130 >= 0)
 		strcpy_s(ppResults[i]->MMBZ, ppTable[i * COL_EACH_ROW + col_130]);
-		//if (col_131 >= 0)
+		if (col_131 >= 0)
 		strcpy_s(ppResults[i]->WTLB, ppTable[i * COL_EACH_ROW + col_131]);
-		//if (col_100 >= 0)
+		if (col_100 >= 0)
 		strcpy_s(ppResults[i]->JYSDM, ppTable[i * COL_EACH_ROW + col_100]);
-		//if (col_145 >= 0)
+		if (col_145 >= 0)
 		strcpy_s(ppResults[i]->WTJG, ppTable[i * COL_EACH_ROW + col_145]);
-		//if (col_144 >= 0)
+		if (col_144 >= 0)
 		strcpy_s(ppResults[i]->WTSL, ppTable[i * COL_EACH_ROW + col_144]);
-		//if (col_153 >= 0)
+		if (col_153 >= 0)
 		strcpy_s(ppResults[i]->CJJG, ppTable[i * COL_EACH_ROW + col_153]);
-		//if (col_152 >= 0)
+		if (col_152 >= 0)
 		strcpy_s(ppResults[i]->CJSL, ppTable[i * COL_EACH_ROW + col_152]);
 		if (col_162 >= 0)
 			strcpy_s(ppResults[i]->CDSL, ppTable[i * COL_EACH_ROW + col_162]);
-		//if (col_146 >= 0)
+		if (col_146 >= 0)
 		strcpy_s(ppResults[i]->WTBH, ppTable[i * COL_EACH_ROW + col_146]);
 		if (col_194 >= 0)
 			strcpy_s(ppResults[i]->BJFS, ppTable[i * COL_EACH_ROW + col_194]);
@@ -358,19 +358,19 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 			strcpy_s(ppResults[i]->CJRQ, ppTable[i * COL_EACH_ROW + col_150]);
 		if (col_151 >= 0)
 			strcpy_s(ppResults[i]->CJSJ, ppTable[i * COL_EACH_ROW + col_151]);
-		//if (col_123 >= 0)
+		if (col_123 >= 0)
 		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
-		//if (col_140 >= 0)
+		if (col_140 >= 0)
 		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		//if (col_141 >= 0)
+		if (col_141 >= 0)
 		strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		//if (col_130 >= 0)
+		if (col_130 >= 0)
 		strcpy_s(ppResults[i]->MMBZ, ppTable[i * COL_EACH_ROW + col_130]);
-		//if (col_131 >= 0)
+		if (col_131 >= 0)
 		strcpy_s(ppResults[i]->WTLB, ppTable[i * COL_EACH_ROW + col_131]);
-		//if (col_153 >= 0)
+		if (col_153 >= 0)
 		strcpy_s(ppResults[i]->CJJG, ppTable[i * COL_EACH_ROW + col_153]);
-		//if (col_152 >= 0)
+		if (col_152 >= 0)
 		strcpy_s(ppResults[i]->CJSL, ppTable[i * COL_EACH_ROW + col_152]);
 		if (col_303 >= 0)
 			strcpy_s(ppResults[i]->FSJE, ppTable[i * COL_EACH_ROW + col_303]);
@@ -384,7 +384,7 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 			strcpy_s(ppResults[i]->GHF, ppTable[i * COL_EACH_ROW + col_207]);
 		if (col_208 >= 0)
 			strcpy_s(ppResults[i]->CJF, ppTable[i * COL_EACH_ROW + col_208]);
-		//if (col_155 >= 0)
+		if (col_155 >= 0)
 		strcpy_s(ppResults[i]->CJBH, ppTable[i * COL_EACH_ROW + col_155]);
 		if (col_167 >= 0)
 			strcpy_s(ppResults[i]->CDBZ, ppTable[i * COL_EACH_ROW + col_167]);
@@ -456,21 +456,21 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 	{
 		ppResults[i] = new GFLB_STRUCT();
 
-		//if (col_140 >= 0)
+		if (col_140 >= 0)
 		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		//if (col_141 >= 0)
+		if (col_141 >= 0)
 		strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		//if (col_200 >= 0)
+		if (col_200 >= 0)
 		strcpy_s(ppResults[i]->ZQSL, ppTable[i * COL_EACH_ROW + col_200]);
-		//if (col_201 >= 0)
+		if (col_201 >= 0)
 		strcpy_s(ppResults[i]->KMSL, ppTable[i * COL_EACH_ROW + col_201]);
-		//if (col_202 >= 0)
+		if (col_202 >= 0)
 		strcpy_s(ppResults[i]->TBCBJ, ppTable[i * COL_EACH_ROW + col_202]);
-		//if (col_949 >= 0)
+		if (col_949 >= 0)
 		strcpy_s(ppResults[i]->DQJ, ppTable[i * COL_EACH_ROW + col_949]);
-		//if (col_205 >= 0)
+		if (col_205 >= 0)
 		strcpy_s(ppResults[i]->ZXSZ, ppTable[i * COL_EACH_ROW + col_205]);
-		//if (col_204 >= 0)
+		if (col_204 >= 0)
 		strcpy_s(ppResults[i]->TBFDYK, ppTable[i * COL_EACH_ROW + col_204]);
 		if (col_232 >= 0)
 			strcpy_s(ppResults[i]->SXYK, ppTable[i * COL_EACH_ROW + col_232]);
@@ -478,13 +478,13 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 			strcpy_s(ppResults[i]->CKYKBL, ppTable[i * COL_EACH_ROW + col_230]);
 		if (col_160 >= 0)
 			strcpy_s(ppResults[i]->DJSL, ppTable[i * COL_EACH_ROW + col_160]);
-		//if (col_123 >= 0)
+		if (col_123 >= 0)
 		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
 		if (col_100 >= 0)
 			strcpy_s(ppResults[i]->JYSDM, ppTable[i * COL_EACH_ROW + col_100]);
 		if (col_101 >= 0)
 			strcpy_s(ppResults[i]->JYSMC, ppTable[i * COL_EACH_ROW + col_101]);
-		//if (col_1213 >= 0)
+		if (col_1213 >= 0)
 		strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
 
 
@@ -525,13 +525,13 @@ void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT
 	{
 		ppResults[i] = new ZJYE_STRUCT();
 
-		//if (col_132 >= 0)
+		if (col_132 >= 0)
 		strcpy_s(ppResults[i]->BZ, ppTable[i * COL_EACH_ROW + col_132]);
-		//if (col_300 >= 0)
+		if (col_300 >= 0)
 		strcpy_s(ppResults[i]->ZJYE, ppTable[i * COL_EACH_ROW + col_300]);
-		//if (col_301 >= 0)
+		if (col_301 >= 0)
 		strcpy_s(ppResults[i]->KYZJ, ppTable[i * COL_EACH_ROW + col_301]);
-		//if (col_310 >= 0)
+		if (col_310 >= 0)
 		strcpy_s(ppResults[i]->ZZC, ppTable[i * COL_EACH_ROW + col_310]);
 		if (col_302 >= 0)
 			strcpy_s(ppResults[i]->KQZJ, ppTable[i * COL_EACH_ROW + col_302]);
@@ -897,7 +897,7 @@ void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 
 void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
 {
-	strcpy(pOut->ID, pIn->WTBH);//将会被修正
+	//strcpy(pOut->ID, pIn->WTBH);//将会被修正
 	strcpy(pOut->OrderID, pIn->WTBH);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->InstrumentName, pIn->ZQMC);
@@ -950,6 +950,7 @@ void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 {
 	strcpy(pOut->KHH, pIn->ClientID);
 	strcpy(pOut->GDDM, pIn->AccountID);
+
 	strcpy(pOut->ZQDM, pIn->InstrumentID);
 	pOut->Price = pIn->Price;
 	pOut->Qty = pIn->Qty;
