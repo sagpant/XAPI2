@@ -121,8 +121,6 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	WTLB_STRUCT** ppRS = nullptr;
 	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
-
-
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewOrderList.clear();
 
@@ -610,7 +608,7 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 	}
 	else
 	{
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logined, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 		m_pApi->StartQueryThread();
 	}
@@ -631,6 +629,8 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 
 			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInvestor, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(InvestorField), nullptr, 0, nullptr, 0);
 		}
+
+		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
 
 	return 0;
@@ -654,13 +654,18 @@ int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* 
 
 	int count = GetCountStructs((void**)ppRS);
 
-	for (int i = 0; i < count; ++i)
+	if (count>0)
 	{
-		InvestorField* pField = (InvestorField*)m_msgQueue->new_block(sizeof(InvestorField));
+		for (int i = 0; i < count; ++i)
+		{
+			InvestorField* pField = (InvestorField*)m_msgQueue->new_block(sizeof(InvestorField));
 
-		GDLB_2_InvestorField(ppRS[i], pField);
+			GDLB_2_InvestorField(ppRS[i], pField);
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInvestor, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(InvestorField), nullptr, 0, nullptr, 0);
+			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInvestor, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(InvestorField), nullptr, 0, nullptr, 0);
+		}
+
+		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
 
 	return 0;
@@ -678,6 +683,12 @@ int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_ST
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
 	}
+
+	//if (pRespone->ppResults == nullptr)
+	//{
+
+	//	return;
+	//}
 
 	ZJYE_STRUCT** ppRS = nullptr;
 	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);

@@ -273,6 +273,7 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 {
 	ReqQueryData_STRUCT query = { 0 };
 	strcpy(query.KHH, pQuery->ClientID);
+	strcpy(query.ZJZH, pQuery->ClientID);//通达信模拟上这样写是否会出问题
 	strcpy(query.GDDM, pQuery->AccountID);
 	strcpy(query.ZQDM, pQuery->InstrumentID);
 	sprintf_s(query.KSRQ,"%d",pQuery->DateStart);

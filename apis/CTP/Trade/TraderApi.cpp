@@ -667,7 +667,7 @@ char* CTraderApi::ReqOrderInsert(
 		// 测试平台穿越速度，用完后需要注释掉
 		//WriteLog("CTP:ReqOrderInsert:%s %d", body.InstrumentID, nRet);
 #ifdef ENABLE_LICENSE
-		int err = m_pLicense->GetErrorCodeByTrial();
+		int err = m_pLicense->GetErrorCodeForSendOrder();
 		if (err<0)
 		{
 			//sprintf(m_orderInsert_Id, "%d", -5);
@@ -1997,8 +1997,11 @@ void CTraderApi::OnRspQryInvestor(CThostFtdcInvestorField *pInvestor, CThostFtdc
 			
 			int err = m_pLicense->GetErrorCodeByNameThenAccount(pField->InvestorName,m_UserInfo.UserID);
 			{
+				m_pLicense->SetSendOrderFlag(true);
 				if (err < 0)
 				{
+					m_pLicense->SetSendOrderFlag(false);
+
 					RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
 					pField->RawErrorID = err;
 					strncpy(pField->Text, m_pLicense->GetErrorInfo(), sizeof(Char256Type));

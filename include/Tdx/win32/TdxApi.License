@@ -1,9 +1,10 @@
 
 [License]
-ExpireDate = 20160301
-Trial = 10
-MachineID = *|
+ExpireDate=20160201
+Trial=5
+MachineID=".*"
 
 [User]
-Account = *|
-UserName = *|
+Account=".*"
+UserName=".*"
+Info=
