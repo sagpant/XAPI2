@@ -30,21 +30,6 @@
     <ClInclude Include="MsgQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\CrossPlatform.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\QueueHeader.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\QueueStruct.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ApiHeader.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\QueueEnum.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="RemoteQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
