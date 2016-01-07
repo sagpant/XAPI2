@@ -880,6 +880,7 @@ void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 	strcpy(pOut->ID, pIn->WTBH);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->InstrumentName, pIn->ZQMC);
+	strcpy(pOut->AccountID, pIn->GDDM);
 	pOut->Price = pIn->CJJG_;
 	pOut->Qty = pIn->CJSL_;
 	pOut->Date = pIn->CJRQ_;
@@ -901,6 +902,7 @@ void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
 	strcpy(pOut->OrderID, pIn->WTBH);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->InstrumentName, pIn->ZQMC);
+	strcpy(pOut->AccountID, pIn->GDDM);
 	pOut->Price = pIn->WTJG_;
 	pOut->Qty = pIn->WTSL_;
 	pOut->Date = pIn->WTRQ_;
@@ -949,6 +951,7 @@ int OrderType_2_WTFS(OrderType In)
 void OrderField_2_Order_STRUCT(OrderField* pIn, Order_STRUCT* pOut)
 {
 	strcpy(pOut->KHH, pIn->ClientID);
+	strcpy(pOut->ZJZH, pIn->ClientID);//通达信模拟上是否会出错？
 	strcpy(pOut->GDDM, pIn->AccountID);
 
 	strcpy(pOut->ZQDM, pIn->InstrumentID);
@@ -1013,6 +1016,7 @@ void GDLB_2_InvestorField(GDLB_STRUCT* pIn, InvestorField* pOut)
 void ZJYE_2_AccountField(ZJYE_STRUCT* pIn, AccountField* pOut)
 {
 	strcpy(pOut->AccountID, pIn->ZJZH);
+	//strcpy(pOut->ClientID, pIn->ZJZH);
 	
 	pOut->Available = pIn->KYZJ_;
 
@@ -1031,6 +1035,7 @@ void GFLB_2_PositionField(GFLB_STRUCT* pIn, PositionField* pOut)
 	strcpy(pOut->InstrumentName, pIn->ZQMC);
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->Symbol, pIn->ZQDM);
+	strcpy(pOut->AccountID, pIn->GDDM);
 
 	// 还有一些信息没有
 }

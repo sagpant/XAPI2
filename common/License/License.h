@@ -14,20 +14,21 @@
 #include "files.h"
 
 // 1
-#define ERROR_CODE_1	"没有读取到授权文件,将自动生成试用版授权到dll同目录下"
+#define ERROR_CODE_1	"没有读取到授权文件,将自动生成试用版授权到dll同目录下，机器码为[%s]"
 #define ERROR_CODE_2	"授权认证失败"
 #define ERROR_CODE_3	"授权过期，过期时间为[%d]"
 #define ERROR_CODE_4	"没有[用户号:%s]的授权"
 #define ERROR_CODE_5	"机器码验证失败"
-#define ERROR_CODE_6	"试用超次数,限制[%d]次"
+#define ERROR_CODE_6	"试用超次数，限制[%d]次"
 #define ERROR_CODE_7	"授权产品名不对应"
-#define ERROR_CODE_8	"[用户号:%s]授权的[姓名:%s],现获得的为[%s],下单将被拒绝"
+#define ERROR_CODE_8	"[用户号:%s]授权的[姓名:%s]，现获得的为[%s]，下单将被拒绝"
 #define ERROR_CODE_9	"没有[姓名:%s]的授权"
 #define ERROR_CODE_10	"授权范围太广时，到期时间不能过长"
-#define ERROR_CODE_11	"生成授权文件失败，请检查是否有权限写入。或以管理员方式再次启动"
+#define ERROR_CODE_11	"写入授权文件失败，请检查是否有权限写入或以管理员方式再次启动。试用次数为[%d]，机器码为[%s]"
+#define ERROR_CODE_14	"授权失败，无法下单"
 // 12
-#define ERROR_CODE_12	"未读取到签名信息，使用最小授权，试用次数为[%d]"
-#define ERROR_CODE_13	"授权快要过期，请提前申请新的授权。过期时间为[%d],开始提醒日为[%d]"
+#define ERROR_CODE_12	"未读取到签名信息，使用最小授权，试用次数为[%d]，机器码为[%s]"
+#define ERROR_CODE_13	"授权快要过期，请提前申请新的授权。过期时间为[%d]，开始提醒日为[%d]"
 
 #define FILE_EXT_LIC "License"
 #define FILE_EXT_PUB "PublicKey"
@@ -95,7 +96,10 @@ public:
 	int GetErrorCodeForSign();
 	int GetErrorCodeForExpireDate();
 	int GetErrorCodeByNameThenAccount(const char* name, const char* account);
-	int GetErrorCodeByTrial();
+	int GetErrorCodeForSendOrder();
+
+	void SetSendOrderFlag(bool flag);
+	bool GetSendOrderFlag();
 
 	
 	int Today(int day);
@@ -154,6 +158,8 @@ private:
 	bool m_bHasStarAccount;
 	bool m_bHasStarUserName;
 	bool m_bHasStarMAC;
+
+	bool m_bSendOrderFlag;
 };
 
 #endif

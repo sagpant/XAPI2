@@ -81,6 +81,7 @@ CLicense::CLicense()
 {
 	m_bHasSaved = false;
 	m_bLoaded = false;
+	m_bSendOrderFlag = false;
 
 	sprintf_s(m_RealMAC, "%ld", GetMACaddress());
 
@@ -177,6 +178,16 @@ bool CLicense::HasSaved()
 	return m_bHasSaved;
 }
 
+void CLicense::SetSendOrderFlag(bool flag)
+{
+	m_bSendOrderFlag = flag;
+}
+
+bool CLicense::GetSendOrderFlag()
+{
+	return m_bSendOrderFlag;
+}
+
 int CLicense::LoadIni()
 {
 	m_bLoaded = iniFileLoad(m_LicensePath);
@@ -191,57 +202,10 @@ int CLicense::LoadIni()
 
 	iniFileFree();
 
-	/*vector<string> vct1;
-	{
-	char* token = strtok(m_Account, "|");
-	while (token)
-	{
-	if (strlen(token) > 0)
-	{
-	vct1.push_back(string(token));
-	}
-	token = strtok(nullptr, "|");
-	}
-	}
-
-	vector<string> vct2;
-	{
-	char* token = strtok(m_UserName, "|");
-	while (token)
-	{
-	if (strlen(token) > 0)
-	{
-	vct2.push_back(string(token));
-	}
-	token = strtok(nullptr, "|");
-	}
-	}
-
-	m_MacSet.clear();
-	vector<string> vct3;
-	{
-	char* token = strtok(m_MAC, "|");
-	while (token)
-	{
-	if (strlen(token) > 0)
-	{
-	m_MacSet.insert(string(token));
-	}
-	token = strtok(nullptr, "|");
-	}
-	}
-
-	m_UserMap.clear();
-	int count = min(vct1.size(), vct2.size());
-	for (size_t i = 0; i < count; ++i)
-	{
-	AddUser(vct1[i].c_str(), vct2[i].c_str());
-	}*/
-
 	if (m_bLoaded != 0)
 		return 0;
 
-	sprintf(m_ErrorInfo, ERROR_CODE_1);
+	sprintf(m_ErrorInfo, ERROR_CODE_1, m_RealMAC);
 	m_ErrorCode = 1;
 	return m_ErrorCode;
 }
@@ -255,15 +219,16 @@ int CLicense::SaveIni()
 {
 	iniFileLoad(m_LicensePath);
 
-	iniSetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, m_ExpireDate, 10);
-	iniSetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, m_Trial, 10);
+	int bRet = iniSetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, m_ExpireDate, Today(7));
+	iniSetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, m_Trial, 5);
+	iniSetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC);
 
 	iniSetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account);
 	iniSetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName);
 
-	//m_Account[0] = 0;
 	char szInfo[2048] = { 0 };
-
+	strcat(szInfo, m_RealMAC);
+	strcat(szInfo, ":");
 	for (map<string, string>::iterator it = m_UserMap.begin(); it != m_UserMap.end(); ++it)
 	{
 		strcat(szInfo, it->first.c_str());
@@ -272,15 +237,6 @@ int CLicense::SaveIni()
 		strcat(szInfo, "|");
 	}
 	iniSetString(APP_NAME_USER, KEY_NAME_INFO, szInfo);
-
-	//m_MAC[0] = 0;
-	//for (set<string>::iterator it = m_MacSet.begin(); it != m_MacSet.end(); ++it)
-	//{
-	//	strcat(m_MAC, it->c_str());
-	//	strcat(m_MAC, "|");
-	//}
-	int bRet = iniSetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC);
-
 	iniFileFree();
 
 	if (bRet != 0)
@@ -289,8 +245,8 @@ int CLicense::SaveIni()
 		return 0;
 	}
 
-	sprintf(m_ErrorInfo, ERROR_CODE_11);
-	m_ErrorCode = -11;
+	sprintf(m_ErrorInfo, ERROR_CODE_11, m_Trial, m_RealMAC);
+	m_ErrorCode = 11;
 	return m_ErrorCode;
 }
 
@@ -324,7 +280,7 @@ int CLicense::GetErrorCodeForSign()
 			//m_ExpireDate = min(m_ExpireDate, Today(7));
 
 			m_ErrorCode = 12;
-			sprintf_s(m_ErrorInfo, ERROR_CODE_12, m_Trial);
+			sprintf_s(m_ErrorInfo, ERROR_CODE_12, m_Trial, m_RealMAC);
 
 			break;
 		}
@@ -444,10 +400,17 @@ int CLicense::GetErrorCodeByNameThenAccount(const char* name, const char* accoun
 	return m_ErrorCode;
 }
 
-int CLicense::GetErrorCodeByTrial()
+int CLicense::GetErrorCodeForSendOrder()
 {
 	do
 	{
+		if (!m_bSendOrderFlag)
+		{
+			sprintf(m_ErrorInfo, ERROR_CODE_14);
+			m_ErrorCode = -14;
+			break;
+		}
+
 		// 检查次数
 		if (m_Trial > 0)
 		{
