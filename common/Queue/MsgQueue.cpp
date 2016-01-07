@@ -29,21 +29,28 @@ void CMsgQueue::Clear()
 
 bool CMsgQueue::Process()
 {
-	ResponeItem* pItem = nullptr;
-	if (m_queue.try_dequeue(pItem))
+	try
 	{
-		Output(pItem);
-		if (pItem->bNeedDelete)
+		ResponeItem* pItem = nullptr;
+		if (m_queue.try_dequeue(pItem))
 		{
-			// 删除的是数组，目前是自己模块创建的自己删
-			delete[] pItem->ptr1;
-			delete[] pItem->ptr2;
-			delete[] pItem->ptr3;
+			Output(pItem);
+			if (pItem->bNeedDelete)
+			{
+				// 删除的是数组，目前是自己模块创建的自己删
+				delete[] pItem->ptr1;
+				delete[] pItem->ptr2;
+				delete[] pItem->ptr3;
+			}
+			delete pItem;
+			return true;
 		}
-		delete pItem;
-		return true;
+		return false;
 	}
-	return false;
+	catch (...)
+	{
+		return false;
+	}
 }
 
 void CMsgQueue::Output(ResponeItem* pItem)
