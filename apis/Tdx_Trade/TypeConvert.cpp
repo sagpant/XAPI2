@@ -207,6 +207,8 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 	int col_1213 = GetIndexByFieldID(ppFieldInfos, FIELD_BLXX);
 
 	int col_166 = GetIndexByFieldID(ppFieldInfos, FIELD_WTFS);
+	int col_121 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJZH);
+
 
 	for (int i = 0; i < count; ++i)
 	{
@@ -250,6 +252,8 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 			strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
 		if (col_166 >= 0)
 			strcpy_s(ppResults[i]->WTFS, ppTable[i * COL_EACH_ROW + col_166]);
+		if (col_121 >= 0)
+			strcpy_s(ppResults[i]->ZJZH, ppTable[i * COL_EACH_ROW + col_121]);
 
 		ppResults[i]->WTRQ_ = atoi(ppResults[i]->WTRQ);
 		ppResults[i]->MMBZ_ = atoi(ppResults[i]->MMBZ);
@@ -349,6 +353,7 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 	int col_155 = GetIndexByFieldID(ppFieldInfos, FIELD_CJBH);
 	int col_167 = GetIndexByFieldID(ppFieldInfos, FIELD_CDBZ);
 	int col_146 = GetIndexByFieldID(ppFieldInfos, FIELD_WTBH);
+	int col_121 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJZH);
 
 	for (int i = 0; i < count; ++i)
 	{
@@ -390,6 +395,7 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 			strcpy_s(ppResults[i]->CDBZ, ppTable[i * COL_EACH_ROW + col_167]);
 		if (col_146 >= 0)
 			strcpy_s(ppResults[i]->WTBH, ppTable[i * COL_EACH_ROW + col_146]);
+		
 
 
 		ppResults[i]->CJRQ_ = atoi(ppResults[i]->CJRQ);

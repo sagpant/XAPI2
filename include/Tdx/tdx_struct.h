@@ -87,6 +87,8 @@ struct Order_STRUCT
 struct CancelOrder_STRUCT
 {
 	char KHH[32];	// 120_客户号
+	char ZJZH[32];	// 121_资金帐号
+	char ZHLB[32];	// 125_帐号类别
 	char GDDM[32];	// 123_股东代码
 	char WTBH[32];	// 146_委托编号
 	char JYSDM[32];	// 100_交易所代码
@@ -132,6 +134,7 @@ struct GDLB_STRUCT
 struct WTLB_STRUCT
 {
 	char KHH[32];	// 120_客户号
+	char ZJZH[32];	// 121_资金帐号
 	char WTRQ[32];	// 142_委托日期
 	char WTSJ[32];	// 143_委托时间
 	char GDDM[32];  // 123_股东代码

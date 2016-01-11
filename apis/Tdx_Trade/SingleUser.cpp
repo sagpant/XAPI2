@@ -749,6 +749,7 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 	OrderField* pOrder = (OrderField*)pRespone->pUserData_Public2;
 
 	WTLB_STRUCT* pWTOrders = new WTLB_STRUCT;
+	strcpy(pWTOrders->ZJZH, pTdxOrder->ZJZH);
 	strcpy(pWTOrders->GDDM, pTdxOrder->GDDM);
 	strcpy(pWTOrders->WTBH, pTdxOrder->WTBH);
 	strcpy(pWTOrders->JYSDM, pTdxOrder->ZHLB_);
