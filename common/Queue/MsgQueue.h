@@ -152,6 +152,7 @@ public:
 			return;
 		}
 		ResponeItem* pItem = new ResponeItem;
+		//memset(pItem, 0, sizeof(ResponeItem));
 		pItem->bNeedDelete = true;
 
 		pItem->type = type;
@@ -183,6 +184,7 @@ public:
 			return;
 		}
 		ResponeItem* pItem = new ResponeItem;
+		//memset(pItem, 0, sizeof(ResponeItem));
 		pItem->bNeedDelete = false;
 
 		pItem->type = type;
