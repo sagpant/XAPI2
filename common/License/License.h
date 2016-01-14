@@ -38,7 +38,13 @@
 using namespace std;
 using namespace CryptoPP;
 
-#pragma comment(lib, "../../lib/cryptlib.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "../../lib/Debug/cryptlib.lib")
+#else
+#pragma comment(lib, "../../lib/Release/cryptlib.lib")
+#endif // DEBUG
+
+
 
 void GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed);
 string RSAEncryptString(const char *pubFilename, const char *seed, const char *message);

@@ -185,8 +185,8 @@ static int FindSection(const char *section, char **sect1, char **sect2, char **c
 	char content[SIZE_LINE];
 	char *rem1, *rem2, *nextline = nullptr;
 
-	char *p;
-	char *empty;
+	char *p = nullptr;
+	char *empty = nullptr;
 	int uselen = 0;
 	char found = 0;
 
