@@ -53,16 +53,16 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 	case QueryType::QueryType_ReqQryTradingAccount:
 		iRet = _ReqQryTradingAccount(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
-	case QueryType::QueryType_ReqQryInvestorPosition :
+	case QueryType::QueryType_ReqQryInvestorPosition:
 		iRet = _ReqQryInvestorPosition(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
-	case QueryType::QueryType_ReqQryInstrument :
+	case QueryType::QueryType_ReqQryInstrument:
 		iRet = _ReqQryInstrument(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
-	case QueryType::QueryType_ReqQryInvestor :
+	case QueryType::QueryType_ReqQryInvestor:
 		iRet = _ReqQryInvestor(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
-	case QueryType::QueryType_ReqQryOrder :
+	case QueryType::QueryType_ReqQryOrder:
 		iRet = _ReqQryOrder(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
 	case QueryType::QueryType_ReqQryTrade:
@@ -260,14 +260,14 @@ int CTraderApi::_Init()
 	{
 		LogField* pField = (LogField*)m_msgQueue->new_block(sizeof(LogField));
 
-		sprintf_s(pField->Message, "SetCurrentDirectory:%s", szDirectory);
+		sprintf(pField->Message, "SetCurrentDirectory:%s", szDirectory);
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnLog, m_msgQueue, m_pClass, true, 0, pField, sizeof(LogField), nullptr, 0, nullptr, 0);
 	}
 
 	RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
 	pField->RawErrorID = 0;
-	sprintf_s(pField->Text, "ExePath:%s", szExePath);
+	sprintf(pField->Text, "ExePath:%s", szExePath);
 	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 
 	m_pApi = CThostFtdcTraderApi::CreateFtdcTraderApi(pszPath);
