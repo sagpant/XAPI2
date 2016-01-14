@@ -78,11 +78,17 @@ void Select2()
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	//printf("START");
+	//return 0;
+
 	// 如果带参数，按参数进行操作
 	if (argc == 5)
 	{
 		CLicense license;
 		string s;
+
+		bool bOK1 = false;
+		bool bOK2 = false;
 
 		int arg = 0;
 		/* Parse command line arguments.  */
@@ -90,22 +96,30 @@ int _tmain(int argc, _TCHAR* argv[])
 			if (!strcmp(argv[arg], "--License") ||
 				!strcmp(argv[arg], "--license")) {
 				license.SetLicensePath(argv[arg + 1]);
+				bOK1 = true;
 			}
 			else if (!strcmp(argv[arg], "--PrivateKey") ||
-				!strcmp(argv[arg], "--PrivateKey")) {
+				!strcmp(argv[arg], "--privateKey")) {
 				strcpy(license.m_PrivateKeyPath, argv[arg + 1]);
 				s = license.LoadStringFromFile(license.m_LicensePath);
+				bOK2 = true;
 			}
 			else {
 				if (argc > 1)
-					fprintf(stderr, "Invalid command line argument: %s\n", argv[arg]);
+					printf("Invalid command line argument: %s\n", argv[arg]);
 			}
 			arg++;
 		}
 
-		license.Sign(s.c_str());
-		printf("OK");
-		exit(1);
+		if (bOK1&&bOK2)
+		{
+			license.Sign(s.c_str());
+			printf("OK");
+		}
+		else
+		{
+			printf("NO");
+		}
 		return 1;
 	}
 

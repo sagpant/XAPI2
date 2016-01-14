@@ -143,7 +143,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
-    <OutDir>..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
+    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\$(ProjectName)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -305,11 +305,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\ApiHeader.h" />
-    <ClInclude Include="..\include\CrossPlatform.h" />
-    <ClInclude Include="..\include\QueueEnum.h" />
-    <ClInclude Include="..\include\QueueHeader.h" />
-    <ClInclude Include="..\include\QueueStruct.h" />
+    <ClInclude Include="ArrayLockFreeQueue.h" />
+    <ClInclude Include="ArrayLockFreeQueueImp.h" />
+    <ClInclude Include="atom_opt.h" />
     <ClInclude Include="MsgQueue.h" />
     <ClInclude Include="RemoteQueue.h" />
     <ClInclude Include="stdafx.h" />
