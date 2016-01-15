@@ -28,8 +28,56 @@
 
 using namespace std;
 
+//// Prints the MAC address stored in a 6 byte array to stdout
+//static void PrintMACaddress(unsigned char MACData[])
+//{
+//
+//#ifdef PRINTING_TO_CONSOLE_ALLOWED
+//
+//	printf("\nMAC Address: %02X-%02X-%02X-%02X-%02X-%02X\n",
+//		MACData[0], MACData[1], MACData[2], MACData[3], MACData[4], MACData[5]);
+//
+//#endif
+//
+//	char string[256];
+//	sprintf(string, "%02X-%02X-%02X-%02X-%02X-%02X\n", MACData[0], MACData[1],
+//		MACData[2], MACData[3], MACData[4], MACData[5]);
+//	//WriteConstantString("MACaddress", string);
+//	printf(string);
+//}
+
+// Fetches the MAC address and prints it
+//DWORD GetMACaddress()
+//{
+//	DWORD MACaddress = 0;
+//	IP_ADAPTER_INFO AdapterInfo[16];       // Allocate information
+//	// for up to 16 NICs
+//	DWORD dwBufLen = sizeof(AdapterInfo);  // Save memory size of buffer
+//
+//	DWORD dwStatus = GetAdaptersInfo(      // Call GetAdapterInfo
+//		AdapterInfo,                 // [out] buffer to receive data
+//		&dwBufLen);                  // [in] size of receive data buffer
+//	//assert(dwStatus == ERROR_SUCCESS);  // Verify return value is
+//	// valid, no buffer overflow
+//
+//	PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo; // Contains pointer to
+//	// current adapter info
+//	do {
+//		if (MACaddress == 0)
+//			MACaddress = pAdapterInfo->Address[5] + pAdapterInfo->Address[4] * 256 +
+//			pAdapterInfo->Address[3] * 256 * 256 +
+//			pAdapterInfo->Address[2] * 256 * 256 * 256;
+//		//PrintMACaddress(pAdapterInfo->Address); // Print MAC address
+//		//memcpy(pAddress1, pAdapterInfo->Address, sizeof(pAdapterInfo->Address));
+//		//break;
+//		pAdapterInfo = pAdapterInfo->Next;    // Progress through linked list
+//	} while (pAdapterInfo);                    // Terminate if last adapter
+//
+//	return MACaddress;
+//}
+
 // Prints the MAC address stored in a 6 byte array to stdout
-static void PrintMACaddress(unsigned char MACData[])
+static void PrintMACaddress(unsigned char MACData[],char* string)
 {
 
 #ifdef PRINTING_TO_CONSOLE_ALLOWED
@@ -39,15 +87,14 @@ static void PrintMACaddress(unsigned char MACData[])
 
 #endif
 
-	char string[256];
-	sprintf(string, "%02X-%02X-%02X-%02X-%02X-%02X\n", MACData[0], MACData[1],
+	//char string[256];
+	sprintf(string, "%02X-%02X-%02X-%02X-%02X-%02X", MACData[0], MACData[1],
 		MACData[2], MACData[3], MACData[4], MACData[5]);
 	//WriteConstantString("MACaddress", string);
-	printf(string);
+	//printf(string);
 }
 
-// Fetches the MAC address and prints it
-DWORD GetMACaddress()
+DWORD GetMACaddress(char* string)
 {
 	DWORD MACaddress = 0;
 	IP_ADAPTER_INFO AdapterInfo[16];       // Allocate information
@@ -67,9 +114,9 @@ DWORD GetMACaddress()
 			MACaddress = pAdapterInfo->Address[5] + pAdapterInfo->Address[4] * 256 +
 			pAdapterInfo->Address[3] * 256 * 256 +
 			pAdapterInfo->Address[2] * 256 * 256 * 256;
-		//PrintMACaddress(pAdapterInfo->Address); // Print MAC address
+		PrintMACaddress(pAdapterInfo->Address, string); // Print MAC address
 		//memcpy(pAddress1, pAdapterInfo->Address, sizeof(pAdapterInfo->Address));
-		//break;
+		break;
 		pAdapterInfo = pAdapterInfo->Next;    // Progress through linked list
 	} while (pAdapterInfo);                    // Terminate if last adapter
 
@@ -79,20 +126,22 @@ DWORD GetMACaddress()
 
 CLicense::CLicense()
 {
-	m_bHasSaved = false;
-	m_bLoaded = false;
-	m_bSendOrderFlag = false;
-
-	sprintf_s(m_RealMAC, "%ld", GetMACaddress());
-
-	CreateDefault();
-
 	memset(m_LicensePath, 0, sizeof(m_LicensePath));
 	memset(m_PublicKeyPath, 0, sizeof(m_PublicKeyPath));
 	memset(m_PrivateKeyPath, 0, sizeof(m_PrivateKeyPath));
 	memset(m_SignaturePath, 0, sizeof(m_SignaturePath));
 	memset(m_PublicKeyString, 0, sizeof(m_PublicKeyString));
 	memset(m_SignatureString, 0, sizeof(m_SignatureString));
+	memset(m_RealMAC, 0, sizeof(m_RealMAC));
+
+	m_bHasSaved = false;
+	m_bLoaded = false;
+	m_bSendOrderFlag = false;
+
+	//sprintf_s(m_RealMAC, "%ld", GetMACaddress());
+	GetMACaddress(m_RealMAC);
+
+	CreateDefault();
 }
 
 
@@ -379,22 +428,24 @@ int CLicense::GetErrorCodeByNameThenAccount(const char* name, const char* accoun
 
 	do
 	{
-		// 由于使用了正则，没办法做到一一对应了，所以这里只检查姓名
-		//regex pattern(m_Account);
-		//if (regex_search(account, pattern))
+		// 汉字使用正则太复杂，还是改用查找
+		//regex pattern(m_UserName);
+		//if (!regex_search(name, pattern))
 		//{
-		//	m_ErrorCode = 0;
+		//	m_ErrorCode = -9;
+		//	sprintf(m_ErrorInfo, ERROR_CODE_9, name);
 		//	break;
 		//}
-
-		regex pattern(m_UserName);
-		if (!regex_search(name, pattern))
+		if (strlen(m_UserName) <= 0)
+		{
+			break;
+		}
+		if (nullptr == strstr(m_UserName, name))
 		{
 			m_ErrorCode = -9;
 			sprintf(m_ErrorInfo, ERROR_CODE_9, name);
 			break;
 		}
-
 	} while (false);
 
 	return m_ErrorCode;

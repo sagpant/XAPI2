@@ -384,7 +384,7 @@ int iniGetInt(const char *section, const char *key, int defvalue)
 {
 	char valstr[64];
 
-	if (iniGetValue(section, key, valstr, sizeof(valstr), NULL))
+	if (iniGetString(section, key, valstr, sizeof(valstr), ""))
 	    return (int)strtol(valstr, NULL, 0);
 	return defvalue;
 }
@@ -395,7 +395,7 @@ double iniGetDouble(const char *section, const char *key, double defvalue)
 {
 	char valstr[64];
 
-	if (iniGetValue(section, key, valstr, sizeof(valstr), NULL))
+	if (iniGetString(section, key, valstr, sizeof(valstr), ""))
 	    return (int)atof(valstr);
 	return defvalue;
 }
