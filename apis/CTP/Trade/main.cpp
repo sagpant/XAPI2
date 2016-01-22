@@ -50,6 +50,8 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case QueryType_ReqQryInvestorPosition:
 	case QueryType_ReqQryTradingAccount:
 	case QueryType_ReqQrySettlementInfo:
+	case QueryType_ReqQryTrade:
+	case QueryType_ReqQryOrder:
 		pApi->ReqQuery((QueryType)type, (ReqQueryField*)ptr1);
 		break;
 	case RequestType_ReqOrderInsert:
