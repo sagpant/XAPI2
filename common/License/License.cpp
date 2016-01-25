@@ -88,7 +88,7 @@ static void PrintMACaddress(unsigned char MACData[],char* string)
 #endif
 
 	//char string[256];
-	sprintf(string, "%02X-%02X-%02X-%02X-%02X-%02X", MACData[0], MACData[1],
+	sprintf(string, "%02X%02X%02X%02X%02X%02X", MACData[0], MACData[1],
 		MACData[2], MACData[3], MACData[4], MACData[5]);
 	//WriteConstantString("MACaddress", string);
 	//printf(string);

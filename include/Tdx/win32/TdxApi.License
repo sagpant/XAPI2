@@ -1,10 +1,9 @@
-
 [License]
-ExpireDate=20160201
-Trial=5
-MachineID=".*"
-
+ExpireDate = "20160201"
+Trial = "5"
+MachineID = ".*"
+Product = "TdxApi"
 [User]
-Account=".*"
-UserName=".*"
-Info=
+Account = ".*"
+UserName = 
+Info = "公开试用账号"
