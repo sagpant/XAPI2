@@ -1,14 +1,13 @@
 <?php
 session_start();
-
-require_once('dbconfig.php');
+require_once('config.php');
 
 unset($_SESSION['Error']);
 unset($_SESSION['LOGINED']);
 unset($_SESSION['UserID']);
 unset($_SESSION['ID']);
 
-if($_SESSION['SWITCH']==true)
+if(@$_SESSION['SWITCH']==true)
 {
     // 取账号信息
     $query = 'SELECT * FROM UserInfo WHERE UserID = '
@@ -37,9 +36,9 @@ if(empty($row))
 	return;
 }
 
-if($_SESSION['SWITCH']==true)
+if(@$_SESSION['SWITCH']==true)
 {
-    
+    // 切换账号，不检查密码
 }
 else
 {
@@ -80,14 +79,15 @@ $_SESSION['Products'] = $Products;
 // 可以判断一下，只让本机登录的为管理员
 if($_SESSION['Right'] == 99)
 {
-    $admin_ips = array('127.0.0.1','','');
+    // 居然有IPv6的问题
+    $admin_ips = array('127.0.0.1','::1','');
     if(in_array($_SERVER['REMOTE_ADDR'],$admin_ips,true))
     {
     }
     else
     {         
         // 降级为审核员
-        $_SESSION['Right'] = 3;
+        $_SESSION['Right'] = 2;
     }
 }
 
@@ -95,6 +95,6 @@ if($_SESSION['Right'] == 99)
 $lifeTime = 3600;
 setcookie(session_name(), session_id(), time() + $lifeTime, "/");
     
-header("Location:Home.php");
+header("Location: $Homepage");
 return;
 ?>

@@ -1,8 +1,7 @@
 <?php
 session_start();
+require_once('config.php');
 include_once('CheckSignin.php');
-
-require_once('dbconfig.php');
 
 if(isset($_POST['ModifyInfo']))
 {

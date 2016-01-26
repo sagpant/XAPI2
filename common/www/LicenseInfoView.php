@@ -1,8 +1,7 @@
 <?php
 session_start();
+require_once('config.php');
 include_once('CheckSignin.php');
-
-require_once('dbconfig.php');
 require_once('EnumFun.php');
 
 $result = $mdb2->query(
@@ -96,6 +95,7 @@ $json_content2 = json_decode($content2,true);
 <p>UserName: <input type="text" name="UserName" value="<?php echo $json_content1['User']['UserName'];?>"/>接口登录后所能取到的客户真实姓名，不支持正则</p>
 <p>Info: <input type="text" name="Info" value="<?php echo $json_content1['User']['Info'];?>"/>额外信息，一般由审核员填写，会写入到授权文件中</p>
 <hr/>
+<p>上面的信息如果不会填写，那就把*.Licence中的文本直接粘贴到下面的备注即可，后面的事交审核人员处理</p>
 <p>备注: <textarea rows="5" cols="60" name="Remark"><?php echo $row[strtolower('Remark')];?></textarea>备注，需告知审核员或用户的消息</p>
 <input type="submit" value="Submit" name="Update"/>
 </form>

@@ -1,14 +1,13 @@
 <?php
 session_start();
+require_once('config.php');
 include_once('CheckSignin.php');
-
-require_once('dbconfig.php');
 require_once('EnumFun.php');
 
 $result2 = $mdb2->query(
 	'SELECT * FROM ProductInfo ');
-if (PEAR::isError($result)) {
-	die("{'Error':'".$result->getMessage()."'}");
+if (PEAR::isError($result2)) {
+	die("{'Error':'".$result2->getMessage()."'}");
 }
 
 $query = "SELECT * FROM LicenceInfo WHERE 1=1 ";

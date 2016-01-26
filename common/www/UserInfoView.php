@@ -1,7 +1,8 @@
 <?php
 session_start();
+require_once('config.php');
 include_once('CheckSignin.php');
-require_once('dbconfig.php');
+
 
 $query = 'SELECT * FROM UserInfo WHERE UserID = '
 		.$mdb2->quote($_SESSION['UserID'],"text");
@@ -37,7 +38,7 @@ echo "</pre>";
 <form action="UserInfoAction.php" method="post">
 <h1>修改密码</h1>
 <p>修改成功后需要重新登录</p>
-<?php echo $_SESSION['Error']; unset($_SESSION['Error']);?>
+<?php echo @$_SESSION['Error']; unset($_SESSION['Error']);?>
 <p>原始密码: <input type="text" name="OldPassword" value=""/></p>
 <p>新密码: <input type="text" name="NewPassword" value=""/></p>
 <p>确认密码: <input type="text" name="NewPassword2" value=""/></p>

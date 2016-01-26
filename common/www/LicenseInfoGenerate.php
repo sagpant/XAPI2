@@ -1,13 +1,9 @@
 <?php
 session_start();
-
-include_once('CheckSignin.php');
-
-require_once('dbconfig.php');
-require_once('DirFileFun.php');
 require_once('config.php');
+include_once('CheckSignin.php');
+require_once('DirFileFun.php');
 require_once('JSON.php');
-
 
 
 $result = $mdb2->query(
@@ -35,7 +31,7 @@ else
     }
     else
     {
-        echo "您没有权限";
+        echo "您没有下载权限";
         return;       
     }
 }
