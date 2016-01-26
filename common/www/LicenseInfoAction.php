@@ -1,7 +1,8 @@
 <?php
 session_start();
+require_once('config.php');
 include_once('CheckSignin.php');
-require_once('dbconfig.php');
+
 
 if(empty($_POST))
 {
@@ -115,7 +116,7 @@ if(isset($_POST['Update']))
 		die("{'Error':'".$result->getMessage()."'}");
 	}
     
-    header("Location:LicenseInfoListView.php");
+    header("Location:".getenv("HTTP_REFERER"));
     return;
 }
 

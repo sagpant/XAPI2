@@ -10,7 +10,7 @@ require_once('config.php');
 </head>
 <body>
 <form action="Session.php" method="post">
-<?php echo $_SESSION['Error']; unset($_SESSION['Error']);?>
+<?php echo @$_SESSION['Error']; unset($_SESSION['Error']);?>
 <p>用户名：<input name="UserID"/></p>
 <p>密码：<input name="Password"/></p>
 <p><button type='submit'>登录</button></p>

@@ -1,10 +1,11 @@
 <?php
 session_start();
-
-require_once('dbconfig.php');
 require_once('config.php');
 
-if($OpenSignup == false)
+if(@$_SESSION['Right'] == 99)
+{
+}
+else if($OpenSignup == false)
 {
     $_SESSION['Error'] = '对不起，目前不开放注册';
     header("Location:Signin.php");

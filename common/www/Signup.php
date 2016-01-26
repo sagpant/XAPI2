@@ -10,7 +10,10 @@ require_once('config.php');
 <body>
 
 <?php
-if($OpenSignup == false)
+if(@$_SESSION['Right'] == 99)
+{
+}
+else if($OpenSignup == false)
 {
     echo "对不起，目前不开放注册";
     return;
@@ -18,7 +21,7 @@ if($OpenSignup == false)
 ?>
 
 <form action="Join.php" method="post">
-<?php echo $_SESSION['Error']; unset($_SESSION['Error']);?>
+<?php echo @$_SESSION['Error']; unset($_SESSION['Error']);?>
 <p>用户名<input name="UserID"/></p>
 <p>密码<input name="Password"/></p>
 <p>密码2<input name="Password2"/>再次输入密码</p>

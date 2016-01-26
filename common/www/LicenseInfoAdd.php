@@ -1,7 +1,8 @@
 <?php
 session_start();
+require_once('config.php');
 include_once('CheckSignin.php');
-require_once('dbconfig.php');
+
 
 $query = "SELECT COUNT(*) AS NUM_A FROM LicenceInfo WHERE "
         ." User1 = ".$mdb2->quote($_SESSION['UserID'],"text")
@@ -11,10 +12,9 @@ $result = $mdb2->query($query);
 $row = $result->fetchRow();
 //print_r($row);
 //echo $row[strtolower('NUM_A')];
-$count = 5;
-if($row[strtolower('NUM_A')]>$count)
+if($row[strtolower('NUM_A')]>$PendingLicenseCount)
 {
-    echo "非审核的授权超过 $count 个，请等部分批准后再新申请";
+    echo "未审核的授权超过 $PendingLicenseCount 个，请等部分批准后再新申请";
     return;
 }
 
@@ -48,7 +48,8 @@ while ($row = $result->fetchRow())
 <p>UserName: <input type="text" name="UserName" value=""/>接口登录后所能取到的客户真实姓名，不支持正则</p>
 <p>Info: <input type="text" name="Info" value=""/>额外信息，一般由审核员填写，会写入到授权文件中</p>
 <hr/>
-<p>Remark: <textarea rows="5" cols="60" name="Remark"><?php echo $row[strtolower('Remark')];?></textarea>备注，需告知审核员或用户的消息</p>
+<p>上面的信息如果不会填写，那就把*.Licence中的文本直接粘贴到下面的备注即可，后面的事交审核人员处理</p>
+<p>Remark: <textarea rows="5" cols="60" name="Remark"><?php echo $row[strtolower('Remark')];?></textarea>备注，需告知审核员的消息</p>
 <input type="submit" value="Submit" name="Create"/>
 </form>
 

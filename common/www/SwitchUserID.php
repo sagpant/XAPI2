@@ -1,9 +1,10 @@
 <?php
 session_start();
+require_once('config.php');
 
-if($_SESSION['Right'] != 99)
+if(@$_SESSION['Right'] != 99)
 {
-	header("Location:Home.php");
+	header("Location: $Homepage");
 	return;
 }
 
