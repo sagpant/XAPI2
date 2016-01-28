@@ -26,9 +26,8 @@ if(!empty($_POST['UserID']))
 <body>
 
 <form action="SwitchUserID.php" method="post">
-这个功能只对管理员
-UserID<input name="UserID"/>
-<button type='submit'>切换</button>
+<p>这个功能只对管理员开放，用于切换到某个用户上看授权设置是否正确,或对账号信息进行修改</p>
+<p>UserID<input name="UserID"/><button type='submit'>切换</button></p>
 </form>
 
 </body>

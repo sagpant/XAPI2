@@ -11,9 +11,13 @@ if(empty($_POST))
         $query = 'DELETE FROM LicenceInfo '
         .' WHERE ID = '
         .$mdb2->quote($_GET['ID'],"integer")
-        .' AND User1 = '
-        .$mdb2->quote($_SESSION['UserID'],"text")
-        ;
+        .' AND Status <4 ';
+        
+        // 只能删除自己的吗？管理员可以更新所有的
+        if($_SESSION['Right'] <= 2)
+        {
+            $query = $query.' AND User1 = '.$mdb2->quote($_SESSION['UserID'],"text");
+        }
         
         $result = $mdb2->query($query);
         
@@ -107,10 +111,14 @@ if(isset($_POST['Update']))
     .$mdb2->quote($_POST['Remark'],"text")
     .' , Status = 1'
 	.' WHERE ID = '
-	.$mdb2->quote($_GET['ID'],"integer")
-    .' AND User1 = '
-    .$mdb2->quote($_SESSION['UserID'],"text");
+	.$mdb2->quote($_GET['ID'],"integer");
     
+    // 只能更新自己的吗？管理员可以更新所有的
+    if($_SESSION['Right'] <= 2)
+    {
+        $query = $query.' AND User1 = '.$mdb2->quote($_SESSION['UserID'],"text");
+    }
+
     $result = $mdb2->query($query);
 	if (PEAR::isError($result)) {
 		die("{'Error':'".$result->getMessage()."'}");

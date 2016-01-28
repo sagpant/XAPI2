@@ -32,6 +32,7 @@ if($_SESSION['Right']<=1)
 {
     $query = $query." AND User1 = ".$mdb2->quote($_SESSION['UserID'],"text");
 }
+$query = $query." ORDER BY ID DESC";
 
 // 如果是审核员是可以看到自己能审核的
     

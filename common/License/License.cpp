@@ -245,9 +245,9 @@ int CLicense::LoadIni()
 	m_ExpireDate = iniGetInt(APP_NAME_LICENSE, KEY_NAME_EXPIRE_DATE, -1);
 	m_Trial = iniGetInt(APP_NAME_LICENSE, KEY_NAME_TRIAL, 5);
 
-	iniGetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account, sizeof(m_Account), "A");
-	iniGetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName, sizeof(m_UserName), "B");
-	iniGetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC, sizeof(m_MAC), "C");
+	iniGetString(APP_NAME_USER, KEY_NAME_ACCOUNT, m_Account, sizeof(m_Account), "");
+	iniGetString(APP_NAME_USER, KEY_NAME_USERNAME, m_UserName, sizeof(m_UserName), "");
+	iniGetString(APP_NAME_LICENSE, KEY_NAME_MAC, m_MAC, sizeof(m_MAC), "");
 
 	iniFileFree();
 
@@ -308,7 +308,7 @@ void CLicense::CreateDefault()
 	m_nCurrentTrial = 0;
 
 	strncpy(m_Account, ".*", sizeof(m_Account));
-	strncpy(m_UserName, ".*", sizeof(m_UserName));
+	strncpy(m_UserName, "", sizeof(m_UserName));
 	strncpy(m_MAC, ".*", sizeof(m_MAC));
 }
 
@@ -359,6 +359,10 @@ int CLicense::GetErrorCodeForMachineID()
 
 	do
 	{
+		if (strlen(m_MAC) <= 0)
+		{
+			break;
+		}
 		// 检查机器码
 		regex pattern(m_MAC);
 		if (!regex_search(m_RealMAC, pattern))
@@ -408,6 +412,10 @@ int CLicense::GetErrorCodeByAccount(const char* account)
 
 	do
 	{
+		if (strlen(m_Account) <= 0)
+		{
+			break;
+		}
 		regex pattern(m_Account);
 		if (!regex_search(account, pattern))
 		{
@@ -429,13 +437,6 @@ int CLicense::GetErrorCodeByNameThenAccount(const char* name, const char* accoun
 	do
 	{
 		// 汉字使用正则太复杂，还是改用查找
-		//regex pattern(m_UserName);
-		//if (!regex_search(name, pattern))
-		//{
-		//	m_ErrorCode = -9;
-		//	sprintf(m_ErrorInfo, ERROR_CODE_9, name);
-		//	break;
-		//}
 		if (strlen(m_UserName) <= 0)
 		{
 			break;

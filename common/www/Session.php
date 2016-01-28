@@ -77,11 +77,28 @@ while($row = $result->fetchRow())
 $_SESSION['Products'] = $Products;
 
 // 可以判断一下，只让本机登录的为管理员
-if($_SESSION['Right'] == 99)
+/*if($_SESSION['Right'] == 99)
 {
     // 居然有IPv6的问题
     $admin_ips = array('127.0.0.1','::1','');
     if(in_array($_SERVER['REMOTE_ADDR'],$admin_ips,true))
+    {
+    }
+    else
+    {         
+        // 降级为审核员
+        $_SESSION['Right'] = 2;
+    }
+}*/
+
+if($_SESSION['Right'] == 99)
+{
+    // 通过特殊页面登录成功的管理员才有管理员权限
+    //echo (int)$_POST['Token'];
+    //echo (int)$admin_token;
+    //return;
+    // 这个功能与某个管理员登录的php有关联，要改的话得同时改
+    if(@$_SESSION['TRY_ADMIN'] == true)
     {
     }
     else

@@ -19,8 +19,11 @@ $product = $row[strtolower('Product')];
 $content1 = strval($row[strtolower('Content1')]);
 $content2 = strval($row[strtolower('Content2')]);
 
-$json_content1 = json_decode($content1,true);
+$json_content = json_decode($content1,true);
 $json_content2 = json_decode($content2,true);
+
+if(!empty($content2))
+    $json_content = $json_content2;
 ?>
 <!DOCTYPE HTML><html>
 <head>
@@ -78,57 +81,39 @@ else
   </tr>
 </table>
 <hr/>
-<?php if($row[strtolower('Status')]<4) {?>
-<table>
-  <tr>
-  <td>
+<?php
+/*echo date(DATE_RFC822,strtotime($row[strtolower('Time2')]));
+echo "<br/>";
+echo date(DATE_RFC822,time());
+echo "<br/>";*/
+// 注意时区问题
+$t = time()-strtotime($row[strtolower('Time2')]);
 
-  <form action="LicenseInfoAction.php?ID=<?php echo $row[strtolower('ID')];?>" method="post">
-<p>这个表格中自动填写的是申请内容</p>
+if(
+($row[strtolower('Status')]<4) // 没有下载的可以直接审核
+||($row[strtolower('Status')]==4 && $t<$ReviewTimeLimit2) // 已经下载的一定时间内可以再审核
+||($_SESSION['Right']==99&& $t<$ReviewTimeLimit99)   // 管理员一定时间内可以再审核
+) 
+{?>
+<form action="LicenseInfoAction.php?ID=<?php echo $row[strtolower('ID')];?>" method="post">
+<p>审核内容为空时，将取申请内容自动填写下表</p>
 <p>Product: <input type="text" name="Product" readonly value="<?php echo $row[strtolower('Product')];?>"/></p>
-<p>ExpireDate: <input type="text" name="ExpireDate" value="<?php echo $json_content1['License']['ExpireDate'];?>"/>到期时间，格式：20160315</p>
-<p>Trial: <input type="text" name="Trial" value="<?php echo $json_content1['License']['Trial'];?>"/>单次会话下单次数，0表示无限制</p>
-<p>MachineID: <input type="text" name="MachineID" value="<?php echo $json_content1['License']['MachineID'];?>"/>机器码，如果没有绑定账号就必须绑定机器码，支持正则</p>
-<p>Account: <input type="text" name="Account" value="<?php echo $json_content1['User']['Account'];?>"/>登录时所用的客户号，支持正则</p>
-<p>UserName: <input type="text" name="UserName" value="<?php echo $json_content1['User']['UserName'];?>"/>接口登录后所能取到的客户真实姓名，不支持正则</p>
-<p>Info: <input type="text" name="Info" value="<?php echo $json_content1['User']['Info'];?>"/>额外信息，一般由审核员填写，会写入到授权文件中</p>
+<p>ExpireDate: <input type="text" name="ExpireDate" value="<?php echo $json_content['License']['ExpireDate'];?>"/>到期时间，格式：20160315</p>
+<p>Trial: <input type="text" name="Trial" value="<?php echo $json_content['License']['Trial'];?>"/>单次会话下单次数，0表示无限制</p>
+<p>MachineID: <input type="text" name="MachineID" value="<?php echo $json_content['License']['MachineID'];?>"/>机器码，如果没有绑定账号就必须绑定机器码，支持正则</p>
+<p>Account: <input type="text" name="Account" value="<?php echo $json_content['User']['Account'];?>"/>登录时所用的客户号，支持正则</p>
+<p>UserName: <input type="text" name="UserName" value="<?php echo $json_content['User']['UserName'];?>"/>接口登录后所能取到的客户真实姓名，不支持正则</p>
+<p>Info: <input type="text" name="Info" value="<?php echo $json_content['User']['Info'];?>"/>额外信息，一般由审核员填写，会写入到授权文件中</p>
 <hr/>
 <p>状态: <select name="Status">
   <option value ="1"><?php echo EnumStatusToString(1);?></option>
   <option value ="2"><?php echo EnumStatusToString(2);?></option>
   <option value ="3"><?php echo EnumStatusToString(3);?></option>
-  <option value ="4"><?php echo EnumStatusToString(4);?></option>
+  <!--<option value ="4"><?php echo EnumStatusToString(4);?></option>-->
 </select>状态信息决定了是否审核完成，用户是否可下载，不要改错了</p>
 <p>备注: <textarea rows="5" cols="60" name="Remark"><?php echo $row[strtolower('Remark')];?></textarea>备注，需告知审核员或用户的消息</p>
 <input type="submit" value="Submit" name="Review_Left" />
 </form>
-
-</td>
-<td>
-
-<form action="LicenseInfoAction.php?ID=<?php echo $row[strtolower('ID')];?>" method="post">
-<p>这个表格中自动填写的是审核内容</p>
-<p>Product: <input type="text" name="Product" readonly value="<?php echo $row[strtolower('Product')];?>"/></p>
-<p>ExpireDate: <input type="text" name="ExpireDate" value="<?php echo $json_content2['License']['ExpireDate'];?>"/></p>
-<p>Trial: <input type="text" name="Trial" value="<?php echo $json_content2['License']['Trial'];?>"/></p>
-<p>MachineID: <input type="text" name="MachineID" value="<?php echo $json_content2['License']['MachineID'];?>"/></p>
-<p>Account: <input type="text" name="Account" value="<?php echo $json_content2['User']['Account'];?>"/></p>
-<p>UserName: <input type="text" name="UserName" value="<?php echo $json_content2['User']['UserName'];?>"/></p>
-<p>Info: <input type="text" name="Info" value="<?php echo $json_content2['User']['Info'];?>"/></p>
-<hr/>
-<p>状态: <select name="Status">
-  <option value ="1"><?php echo EnumStatusToString(1);?></option>
-  <option value ="2"><?php echo EnumStatusToString(2);?></option>
-  <option value ="3"><?php echo EnumStatusToString(3);?></option>
-  <option value ="4"><?php echo EnumStatusToString(4);?></option>
-</select></p>
-<p>备注: <textarea rows="5" cols="60" name="Remark"><?php echo $row[strtolower('Remark')];?></textarea></p>
-<input type="submit" value="Submit"  name="Review_Right" />
-</form>
-
-</td>
-</tr>
-</table>
 <?php }?>
 
 </body>

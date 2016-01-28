@@ -37,11 +37,11 @@ echo "</pre>";
 <hr/>
 <form action="UserInfoAction.php" method="post">
 <h1>修改密码</h1>
-<p>修改成功后需要重新登录</p>
+<p>修改成功后将不提示，直接跳转到重新登录界面</p>
 <?php echo @$_SESSION['Error']; unset($_SESSION['Error']);?>
-<p>原始密码: <input type="text" name="OldPassword" value=""/></p>
-<p>新密码: <input type="text" name="NewPassword" value=""/></p>
-<p>确认密码: <input type="text" name="NewPassword2" value=""/></p>
+<p>原始密码: <input type="password" name="OldPassword" value=""/></p>
+<p>新密码: <input type="password" name="NewPassword" value=""/></p>
+<p>确认密码: <input type="password" name="NewPassword2" value=""/></p>
 <input type="submit" value="Submit" name="ModifyPassword"/>
 
 </form>

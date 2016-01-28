@@ -101,6 +101,20 @@ if(write_ini_file(json_decode($content2,true), $path1, true))
 {
     $LicensePath = $path1;
     echo "生成授权文件成功<br/>";
+    
+    $cmd = "cscript.exe $VbsPath \"$LicensePath\"";
+    $ret = exec($cmd);
+    //echo $ret;
+    if("OK" == $ret)
+    {
+         echo "编码转换成功<br/>";
+    }
+    else
+    {
+        echo "编码转换失败<br/>";
+        return;
+    }
+    
     echo "<a href=$path1>下载License文件，请鼠标右键->链接另存为</a><br/>";
     
     $PrivateKeyPath = "$PrivateKeyDir\\$Product\\$Product.PrivateKey";
@@ -132,6 +146,8 @@ else
 {
     echo "生成License失败<br/>";
 }
+
+
 
 ?>
 <p>请将License文件和Signature文件放到与dll同目录下</p>

@@ -23,8 +23,8 @@ else if($OpenSignup == false)
 <form action="Join.php" method="post">
 <?php echo @$_SESSION['Error']; unset($_SESSION['Error']);?>
 <p>用户名<input name="UserID"/></p>
-<p>密码<input name="Password"/></p>
-<p>密码2<input name="Password2"/>再次输入密码</p>
+<p>密码<input type="password" name="Password"/></p>
+<p>密码2<input type="password" name="Password2"/>再次输入密码</p>
 <p><button type='submit'>注册</button></p>
 </form>
 </body>
