@@ -6,7 +6,9 @@ require_once('EnumFun.php');
 
 $result = $mdb2->query(
 	'SELECT * FROM LicenceInfo WHERE User1 = '
-	.$mdb2->quote($_SESSION['UserID'],"text"));
+	.$mdb2->quote($_SESSION['UserID'],"text")
+    ." ORDER BY ID DESC"
+    );
     if (PEAR::isError($result)) {
         die("{'Error':'".$result->getMessage()."'}");
     }

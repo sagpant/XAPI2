@@ -27,6 +27,7 @@ if(!empty($_POST['User2']))
 {
     $query = $query." AND User2 = ".$mdb2->quote($_POST['User2'],"text");
 }
+$query = $query." ORDER BY ID DESC";
 
 $result = $mdb2->query($query);
 

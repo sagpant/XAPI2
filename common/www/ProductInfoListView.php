@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('config.php');
-include_once('CheckSignin.php');
+//include_once('CheckSignin.php');
 require_once('EnumFun.php');
 
 $result = $mdb2->query(
@@ -29,7 +29,7 @@ while ($row = $result->fetchRow())
    echo "<tr>";
    echo "<td>".$row[strtolower('ID')]."</td>";
    echo "<td>".$row[strtolower('Name')]."</td>";
-   echo "<td><a href='".$row[strtolower('Url')]."'>查看介绍页</a></td>";
+   echo "<td><a href='".$row[strtolower('Url')]."'>查看并下载</a></td>";
    echo "</tr>";
 }
 ?>

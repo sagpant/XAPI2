@@ -78,12 +78,21 @@ $json_content2 = json_decode($content2,true);
   <td><?php echo $row[strtolower('Remark')];?></td>
   </tr>
 </table>
-<?php if($row[strtolower('Status')]>=3) {?>
+<?php
+// 审核员也可以下载，因为可能需要检查一下是否可用
+if($row[strtolower('Status')]>=3)
+{
+?>
 <hr/>
 <h1>下载</h1>
 <p><?php echo "<a href='LicenseInfoGenerate.php?ID=".$row[strtolower('ID')]."' target='_blank'>生成授权并下载</a>"?></p>
-<?php }?>
-<?php if($row[strtolower('Status')]<3) {?>
+<?php
+}
+
+// 审核员是否能修改呢申请信息呢？不能修改才对
+if($row[strtolower('Status')]<3 && $_SESSION['UserID'] == $row[strtolower('User1')])
+{
+?>
 <hr/>
 <form action="LicenseInfoAction.php?ID=<?php echo $row[strtolower('ID')];?>" method="post">
 <h1>在没有通过审核人员审核前，是可以再编辑的</h1>
