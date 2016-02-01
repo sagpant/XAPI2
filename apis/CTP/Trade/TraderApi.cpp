@@ -1542,7 +1542,14 @@ int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1
 void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsLast)
 {
 	if (nullptr == pOrder)
+	{
+		// 如果是请求报单而当日无报单，也需要回调告知 bIsLast = true
+		if (nRequestID != 0)
+		{
+			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryOrder, m_msgQueue, m_pClass, bIsLast, 0, nullptr, sizeof(OrderField), nullptr, 0, nullptr, 0);
+		}
 		return;
+	}
 
 	OrderIDType orderId = { 0 };
 	sprintf(orderId, "%d:%d:%s", pOrder->FrontID, pOrder->SessionID, pOrder->OrderRef);
