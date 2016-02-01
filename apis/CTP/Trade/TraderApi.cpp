@@ -1309,55 +1309,54 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 {
 	if (!IsErrorRspInfo("OnRspQryInvestorPosition", pRspInfo, nRequestID, bIsLast))
 	{
-		if (pInvestorPosition)
+		// 如果没有持仓，返回空的数据
+		if (nullptr == pInvestorPosition)
 		{
-			PositionIDType positionId = { 0 };
-			sprintf(positionId, "%s:%s:%d:%c",
-				pInvestorPosition->ExchangeID,
-				pInvestorPosition->InstrumentID,
-				TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-				pInvestorPosition->HedgeFlag);
+			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, bIsLast, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+			return;
+		}
 
-			PositionField* pField = nullptr;
-			unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId);
-			if (it == m_id_platform_position.end())
-			{
-				pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
+		PositionIDType positionId = { 0 };
+		sprintf(positionId, "%s:%s:%d:%c",
+			pInvestorPosition->ExchangeID,
+			pInvestorPosition->InstrumentID,
+			TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
+			pInvestorPosition->HedgeFlag);
 
-				//sprintf(pField->Symbol, "%s.%s", pInvestorPosition->InstrumentID, pInvestorPosition->ExchangeID);
-				strcpy(pField->Symbol, pInvestorPosition->InstrumentID);
-				strcpy(pField->InstrumentID, pInvestorPosition->InstrumentID);
-				strcpy(pField->ExchangeID, pInvestorPosition->ExchangeID);
-				pField->Side = TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection);
-				pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag);
+		PositionField* pField = nullptr;
+		unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId);
+		if (it == m_id_platform_position.end())
+		{
+			pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
 
-				m_id_platform_position.insert(pair<string, PositionField*>(positionId, pField));
-			}
-			else
-			{
-				pField = it->second;
-			}
+			//sprintf(pField->Symbol, "%s.%s", pInvestorPosition->InstrumentID, pInvestorPosition->ExchangeID);
+			strcpy(pField->Symbol, pInvestorPosition->InstrumentID);
+			strcpy(pField->InstrumentID, pInvestorPosition->InstrumentID);
+			strcpy(pField->ExchangeID, pInvestorPosition->ExchangeID);
+			pField->Side = TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection);
+			pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag);
 
-			pField->Position = pInvestorPosition->Position;
-			pField->TodayPosition = pInvestorPosition->TodayPosition;
-			pField->HistoryPosition = pInvestorPosition->Position - pInvestorPosition->TodayPosition;
-
-			// 等数据收集全了再遍历通知一次，为何要这样做？因为今昨是两条记录，但我记在一个里面
-			if (bIsLast)
-			{
-				int cnt = 0;
-				size_t count = m_id_platform_position.size();
-				for (unordered_map<string, PositionField*>::iterator iter = m_id_platform_position.begin(); iter != m_id_platform_position.end(); iter++)
-				{
-					++cnt;
-					m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, cnt == count, 0, iter->second, sizeof(PositionField), nullptr, 0, nullptr, 0);
-				}
-			}
-			//XRespone(ResponeType::OnRspQryInvestorPosition, m_msgQueue, this, bIsLast, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
+			m_id_platform_position.insert(pair<string, PositionField*>(positionId, pField));
 		}
 		else
 		{
-			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, bIsLast, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+			pField = it->second;
+		}
+
+		pField->Position = pInvestorPosition->Position;
+		pField->TodayPosition = pInvestorPosition->TodayPosition;
+		pField->HistoryPosition = pInvestorPosition->Position - pInvestorPosition->TodayPosition;
+
+		// 等数据收集全了再遍历通知一次，为何要这样做？因为今昨是两条记录，但我记在一个里面
+		if (bIsLast)
+		{
+			int cnt = 0;
+			size_t count = m_id_platform_position.size();
+			for (unordered_map<string, PositionField*>::iterator iter = m_id_platform_position.begin(); iter != m_id_platform_position.end(); iter++)
+			{
+				++cnt;
+				m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, cnt == count, 0, iter->second, sizeof(PositionField), nullptr, 0, nullptr, 0);
+			}
 		}
 	}
 }
@@ -1546,7 +1545,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 		// 如果是请求报单而当日无报单，也需要回调告知 bIsLast = true
 		if (nRequestID != 0)
 		{
-			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryOrder, m_msgQueue, m_pClass, bIsLast, 0, nullptr, sizeof(OrderField), nullptr, 0, nullptr, 0);
+			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryOrder, m_msgQueue, m_pClass, bIsLast, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 		}
 		return;
 	}
@@ -1660,7 +1659,13 @@ int CTraderApi::_ReqQryTrade(char type, void* pApi1, void* pApi2, double double1
 void CTraderApi::OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsLast)
 {
 	if (nullptr == pTrade)
+	{
+		if (nRequestID != 0)
+		{
+			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryTrade, m_msgQueue, m_pClass, bIsLast, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+		}
 		return;
+	}
 
 	TradeField* pField = (TradeField*)m_msgQueue->new_block(sizeof(TradeField));
 	strcpy(pField->InstrumentID, pTrade->InstrumentID);
@@ -1808,7 +1813,13 @@ int CTraderApi::_ReqQryQuote(char type, void* pApi1, void* pApi2, double double1
 void CTraderApi::OnQuote(CThostFtdcQuoteField *pQuote, int nRequestID, bool bIsLast)
 {
 	if (nullptr == pQuote)
+	{
+		if (nRequestID != 0)
+		{
+			m_msgQueue->Input_Copy(ResponeType::ResponeType_OnRspQryQuote, m_msgQueue, m_pClass, bIsLast, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+		}
 		return;
+	}
 
 	OrderIDType quoteId = { 0 };
 	sprintf(quoteId, "%d:%d:%s", pQuote->FrontID, pQuote->SessionID, pQuote->QuoteRef);
