@@ -56,6 +56,7 @@ OpenCloseType TThostFtdcOffsetFlagType_2_OpenCloseType(TThostFtdcOffsetFlagType 
 	case THOST_FTDC_OF_CloseToday:
 		return OpenCloseType::OpenCloseType_CloseToday;
 	case THOST_FTDC_OF_Close:
+	case THOST_FTDC_OF_CloseYesterday:
 		return OpenCloseType::OpenCloseType_Close;
 	case THOST_FTDC_OF_Open:
 	default:
