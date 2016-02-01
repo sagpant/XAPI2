@@ -33,13 +33,13 @@ void CRemoteQueue::RunInThread()
 		}
 		else
 		{
-			// ¿ÕÏÐÊ±µÈ1ms,Èç¹ûÁ¢¼´ÓÐÊÂ¼þ¹ýÀ´¾ÍÍíÁË1ms
+			// ç©ºé—²æ—¶ç­‰1ms,å¦‚æžœç«‹å³æœ‰äº‹ä»¶è¿‡æ¥å°±æ™šäº†1ms
 			//this_thread::sleep_for(chrono::milliseconds(1));
 
-			// ¿ÕÏÐÊ±¹ýÀ´µÈ1ms,Ã»µÈµ½¾Í»ØÈ¥ÔÙÊÔ
-			// Èç¹ýÕýºÃµÈµ½ÁË£¬¾ÍÁ¢¼´È¥ÊÔ£¬Ó¦µ±»á¿ìÒ»µã°É?
+			// ç©ºé—²æ—¶è¿‡æ¥ç­‰1ms,æ²¡ç­‰åˆ°å°±å›žåŽ»å†è¯•
+			// å¦‚è¿‡æ­£å¥½ç­‰åˆ°äº†ï¼Œå°±ç«‹å³åŽ»è¯•ï¼Œåº”å½“ä¼šå¿«ä¸€ç‚¹å§?
 			unique_lock<mutex> lck(m_mtx);
-			m_cv.wait_for(lck, std::chrono::seconds(1));
+			m_cv.wait_for(lck, std::chrono::milliseconds(1));
 		}
 	}
 
@@ -50,7 +50,7 @@ void CRemoteQueue::RunInThread()
 		m_ctx = nullptr;
 	}
 #endif
-	// ÇåÀíÏß³Ì
+	// æ¸…ç†çº¿ç¨‹
 	m_hThread = nullptr;
 	m_bRunning = false;
 }
@@ -58,7 +58,7 @@ void CRemoteQueue::RunInThread()
 void CRemoteQueue::Output(ResponeItem* pItem)
 {
 #ifdef _REMOTE
-	// ·¢ËÍÊý¾Ý
+	// å‘é€æ•°æ®
 	if (pItem->ptr1 && pItem->size1>0)
 	{
 		int ret = zsocket_sendmem(m_pubisher, pItem->ptr1, pItem->size1, ZFRAME_DONTWAIT);
