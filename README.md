@@ -22,7 +22,7 @@ XAPI标准委员会 142703128（需邀请，用于高手进行标准的制定）
 5. **lib**:各种库文件
 6. **languages**:各种语言的XAPI封装
 7. **tests**：测试代码
-8. **tools**:一些小工具
+8. **tools**:一些小工具。如FakeAPI用来获取CTP/LTS客户端授权码，请看项目中的READEME.md
 
 ## 编译XAPI
 1. 打开AllCppProjects.sln
