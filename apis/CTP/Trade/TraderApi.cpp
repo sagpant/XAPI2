@@ -18,6 +18,7 @@
 #include <cstring>
 #include <assert.h>
 #include <cfloat>
+#include <direct.h>
 
 #ifdef ENABLE_LICENSE
 #include "../../common/License/License.h"
@@ -248,27 +249,48 @@ int CTraderApi::_Init()
 	sprintf(pszPath, "%s/%s/%s/Td/%d/", m_szPath.c_str(), m_ServerInfo.BrokerID, m_UserInfo.UserID, rand());
 	makedirs(pszPath);
 
+	
+	// 本来想使用chdir的方法解决Kingstar的证书问题，测试多次发现还是读取的exe目录下
+	// 打算使用文件复制的方法来实现，
+	// 1.先检查证书是否存在，存在就跳过
+	// 2.复制，用完要删
+#ifdef KS_COPYFILE
+	lock_guard<mutex> cl(m_csOrderRef);
+
 	char szExePath[MAX_PATH] = { 0 };
 	GetExePath(szExePath);
-	char szDllPath[MAX_PATH] = {0};
+	char szDllPath[MAX_PATH] = { 0 };
 	GetDllPathByFunctionName("XRequest", szDllPath);
-	char szDirectory[MAX_PATH] = { 0 };
-	GetDirectoryByPath(szDllPath, szDirectory);
-	char szCurrDir[MAX_PATH] = { 0 };
 
-	if (SetCurrentDirectoryA(szDirectory))
+	char szExistingFileName[MAX_PATH] = { 0 };
+	char szNewFileName[MAX_PATH] = { 0 };
+	GetNewPathInSameDirectory(szDllPath, KS_LKC_FILENAME, KS_LKC_EXT, szExistingFileName);
+	GetNewPathInSameDirectory(szExePath, KS_LKC_FILENAME, KS_LKC_EXT, szNewFileName);
+
+	bool bRet = CopyFileA(szExistingFileName, szNewFileName, false);
+
+	if (!bRet)
 	{
+		char szBuf[256] = { 0 };
+		LPVOID lpMsgBuf;
+		DWORD dw = GetLastError();
+		FormatMessageA(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			dw,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPSTR)&lpMsgBuf,
+			0, NULL);
+
 		LogField* pField = (LogField*)m_msgQueue->new_block(sizeof(LogField));
 
-		sprintf(pField->Message, "SetCurrentDirectory:%s", szDirectory);
+		sprintf(pField->Message, "CopyFile:%s", lpMsgBuf);
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnLog, m_msgQueue, m_pClass, true, 0, pField, sizeof(LogField), nullptr, 0, nullptr, 0);
 	}
+#endif // KS_COPYFILE	
 
-	RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
-	pField->RawErrorID = 0;
-	sprintf(pField->Text, "ExePath:%s", szExePath);
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 	m_pApi = CThostFtdcTraderApi::CreateFtdcTraderApi(pszPath);
 	delete[] pszPath;
@@ -316,6 +338,22 @@ int CTraderApi::_Init()
 		m_pApi->Init();
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Connecting, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
+	else
+	{
+		RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
+
+		pField->RawErrorID = 0;
+		strncpy(pField->Text, "(Api==null)", sizeof(Char256Type));
+
+		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+	}
+
+#ifdef KS_COPYFILE
+	if (bRet)
+	{
+		DeleteFileA(szNewFileName);
+	}
+#endif // KS_COPYFILE
 
 	return 0;
 }

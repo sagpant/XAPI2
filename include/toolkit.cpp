@@ -496,3 +496,15 @@ void GetDirectoryByPath(const char* szPath, char* szDirectory)
 	_splitpath(szPath, drive, dir, fname, ext);
 	_makepath(szDirectory, drive, dir, nullptr, nullptr);
 }
+
+void GetNewPathInSameDirectory(const char* szPath, const char* szFname, const char* szExt, char* szFileName)
+{
+	//char szPath[_MAX_PATH] = { 0 };
+	char drive[_MAX_DRIVE] = { 0 };
+	char dir[_MAX_DIR] = { 0 };
+	char fname[_MAX_FNAME] = { 0 };
+	char ext[_MAX_EXT] = { 0 };
+
+	_splitpath(szPath, drive, dir, fname, ext);
+	_makepath(szFileName, drive, dir, szFname, szExt);
+}
