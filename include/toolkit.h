@@ -40,5 +40,7 @@ void GetDllPathByFunctionName(const char* szFunctionName, char* szPath);
 void GetExePath(char* szPath);
 // 传入路径，得到目录
 void GetDirectoryByPath(const char* szPath, char* szDirectory);
+// 通过一个路径得到新的路径
+void GetNewPathInSameDirectory(const char* szPath, const char* szFname, const char* szExt, char* szFileName);
 
 #endif
