@@ -26,6 +26,25 @@ if($_POST['Password'] != $_POST['Password2'])
     return;
 }
 
+// 检查用户是否已经存在，因为在有些MDB2上报的错太不靠谱
+$query = 'SELECT * FROM UserInfo WHERE UserID = '
+    .$mdb2->quote($_POST['UserID'],"text");
+//echo $query;
+$result = $mdb2->query($query);
+
+if (PEAR::isError($result)) {
+    die("{'Error':'".$result->getMessage()."'}");
+}
+
+$row = $result->fetchRow();
+
+if(!empty($row))
+{
+	$_SESSION['Error'] = '用户名已经存在';
+	header("Location:".getenv("HTTP_REFERER"));
+	return;
+}
+
 // 插入用户
 $query = 
 	'INSERT INTO UserInfo(UserID,Password,'
