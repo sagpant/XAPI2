@@ -10,10 +10,14 @@ del AllCppProjects.sdf /S /Q
 del AllCppProjects.v12.suo /S /Q /A H
 
 rd apis\CTP_Quote\Debug /S /Q
+rd apis\CTP_Quote\Debug64 /S /Q
 rd apis\CTP_Quote\Release /S /Q
+rd apis\CTP_Quote\Release64 /S /Q
 rd apis\CTP_Quote\x64 /S /Q
 rd apis\CTP_Trade\Debug /S /Q
+rd apis\CTP_Trade\Debug64 /S /Q
 rd apis\CTP_Trade\Release /S /Q
+rd apis\CTP_Trade\Release64 /S /Q
 rd apis\CTP_Trade\x64 /S /Q
 rd apis\Kingstar_Quote\Debug /S /Q
 rd apis\Kingstar_Quote\Release /S /Q

@@ -10,4 +10,8 @@ xcopy "include\Kingstar\win32\*.*" "bin\Release\x86\Kingstar" /Y
 xcopy "include\LTS_v2\win32\*.dll" "bin\Release\x86\LTS_v2" /Y
 xcopy "include\UFX\win32\*.*" "bin\Release\x86\UFX" /Y
 
+xcopy "include\CTP\win64\*.dll" "bin\Debug64\x64\CTP" /Y
+
+xcopy "include\CTP\win64\*.dll" "bin\Release64\x64\CTP" /Y
+
 pause
