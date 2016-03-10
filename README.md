@@ -28,7 +28,7 @@ XAPI标准委员会 142703128（需邀请，用于高手进行标准的制定）
 1. 打开AllCppProjects.sln
 2. common\Queue是每个API封装都依赖它的处理消息队列的库，有64位和32位版。所以在部署时可以放在System32或SysWOW64下。或放在客户端程序的exe同目录下，或放在每个API封装库的同目录下。
 3. apis\CTP_Quote等一类的项目，是对应的API的封装。编译好后还需要将API官方的库复制到同目录，你可以直接运行CopyApiDll.bat将依赖的dll复制到bin对应的目录下
-4. 有些项目需要使用到一些授权库的功能common\License，比如说apis\CTP_Trade，直接编译你会发现编译不过，这是因用到的第三方的库文件太大，我在提交代码时提交的是zip。你需要先解压include/cryptopp.zip和lib/cryptlib.zip。你也可在项目属性中去掉**ENABLE\_LICENSE**，这样授权功能模块将不参与编译。
+4. 有些项目需要使用到一些授权库的功能common\License，比如说apis\CTP_Trade，直接编译你会发现编译不过，这是因用到的第三方的库文件太大，我在提交代码时提交的是zip。你需要先解压include/cryptopp.zip和lib/cryptlib.zip。你也可在项目属性中去掉**ENABLE\_LICENSE**，这样授权功能模块将不参与编译。具体的方式是，哪个项目编译的时候，报关于randpool.h的错误，就在哪个项目的属性Configuration Properties -> C/C++ -> Preprossor中找到**ENABLE\_LICENSE**，然后去掉它。
 
 ## 编译各种语言封装
 ### C/C++版
