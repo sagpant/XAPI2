@@ -408,6 +408,7 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 			TradeField* pField = (TradeField*)m_msgQueue->new_block(sizeof(TradeField));
 
 			CJLB_2_TradeField(ppRS[i], pField);
+			CreateID(pField->ID, ppRS[i]->CJRQ, ppRS[i]->GDDM, ppRS[i]->WTBH);
 			pField->Date = ppRS[i]->CJRQ_ == 0 ? Today(0) : ppRS[i]->CJRQ_;//日期为0，重新赋值
 
 			if (m_TradeListReverse)
