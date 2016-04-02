@@ -883,7 +883,7 @@ OrderSide MMBZ_2_OrderSide(int In)
 
 void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 {
-	strcpy(pOut->ID, pIn->WTBH);
+	//strcpy(pOut->ID, pIn->WTBH);将会被修正
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->InstrumentName, pIn->ZQMC);
 	strcpy(pOut->AccountID, pIn->GDDM);
