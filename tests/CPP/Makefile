@@ -11,7 +11,7 @@ DEPS+=../../common/Queue/MsgQueue.o \
 	  ../../common/Queue/RemoteQueue.o \
       ../../include/ApiProcess.o
 
-LFLAGS=-ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi
+LFLAGS=-Wl,-R\$$ORIGIN -ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi
 
 all: CPP_TEST libQuantBox_CTP_Quote.so libQuantBox_CTP_Trade.so 
 
