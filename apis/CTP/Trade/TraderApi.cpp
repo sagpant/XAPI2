@@ -18,7 +18,9 @@
 #include <cstring>
 #include <assert.h>
 #include <cfloat>
+#if defined(_MSC_VER) || defined(_WIN32)
 #include <direct.h>
+#endif
 
 #ifdef ENABLE_LICENSE
 #include "../../common/License/License.h"
@@ -1499,7 +1501,7 @@ int CTraderApi::_ReqQrySettlementInfo(char type, void* pApi1, void* pApi2, doubl
 	CThostFtdcQrySettlementInfoField body = { 0 };
 	strncpy(body.BrokerID, m_RspUserLogin.BrokerID, sizeof(TThostFtdcBrokerIDType));
 	strncpy(body.InvestorID, m_RspUserLogin.UserID, sizeof(TThostFtdcInvestorIDType));
-	sprintf_s(body.TradingDay, "%d", pQuery->DateStart);
+	sprintf(body.TradingDay, "%d", pQuery->DateStart);
 
 	return m_pApi->ReqQrySettlementInfo(&body, ++m_lRequestID);
 }

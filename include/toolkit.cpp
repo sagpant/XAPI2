@@ -470,6 +470,7 @@ void GetOnFrontDisconnectedMsg(int ErrorId, char* ErrorMsg)
 	}
 }
 
+#if defined _WIN32 || WIN32 || _WINDOWS
 void GetDllPathByFunctionName(const char* szFunctionName, char* szPath)
 {
 	HMODULE hModule = nullptr;
@@ -508,3 +509,4 @@ void GetNewPathInSameDirectory(const char* szPath, const char* szFname, const ch
 	_splitpath(szPath, drive, dir, fname, ext);
 	_makepath(szFileName, drive, dir, szFname, szExt);
 }
+#endif

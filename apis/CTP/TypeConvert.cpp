@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "TypeConvert.h"
-
+#include <cstring>
 #include <stdio.h>
 
 
