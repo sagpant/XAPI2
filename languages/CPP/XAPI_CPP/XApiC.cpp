@@ -109,7 +109,7 @@ void X_Register(void* pFun, void* pApi, fnOnRespone pCallback, void* pClass)
 	if (pFun == nullptr || pApi == nullptr)
 		return;
 
-	((fnOnRespone)pFun)(RequestType::RequestType_Register, pApi, nullptr, 0, 0, pCallback, 0, pClass, 0, nullptr, 0);
+	((fnOnRespone)pFun)(RequestType::RequestType_Register, pApi, nullptr, 0, 0, (void*)pCallback, 0, pClass, 0, nullptr, 0);
 }
 
 void X_Connect(void* pFun, void* pApi, const char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count)
