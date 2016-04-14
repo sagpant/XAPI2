@@ -5,7 +5,9 @@ DEPS=../../languages/CPP/XAPI_CPP/XApiImpl.o \
 DEPS+=../../include/toolkit.o \
 	  ../../include/ApiProcess.o
 ALL = CPP_TEST
+
 include ../../Makefile.global
+
 LFLAGS=\
 -ldl \
 -L../../apis/CTP -lQuantBox_CTP_Quote -lQuantBox_CTP_Trade \
