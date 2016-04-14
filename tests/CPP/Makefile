@@ -1,7 +1,7 @@
 CXX=clang++
 C=clang
 IFLAGS=-I../../ -I../../include/ -I../ -I./ 
-CFLAGS=$(IFLAGS)-std=c++11 -O3 -fPIC -pthread
+CFLAGS=$(IFLAGS)-std=c++11 -O3 -fPIC -pthread -m64
 DEPS=../../languages/CPP/XAPI_CPP/XApiImpl.o \
 	 ../../languages/CPP/XAPI_CPP/XApiCpp.o \
 	 ../../languages/CPP/XAPI_CPP/XApiC.o \
