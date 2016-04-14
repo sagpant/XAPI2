@@ -1,2 +1,2 @@
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/Code/XAPI2/common/Queue:~/Code/XAPI2/apis/CTP:~/Code/XAPI2/include/CTP/linux
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/Workspaces/XAPI2/common/Queue:~/Workspaces/XAPI2/apis/CTP:~/Workspaces/XAPI2/include/CTP/linux64
 export MALLOC_CHECK_=0

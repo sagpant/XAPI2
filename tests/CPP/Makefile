@@ -8,7 +8,7 @@ ALL = CPP_TEST
 
 include ../../Makefile.global
 
-LFLAGS=-Wl,-R\$$ORIGIN \
+LFLAGS=-Wl,-rpath,\$$ORIGIN \
 -ldl \
 -L../../apis/CTP -lQuantBox_CTP_Quote -lQuantBox_CTP_Trade \
 -L../../common/Queue  -lQueue
