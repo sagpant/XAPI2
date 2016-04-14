@@ -1,6 +1,6 @@
 include ../../Makefile.global
 
-LFLAGS=-ldl
+LFLAGS=-Wl,-R\$$ORIGIN -ldl
 ALL=libQueue.so 
 
 all: $(ALL)
