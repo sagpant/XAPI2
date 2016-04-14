@@ -125,7 +125,7 @@ public:
 	int count;
 };
 
-int main_1(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	CXSpiImpl* p = new CXSpiImpl();
 #if defined WINDOWS || _WIN32
@@ -304,7 +304,7 @@ int main_4(int argc, char* argv[])
 	return 0;
 }
 
-int main(int argc, char* argv[])
+int main_555(int argc, char* argv[])
 {
 	CXSpiImpl* p = new CXSpiImpl();
 #if defined WINDOWS || _WIN32

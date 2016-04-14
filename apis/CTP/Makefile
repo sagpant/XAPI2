@@ -1,26 +1,12 @@
-CXX=clang
-IFLAGS=-I../../ -I../../include/ -I../ -I./ 
-CFLAGS=$(IFLAGS)-std=c++11 -fPIC
+ALL=libQuantBox_CTP_Quote.so libQuantBox_CTP_Trade.so
 
-DEPS=../../../XAPI2/languages/CPP/XAPI_CPP/XApiImpl.o \
-	 ../../../XAPI2/languages/CPP/XAPI_CPP/XApiCpp.o \
-	 ../../../XAPI2/languages/CPP/XAPI_CPP/XApiC.o \
-	 ../../include/toolkit.o
+include ../../Makefile.global
 
-DEPS+=../../common/Queue/MsgQueue.o \
-	  ../../common/Queue/RemoteQueue.o \
-      ../../include/ApiProcess.o
+LFLAGS+=-ldl -L../../include/CTP/linux64  
 
-LFLAGS=-ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi 
-all: ctp_quote.so ctp_trade.so 
+libQuantBox_CTP_Quote.so: Quote/main.cpp Quote/MdUserApi.cpp TypeConvert.cpp $(DEPS)
+	$(CXX) --shared $(IFLAGS) $(LFLAGS) $(CFLAGS) -lthostmduserapi -I../CTP_Quote -o $@ $^
 
-%.o: %.cpp 
-	$(CXX) $(CFLAGS) -c $^ -o $@
-
-ctp_quote.so: Quote/main.cpp Quote/MdUserApi.cpp TypeConvert.cpp $(DEPS)
-	$(CXX) --shared $(IFLAGS) $(CFLAGS) -I../CTP_Quote -o $@ $^
-
-ctp_trade.so: Trade/main.cpp Trade/TraderApi.cpp TypeConvert.cpp $(DEPS)
-	$(CXX) --shared $(IFLAGS) $(CFLAGS) -I../CTP_Trade -o $@ $^
-
+libQuantBox_CTP_Trade.so: Trade/main.cpp Trade/TraderApi.cpp TypeConvert.cpp $(DEPS)
+	$(CXX) --shared $(IFLAGS) $(LFLAGS) $(CFLAGS) -lthosttraderapi -I../CTP_Trade -o $@ $^
 
