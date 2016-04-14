@@ -1,6 +1,6 @@
 CXX=clang
 IFLAGS=-I../../ -I../../include/ -I../ -I./ 
-CFLAGS=$(IFLAGS)-std=c++11 -fPIC
+CFLAGS=$(IFLAGS)-std=c++11 -O3 -fPIC
 
 DEPS=../../../XAPI2/languages/CPP/XAPI_CPP/XApiImpl.o \
 	 ../../../XAPI2/languages/CPP/XAPI_CPP/XApiCpp.o \
@@ -11,7 +11,7 @@ DEPS+=../../common/Queue/MsgQueue.o \
 	  ../../common/Queue/RemoteQueue.o \
       ../../include/ApiProcess.o
 
-LFLAGS=-Wl,-R\$$ORIGIN -ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi 
+LFLAGS=-Bsymbolic -Wl,-R\$$ORIGIN -ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi 
 all: ctp_quote.so ctp_trade.so 
 
 %.o: %.cpp 

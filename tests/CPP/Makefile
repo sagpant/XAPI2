@@ -1,7 +1,7 @@
 CXX=clang++
 C=clang
 IFLAGS=-I../../ -I../../include/ -I../ -I./ 
-CFLAGS=$(IFLAGS)-std=c++11 -fPIC -pthread -g 
+CFLAGS=$(IFLAGS)-std=c++11 -O3 -fPIC -pthread
 DEPS=../../languages/CPP/XAPI_CPP/XApiImpl.o \
 	 ../../languages/CPP/XAPI_CPP/XApiCpp.o \
 	 ../../languages/CPP/XAPI_CPP/XApiC.o \
@@ -11,7 +11,7 @@ DEPS+=../../common/Queue/MsgQueue.o \
 	  ../../common/Queue/RemoteQueue.o \
       ../../include/ApiProcess.o
 
-LFLAGS=-Wl,-R\$$ORIGIN -ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi
+LFLAGS=-Bsymbolic -Wl,-R\$$ORIGIN -ldl -L../../include/CTP/linux64 -lthosttraderapi -lthostmduserapi
 
 all: CPP_TEST libQuantBox_CTP_Quote.so libQuantBox_CTP_Trade.so 
 
