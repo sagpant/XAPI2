@@ -1,0 +1,11 @@
+CXX=clang++
+IFLAGS=-I../../ -I../../include/ -I../ -I./ 
+CFLAGS=$(IFLAGS)-std=c++11 -fPIC -pthread -g -Bsymbol
+
+all: $(ALL)
+
+%.o: %.cpp 
+	$(CXX) $(CFLAGS) -c $^ -o $@
+
+clean:
+	rm -rf *.so *.o $(DEPS)
