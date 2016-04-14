@@ -1,6 +1,6 @@
 CXX=clang++
 IFLAGS=-I../../ -I../../include/ -I../ -I./ 
-CFLAGS=$(IFLAGS)-std=c++11 -fPIC -pthread -g -Bsymbol
+CFLAGS=$(IFLAGS)-std=c++11 -O3 -fPIC -pthread -Bsymbol
 
 all: $(ALL)
 
