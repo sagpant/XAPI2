@@ -25,7 +25,7 @@ char* Market_2_ExchangeID(WORD In)
 	case SH_MARKET_EX:
 		return "SSE";
 	case SZ_MARKET_EX:
-		return "SZE";
+		return "SZSE";
 	case HK_MARKET_EX:
 		return "HKEx";
 	case EB_MARKET_EX:
