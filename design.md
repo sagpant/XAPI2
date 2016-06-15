@@ -91,3 +91,6 @@ XAPI2中各项目的输出路径都应该同一放到一个文件夹中。
 在XAPI2中的各项目中，XAPI和XAPI2不应该视为可混用(interchangable)。XAPI应该仅用来表达与之前XAPI相关的内容（如果有的话），否则应该一律使用XAPI2。
 
 比如在C#的接口中，名称空间应该是QuantBox.XAPI2，而不是QuantBox.XAPI。
+
+#### 14. 消息队列MessageQueue对远程推送数据的支持
+MessageQueue需要能够将数据通过不同的消息中间件（zeromq, Rabbitmq）推送到其它地方（其它机器，网络）中的能力。考虑的解决方案为：将CMsgQueue中的回调函数m_fnOnResponse从一个回调函数扩展成一组回调函数，然后实现一些回调函数，可以向zeromq或Rabbitmq中发送数据。这样可以做到各种数据分发底层实现的低耦合。用户可以随意增加和替换。zeromq在网络中断的时候不负责消息丢失的维护，Rabbitmq则负责。所以，zeromq发送行情数据类的消息应该够用，Rabbitmq可能比较适合发送交易类的消息。
