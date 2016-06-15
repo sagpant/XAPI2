@@ -42,6 +42,15 @@ namespace XAPI
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string Char64PositionIndex;
         public int Int32PositionIndex;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public BusinessType Business;
     }
 
     ///持仓
@@ -80,6 +89,15 @@ namespace XAPI
         public double TodayPRPosition;
         ///今日申赎持仓冻结
         public double TodayPRFrozen;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public BusinessType Business;
     }
 
     /// <summary>
@@ -194,6 +212,15 @@ namespace XAPI
         public int ReserveInt32;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string ReserveChar64;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public BusinessType Business;
     }
 
     /// <summary>
@@ -235,6 +262,15 @@ namespace XAPI
         public int ReserveInt32;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string ReserveChar64;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public BusinessType Business;
     }
 
 

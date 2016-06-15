@@ -304,6 +304,13 @@ namespace XAPI
         Fuse,				///熔断时段,参考于LTS
     };
 
+    [ComVisible(false)]
+    public enum BusinessType : byte
+    {
+        Future,
+        Stock,
+        Option,
+    };
 
 
 
