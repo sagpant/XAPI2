@@ -313,6 +313,8 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
 	}
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -533,6 +535,8 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	m_OldTradeList = m_NewTradeList;
 	m_NewTradeList.clear();
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -643,6 +647,8 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -677,6 +683,8 @@ int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* 
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
+
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -720,6 +728,8 @@ int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_ST
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryTradingAccount, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
 	}
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -749,6 +759,8 @@ int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
 	}
+
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }

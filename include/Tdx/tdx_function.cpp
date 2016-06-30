@@ -428,6 +428,9 @@ void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT
 
 void DeleteStructs(void*** pppStructs)
 {
+	if (pppStructs == nullptr)
+		return;
+
 	if (*pppStructs == nullptr)
 		return;
 
@@ -436,6 +439,7 @@ void DeleteStructs(void*** pppStructs)
 	int i = 0;
 	while (ppStructs[i] != 0)
 	{
+		//delete ppStructs[i];
 		delete[] ppStructs[i];
 		ppStructs[i] = nullptr;
 
