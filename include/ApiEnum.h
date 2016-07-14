@@ -251,6 +251,15 @@ enum TradingPhaseType :char
 	TradingPhaseType_Fuse,				///熔断时段,参考于LTS
 };
 
+/// 业务类型，主要是有些API实际上已经对接了各种市场
+// 不同的市场需要不同的函数，统一到一起实在太难,所以这个地方交给用户自己来指定
+enum BusinessType :char
+{
+	BusinessType_Future,
+	BusinessType_Stock,
+	BusinessType_Option,
+};
+
 
 
 
@@ -266,7 +275,7 @@ enum TradingPhaseType :char
 
 enum BarType :char
 {
-	Time = 1,
+	BarType_Time = 1,
 	Tick,
 	Volume,
 	Range,

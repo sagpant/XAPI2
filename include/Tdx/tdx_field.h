@@ -39,6 +39,7 @@ ID一样，中文名可能不一样
 #define FIELD_CJSJ			151	//	151_成交时间
 #define FIELD_CJSL			152	//	152_成交数量
 #define FIELD_CJJG			153	//	153_成交价格
+#define FIELD_CJJE			154	//	154_成交金额
 #define FIELD_CJBH			155	//	155_成交编号
 #define FIELD_DJSL			160	//	160_冻结数量
 #define FIELD_DJZJ			161	//	161_冻结资金

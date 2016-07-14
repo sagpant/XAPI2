@@ -496,6 +496,12 @@ namespace XAPI.COM
             cls.ReserveInt32 = field.ReserveInt32;
             cls.ReserveChar64 = field.ReserveChar64;
 
+            cls.PortfolioID1 = field.PortfolioID1;
+            cls.PortfolioID2 = field.PortfolioID2;
+            cls.PortfolioID3 = field.PortfolioID3;
+            cls.Business = (int)field.Business;
+            cls.Business_String = Enum<XAPI.BusinessType>.ToString(field.Business);
+
             if (null == OnRtnOrder)
             {
                 QueueData qd = new QueueData();
@@ -541,6 +547,12 @@ namespace XAPI.COM
             cls.TradeID = field.TradeID;
             cls.ReserveInt32 = field.ReserveInt32;
             cls.ReserveChar64 = field.ReserveChar64;
+
+            cls.PortfolioID1 = field.PortfolioID1;
+            cls.PortfolioID2 = field.PortfolioID2;
+            cls.PortfolioID3 = field.PortfolioID3;
+            cls.Business = (int)field.Business;
+            cls.Business_String = Enum<XAPI.BusinessType>.ToString(field.Business);
 
             if (null == OnRtnTrade)
             {
@@ -642,6 +654,13 @@ namespace XAPI.COM
             cls.TodayBSFrozen = field.TodayBSFrozen;
             cls.TodayPRPosition = field.TodayPRPosition;
             cls.TodayPRFrozen = field.TodayPRFrozen;
+
+            cls.PortfolioID1 = field.PortfolioID1;
+            cls.PortfolioID2 = field.PortfolioID2;
+            cls.PortfolioID3 = field.PortfolioID3;
+            cls.Business = (int)field.Business;
+            cls.Business_String = Enum<XAPI.BusinessType>.ToString(field.Business);
+
 
             if (null == OnRspQryInvestorPosition)
             {
@@ -758,6 +777,12 @@ namespace XAPI.COM
                 cls.Text = field.Text();
                 cls.ReserveInt32 = field.ReserveInt32;
                 cls.ReserveChar64 = field.ReserveChar64;
+
+                cls.PortfolioID1 = field.PortfolioID1;
+                cls.PortfolioID2 = field.PortfolioID2;
+                cls.PortfolioID3 = field.PortfolioID3;
+                cls.Business = (int)field.Business;
+                cls.Business_String = Enum<XAPI.BusinessType>.ToString(field.Business);
             }
 
             if (null == OnRspQryOrder)
@@ -811,6 +836,12 @@ namespace XAPI.COM
                 cls.TradeID = field.TradeID;
                 cls.ReserveInt32 = field.ReserveInt32;
                 cls.ReserveChar64 = field.ReserveChar64;
+
+                cls.PortfolioID1 = field.PortfolioID1;
+                cls.PortfolioID2 = field.PortfolioID2;
+                cls.PortfolioID3 = field.PortfolioID3;
+                cls.Business = (int)field.Business;
+                cls.Business_String = Enum<XAPI.BusinessType>.ToString(field.Business);
             }
 
             if (null == OnRspQryTrade)

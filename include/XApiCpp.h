@@ -64,7 +64,7 @@ public:
 	virtual const char* CancelQuote(OrderIDType* pIn, int count, char* pOut) = 0;
 protected:
 	CXApi();
-	~CXApi(){};
+	~CXApi();
 };
 
 #endif

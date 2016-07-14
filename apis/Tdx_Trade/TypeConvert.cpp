@@ -187,73 +187,86 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 	ppResults[count] = nullptr;
 	*pppResults = ppResults;
 
-	int col_142 = GetIndexByFieldID(ppFieldInfos, FIELD_WTRQ);
-	int col_143 = GetIndexByFieldID(ppFieldInfos, FIELD_WTSJ);
-	int col_123 = GetIndexByFieldID(ppFieldInfos, FIELD_GDDM);
-	int col_140 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQDM);
-	int col_141 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQMC);
-	int col_130 = GetIndexByFieldID(ppFieldInfos, FIELD_MMBZ);
-	int col_131 = GetIndexByFieldID(ppFieldInfos, FIELD_WTLB);
-	int col_100 = GetIndexByFieldID(ppFieldInfos, FIELD_JYSDM);
-	int col_145 = GetIndexByFieldID(ppFieldInfos, FIELD_WTJG);
-	int col_144 = GetIndexByFieldID(ppFieldInfos, FIELD_WTSL);
-	int col_153 = GetIndexByFieldID(ppFieldInfos, FIELD_CJJG);
-	int col_152 = GetIndexByFieldID(ppFieldInfos, FIELD_CJSL);
-	int col_162 = GetIndexByFieldID(ppFieldInfos, FIELD_CDSL);
-	int col_146 = GetIndexByFieldID(ppFieldInfos, FIELD_WTBH);
-	int col_194 = GetIndexByFieldID(ppFieldInfos, FIELD_BJFS);
 	int col_147 = GetIndexByFieldID(ppFieldInfos, FIELD_ZTSM);
-	int col_161 = GetIndexByFieldID(ppFieldInfos, FIELD_DJZJ);
-	int col_1213 = GetIndexByFieldID(ppFieldInfos, FIELD_BLXX);
-
-	int col_166 = GetIndexByFieldID(ppFieldInfos, FIELD_WTFS);
-	int col_121 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJZH);
-
 
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new WTLB_STRUCT();
 
-		if (col_142 >= 0)
-			strcpy_s(ppResults[i]->WTRQ, ppTable[i * COL_EACH_ROW + col_142]);
-		if (col_143 >= 0)
-			strcpy_s(ppResults[i]->WTSJ, ppTable[i * COL_EACH_ROW + col_143]);
-		if (col_123 >= 0)
-		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
-		if (col_140 >= 0)
-		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		if (col_141 >= 0)
-		strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		if (col_130 >= 0)
-		strcpy_s(ppResults[i]->MMBZ, ppTable[i * COL_EACH_ROW + col_130]);
-		if (col_131 >= 0)
-		strcpy_s(ppResults[i]->WTLB, ppTable[i * COL_EACH_ROW + col_131]);
-		if (col_100 >= 0)
-		strcpy_s(ppResults[i]->JYSDM, ppTable[i * COL_EACH_ROW + col_100]);
-		if (col_145 >= 0)
-		strcpy_s(ppResults[i]->WTJG, ppTable[i * COL_EACH_ROW + col_145]);
-		if (col_144 >= 0)
-		strcpy_s(ppResults[i]->WTSL, ppTable[i * COL_EACH_ROW + col_144]);
-		if (col_153 >= 0)
-		strcpy_s(ppResults[i]->CJJG, ppTable[i * COL_EACH_ROW + col_153]);
-		if (col_152 >= 0)
-		strcpy_s(ppResults[i]->CJSL, ppTable[i * COL_EACH_ROW + col_152]);
-		if (col_162 >= 0)
-			strcpy_s(ppResults[i]->CDSL, ppTable[i * COL_EACH_ROW + col_162]);
-		if (col_146 >= 0)
-		strcpy_s(ppResults[i]->WTBH, ppTable[i * COL_EACH_ROW + col_146]);
-		if (col_194 >= 0)
-			strcpy_s(ppResults[i]->BJFS, ppTable[i * COL_EACH_ROW + col_194]);
-		if (col_147 >= 0)
-			strcpy_s(ppResults[i]->ZTSM, ppTable[i * COL_EACH_ROW + col_147]);
-		if (col_161 >= 0)
-			strcpy_s(ppResults[i]->DJZJ, ppTable[i * COL_EACH_ROW + col_161]);
-		if (col_1213 >= 0)
-			strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
-		if (col_166 >= 0)
-			strcpy_s(ppResults[i]->WTFS, ppTable[i * COL_EACH_ROW + col_166]);
-		if (col_121 >= 0)
-			strcpy_s(ppResults[i]->ZJZH, ppTable[i * COL_EACH_ROW + col_121]);
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_WTRQ:
+				strcpy_s(ppResults[i]->WTRQ, t);
+				break;
+			case FIELD_WTSJ:
+				strcpy_s(ppResults[i]->WTSJ, t);
+				break;
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_ZQDM:
+				strcpy_s(ppResults[i]->ZQDM, t);
+				break;
+			case FIELD_ZQMC:
+				strcpy_s(ppResults[i]->ZQMC, t);
+				break;
+			case FIELD_MMBZ:
+				strcpy_s(ppResults[i]->MMBZ, t);
+				break;
+			case FIELD_WTLB:
+				strcpy_s(ppResults[i]->WTLB, t);
+				break;
+			case FIELD_JYSDM:
+				strcpy_s(ppResults[i]->JYSDM, t);
+				break;
+			case FIELD_WTJG:
+				strcpy_s(ppResults[i]->WTJG, t);
+				break;
+			case FIELD_WTSL:
+				strcpy_s(ppResults[i]->WTSL, t);
+				break;
+			case FIELD_CJJG:
+				strcpy_s(ppResults[i]->CJJG, t);
+				break;
+			case FIELD_CJSL:
+				strcpy_s(ppResults[i]->CJSL, t);
+				break;
+			case FIELD_CDSL:
+				strcpy_s(ppResults[i]->CDSL, t);
+				break;
+			case FIELD_WTBH:
+				strcpy_s(ppResults[i]->WTBH, t);
+				break;
+			case FIELD_BJFS:
+				strcpy_s(ppResults[i]->BJFS, t);
+				break;
+			case FIELD_ZTSM:
+				strcpy_s(ppResults[i]->ZTSM, t);
+				break;
+			case FIELD_DJZJ:
+				strcpy_s(ppResults[i]->DJZJ, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			case FIELD_WTFS:
+				strcpy_s(ppResults[i]->WTFS, t);
+				break;
+			case FIELD_ZJZH:
+				strcpy_s(ppResults[i]->ZJZH, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
 
 		ppResults[i]->WTRQ_ = atoi(ppResults[i]->WTRQ);
 		ppResults[i]->MMBZ_ = atoi(ppResults[i]->MMBZ);
@@ -264,6 +277,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		ppResults[i]->CJSL_ = atoi(ppResults[i]->CJSL);
 		ppResults[i]->DJZJ_ = atof(ppResults[i]->DJZJ);
 		ppResults[i]->WTFS_ = atof(ppResults[i]->WTFS);
+		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
 
 		// 可能没有，怎么办?那就只好不用它了
 		ppResults[i]->CDSL_ = atoi(ppResults[i]->CDSL);
@@ -335,68 +349,75 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 	ppResults[count] = nullptr;
 	*pppResults = ppResults;
 
-	int col_150 = GetIndexByFieldID(ppFieldInfos, FIELD_CJRQ);
-	int col_151 = GetIndexByFieldID(ppFieldInfos, FIELD_CJSJ);
-	int col_123 = GetIndexByFieldID(ppFieldInfos, FIELD_GDDM);
-	int col_140 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQDM);
-	int col_141 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQMC);
-	int col_130 = GetIndexByFieldID(ppFieldInfos, FIELD_MMBZ);
-	int col_131 = GetIndexByFieldID(ppFieldInfos, FIELD_WTLB);
-	int col_153 = GetIndexByFieldID(ppFieldInfos, FIELD_CJJG);
-	int col_152 = GetIndexByFieldID(ppFieldInfos, FIELD_CJSL);
-	int col_303 = GetIndexByFieldID(ppFieldInfos, FIELD_FSJE);
-	int col_304 = GetIndexByFieldID(ppFieldInfos, FIELD_SYJE);
-	int col_206 = GetIndexByFieldID(ppFieldInfos, FIELD_YJ);
-	int col_210 = GetIndexByFieldID(ppFieldInfos, FIELD_YHS);
-	int col_207 = GetIndexByFieldID(ppFieldInfos, FIELD_GHF);
-	int col_208 = GetIndexByFieldID(ppFieldInfos, FIELD_CJF);
-	int col_155 = GetIndexByFieldID(ppFieldInfos, FIELD_CJBH);
-	int col_167 = GetIndexByFieldID(ppFieldInfos, FIELD_CDBZ);
-	int col_146 = GetIndexByFieldID(ppFieldInfos, FIELD_WTBH);
-	int col_121 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJZH);
-
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new CJLB_STRUCT();
 
-		if (col_150 >= 0)
-			strcpy_s(ppResults[i]->CJRQ, ppTable[i * COL_EACH_ROW + col_150]);
-		if (col_151 >= 0)
-			strcpy_s(ppResults[i]->CJSJ, ppTable[i * COL_EACH_ROW + col_151]);
-		if (col_123 >= 0)
-		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
-		if (col_140 >= 0)
-		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		if (col_141 >= 0)
-		strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		if (col_130 >= 0)
-		strcpy_s(ppResults[i]->MMBZ, ppTable[i * COL_EACH_ROW + col_130]);
-		if (col_131 >= 0)
-		strcpy_s(ppResults[i]->WTLB, ppTable[i * COL_EACH_ROW + col_131]);
-		if (col_153 >= 0)
-		strcpy_s(ppResults[i]->CJJG, ppTable[i * COL_EACH_ROW + col_153]);
-		if (col_152 >= 0)
-		strcpy_s(ppResults[i]->CJSL, ppTable[i * COL_EACH_ROW + col_152]);
-		if (col_303 >= 0)
-			strcpy_s(ppResults[i]->FSJE, ppTable[i * COL_EACH_ROW + col_303]);
-		if (col_304 >= 0)
-			strcpy_s(ppResults[i]->SYJE, ppTable[i * COL_EACH_ROW + col_304]);
-		if (col_206 >= 0)
-			strcpy_s(ppResults[i]->YJ, ppTable[i * COL_EACH_ROW + col_206]);
-		if (col_210 >= 0)
-			strcpy_s(ppResults[i]->YHS, ppTable[i * COL_EACH_ROW + col_210]);
-		if (col_207 >= 0)
-			strcpy_s(ppResults[i]->GHF, ppTable[i * COL_EACH_ROW + col_207]);
-		if (col_208 >= 0)
-			strcpy_s(ppResults[i]->CJF, ppTable[i * COL_EACH_ROW + col_208]);
-		if (col_155 >= 0)
-		strcpy_s(ppResults[i]->CJBH, ppTable[i * COL_EACH_ROW + col_155]);
-		if (col_167 >= 0)
-			strcpy_s(ppResults[i]->CDBZ, ppTable[i * COL_EACH_ROW + col_167]);
-		if (col_146 >= 0)
-			strcpy_s(ppResults[i]->WTBH, ppTable[i * COL_EACH_ROW + col_146]);
-		
-
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_CJRQ:
+				strcpy_s(ppResults[i]->CJRQ, t);
+				break;
+			case FIELD_CJSJ:
+				strcpy_s(ppResults[i]->CJSJ, t);
+				break;
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_ZQDM:
+				strcpy_s(ppResults[i]->ZQDM, t);
+				break;
+			case FIELD_ZQMC:
+				strcpy_s(ppResults[i]->ZQMC, t);
+				break;
+			case FIELD_MMBZ:
+				strcpy_s(ppResults[i]->MMBZ, t);
+				break;
+			case FIELD_WTLB:
+				strcpy_s(ppResults[i]->WTLB, t);
+				break;
+			case FIELD_CJJG:
+				strcpy_s(ppResults[i]->CJJG, t);
+				break;
+			case FIELD_CJSL:
+				strcpy_s(ppResults[i]->CJSL, t);
+				break;
+			case FIELD_FSJE:
+				strcpy_s(ppResults[i]->FSJE, t);
+				break;
+			case FIELD_SYJE:
+				strcpy_s(ppResults[i]->SYJE, t);
+				break;
+			case FIELD_YJ:
+				strcpy_s(ppResults[i]->YJ, t);
+				break;
+			case FIELD_YHS:
+				strcpy_s(ppResults[i]->YHS, t);
+				break;
+			case FIELD_GHF:
+				strcpy_s(ppResults[i]->GHF, t);
+				break;
+			case FIELD_CJF:
+				strcpy_s(ppResults[i]->CJF, t);
+				break;
+			case FIELD_CJBH:
+				strcpy_s(ppResults[i]->CJBH, t);
+				break;
+			case FIELD_CDBZ:
+				strcpy_s(ppResults[i]->CDBZ, t);
+				break;
+			case FIELD_WTBH:
+				strcpy_s(ppResults[i]->WTBH, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
 
 		ppResults[i]->CJRQ_ = atoi(ppResults[i]->CJRQ);
 		ppResults[i]->MMBZ_ = atoi(ppResults[i]->MMBZ);
@@ -442,57 +463,66 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 	ppResults[count] = nullptr;
 	*pppResults = ppResults;
 
-	int col_140 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQDM);
-	int col_141 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQMC);
-	int col_200 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQSL);
-	int col_201 = GetIndexByFieldID(ppFieldInfos, FIELD_KMSL);
-	int col_202 = GetIndexByFieldID(ppFieldInfos, FIELD_TBCBJ);
-	int col_949 = GetIndexByFieldID(ppFieldInfos, FIELD_DQJ);
-	int col_205 = GetIndexByFieldID(ppFieldInfos, FIELD_ZXSZ);
-	int col_204 = GetIndexByFieldID(ppFieldInfos, FIELD_TBFDYK);
-	int col_232 = GetIndexByFieldID(ppFieldInfos, FIELD_SXYK);
-	int col_230 = GetIndexByFieldID(ppFieldInfos, FIELD_CKYKBL);
-	int col_160 = GetIndexByFieldID(ppFieldInfos, FIELD_DJSL);
-	int col_123 = GetIndexByFieldID(ppFieldInfos, FIELD_GDDM);
-	int col_100 = GetIndexByFieldID(ppFieldInfos, FIELD_JYSDM);
-	int col_101 = GetIndexByFieldID(ppFieldInfos, FIELD_JYSMC);
-	int col_1213 = GetIndexByFieldID(ppFieldInfos, FIELD_BLXX);
-
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new GFLB_STRUCT();
 
-		if (col_140 >= 0)
-		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		if (col_141 >= 0)
-		strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		if (col_200 >= 0)
-		strcpy_s(ppResults[i]->ZQSL, ppTable[i * COL_EACH_ROW + col_200]);
-		if (col_201 >= 0)
-		strcpy_s(ppResults[i]->KMSL, ppTable[i * COL_EACH_ROW + col_201]);
-		if (col_202 >= 0)
-		strcpy_s(ppResults[i]->TBCBJ, ppTable[i * COL_EACH_ROW + col_202]);
-		if (col_949 >= 0)
-		strcpy_s(ppResults[i]->DQJ, ppTable[i * COL_EACH_ROW + col_949]);
-		if (col_205 >= 0)
-		strcpy_s(ppResults[i]->ZXSZ, ppTable[i * COL_EACH_ROW + col_205]);
-		if (col_204 >= 0)
-		strcpy_s(ppResults[i]->TBFDYK, ppTable[i * COL_EACH_ROW + col_204]);
-		if (col_232 >= 0)
-			strcpy_s(ppResults[i]->SXYK, ppTable[i * COL_EACH_ROW + col_232]);
-		if (col_230 >= 0)
-			strcpy_s(ppResults[i]->CKYKBL, ppTable[i * COL_EACH_ROW + col_230]);
-		if (col_160 >= 0)
-			strcpy_s(ppResults[i]->DJSL, ppTable[i * COL_EACH_ROW + col_160]);
-		if (col_123 >= 0)
-		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
-		if (col_100 >= 0)
-			strcpy_s(ppResults[i]->JYSDM, ppTable[i * COL_EACH_ROW + col_100]);
-		if (col_101 >= 0)
-			strcpy_s(ppResults[i]->JYSMC, ppTable[i * COL_EACH_ROW + col_101]);
-		if (col_1213 >= 0)
-		strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
-
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_ZQDM:
+				strcpy_s(ppResults[i]->ZQDM, t);
+				break;
+			case FIELD_ZQMC:
+				strcpy_s(ppResults[i]->ZQMC, t);
+				break;
+			case FIELD_ZQSL:
+				strcpy_s(ppResults[i]->ZQSL, t);
+				break;
+			case FIELD_KMSL:
+				strcpy_s(ppResults[i]->KMSL, t);
+				break;
+			case FIELD_TBCBJ:
+				strcpy_s(ppResults[i]->TBCBJ, t);
+				break;
+			case FIELD_DQJ:
+				strcpy_s(ppResults[i]->DQJ, t);
+				break;
+			case FIELD_ZXSZ:
+				strcpy_s(ppResults[i]->ZXSZ, t);
+				break;
+			case FIELD_TBFDYK:
+				strcpy_s(ppResults[i]->TBFDYK, t);
+				break;
+			case FIELD_SXYK:
+				strcpy_s(ppResults[i]->SXYK, t);
+				break;
+			case FIELD_CKYKBL:
+				strcpy_s(ppResults[i]->CKYKBL, t);
+				break;
+			case FIELD_DJSL:
+				strcpy_s(ppResults[i]->DJSL, t);
+				break;
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_JYSDM:
+				strcpy_s(ppResults[i]->JYSDM, t);
+				break;
+			case FIELD_JYSMC:
+				strcpy_s(ppResults[i]->JYSMC, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
 
 		ppResults[i]->ZQSL_ = atoi(ppResults[i]->ZQSL);
 		ppResults[i]->KMSL_ = atoi(ppResults[i]->KMSL);
@@ -519,33 +549,42 @@ void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT
 	ppResults[count] = nullptr;
 	*pppResults = ppResults;
 
-	int col_132 = GetIndexByFieldID(ppFieldInfos, FIELD_BZ);
-	int col_300 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJYE);
-	int col_301 = GetIndexByFieldID(ppFieldInfos, FIELD_KYZJ);
-	int col_310 = GetIndexByFieldID(ppFieldInfos, FIELD_ZZC_310);
-	int col_302 = GetIndexByFieldID(ppFieldInfos, FIELD_KQZJ);
-	int col_121 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJZH);
-	int col_205 = GetIndexByFieldID(ppFieldInfos, FIELD_ZXSZ);
-
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new ZJYE_STRUCT();
 
-		if (col_132 >= 0)
-		strcpy_s(ppResults[i]->BZ, ppTable[i * COL_EACH_ROW + col_132]);
-		if (col_300 >= 0)
-		strcpy_s(ppResults[i]->ZJYE, ppTable[i * COL_EACH_ROW + col_300]);
-		if (col_301 >= 0)
-		strcpy_s(ppResults[i]->KYZJ, ppTable[i * COL_EACH_ROW + col_301]);
-		if (col_310 >= 0)
-		strcpy_s(ppResults[i]->ZZC, ppTable[i * COL_EACH_ROW + col_310]);
-		if (col_302 >= 0)
-			strcpy_s(ppResults[i]->KQZJ, ppTable[i * COL_EACH_ROW + col_302]);
-		if (col_121 >= 0)
-			strcpy_s(ppResults[i]->ZJZH, ppTable[i * COL_EACH_ROW + col_121]);
-		if (col_205 >= 0)
-			strcpy_s(ppResults[i]->ZXSZ, ppTable[i * COL_EACH_ROW + col_205]);
-
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_BZ:
+				strcpy_s(ppResults[i]->BZ, t);
+				break;
+			case FIELD_ZJYE:
+				strcpy_s(ppResults[i]->ZJYE, t);
+				break;
+			case FIELD_KYZJ:
+				strcpy_s(ppResults[i]->KYZJ, t);
+				break;
+			case FIELD_ZZC_310:
+				strcpy_s(ppResults[i]->ZZC, t);
+				break;
+			case FIELD_KQZJ:
+				strcpy_s(ppResults[i]->KQZJ, t);
+				break;
+			case FIELD_ZJZH:
+				strcpy_s(ppResults[i]->ZJZH, t);
+				break;
+			case FIELD_ZXSZ:
+				strcpy_s(ppResults[i]->ZXSZ, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
 
 		ppResults[i]->ZJYE_ = atof(ppResults[i]->ZJYE);
 		ppResults[i]->KYZJ_ = atof(ppResults[i]->KYZJ);
@@ -571,120 +610,129 @@ void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** 
 	ppResults[count] = nullptr;
 	*pppResults = ppResults;
 
-	int col_140 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQDM);
-	int col_141 = GetIndexByFieldID(ppFieldInfos, FIELD_ZQMC);
-	int col_946 = GetIndexByFieldID(ppFieldInfos, FIELD_ZSJ);
-	int col_945 = GetIndexByFieldID(ppFieldInfos, FIELD_JKJ);
-	int col_948 = GetIndexByFieldID(ppFieldInfos, FIELD_GZLX);
-	int col_949 = GetIndexByFieldID(ppFieldInfos, FIELD_DQJ);
-	int col_910 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_PRICE_1);
-	int col_911 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_PRICE_2);
-	int col_912 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_PRICE_3);
-	int col_913 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_PRICE_4);
-	int col_914 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_PRICE_5);
-	int col_900 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_SIZE_1);
-	int col_901 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_SIZE_2);
-	int col_902 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_SIZE_3);
-	int col_903 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_SIZE_4);
-	int col_904 = GetIndexByFieldID(ppFieldInfos, FIELD_BID_SIZE_5);
-	int col_930 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_PRICE_1);
-	int col_931 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_PRICE_2);
-	int col_932 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_PRICE_3);
-	int col_933 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_PRICE_4);
-	int col_934 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_PRICE_5);
-	int col_920 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_SIZE_1);
-	int col_921 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_SIZE_2);
-	int col_922 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_SIZE_3);
-	int col_923 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_SIZE_4);
-	int col_924 = GetIndexByFieldID(ppFieldInfos, FIELD_ASK_SIZE_5);
-	int col_100 = GetIndexByFieldID(ppFieldInfos, FIELD_JYSDM);
-	int col_187 = GetIndexByFieldID(ppFieldInfos, FIELD_ZXJYGS);
-	int col_226 = GetIndexByFieldID(ppFieldInfos, FIELD_ZXMRBDJW);
-	int col_227 = GetIndexByFieldID(ppFieldInfos, FIELD_ZXMCBDJW);
-	int col_125 = GetIndexByFieldID(ppFieldInfos, FIELD_ZHLB);
-	int col_132 = GetIndexByFieldID(ppFieldInfos, FIELD_BZ);
-	int col_958 = GetIndexByFieldID(ppFieldInfos, FIELD_GZBS);
-	int col_940 = GetIndexByFieldID(ppFieldInfos, FIELD_ZTJG);
-	int col_941 = GetIndexByFieldID(ppFieldInfos, FIELD_DTJG);
-	int col_1213 = GetIndexByFieldID(ppFieldInfos, FIELD_BLXX);
-
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new HQ_STRUCT();
 
-		//if (col_140 >= 0)
-		strcpy_s(ppResults[i]->ZQDM, ppTable[i * COL_EACH_ROW + col_140]);
-		if (col_141 >= 0)
-			strcpy_s(ppResults[i]->ZQMC, ppTable[i * COL_EACH_ROW + col_141]);
-		if (col_946 >= 0)
-			strcpy_s(ppResults[i]->ZSJ, ppTable[i * COL_EACH_ROW + col_946]);
-		if (col_945 >= 0)
-			strcpy_s(ppResults[i]->JKJ, ppTable[i * COL_EACH_ROW + col_945]);
-		if (col_948 >= 0)
-			strcpy_s(ppResults[i]->GZLX, ppTable[i * COL_EACH_ROW + col_948]);
-		//if (col_949 >= 0)
-		strcpy_s(ppResults[i]->DQJ, ppTable[i * COL_EACH_ROW + col_949]);
-		//if (col_910 >= 0)
-		strcpy_s(ppResults[i]->BidPrice1, ppTable[i * COL_EACH_ROW + col_910]);
-		//if (col_911 >= 0)
-		strcpy_s(ppResults[i]->BidPrice2, ppTable[i * COL_EACH_ROW + col_911]);
-		//if (col_912 >= 0)
-		strcpy_s(ppResults[i]->BidPrice3, ppTable[i * COL_EACH_ROW + col_912]);
-		//if (col_913 >= 0)
-		strcpy_s(ppResults[i]->BidPrice4, ppTable[i * COL_EACH_ROW + col_913]);
-		//if (col_914 >= 0)
-		strcpy_s(ppResults[i]->BidPrice5, ppTable[i * COL_EACH_ROW + col_914]);
-		//if (col_900 >= 0)
-		strcpy_s(ppResults[i]->BidSize1, ppTable[i * COL_EACH_ROW + col_900]);
-		//if (col_901 >= 0)
-		strcpy_s(ppResults[i]->BidSize2, ppTable[i * COL_EACH_ROW + col_901]);
-		//if (col_902 >= 0)
-		strcpy_s(ppResults[i]->BidSize3, ppTable[i * COL_EACH_ROW + col_902]);
-		//if (col_903 >= 0)
-		strcpy_s(ppResults[i]->BidSize4, ppTable[i * COL_EACH_ROW + col_903]);
-		//if (col_904 >= 0)
-		strcpy_s(ppResults[i]->BidSize5, ppTable[i * COL_EACH_ROW + col_904]);
-		//if (col_930 >= 0)
-		strcpy_s(ppResults[i]->AskPrice1, ppTable[i * COL_EACH_ROW + col_930]);
-		//if (col_931 >= 0)
-		strcpy_s(ppResults[i]->AskPrice2, ppTable[i * COL_EACH_ROW + col_931]);
-		//if (col_932 >= 0)
-		strcpy_s(ppResults[i]->AskPrice3, ppTable[i * COL_EACH_ROW + col_932]);
-		//if (col_933 >= 0)
-		strcpy_s(ppResults[i]->AskPrice4, ppTable[i * COL_EACH_ROW + col_933]);
-		//if (col_934 >= 0)
-		strcpy_s(ppResults[i]->AskPrice5, ppTable[i * COL_EACH_ROW + col_934]);
-		//if (col_920 >= 0)
-		strcpy_s(ppResults[i]->AskSize1, ppTable[i * COL_EACH_ROW + col_920]);
-		//if (col_921 >= 0)
-		strcpy_s(ppResults[i]->AskSize2, ppTable[i * COL_EACH_ROW + col_921]);
-		//if (col_922 >= 0)
-		strcpy_s(ppResults[i]->AskSize3, ppTable[i * COL_EACH_ROW + col_922]);
-		//if (col_923 >= 0)
-		strcpy_s(ppResults[i]->AskSize4, ppTable[i * COL_EACH_ROW + col_923]);
-		//if (col_924 >= 0)
-		strcpy_s(ppResults[i]->AskSize5, ppTable[i * COL_EACH_ROW + col_924]);
-		//if (col_100 >= 0)
-		strcpy_s(ppResults[i]->JYSDM, ppTable[i * COL_EACH_ROW + col_100]);
-		//if (col_187 >= 0)
-		strcpy_s(ppResults[i]->ZXJYGS, ppTable[i * COL_EACH_ROW + col_187]);
-		//if (col_226 >= 0)
-		strcpy_s(ppResults[i]->ZXMRBDJW, ppTable[i * COL_EACH_ROW + col_226]);
-		//if (col_227 >= 0)
-		strcpy_s(ppResults[i]->ZXMCBDJW, ppTable[i * COL_EACH_ROW + col_227]);
-		//if (col_125 >= 0)
-		strcpy_s(ppResults[i]->ZHLB, ppTable[i * COL_EACH_ROW + col_125]);
-		//if (col_132 >= 0)
-		strcpy_s(ppResults[i]->BZ, ppTable[i * COL_EACH_ROW + col_132]);
-		//if (col_958 >= 0)
-		strcpy_s(ppResults[i]->GZBS, ppTable[i * COL_EACH_ROW + col_958]);
-		if (col_940 >= 0)
-			strcpy_s(ppResults[i]->ZTJG, ppTable[i * COL_EACH_ROW + col_940]);
-		if (col_941 >= 0)
-			strcpy_s(ppResults[i]->DTJG, ppTable[i * COL_EACH_ROW + col_941]);
-		if (col_1213 >= 0)
-			strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
-
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_ZQDM:
+				strcpy_s(ppResults[i]->ZQDM, t);
+				break;
+			case FIELD_ZQMC:
+				strcpy_s(ppResults[i]->ZQMC, t);
+				break;
+			case FIELD_ZSJ:
+				strcpy_s(ppResults[i]->ZSJ, t);
+				break;
+			case FIELD_JKJ:
+				strcpy_s(ppResults[i]->JKJ, t);
+				break;
+			case FIELD_GZLX:
+				strcpy_s(ppResults[i]->GZLX, t);
+				break;
+			case FIELD_DQJ:
+				strcpy_s(ppResults[i]->DQJ, t);
+				break;
+			case FIELD_BID_PRICE_1:
+				strcpy_s(ppResults[i]->BidPrice1, t);
+				break;
+			case FIELD_BID_PRICE_2:
+				strcpy_s(ppResults[i]->BidPrice2, t);
+				break;
+			case FIELD_BID_PRICE_3:
+				strcpy_s(ppResults[i]->BidPrice3, t);
+				break;
+			case FIELD_BID_PRICE_4:
+				strcpy_s(ppResults[i]->BidPrice4, t);
+				break;
+			case FIELD_BID_PRICE_5:
+				strcpy_s(ppResults[i]->BidPrice5, t);
+				break;
+			case FIELD_BID_SIZE_1:
+				strcpy_s(ppResults[i]->BidSize1, t);
+				break;
+			case FIELD_BID_SIZE_2:
+				strcpy_s(ppResults[i]->BidSize2, t);
+				break;
+			case FIELD_BID_SIZE_3:
+				strcpy_s(ppResults[i]->BidSize3, t);
+				break;
+			case FIELD_BID_SIZE_4:
+				strcpy_s(ppResults[i]->BidSize4, t);
+				break;
+			case FIELD_BID_SIZE_5:
+				strcpy_s(ppResults[i]->BidSize5, t);
+				break;
+			case FIELD_ASK_PRICE_1:
+				strcpy_s(ppResults[i]->AskPrice1, t);
+				break;
+			case FIELD_ASK_PRICE_2:
+				strcpy_s(ppResults[i]->AskPrice2, t);
+				break;
+			case FIELD_ASK_PRICE_3:
+				strcpy_s(ppResults[i]->AskPrice3, t);
+				break;
+			case FIELD_ASK_PRICE_4:
+				strcpy_s(ppResults[i]->AskPrice4, t);
+				break;
+			case FIELD_ASK_PRICE_5:
+				strcpy_s(ppResults[i]->AskPrice5, t);
+				break;
+			case FIELD_ASK_SIZE_1:
+				strcpy_s(ppResults[i]->AskSize1, t);
+				break;
+			case FIELD_ASK_SIZE_2:
+				strcpy_s(ppResults[i]->AskSize2, t);
+				break;
+			case FIELD_ASK_SIZE_3:
+				strcpy_s(ppResults[i]->AskSize2, t);
+				break;
+			case FIELD_ASK_SIZE_4:
+				strcpy_s(ppResults[i]->AskSize4, t);
+				break;
+			case FIELD_ASK_SIZE_5:
+				strcpy_s(ppResults[i]->AskSize5, t);
+				break;
+			case FIELD_JYSDM:
+				strcpy_s(ppResults[i]->JYSDM, t);
+				break;
+			case FIELD_ZXJYGS:
+				strcpy_s(ppResults[i]->ZXJYGS, t);
+				break;
+			case FIELD_ZXMRBDJW:
+				strcpy_s(ppResults[i]->ZXMRBDJW, t);
+				break;
+			case FIELD_ZXMCBDJW:
+				strcpy_s(ppResults[i]->ZXMCBDJW, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			case FIELD_BZ:
+				strcpy_s(ppResults[i]->BZ, t);
+				break;
+			case FIELD_GZBS:
+				strcpy_s(ppResults[i]->GZBS, t);
+				break;
+			case FIELD_ZTJG:
+				strcpy_s(ppResults[i]->ZTJG, t);
+				break;
+			case FIELD_DTJG:
+				strcpy_s(ppResults[i]->DTJG, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
 
 		ppResults[i]->ZSJ_ = atof(ppResults[i]->ZSJ);
 		ppResults[i]->JKJ_ = atof(ppResults[i]->JKJ);

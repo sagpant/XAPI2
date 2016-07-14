@@ -11,6 +11,15 @@
 /// 1.由API直接提供有效值
 /// 2.计算出来的值，字段正好预留了此字段，可以直接填充，这样使用者就不需要定义自己的字段了
 
+/////////////////////////////////////////////////////////////////////////
+///
+/// 账号体系分成三层
+/// 客户端XAPI层，主要是多账号功能，如TDX可以登录多个账号
+/// 分账户层，如O32中下单要指定资产单元或投资组合
+/// 交易所层，比如股东代码，有可能无法区分需要
+
+
+
 ///查询持仓,查委托，查成交,查合约，查资金等
 ///定义一个通用的结构，省事
 struct ReqQueryField
@@ -47,6 +56,17 @@ struct ReqQueryField
 	///一般是由API底层查询预留
 	OrderIDType			Char64PositionIndex;
 	Int32Type			Int32PositionIndex;
+
+
+
+	/// 基金
+	IDChar32Type	PortfolioID1;
+	/// 资产单元
+	IDChar32Type	PortfolioID2;
+	/// 投资组合
+	IDChar32Type	PortfolioID3;
+
+	BusinessType	Business;
 };
 
 ///持仓
@@ -94,6 +114,15 @@ struct PositionField
 	QtyType			TodayPRPosition;
 	///今日申赎持仓冻结
 	QtyType			TodayPRFrozen;
+
+	/// 基金
+	IDChar32Type	PortfolioID1;
+	/// 资产单元
+	IDChar32Type	PortfolioID2;
+	/// 投资组合
+	IDChar32Type	PortfolioID3;
+
+	BusinessType	Business;
 };
 
 ///做市商双向报价
@@ -218,6 +247,19 @@ struct OrderField
 	Int32Type		ReserveInt32;
 	///预留字符串
 	Char64Type		ReserveChar64;
+
+	/// 基金
+	IDChar32Type	PortfolioID1;
+	/// 资产单元
+	IDChar32Type	PortfolioID2;
+	/// 投资组合
+	IDChar32Type	PortfolioID3;
+
+	BusinessType	Business;
+
+	// 本处代码只内部使用，用于方便在封装API时快速的进行查找，减少代码
+	void*			pUserData1;
+	void*			pUserData2;
 };
 
 
@@ -268,6 +310,15 @@ struct TradeField
 	Int32Type		ReserveInt32;
 	///预留字符串
 	Char64Type		ReserveChar64;
+
+	/// 基金
+	IDChar32Type	PortfolioID1;
+	/// 资产单元
+	IDChar32Type	PortfolioID2;
+	/// 投资组合
+	IDChar32Type	PortfolioID3;
+
+	BusinessType	Business;
 };
 
 ///服务器信息
@@ -362,6 +413,10 @@ struct RspUserLoginField
 	Int32Type		RawErrorID;
 	///信息
 	Char256Type		Text;
+
+	Char32Type		Version;
+
+	Char32Type		Lang;
 };
 
 

@@ -5,11 +5,19 @@
 #include "../../include/QueueEnum.h"
 
 #ifdef _WIN64
-#pragma comment(lib, "../../include/LTS_v2/win64/securityqueryapi.lib")
-#pragma comment(lib, "../../lib/Queue_x64.lib")
+	#pragma comment(lib, "../../include/LTS_v2/win64/securityqueryapi.lib")
+	#ifdef _DEBUG
+	#pragma comment(lib, "../../lib/Queue_x64d.lib")
+	#else
+	#pragma comment(lib, "../../lib/Queue_x64.lib")
+	#endif
 #else
-#pragma comment(lib, "../../include/LTS_v2/win32/securityqueryapi.lib")
-#pragma comment(lib, "../../lib/Queue_x86.lib")
+	#pragma comment(lib, "../../include/LTS_v2/win32/securityqueryapi.lib")
+	#ifdef _DEBUG
+	#pragma comment(lib, "../../lib/Queue_x86d.lib")
+	#else
+	#pragma comment(lib, "../../lib/Queue_x86.lib")
+	#endif
 #endif
 
 #include <set>
