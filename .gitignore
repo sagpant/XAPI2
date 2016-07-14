@@ -231,10 +231,12 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-
 # Linux objects
 *.so
 *.o
 
 # Misc files
 *.userprefs
+
+# VSCode files
+.vscode
