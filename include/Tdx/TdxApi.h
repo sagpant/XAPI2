@@ -50,6 +50,8 @@ public:
 	// 弹出通达信内部的版本对话框
 	virtual void Version() = 0;
 
+	virtual int GetTableHeader(void* client, int request, FieldInfo_STRUCT*** pppResults) = 0;
+
 	virtual int SendRequest(IN RequestRespone_STRUCT* pRequest) = 0;
 
 	virtual RequestRespone_STRUCT* MakeQueryData(ReqQueryData_STRUCT* query) = 0;

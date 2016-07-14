@@ -74,7 +74,7 @@ TDXAPI_API void DeleteStructs(void*** pppStructs);
 // 股东列表处理，用于授权部分
 TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
 
-TDXAPI_API void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
+TDXAPI_API void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
 
 TDXAPI_API void DeleteRequestRespone(RequestRespone_STRUCT* pRespone);
 

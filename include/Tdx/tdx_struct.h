@@ -90,8 +90,10 @@ struct CancelOrder_STRUCT
 	char ZJZH[32];	// 121_资金帐号
 	char ZHLB[32];	// 125_帐号类别
 	char GDDM[32];	// 123_股东代码
+	char ZQDM[32];	// 140_证券代码
 	char WTBH[32];	// 146_委托编号
 	char JYSDM[32];	// 100_交易所代码
+	char XWDM[32];	// 173_席位代码
 
 	void* Client;	// 多账号
 };
@@ -104,6 +106,7 @@ struct ReqQueryData_STRUCT
 	char KSRQ[32];
 	char ZZRQ[32];
 	char ZQDM[32];
+	int RZRQBS;		// 281_融资融券标识
 
 	bool bAll;
 
@@ -154,6 +157,10 @@ struct WTLB_STRUCT
 	char ZTSM[32];  // 147_状态说明
 	char DJZJ[32];  // 161_冻结资金
 	char BLXX[32];	// 1213_保留信息
+
+	//char WTJE[32];  // 148_委托金额
+	//char CJJE[32];	// 154_成交金额
+	char ZHLB[32];	// 125_帐号类别
 	
 
 	int WTRQ_;
@@ -170,6 +177,10 @@ struct WTLB_STRUCT
 	int ZTSM_;
 	int BJFS_;
 	int WTFS_;
+
+	//double WTJE_;
+	//double CJJE_;
+	int ZHLB_;
 
 	void* Client;	// 多账号
 };

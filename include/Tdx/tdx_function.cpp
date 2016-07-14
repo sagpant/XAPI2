@@ -381,32 +381,43 @@ void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT
 	ppResults[count] = nullptr;
 	*pppResults = ppResults;
 
-	int col_123 = GetIndexByFieldID(ppFieldInfos, FIELD_GDDM);
-	int col_124 = GetIndexByFieldID(ppFieldInfos, FIELD_GDMC);
-	int col_125 = GetIndexByFieldID(ppFieldInfos, FIELD_ZHLB);
-	int col_121 = GetIndexByFieldID(ppFieldInfos, FIELD_ZJZH);
-	int col_173 = GetIndexByFieldID(ppFieldInfos, FIELD_XWDM);
-	int col_281 = GetIndexByFieldID(ppFieldInfos, FIELD_RZRQBS);
-	int col_1213 = GetIndexByFieldID(ppFieldInfos, FIELD_BLXX);
-
 	for (int i = 0; i < count; ++i)
 	{
 		ppResults[i] = new GDLB_STRUCT();
 
-		//if (col_123 >= 0)
-		strcpy_s(ppResults[i]->GDDM, ppTable[i * COL_EACH_ROW + col_123]);
-		//if (col_124 >= 0)
-		strcpy_s(ppResults[i]->GDMC, ppTable[i * COL_EACH_ROW + col_124]);
-		if (col_121 >= 0)
-			strcpy_s(ppResults[i]->ZJZH, ppTable[i * COL_EACH_ROW + col_121]);
-		//if (col_125 >= 0)
-		strcpy_s(ppResults[i]->ZHLB, ppTable[i * COL_EACH_ROW + col_125]);
-		if (col_173 >= 0)
-			strcpy_s(ppResults[i]->XWDM, ppTable[i * COL_EACH_ROW + col_173]);
-		if (col_281 >= 0)
-			strcpy_s(ppResults[i]->RZRQBS, ppTable[i * COL_EACH_ROW + col_281]);
-		if (col_1213 >= 0)
-			strcpy_s(ppResults[i]->BLXX, ppTable[i * COL_EACH_ROW + col_1213]);
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_GDMC:
+				strcpy_s(ppResults[i]->GDMC, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			case FIELD_ZJZH:
+				strcpy_s(ppResults[i]->ZJZH, t);
+				break;
+			case FIELD_XWDM:
+				strcpy_s(ppResults[i]->XWDM, t);
+				break;
+			case FIELD_RZRQBS:
+				strcpy_s(ppResults[i]->RZRQBS, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			}
+
+			++j;
+			pRow = ppFieldInfos[j];
+		}
 
 		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
 		ppResults[i]->RZRQBS_ = atoi(ppResults[i]->RZRQBS);
@@ -417,6 +428,9 @@ void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT
 
 void DeleteStructs(void*** pppStructs)
 {
+	if (pppStructs == nullptr)
+		return;
+
 	if (*pppStructs == nullptr)
 		return;
 
@@ -425,6 +439,7 @@ void DeleteStructs(void*** pppStructs)
 	int i = 0;
 	while (ppStructs[i] != 0)
 	{
+		//delete ppStructs[i];
 		delete[] ppStructs[i];
 		ppStructs[i] = nullptr;
 
@@ -452,7 +467,12 @@ A341083000|LK|1|                         |主股东|
 8
 E015976151|HT|1|88500918|		12982|1|	|主股东|
 0601605823|HT|0|88500918|		354000|1|	|主股东|
+
+8
+101313017766|0026087534|ZL|0|     304300|0|0|主股东|
+101313017766|A511876656|ZL|1|     55005|0|0|主股东|
 */
+// 发现不准从登录信息中猜测式解析不准，需要换一种方式
 void String2GDLB(char* szString, GDLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
@@ -537,7 +557,87 @@ void String2GDLB(char* szString, GDLB_STRUCT*** pppResults, void* Client)
 	delete[] pBuf;
 }
 
-void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults, void* Client)
+// 这种方式假定登录时的格式与直接查询的格式是完全一样的
+void String2GDLB2(FieldInfo_STRUCT** ppFieldInfos, char* szString, GDLB_STRUCT*** pppResults, void* Client)
+{
+	*pppResults = nullptr;
+	if (szString == nullptr)
+		return;
+
+	char* pBuf = new char[strlen(szString) + 1];
+	strcpy(pBuf, szString);
+
+	vector<char*> vct;
+
+	// 分好多少列
+	char* token = strtok(pBuf, "\r\n");
+	int i = 0;
+	while (token)
+	{
+		if (i>0)
+		{
+			vct.push_back(token);
+		}
+		token = strtok(nullptr, "\r\n");
+		++i;
+	}
+
+	int count = vct.size();
+
+	GDLB_STRUCT** ppResults = new GDLB_STRUCT*[count + 1]();
+	ppResults[count] = nullptr;
+	*pppResults = ppResults;
+
+	for (int i = 0; i < count; ++i)
+	{
+		ppResults[i] = new GDLB_STRUCT();
+
+		char* t = strtok(vct[i], "|");
+		int j = 0;
+		while (t)
+		{
+			FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_GDMC:
+				strcpy_s(ppResults[i]->GDMC, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			case FIELD_ZJZH:
+				strcpy_s(ppResults[i]->ZJZH, t);
+				break;
+			case FIELD_XWDM:
+				strcpy_s(ppResults[i]->XWDM, t);
+				break;
+			case FIELD_RZRQBS:
+				strcpy_s(ppResults[i]->RZRQBS, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			default:
+				break;
+			}
+
+			t = strtok(nullptr, "|");
+			++j;
+		}
+
+		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
+		ppResults[i]->RZRQBS_ = atoi(ppResults[i]->RZRQBS);
+
+		ppResults[i]->Client = Client;
+	}
+
+	delete[] pBuf;
+}
+
+void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -552,7 +652,7 @@ void CharTable2Login(char** ppTable, GDLB_STRUCT*** pppResults, void* Client)
 		int requstid = atoi(p);
 		if (requstid == REQUEST_GDLB + 1)
 		{
-			String2GDLB(ppTable[i * COL_EACH_ROW + 2], pppResults, Client);
+			String2GDLB2(ppFieldInfos, ppTable[i * COL_EACH_ROW + 2], pppResults, Client);
 		}
 
 		++i;

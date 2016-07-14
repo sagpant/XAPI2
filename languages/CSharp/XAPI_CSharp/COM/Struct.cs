@@ -82,6 +82,16 @@ namespace XAPI.COM
         public double TodayPRPosition;
         ///今日申赎持仓冻结
         public double TodayPRFrozen;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public int Business;
+        public string Business_String;
     }
 
     /// <summary>
@@ -203,6 +213,16 @@ namespace XAPI.COM
         public int ReserveInt32;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string ReserveChar64;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public int Business;
+        public string Business_String;
     }
 
     /// <summary>
@@ -246,6 +266,16 @@ namespace XAPI.COM
         public int ReserveInt32;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
         public string ReserveChar64;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID1;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID2;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string PortfolioID3;
+
+        public int Business;
+        public string Business_String;
     }
 
 

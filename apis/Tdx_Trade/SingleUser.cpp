@@ -165,6 +165,15 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 					memcpy(pWTField, ppRS[i], sizeof(WTLB_STRUCT));
 					m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pField->ID, pWTField));
 				}
+				else
+				{
+					// 如果已经存在，最好还是更新部分,要更新哪些地方呢？参考OnRespone_ReqOrderInsert部分，看哪些没有默认填写
+					WTLB_STRUCT* pWTField = (WTLB_STRUCT*)it->second;
+					if (strlen(pWTField->ZQMC) == 0)
+					{
+						memcpy(pWTField, ppRS[i], sizeof(WTLB_STRUCT));
+					}
+				}
 			}
 			++i;
 		}
@@ -303,6 +312,8 @@ int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 		m_QueryTradeTime = time(nullptr) + _queryTime;
 		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
 	}
+
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -524,6 +535,8 @@ int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRe
 	m_OldTradeList = m_NewTradeList;
 	m_NewTradeList.clear();
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -616,7 +629,7 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 	
 	// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
 	GDLB_STRUCT** ppRS = nullptr;
-	CharTable2Login(pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2Login(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
 	int count = GetCountStructs((void**)ppRS);
 
@@ -633,6 +646,8 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
+
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -668,6 +683,8 @@ int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* 
 
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
+
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -711,6 +728,8 @@ int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_ST
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryTradingAccount, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
 	}
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -741,6 +760,8 @@ int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_
 		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
 	}
 
+	DeleteStructs((void***)&ppRS);
+
 	return 0;
 }
 
@@ -751,9 +772,12 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 
 	WTLB_STRUCT* pWTOrders = (WTLB_STRUCT*)m_msgQueue->new_block(sizeof(WTLB_STRUCT));
 	strcpy(pWTOrders->ZJZH, pTdxOrder->ZJZH);
+	strcpy(pWTOrders->ZHLB, pTdxOrder->ZHLB_);
+	strcpy(pWTOrders->ZQDM, pTdxOrder->ZQDM);
 	strcpy(pWTOrders->GDDM, pTdxOrder->GDDM);
 	strcpy(pWTOrders->WTBH, pTdxOrder->WTBH);
-	strcpy(pWTOrders->JYSDM, pTdxOrder->ZHLB_);
+	strcpy(pWTOrders->JYSDM, pTdxOrder->ZHLB_);// FIXME:交易所代码有什么办法搞到吗？
+
 	pWTOrders->Client = m_pClient;
 
 	m_pApi->m_id_api_order.insert(pair<string, WTLB_STRUCT*>(pOrder->LocalID, pWTOrders));
