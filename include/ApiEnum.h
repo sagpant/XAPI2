@@ -151,6 +151,7 @@ enum ExecType : char
 ///开平标志，没有提供专门的平昨，而是用Close
 enum OpenCloseType :char
 {
+	OpenCloseType_Undefined = 0,	// 未指定，用来自行处理
 	OpenCloseType_Open,
 	OpenCloseType_Close,
 	OpenCloseType_CloseToday,
@@ -255,6 +256,7 @@ enum TradingPhaseType :char
 // 不同的市场需要不同的函数，统一到一起实在太难,所以这个地方交给用户自己来指定
 enum BusinessType :char
 {
+	BusinessType_Undefined = 0,		/// 未指定
 	BusinessType_Future,
 	BusinessType_Stock,
 	BusinessType_Option,

@@ -214,6 +214,7 @@ namespace XAPI
     [ComVisible(false)]
     public enum OpenCloseType : byte
     {
+        Undefined,
         Open,
         Close,
         CloseToday,
@@ -307,6 +308,7 @@ namespace XAPI
     [ComVisible(false)]
     public enum BusinessType : byte
     {
+        Undefined,
         Future,
         Stock,
         Option,
