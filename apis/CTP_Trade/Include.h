@@ -1,4 +1,4 @@
-// stdafx.h : include file for standard system include files,
+﻿// stdafx.h : include file for standard system include files,
 // or project specific include files that are used frequently, but
 // are changed infrequently
 //
@@ -28,3 +28,7 @@
 	#pragma comment(lib, "../../lib/Queue_x86.lib")
 	#endif
 #endif
+
+// CTP有多个版本有些没有ExchangeID，而有些有
+//#define HAS_ExchangeID	1
+#undef HAS_ExchangeID

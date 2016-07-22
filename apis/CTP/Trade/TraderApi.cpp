@@ -1356,12 +1356,22 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			return;
 		}
 
+#ifdef HAS_ExchangeID
 		PositionIDType positionId = { 0 };
 		sprintf(positionId, "%s:%s:%d:%c",
 			pInvestorPosition->ExchangeID,
 			pInvestorPosition->InstrumentID,
 			TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
 			pInvestorPosition->HedgeFlag);
+#else
+		PositionIDType positionId = { 0 };
+		sprintf(positionId, "%s:%s:%d:%c",
+			"",
+			pInvestorPosition->InstrumentID,
+			TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
+			pInvestorPosition->HedgeFlag);
+
+#endif // HAS_ExchangeID
 
 		PositionField* pField = nullptr;
 		unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId);
@@ -1372,7 +1382,11 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			//sprintf(pField->Symbol, "%s.%s", pInvestorPosition->InstrumentID, pInvestorPosition->ExchangeID);
 			strcpy(pField->Symbol, pInvestorPosition->InstrumentID);
 			strcpy(pField->InstrumentID, pInvestorPosition->InstrumentID);
+
+#ifdef HAS_ExchangeID
 			strcpy(pField->ExchangeID, pInvestorPosition->ExchangeID);
+#endif // HAS_ExchangeID
+
 			pField->Side = TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection);
 			pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag);
 
@@ -1406,17 +1420,6 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 	m_msgQueue_Query->Input_Copy(type, m_msgQueue_Query, this, 0, 0,
 		pQuery, sizeof(ReqQueryField), nullptr, 0, nullptr, 0);
 }
-
-//void CTraderApi::ReqQryInstrument(ReqQueryField* pQuery)
-//{
-//	CThostFtdcQryInstrumentField* pBody = (CThostFtdcQryInstrumentField*)m_msgQueue_Query->new_block(sizeof(CThostFtdcQryInstrumentField));
-//
-//	//strncpy(pBody->InstrumentID,szInstrumentId.c_str(),sizeof(TThostFtdcInstrumentIDType));
-//	//strncpy(pBody->ExchangeID, szExchange.c_str(), sizeof(TThostFtdcExchangeIDType));
-//
-//	m_msgQueue_Query->Input_NoCopy(RequestType::E_QryInstrumentField, m_msgQueue_Query, this, 0, 0,
-//		pBody, sizeof(CThostFtdcQryInstrumentField), nullptr, 0, nullptr, 0);
-//}
 
 int CTraderApi::_ReqQryInstrument(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
@@ -1556,17 +1559,6 @@ void CTraderApi::OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bo
 {
 	IsErrorRspInfo("OnRspError", pRspInfo, nRequestID, bIsLast);
 }
-
-//void CTraderApi::ReqQryOrder()
-//{
-//	CThostFtdcQryOrderField* pBody = (CThostFtdcQryOrderField*)m_msgQueue_Query->new_block(sizeof(CThostFtdcQryOrderField));
-//
-//	strncpy(pBody->BrokerID, m_RspUserLogin.BrokerID, sizeof(TThostFtdcBrokerIDType));
-//	strncpy(pBody->InvestorID, m_RspUserLogin.UserID, sizeof(TThostFtdcInvestorIDType));
-//
-//	m_msgQueue_Query->Input_NoCopy(RequestType::E_QryOrderField, m_msgQueue_Query, this, 0, 0,
-//		pBody, sizeof(CThostFtdcQryOrderField), nullptr, 0, nullptr, 0);
-//}
 
 int CTraderApi::_ReqQryOrder(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {

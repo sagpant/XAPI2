@@ -36,3 +36,6 @@ using namespace KingstarAPI;
 #define KS_LKC_EXT	"lkc"
 
 #define KS_COPYFILE 1
+
+// CTP有多个版本有些没有ExchangeID，而有些有
+#define HAS_ExchangeID	1
