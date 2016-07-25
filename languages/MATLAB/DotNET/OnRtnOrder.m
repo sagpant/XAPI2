@@ -11,4 +11,7 @@ disp(arg.order.Status);
 disp(arg.order.ExecType);
 disp(Extensions_GBK.Text(arg.order));
 
+disp(arg.order.LocalID);
+disp(arg.order.ID);
+
 end

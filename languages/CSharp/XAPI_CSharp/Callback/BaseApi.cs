@@ -201,6 +201,14 @@ namespace XAPI.Callback
 
         }
 
+        /// <summary>
+        /// 这个功能主要是给非.NET语言在调用时使用
+        /// </summary>
+        public void GCCollect()
+        {
+            System.GC.Collect();
+        }
+
         public void RegisterAndStart(IntPtr ptr1)
         {
             lock (this)
@@ -211,6 +219,7 @@ namespace XAPI.Callback
                 }
             }
         }
+
 
         public ApiType GetApiTypes
         {

@@ -6,44 +6,49 @@ using System.Text;
 
 namespace XAPI.COM
 {
+    /// <summary>
+    /// 将object sender改成XApiCom sender后，在MATLAB下只是OnData事件可以注册后收到消息，而其它的事件都无法直接收到
+    /// 如果将OnConnectionStatus这类的事件修改成不带类成员的这种，一些信息又无法传递
+    /// </summary>
     [ComVisible(true)]
     [Guid("4D7F9B54-3098-45AE-8EEB-4ED24AC47613")]
     [InterfaceType(ComInterfaceType.InterfaceIsIDispatch)]
     public interface IXApiEvents
     {
-        [DispId(1)]
-        void OnConnectionStatus(object sender, int status, string status_String, [In] ref RspUserLoginClass userLogin, int size1);
         [DispId(2)]
-        void OnRtnError(object sender, [In] ref ErrorClass error);
+        void OnConnectionStatus(XApiCom sender, int status, string status_String, RspUserLoginClass userLogin, int size1);
         [DispId(3)]
-        void OnLog(object sender, [In] ref LogClass log);
-
+        void OnRtnError(XApiCom sender, ErrorClass error);
         [DispId(4)]
-        void OnRtnDepthMarketData(object sender, [In]ref DepthMarketDataNClass marketData);
-        //public delegate void DelegateOnRtnQuoteRequest(object sender, [In]ref QuoteRequestField quoteRequest);
+        void OnLog(XApiCom sender, LogClass log);
 
         [DispId(5)]
-        void OnRspQryInstrument(object sender, [In] ref InstrumentClass instrument, int size1, bool bIsLast);
-        [DispId(6)]
-        void OnRspQryTradingAccount(object sender, [In] ref AccountClass account, int size1, bool bIsLast);
-        [DispId(7)]
-        void OnRspQryInvestorPosition(object sender, [In] ref PositionClass position, int size1, bool bIsLast);
-        //public delegate void DelegateOnRspQrySettlementInfo(object sender, [In] ref SettlementInfoClass settlementInfo, int size1, bool bIsLast);
-        //public delegate void DelegateOnRspQryInvestor(object sender, [In] ref InvestorField investor, int size1, bool bIsLast);
-        [DispId(8)]
-        void OnRtnOrder(object sender, [In] ref OrderClass order);
-        [DispId(9)]
-        void OnRtnTrade(object sender, [In] ref TradeClass trade);
-        //public delegate void DelegateOnRtnQuote(object sender, [In] ref QuoteField quote);
-        [DispId(10)]
-        void OnRspQryOrder(object sender, [In] ref OrderClass order, int size1, bool bIsLast);
-        [DispId(11)]
-        void OnRspQryTrade(object sender, [In] ref TradeClass trade, int size1, bool bIsLast);
-        //public delegate void DelegateOnRspQryQuote(object sender, [In] ref QuoteField quote, int size1, bool bIsLast);
+        void OnRtnDepthMarketData(XApiCom sender, DepthMarketDataNClass marketData);
+        //public delegate void DelegateOnRtnQuoteRequest(object sender, [In]ref QuoteRequestField quoteRequest);
 
-        //public delegate void DelegateOnRspQryHistoricalTicks(object sender, IntPtr pTicks, int size1, [In] ref HistoricalDataRequestField request, int size2, bool bIsLast);
-        //public delegate void DelegateOnRspQryHistoricalBars(object sender, IntPtr pBars, int size1, [In] ref HistoricalDataRequestField request, int size2, bool bIsLast);
+        [DispId(6)]
+        void OnRspQryInstrument(XApiCom sender, InstrumentClass instrument, int size1, bool bIsLast);
+        [DispId(7)]
+        void OnRspQryTradingAccount(XApiCom sender, AccountClass account, int size1, bool bIsLast);
+        [DispId(8)]
+        void OnRspQryInvestorPosition(XApiCom sender, PositionClass position, int size1, bool bIsLast);
+        //public delegate void DelegateOnRspQrySettlementInfo(object sender, SettlementInfoClass settlementInfo, int size1, bool bIsLast);
+        //public delegate void DelegateOnRspQryInvestor(object sender, InvestorField investor, int size1, bool bIsLast);
+        [DispId(9)]
+        void OnRtnOrder(XApiCom sender, OrderClass order);
+        [DispId(10)]
+        void OnRtnTrade(XApiCom sender, TradeClass trade);
+        //public delegate void DelegateOnRtnQuote(object sender, QuoteField quote);
+        [DispId(11)]
+        void OnRspQryOrder(XApiCom sender, OrderClass order, int size1, bool bIsLast);
+        [DispId(12)]
+        void OnRspQryTrade(XApiCom sender, TradeClass trade, int size1, bool bIsLast);
+        //public delegate void DelegateOnRspQryQuote(object sender, QuoteField quote, int size1, bool bIsLast);
+
+        //public delegate void DelegateOnRspQryHistoricalTicks(object sender, IntPtr pTicks, int size1, HistoricalDataRequestField request, int size2, bool bIsLast);
+        //public delegate void DelegateOnRspQryHistoricalBars(object sender, IntPtr pBars, int size1, HistoricalDataRequestField request, int size2, bool bIsLast);
 
         //public delegate bool DelegateOnFilterSubscribe(object sender, ExchangeType exchange, int instrument_part1, int instrument_part2, int instrument_part3, IntPtr pInstrument);
+        
     }
 }
