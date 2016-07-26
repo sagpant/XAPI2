@@ -1,3 +1,4 @@
-1.以管理员方式运行bin/RegCOM.bat即可
+1.以管理员方式运行bin/RegCOM_exe.bat即可
+2. 根据自己的需求看是否要运行clear_InprocServer32.reg
 2.在Excel中开发工具->Visual Basic->工具->引用->XAPI_CSharp。
 3.如何使用，可以参考TEST_Tdx.xlsm

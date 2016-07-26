@@ -101,26 +101,26 @@ namespace XAPI
 		    return true;
         }
 
-        //static void Main(string[] args)
-        //{
-        //    int i;
-        //    int iCount = args.Length;
+        static void Main(string[] args)
+        {
+            int i;
+            int iCount = args.Length;
 
-        //    for (i = 0; i < iCount; i++)
-        //    {
-        //        Console.Write("Argument : ");
-        //        Console.WriteLine(args[i]);
-        //    }
+            for (i = 0; i < iCount; i++)
+            {
+                Console.Write("Argument : ");
+                Console.WriteLine(args[i]);
+            }
 
-        //    Console.WriteLine("Press [ENTER] to exit.");
-        //    Console.ReadLine();
+            Console.WriteLine("Press [ENTER] to exit.");
+            Console.ReadLine();
 
-        //    ////for (int i = 0; i < 10000; ++i)
-        //    //{
-        //    //    test_Tdx_Main(args);
-        //    //}
-        //    //Console.ReadKey();
-        //}
+            ////for (int i = 0; i < 10000; ++i)
+            //{
+            //    test_Tdx_Main(args);
+            //}
+            //Console.ReadKey();
+        }
 
         static void test_Linux_Main(string[] args)
         {
