@@ -102,13 +102,6 @@ namespace XAPI.COM
 
             // Finally close the main key
             k.Close();
-
-            // 这里不知道如何使用
-            //Guid clsid = typeof(XApiCom).GUID;
-            //cookie = msRegSvc.RegisterTypeForComClients(
-            //    typeof(XApiCom),
-            //    RegistrationClassContext.LocalServer,
-            //    RegistrationConnectionType.SingleUse);
         }
 
         ///<summary>
@@ -135,8 +128,6 @@ namespace XAPI.COM
 
             // Finally close the main key 
             k.Close();
-
-            //msRegSvc.UnregisterTypeForComClients(cookie);
         }
 
         public XApiCom()
