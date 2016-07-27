@@ -88,6 +88,7 @@ namespace XAPI.COM
 	// Win32 APIs.
 	[ComVisible(false)]
 	[StructLayout(LayoutKind.Sequential)]
+    [CLSCompliant(false)]
 	public struct MSG
 	{
 		public IntPtr hwnd;

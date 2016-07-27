@@ -1,5 +1,5 @@
 ﻿using System;
-using System.EnterpriseServices;
+//using System.EnterpriseServices;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("XAPI")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCopyright("Copyright © 2015-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -40,10 +40,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.5.0.0")]
 [assembly: AssemblyFileVersion("1.5.0.0")]
 
-[assembly: ApplicationName("XApiComPlus")]
-[assembly: Description("XApiComPlus Assembly")]
-[assembly: ApplicationActivation(ActivationOption.Server)]
-[assembly: ApplicationAccessControl(false)]
+//[assembly: ApplicationName("XApiComPlus")]
+//[assembly: Description("XApiComPlus Assembly")]
+//[assembly: ApplicationActivation(ActivationOption.Server)]
+//[assembly: ApplicationAccessControl(false)]
 
 //[assembly: ImportedFromTypeLib("")]
 //[assembly: PrimaryInteropAssembly(1,1)]

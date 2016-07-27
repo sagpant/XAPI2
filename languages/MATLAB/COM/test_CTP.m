@@ -4,7 +4,7 @@ md = actxserver('XAPI.COM');
 
 % 查看所支持的事件
 events(md);
-% eventlisteners(md)
+
 
 md.SetLibPath(fullfile(cd,'XAPI\x86\CTP\CTP_Quote_x86.dll'));
 
@@ -19,6 +19,8 @@ md.SetUserInfo('Password','123456');
 
 registerevent(md,{'OnConnectionStatus' @OnMdConnectionStatus});
 registerevent(md,{'OnRtnDepthMarketData' @OnRtnDepthMarketData});
+% 查看注册的事件
+eventlisteners(md)
 
 md.Connect();
 

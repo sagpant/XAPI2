@@ -103,6 +103,8 @@ namespace XAPI
 
         static void Main(string[] args)
         {
+            // 注意：为了进行进程外COM技术的支持，项目已经修改了启动对象，
+            // 默认是从另一个Main中启动，如想测试此内容，请修改项目的属性，Application->Startup object
             int i;
             int iCount = args.Length;
 
@@ -115,11 +117,11 @@ namespace XAPI
             Console.WriteLine("Press [ENTER] to exit.");
             Console.ReadLine();
 
-            ////for (int i = 0; i < 10000; ++i)
-            //{
-            //    test_Tdx_Main(args);
-            //}
-            //Console.ReadKey();
+            //for (int i = 0; i < 10000; ++i)
+            {
+                test_Tdx_Main(args);
+            }
+            Console.ReadKey();
         }
 
         static void test_Linux_Main(string[] args)

@@ -19,6 +19,7 @@ namespace Ideafixxxer.Generics
     /// </summary>
     /// <typeparam name="T">Must be enum type (declared using <c>enum</c> keyword)</typeparam>
     [ComVisible(false)]
+    [CLSCompliant(false)]
     public static class Enum<T> where T : struct, IConvertible
     {
         private static readonly EnumConverter Converter;
