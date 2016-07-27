@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿//using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,11 +11,15 @@ namespace XAPI.Callback
     [ComVisible(false)]
     public class BaseApi : IDisposable
     {
-        public Logger Log;
+        // 没有必要专门引入一个库，但又很少用
+        //public Logger Log;
+        public object Log;
+
         protected Proxy proxy;
         protected IntPtr Handle = IntPtr.Zero;
         public string LibPath;
 
+        [CLSCompliant(false)]
         protected XCall _XRespone;
 
         public ServerInfoField Server;

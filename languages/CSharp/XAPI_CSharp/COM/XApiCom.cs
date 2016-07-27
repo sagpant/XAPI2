@@ -3,7 +3,7 @@ using XAPI.Callback;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.EnterpriseServices;
+//using System.EnterpriseServices;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -18,8 +18,8 @@ namespace XAPI.COM
     [ClassInterface(ClassInterfaceType.None)]
     [ComSourceInterfaces(typeof(IXApiEvents))]
     [ProgId("XAPI.COM")]
-    [EventTrackingEnabled(true)]
-    [Description("Interface Serviced Component")]
+    //[EventTrackingEnabled(true)]
+    //[Description("Interface Serviced Component")]
     public class XApiCom : UserControl,/*ServicedComponent,*/ IXApi,
         IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
                        // warning message

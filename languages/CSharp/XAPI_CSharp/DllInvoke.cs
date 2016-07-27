@@ -7,6 +7,7 @@ using System.Text;
 namespace XAPI
 {
     [ComVisible(false)]
+    [CLSCompliant(false)]
     public class DllInvoke:InvokeBase
     {
         [ComVisible(false)]
