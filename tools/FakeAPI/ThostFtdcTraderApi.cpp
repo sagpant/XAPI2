@@ -182,8 +182,8 @@ public:
 	///报价操作请求
 	virtual int ReqQuoteAction(CThostFtdcInputQuoteActionField *pInputQuoteAction, int nRequestID){ return 0; }
 
-	///锁定请求
-	virtual int ReqLockInsert(CThostFtdcInputLockField *pInputLock, int nRequestID){ return 0; }
+	/////锁定请求
+	//virtual int ReqLockInsert(CThostFtdcInputLockField *pInputLock, int nRequestID){ return 0; }
 
 	///申请组合录入请求
 	virtual int ReqCombActionInsert(CThostFtdcInputCombActionField *pInputCombAction, int nRequestID){ return 0; }
@@ -281,11 +281,11 @@ public:
 	///请求查询报价
 	virtual int ReqQryQuote(CThostFtdcQryQuoteField *pQryQuote, int nRequestID){ return 0; }
 
-	///请求查询锁定
-	virtual int ReqQryLock(CThostFtdcQryLockField *pQryLock, int nRequestID){ return 0; }
+	/////请求查询锁定
+	//virtual int ReqQryLock(CThostFtdcQryLockField *pQryLock, int nRequestID){ return 0; }
 
-	///请求查询锁定证券仓位
-	virtual int ReqQryLockPosition(CThostFtdcQryLockPositionField *pQryLockPosition, int nRequestID){ return 0; }
+	/////请求查询锁定证券仓位
+	//virtual int ReqQryLockPosition(CThostFtdcQryLockPositionField *pQryLockPosition, int nRequestID){ return 0; }
 
 	///请求查询组合合约安全系数
 	virtual int ReqQryCombInstrumentGuard(CThostFtdcQryCombInstrumentGuardField *pQryCombInstrumentGuard, int nRequestID){ return 0; }
