@@ -32,9 +32,9 @@ public:
 	virtual const char* SendQuote(QuoteField* pQuote, int count, char* pOut);
 	virtual const char* CancelQuote(OrderIDType* pIn, int count, char* pOut);
 public:
-	static  void* __stdcall OnRespone(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	static  void* __stdcall OnResponse(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 private:
-	void* _OnRespone(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	void* _OnResponse(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	void* m_pLib;
 	void* m_pFun;

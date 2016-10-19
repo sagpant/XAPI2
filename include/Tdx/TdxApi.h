@@ -23,7 +23,7 @@ class CTdxApi;
 class CTdxSpi
 {
 public:
-	virtual void OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone){};
+	virtual void OnResponse(CTdxApi* pApi, RequestRespone_STRUCT* pRespone){};
 };
 
 //////////////////////////////////////////////////////////////////////////

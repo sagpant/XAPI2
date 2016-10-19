@@ -59,64 +59,64 @@ namespace XAPI.Callback
             Marshal.FreeHGlobal(ReqQueryField_Ptr);
         }
 
-        protected override IntPtr OnRespone(byte type, IntPtr pApi1, IntPtr pApi2, double double1, double double2, IntPtr ptr1, int size1, IntPtr ptr2, int size2, IntPtr ptr3, int size3)
+        protected override IntPtr OnResponse(byte type, IntPtr pApi1, IntPtr pApi2, double double1, double double2, IntPtr ptr1, int size1, IntPtr ptr2, int size2, IntPtr ptr3, int size3)
         {
-            switch ((ResponeType)type)
+            switch ((ResponseType)type)
             {
-                case ResponeType.OnRspQryInstrument:
+                case ResponseType.OnRspQryInstrument:
                     _OnRspQryInstrument(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRspQryTradingAccount:
+                case ResponseType.OnRspQryTradingAccount:
                     _OnRspQryTradingAccount(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRspQryInvestorPosition:
+                case ResponseType.OnRspQryInvestorPosition:
                     _OnRspQryInvestorPosition(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRspQrySettlementInfo:
+                case ResponseType.OnRspQrySettlementInfo:
                     _OnRspQrySettlementInfo(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRspQryInvestor:
+                case ResponseType.OnRspQryInvestor:
                     _OnRspQryInvestor(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRtnOrder:
+                case ResponseType.OnRtnOrder:
                     _OnRtnOrder(ptr1, size1);
                     break;
-                case ResponeType.OnRtnTrade:
+                case ResponseType.OnRtnTrade:
                     _OnRtnTrade(ptr1, size1);
                     break;
-                case ResponeType.OnRtnQuote:
+                case ResponseType.OnRtnQuote:
                     _OnRtnQuote(ptr1, size1);
                     break;
-                case ResponeType.OnRspQryOrder:
+                case ResponseType.OnRspQryOrder:
                     _OnRspQryOrder(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRspQryTrade:
+                case ResponseType.OnRspQryTrade:
                     _OnRspQryTrade(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRspQryQuote:
+                case ResponseType.OnRspQryQuote:
                     _OnRspQryQuote(ptr1, size1, double1);
                     break;
-                case ResponeType.OnRtnDepthMarketData:
+                case ResponseType.OnRtnDepthMarketData:
                     _OnRtnDepthMarketData(ptr1,size1,double1);
                     break;
-                case ResponeType.OnRtnQuoteRequest:
+                case ResponseType.OnRtnQuoteRequest:
                     _OnRtnQuoteRequest(ptr1, size1);
                     break;
 
-                case ResponeType.OnRspQryHistoricalTicks:
+                case ResponseType.OnRspQryHistoricalTicks:
                     _OnRspQryHistoricalTicks(ptr1, size1, ptr2, size2, double1);
                     break;
-                case ResponeType.OnRspQryHistoricalBars:
+                case ResponseType.OnRspQryHistoricalBars:
                     _OnRspQryHistoricalBars(ptr1, size1, ptr2, size2, double1);
                     break;
-                case ResponeType.OnFilterSubscribe:
+                case ResponseType.OnFilterSubscribe:
                     if(_OnFilterSubscribe(double1, size1, size2, size3, ptr1))
                     {
                         return new IntPtr(1);
                     }
                     return IntPtr.Zero;
                 default:
-                    base.OnRespone(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+                    base.OnResponse(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
                     break;
             }
 

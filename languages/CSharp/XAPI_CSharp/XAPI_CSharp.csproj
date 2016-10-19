@@ -181,7 +181,7 @@
     <Compile Include="Proxy.cs" />
     <Compile Include="RequestType.cs" />
     <Compile Include="QueryType.cs" />
-    <Compile Include="ResponeType.cs" />
+    <Compile Include="ResponseType.cs" />
     <Compile Include="SoInvoke.cs" />
     <Compile Include="Struct.cs" />
     <Compile Include="Helper.cs" />

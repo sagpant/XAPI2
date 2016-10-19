@@ -30,9 +30,6 @@
     <ClInclude Include="TypeConvert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Struct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SingleUser.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -134,18 +134,18 @@ void CMdUserApi::WindStart()
         m_CoInitialized = true;
     }
 
-    m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Connecting, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+    m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Connecting, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
     auto errCode = CWAPIWrapperCpp::start();
     if (errCode == 0){
-        //m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Connected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
-        m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+        //m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Connected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+        m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
     }
     else{
         RspUserLoginField* pField = (RspUserLoginField*)m_msgQueue->new_block(sizeof(RspUserLoginField));
         pField->RawErrorID = errCode;
         WindGetErrorMessage(errCode, pField->Text, sizeof pField->Text);
-        m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+        m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
     }
 }
 
@@ -158,7 +158,7 @@ void CMdUserApi::WindStop()
         CWAPIWrapperCpp::stop();
         // 全清理，只留最后一个
         m_msgQueue->Clear();
-        m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+        m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
         // 主动触发
         m_msgQueue->Process();
     }
@@ -187,7 +187,7 @@ void CMdUserApi::WindQryInstrument()
         pField->RawErrorID = errCode;
         strcpy_s(pField->Source, sizeof pField->Source, "WindQryInstrument");
         WindGetErrorMessage(errCode, pField->Text, sizeof pField->Text);
-        m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+        m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
         return;
     }
 
@@ -350,7 +350,7 @@ LONG CMdUserApi::_WindCallback(ULONGLONG reqId, const WindData &wd)
 			AddAsk(pField, st.rt_ask1, st.rt_asize1, 0);
 		} while (false);
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
 	}
 
 	//if (timeLength > 1)
@@ -403,7 +403,7 @@ void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchan
 		pField->RawErrorID = errCode;
 		strcpy_s(pField->Source, sizeof pField->Source, "wsq");
 		WindGetErrorMessage(errCode, pField->Text, sizeof pField->Text);
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnError, m_msgQueue, m_pClass, 0, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
 		return;
 	}
 

@@ -8,7 +8,7 @@ CMsgQueue::CMsgQueue()//:m_queue(1024)
 	m_bDirectOutput = false;
 
 	//回调函数地址指针
-	m_fnOnRespone = nullptr;
+	m_fnOnResponse = nullptr;
 }
 
 void CMsgQueue::Clear()
@@ -57,12 +57,12 @@ void CMsgQueue::Output(ResponeItem* pItem)
 {
 	try
 	{
-		if (m_fnOnRespone)
-			(*m_fnOnRespone)(pItem->type, pItem->pApi1, pItem->pApi2, pItem->double1, pItem->double2, pItem->ptr1, pItem->size1, pItem->ptr2, pItem->size2, pItem->ptr3, pItem->size3);
+		if (m_fnOnResponse)
+			(*m_fnOnResponse)(pItem->type, pItem->pApi1, pItem->pApi2, pItem->double1, pItem->double2, pItem->ptr1, pItem->size1, pItem->ptr2, pItem->size2, pItem->ptr3, pItem->size3);
 	}
 	catch (...)
 	{
-		m_fnOnRespone = nullptr;
+		m_fnOnResponse = nullptr;
 	}
 }
 

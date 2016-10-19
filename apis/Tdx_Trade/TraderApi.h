@@ -112,7 +112,7 @@ public:
 	void RemoveUser(CSingleUser* pUser);
 
 private:
-	virtual void OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	virtual void OnResponse(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
 
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);

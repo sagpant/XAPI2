@@ -16,7 +16,7 @@ public:
 
 	///获取API的版本信息
 	///@retrun 获取到的版本号
-	static const char *GetApiVersion();
+	static const char *GetApiVersion(){ return 0; }
 
 	///删除接口对象本身
 	///@remark 不再使用本接口对象时,调用该函数删除接口对象
@@ -133,7 +133,6 @@ public:
 		return 0;
 	}
 
-
 	///登出请求
 	virtual int ReqUserLogout(CThostFtdcUserLogoutField *pUserLogout, int nRequestID){ return 0; }
 
@@ -182,8 +181,8 @@ public:
 	///报价操作请求
 	virtual int ReqQuoteAction(CThostFtdcInputQuoteActionField *pInputQuoteAction, int nRequestID){ return 0; }
 
-	/////锁定请求
-	//virtual int ReqLockInsert(CThostFtdcInputLockField *pInputLock, int nRequestID){ return 0; }
+	///批量报单操作请求
+	virtual int ReqBatchOrderAction(CThostFtdcInputBatchOrderActionField *pInputBatchOrderAction, int nRequestID){ return 0; }
 
 	///申请组合录入请求
 	virtual int ReqCombActionInsert(CThostFtdcInputCombActionField *pInputCombAction, int nRequestID){ return 0; }
@@ -266,6 +265,18 @@ public:
 	///请求查询产品报价汇率
 	virtual int ReqQryProductExchRate(CThostFtdcQryProductExchRateField *pQryProductExchRate, int nRequestID){ return 0; }
 
+	///请求查询产品组
+	virtual int ReqQryProductGroup(CThostFtdcQryProductGroupField *pQryProductGroup, int nRequestID){ return 0; }
+
+	///请求查询做市商合约手续费率
+	virtual int ReqQryMMInstrumentCommissionRate(CThostFtdcQryMMInstrumentCommissionRateField *pQryMMInstrumentCommissionRate, int nRequestID){ return 0; }
+
+	///请求查询做市商期权合约手续费
+	virtual int ReqQryMMOptionInstrCommRate(CThostFtdcQryMMOptionInstrCommRateField *pQryMMOptionInstrCommRate, int nRequestID){ return 0; }
+
+	///请求查询报单手续费
+	virtual int ReqQryInstrumentOrderCommRate(CThostFtdcQryInstrumentOrderCommRateField *pQryInstrumentOrderCommRate, int nRequestID){ return 0; }
+
 	///请求查询期权交易成本
 	virtual int ReqQryOptionInstrTradeCost(CThostFtdcQryOptionInstrTradeCostField *pQryOptionInstrTradeCost, int nRequestID){ return 0; }
 
@@ -280,12 +291,6 @@ public:
 
 	///请求查询报价
 	virtual int ReqQryQuote(CThostFtdcQryQuoteField *pQryQuote, int nRequestID){ return 0; }
-
-	/////请求查询锁定
-	//virtual int ReqQryLock(CThostFtdcQryLockField *pQryLock, int nRequestID){ return 0; }
-
-	/////请求查询锁定证券仓位
-	//virtual int ReqQryLockPosition(CThostFtdcQryLockPositionField *pQryLockPosition, int nRequestID){ return 0; }
 
 	///请求查询组合合约安全系数
 	virtual int ReqQryCombInstrumentGuard(CThostFtdcQryCombInstrumentGuardField *pQryCombInstrumentGuard, int nRequestID){ return 0; }
@@ -333,7 +338,7 @@ private:
 	CThostFtdcTraderSpi *m_pSpi;
 };
 
-CThostFtdcTraderApi *CThostFtdcTraderApi::CreateFtdcTraderApi(const char *pszFlowPath)
+CThostFtdcTraderApi *MyClassCTP::CreateFtdcTraderApi(const char *pszFlowPath)
 {
 	return new MyClassCTP();
 }

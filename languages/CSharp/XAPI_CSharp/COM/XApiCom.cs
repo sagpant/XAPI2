@@ -299,9 +299,10 @@ namespace XAPI.COM
             }
         }
 
-        public void ReqQuery(XAPI.QueryType type)
+        public void ReqQuery(string type)
         {
-            api.ReqQuery(type,ref _Query);
+            QueryType obj = Enum<QueryType>.Parse(type);
+            api.ReqQuery(obj, ref _Query);
         }
 
         public QueueData TryDequeue()
@@ -344,8 +345,8 @@ namespace XAPI.COM
             if (null == OnConnectionStatus)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnConnectionStatus;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnConnectionStatus);
+                qd.Type = (int)ResponseType.OnConnectionStatus;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnConnectionStatus);
                 qd.Sender = this;
                 qd.Data1 = status;
                 qd.Data2 = Enum<XAPI.ConnectionStatus>.ToString(status);
@@ -375,8 +376,8 @@ namespace XAPI.COM
             if (null == OnRtnError)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRtnError;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRtnError);
+                qd.Type = (int)ResponseType.OnRtnError;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRtnError);
                 qd.Sender = this;
                 qd.Data1 = cls;
 
@@ -402,8 +403,8 @@ namespace XAPI.COM
             if (null == OnLog)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnLog;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnLog);
+                qd.Type = (int)ResponseType.OnLog;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnLog);
                 qd.Sender = this;
                 qd.Data1 = cls;
 
@@ -461,8 +462,8 @@ namespace XAPI.COM
             if (null == OnRtnDepthMarketData)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRtnDepthMarketData;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRtnDepthMarketData);
+                qd.Type = (int)ResponseType.OnRtnDepthMarketData;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRtnDepthMarketData);
                 qd.Sender = this;
                 qd.Data1 = cls;
 
@@ -526,8 +527,8 @@ namespace XAPI.COM
             if (null == OnRtnOrder)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRtnOrder;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRtnOrder);
+                qd.Type = (int)ResponseType.OnRtnOrder;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRtnOrder);
                 qd.Sender = this;
                 qd.Data1 = cls;
 
@@ -578,8 +579,8 @@ namespace XAPI.COM
             if (null == OnRtnTrade)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRtnTrade;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRtnTrade);
+                qd.Type = (int)ResponseType.OnRtnTrade;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRtnTrade);
                 qd.Sender = this;
                 qd.Data1 = cls;
 
@@ -629,8 +630,8 @@ namespace XAPI.COM
             if (null == OnRspQryInstrument)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRspQryInstrument;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRspQryInstrument);
+                qd.Type = (int)ResponseType.OnRspQryInstrument;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRspQryInstrument);
                 qd.Sender = this;
                 qd.Data1 = cls;
                 qd.Data2 = size1;
@@ -686,8 +687,8 @@ namespace XAPI.COM
             if (null == OnRspQryInvestorPosition)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRspQryInvestorPosition;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRspQryInvestorPosition);
+                qd.Type = (int)ResponseType.OnRspQryInvestorPosition;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRspQryInvestorPosition);
                 qd.Sender = this;
                 qd.Data1 = cls;
                 qd.Data2 = size1;
@@ -734,8 +735,8 @@ namespace XAPI.COM
             if (null == OnRspQryTradingAccount)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRspQryTradingAccount;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRspQryTradingAccount);
+                qd.Type = (int)ResponseType.OnRspQryTradingAccount;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRspQryTradingAccount);
                 qd.Sender = this;
                 qd.Data1 = cls;
                 qd.Data2 = size1;
@@ -807,8 +808,8 @@ namespace XAPI.COM
             if (null == OnRspQryOrder)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRspQryOrder;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRspQryOrder);
+                qd.Type = (int)ResponseType.OnRspQryOrder;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRspQryOrder);
                 qd.Sender = this;
                 qd.Data1 = cls;
                 qd.Data2 = size1;
@@ -864,8 +865,8 @@ namespace XAPI.COM
             if (null == OnRspQryTrade)
             {
                 QueueData qd = new QueueData();
-                qd.Type = (int)ResponeType.OnRspQryTrade;
-                qd.Type_String = Enum<XAPI.ResponeType>.ToString(ResponeType.OnRspQryTrade);
+                qd.Type = (int)ResponseType.OnRspQryTrade;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRspQryTrade);
                 qd.Sender = this;
                 qd.Data1 = cls;
                 qd.Data2 = size1;

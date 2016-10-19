@@ -197,7 +197,7 @@ void CMdUserApi::InitDriver(HWND hWnd, UINT Msg)
 		pField->RawErrorID = GetLastError();
 		strncpy(pField->Text, X_GetLastError(), sizeof(Char256Type));
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 		return;
 	}
 
@@ -210,12 +210,12 @@ void CMdUserApi::InitDriver(HWND hWnd, UINT Msg)
 		pField->RawErrorID = GetLastError();
 		strncpy(pField->Text, X_GetLastError(), sizeof(Char256Type));
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 		return;
 	}
 
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 	m_nInited = m_pfnStock_Init(hWnd, Msg, RCV_WORK_REQUEST);// RCV_WORK_SENDMSG);
 	m_hWnd = hWnd;
@@ -269,7 +269,7 @@ void CMdUserApi::Disconnect()
 		if (m_msgQueue)
 		{
 			m_msgQueue->Clear();
-			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+			m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 			// 主动触发
 			m_msgQueue->Process();
 		}
@@ -317,14 +317,14 @@ void CMdUserApi::OnRspQryInstrument(DepthMarketDataNField* _pField,RCV_REPORT_ST
 		break;
 	}
 
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRspQryInstrument, m_msgQueue, m_pClass, index >= Count - 1, 0, pField, sizeof(InstrumentField), nullptr, 0, nullptr, 0);
+	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQryInstrument, m_msgQueue, m_pClass, index >= Count - 1, 0, pField, sizeof(InstrumentField), nullptr, 0, nullptr, 0);
 }
 
 
 bool CMdUserApi::FilterExchangeInstrument(WORD wMarket, int instrument)
 {
 	// 行情太多，需要过滤
-	return (bool)m_msgQueue->Input_Output(ResponeType::ResponeType_OnFilterSubscribe, m_msgQueue, m_pClass, Market_2_ExchangeType(wMarket), 0, nullptr, instrument, nullptr, 0, nullptr, 0);
+	return (bool)m_msgQueue->Input_Output(ResponseType::ResponseType_OnFilterSubscribe, m_msgQueue, m_pClass, Market_2_ExchangeType(wMarket), 0, nullptr, instrument, nullptr, 0, nullptr, 0);
 }
 
 //行情回调，得保证此函数尽快返回
@@ -414,7 +414,7 @@ void CMdUserApi::OnRtnDepthMarketData(RCV_REPORT_STRUCTEx *pDepthMarketData, int
 		AddAsk(pField, my_round(pDepthMarketData->m_fSellPrice5), pDepthMarketData->m_fSellVolume5 * nLots, 0);
 	} while (false);
 
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
+	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
 }
 
 void CMdUserApi::StartThread()

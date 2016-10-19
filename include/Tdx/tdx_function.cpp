@@ -637,12 +637,92 @@ void String2GDLB2(FieldInfo_STRUCT** ppFieldInfos, char* szString, GDLB_STRUCT**
 	delete[] pBuf;
 }
 
+void CharTable2GDLB3(char* ppTable, GDLB_STRUCT*** pppResults, void* Client)
+{
+	*pppResults = nullptr;
+	if (ppTable == nullptr)
+		return;
+
+	//char* pBuf = new char[strlen(szString) + 1];
+	//strcpy(pBuf, szString);
+
+	//vector<char*> vct;
+
+	//// 分好多少列
+	//char* token = strtok(pBuf, "\r\n");
+	//int i = 0;
+	//while (token)
+	//{
+	//	if (i>0)
+	//	{
+	//		vct.push_back(token);
+	//	}
+	//	token = strtok(nullptr, "\r\n");
+	//	++i;
+	//}
+
+	//int count = vct.size();
+
+	//GDLB_STRUCT** ppResults = new GDLB_STRUCT*[count + 1]();
+	//ppResults[count] = nullptr;
+	//*pppResults = ppResults;
+
+	/*for (int i = 0; i < count; ++i)
+	{
+		ppResults[i] = new GDLB_STRUCT();
+
+		char* t = strtok(vct[i], "|");
+		int j = 0;
+		while (t)
+		{
+			FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_GDMC:
+				strcpy_s(ppResults[i]->GDMC, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			case FIELD_ZJZH:
+				strcpy_s(ppResults[i]->ZJZH, t);
+				break;
+			case FIELD_XWDM:
+				strcpy_s(ppResults[i]->XWDM, t);
+				break;
+			case FIELD_RZRQBS:
+				strcpy_s(ppResults[i]->RZRQBS, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			default:
+				break;
+			}
+
+			t = strtok(nullptr, "|");
+			++j;
+		}
+
+		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
+		ppResults[i]->RZRQBS_ = atoi(ppResults[i]->RZRQBS);
+
+		ppResults[i]->Client = Client;
+	}*/
+
+	//delete[] pBuf;
+}
+
 void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
 		return;
 
+	bool bFind = false;
 	// 如果有数据，第一列就不为空
 	int i = 0;
 	int j = 0;
@@ -653,10 +733,43 @@ void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUC
 		if (requstid == REQUEST_GDLB + 1)
 		{
 			String2GDLB2(ppFieldInfos, ppTable[i * COL_EACH_ROW + 2], pppResults, Client);
+			bFind = true;
 		}
 
 		++i;
 		p = ppTable[i * COL_EACH_ROW + j];
+	}
+
+	// 香港账号可能没有开头的一些数字，只能自己识别
+	if (!bFind)
+	{
+		int count = 1;
+		GDLB_STRUCT** ppResults = new GDLB_STRUCT*[count + 1]();
+		ppResults[count] = nullptr;
+		*pppResults = ppResults;
+
+
+		int i = 0;
+		int j = 0;
+		char* p = ppTable[i * COL_EACH_ROW + j];
+		int pos = 0;
+
+		while (p != nullptr)
+		{
+			//CharTable2GDLB3(ppTable[i * COL_EACH_ROW + 0], pppResults, Client);
+			char * flag = ppTable[i * COL_EACH_ROW + 10];
+			if (strcmp(flag, "资金帐号") == 0)
+			{
+				ppResults[pos] = new GDLB_STRUCT();
+
+				strcpy_s(ppResults[pos]->ZJZH, ppTable[i * COL_EACH_ROW + 0]);
+				strcpy_s(ppResults[pos]->GDMC, ppTable[i * COL_EACH_ROW + 1]);
+				++pos;
+			}
+
+			++i;
+			p = ppTable[i * COL_EACH_ROW + j];
+		}
 	}
 
 	return;
@@ -684,6 +797,8 @@ void DeleteRequestRespone(RequestRespone_STRUCT* pRespone)
 
 	DeleteTableBody(pRespone->ppResults);
 	DeleteError(pRespone->pErr);
+	// 会不会是由它导致的每次内存没有释放干净？
+	//delete[] pRespone;
 }
 
 #else

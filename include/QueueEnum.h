@@ -52,33 +52,33 @@ enum QueryType :char
 };
 
 ///响应
-enum ResponeType :char
+enum ResponseType :char
 {
-	ResponeType_OnConnectionStatus = 64,
-	ResponeType_OnRtnError,
-	ResponeType_OnLog,
+	ResponseType_OnConnectionStatus = 64,
+	ResponseType_OnRtnError,
+	ResponseType_OnLog,
 
-	ResponeType_OnRtnDepthMarketData,
-	ResponeType_OnRspQryInstrument,
-	ResponeType_OnRspQryTradingAccount,
-	ResponeType_OnRspQryInvestorPosition,
-	ResponeType_OnRspQrySettlementInfo,
+	ResponseType_OnRtnDepthMarketData,
+	ResponseType_OnRspQryInstrument,
+	ResponseType_OnRspQryTradingAccount,
+	ResponseType_OnRspQryInvestorPosition,
+	ResponseType_OnRspQrySettlementInfo,
 
-	ResponeType_OnRspQryOrder,
-	ResponeType_OnRspQryTrade,
-	ResponeType_OnRspQryQuote,
+	ResponseType_OnRspQryOrder,
+	ResponseType_OnRspQryTrade,
+	ResponseType_OnRspQryQuote,
 
-	ResponeType_OnRtnOrder,
-	ResponeType_OnRtnTrade,
-	ResponeType_OnRtnQuote,
+	ResponseType_OnRtnOrder,
+	ResponseType_OnRtnTrade,
+	ResponseType_OnRtnQuote,
 
-	ResponeType_OnRtnQuoteRequest,
+	ResponseType_OnRtnQuoteRequest,
 
-	ResponeType_OnRspQryHistoricalTicks,
-	ResponeType_OnRspQryHistoricalBars,
-	ResponeType_OnRspQryInvestor,
+	ResponseType_OnRspQryHistoricalTicks,
+	ResponseType_OnRspQryHistoricalBars,
+	ResponseType_OnRspQryInvestor,
 
-	ResponeType_OnFilterSubscribe,
+	ResponseType_OnFilterSubscribe,
 };
 
 // >=100表示API自定义

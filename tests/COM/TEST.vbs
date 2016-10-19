@@ -1,10 +1,10 @@
-Run32()
+'Run32()
 
 MsgBox "点我开始"
 
 Dim XApi
 Set XApi = WScript.CreateObject("XAPI.COM","XApi_")
-XApi.SetLibPath "D:\Kan\Documents\GitHub\XAPI2\bin\Debug\x86\CTP\CTP_Quote_x86.dll"
+XApi.SetLibPath "D:\Users\Kan\Documents\GitHub\XAPI2\bin\Debug\x86\CTP\CTP_Quote_x86.dll"
 XApi.SetServerInfo "Address","tcp://180.168.146.187:10010"
 XApi.SetServerInfo "BrokerID","9999"
 XApi.SetUserInfo "UserID","037505"
@@ -12,6 +12,8 @@ XApi.SetUserInfo "Password","123456"
 XApi.Connect
 
 MsgBox "不要点我，等着反馈"
+
+MsgBox "1"
 
 Sub XApi_OnConnectionStatus(sender, status, status_String, userLogin, size1)
     MsgBox status_String

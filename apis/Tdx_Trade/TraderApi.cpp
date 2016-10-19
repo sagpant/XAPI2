@@ -100,7 +100,7 @@ void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double
 	m_msgQueue_Test->Input_Copy(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 }
 
-void CTraderApi::OnRespone(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+void CTraderApi::OnResponse(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 {
 	if (pRespone == nullptr)
 		return;
@@ -178,11 +178,11 @@ int CTraderApi::_Init()
 		pField->RawErrorID = pErr->ErrCode;
 		strcpy(pField->Text, pErr->ErrInfo);
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 	}
 	else
 	{
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Initialized, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 		ReqUserLogin();
 	}
@@ -205,7 +205,7 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 {
 	Error_STRUCT* pErr = nullptr;
 
-	m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logining, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logining, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 	CSingleUser* pUser = new CSingleUser(this);
 	pUser->m_pClass = m_pClass;
@@ -232,7 +232,7 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 			strcpy(pField->Text, pErr->ErrInfo);
 		}
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logined, 0, pField, sizeof(pField), nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logined, 0, pField, sizeof(pField), nullptr, 0, nullptr, 0);
 		
 		
 		// 登录下一个账号
@@ -248,7 +248,7 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 			pField->RawErrorID = pErr->ErrCode;
 			strcpy(pField->Text, pErr->ErrInfo);
 
-			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
+			m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
 		}
 	}
 
@@ -260,7 +260,7 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 void CTraderApi::StartQueryThread()
 {
 	// 启动定时查询功能使用
-	m_msgQueue_Test->Input_Copy(ResponeType::ResponeType_OnRtnOrder, m_msgQueue_Test, this, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+	m_msgQueue_Test->Input_Copy(ResponseType::ResponseType_OnRtnOrder, m_msgQueue_Test, this, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 }
 
 void CTraderApi::RemoveUser(CSingleUser* pUser)
@@ -411,7 +411,7 @@ bool CTraderApi::IsErrorRspInfo(const char* szSource, Error_STRUCT *pRspInfo)
 		strcpy(pField->Text, pRspInfo->ErrInfo);
 		strcpy(pField->Source, szSource);
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnError, m_msgQueue, m_pClass, true, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnError, m_msgQueue, m_pClass, true, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
 	}
 	return bRet;
 }
@@ -469,7 +469,7 @@ void CTraderApi::Disconnect()
 		if (m_msgQueue)
 		{
 			m_msgQueue->Clear();
-			m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+			m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 			// 主动触发
 			m_msgQueue->Process();
 		}
@@ -735,7 +735,7 @@ int CTraderApi::OnRespone_Subscribe(CTdxApi* pApi, RequestRespone_STRUCT* pRespo
 			AddAsk(pField, pDepthMarketData->AskPrice5_, pDepthMarketData->AskSize5_, 0);
 		} while (false);
 
-		m_msgQueue->Input_NoCopy(ResponeType::ResponeType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
 	}
 
 	return 0;

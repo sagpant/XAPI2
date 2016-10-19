@@ -14,6 +14,7 @@
     <ProjectGuid>{01D3F1DE-99B3-4D41-97C3-F4680CDB980B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Tdx_Trade</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -94,7 +95,6 @@
     <ClInclude Include="..\..\include\toolkit.h" />
     <ClInclude Include="SingleUser.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Struct.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TraderApi.h" />
     <ClInclude Include="TypeConvert.h" />

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace XAPI
 {
-    public enum ResponeType : byte
+    public enum ResponseType : byte
     {
         OnConnectionStatus = 64,
         OnRtnError,

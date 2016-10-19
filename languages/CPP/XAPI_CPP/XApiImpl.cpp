@@ -6,70 +6,70 @@
 #include "../../../include/QueueEnum.h"
 #include "../../../include/XApiC.h"
 
-void* __stdcall CXApiImpl::OnRespone(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
+void* __stdcall CXApiImpl::OnResponse(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	if (pApi2 == nullptr)
 		return nullptr;
 
 	CXApiImpl* pThisClass = (CXApiImpl*)pApi2;
-	return pThisClass->_OnRespone(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+	return pThisClass->_OnResponse(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 }
 
-void* CXApiImpl::_OnRespone(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
+void* CXApiImpl::_OnResponse(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	if (nullptr == m_pSpi)
 		return nullptr;
 
-	ResponeType rt = (ResponeType)type;
+	ResponseType rt = (ResponseType)type;
 	switch (rt)
 	{
-	case ResponeType_OnConnectionStatus:
+	case ResponseType_OnConnectionStatus:
 		m_pSpi->OnConnectionStatus(this, (ConnectionStatus)(char)double1, (RspUserLoginField*)ptr1, size1);
 		break;
-	case ResponeType_OnRtnError:
+	case ResponseType_OnRtnError:
 		m_pSpi->OnRtnError(this, (ErrorField*)ptr1);
 		break;
-	case ResponeType_OnRtnDepthMarketData:
+	case ResponseType_OnRtnDepthMarketData:
 		m_pSpi->OnRtnDepthMarketDataN(this, (DepthMarketDataNField*)ptr1);
 		break;
-	case ResponeType_OnRspQryInstrument:
+	case ResponseType_OnRspQryInstrument:
 		m_pSpi->OnRspQryInstrument(this, (InstrumentField*)ptr1, size1, double1 != 0);
 		break;
-	case ResponeType_OnRspQryTradingAccount:
+	case ResponseType_OnRspQryTradingAccount:
 		m_pSpi->OnRspQryTradingAccount(this, (AccountField*)ptr1, size1, double1 != 0);
 		break;
-	case ResponeType_OnRspQryInvestorPosition:
+	case ResponseType_OnRspQryInvestorPosition:
 		m_pSpi->OnRspQryInvestorPosition(this, (PositionField*)ptr1, size1, double1 != 0);
 		break;
-	case ResponeType_OnRspQrySettlementInfo:
+	case ResponseType_OnRspQrySettlementInfo:
 		m_pSpi->OnRspQrySettlementInfo(this, (SettlementInfoField*)ptr1, size1, double1 != 0);
 		break;
 
-	case ResponeType_OnRtnOrder:
+	case ResponseType_OnRtnOrder:
 		m_pSpi->OnRtnOrder(this, (OrderField*)ptr1);
 		break;
-	case ResponeType_OnRtnTrade:
+	case ResponseType_OnRtnTrade:
 		m_pSpi->OnRtnTrade(this, (TradeField*)ptr1);
 		break;
 
-	case ResponeType_OnRtnQuote:
+	case ResponseType_OnRtnQuote:
 		m_pSpi->OnRtnQuote(this, (QuoteField*)ptr1);
 		break;
-	case ResponeType_OnRtnQuoteRequest:
+	case ResponseType_OnRtnQuoteRequest:
 		m_pSpi->OnRtnQuoteRequest(this, (QuoteRequestField*)ptr1);
 		break;
 
-	case ResponeType_OnRspQryHistoricalTicks:
+	case ResponseType_OnRspQryHistoricalTicks:
 		m_pSpi->OnRspQryHistoricalTicks(this, (TickField*)ptr1, size1, (HistoricalDataRequestField*)ptr2, size2, double1 != 0);
 		break;
-	case ResponeType_OnRspQryHistoricalBars:
+	case ResponseType_OnRspQryHistoricalBars:
 		m_pSpi->OnRspQryHistoricalBars(this, (BarField*)ptr1, size1, (HistoricalDataRequestField*)ptr2, size2, double1 != 0);
 		break;
 
-	case ResponeType_OnRspQryInvestor:
+	case ResponseType_OnRspQryInvestor:
 		m_pSpi->OnRspQryInvestor(this, (InvestorField*)ptr1, size1, double1 != 0);
 		break;
-	case ResponeType_OnFilterSubscribe:
+	case ResponseType_OnFilterSubscribe:
 		return (void*)m_pSpi->OnFilterSubscribe(this, (ExchangeType)(char)double1, (int)size1, (int)size1, (int)size3, (char*)ptr1);
 	default:
 		break;
@@ -135,7 +135,7 @@ const char* CXApiImpl::GetLastError()
 void CXApiImpl::Connect(const char* szPath, ServerInfoField* pServerInfo, UserInfoField* pUserInfo, int count)
 {
 	m_pApi = X_Create(m_pFun);
-	X_Register(m_pFun, m_pApi, (fnOnRespone)OnRespone, this);
+	X_Register(m_pFun, m_pApi, (fnOnResponse)OnResponse, this);
 	X_Connect(m_pFun, m_pApi, szPath, pServerInfo, pUserInfo, count);
 }
 
