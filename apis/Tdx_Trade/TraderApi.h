@@ -112,7 +112,7 @@ public:
 	void RemoveUser(CSingleUser* pUser);
 
 private:
-	virtual void OnResponse(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	virtual void OnResponse(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
 
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
@@ -140,7 +140,7 @@ private:
 	int _ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);*/
 	
 	int _Subscribe(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int OnRespone_Subscribe(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnResponse_Subscribe(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
 
 
 	//检查是否出错

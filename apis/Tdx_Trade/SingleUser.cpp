@@ -103,7 +103,7 @@ void CSingleUser::ReqQryTrade()
 	m_pApi->ReqQuery(&query);
 }
 
-int CSingleUser::OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqQryOrder(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	ReqQueryData_STRUCT* pQuery = (ReqQueryData_STRUCT*)pRespone->pContent;
 
@@ -367,7 +367,7 @@ void TradeList2TradeMap(list<TradeField*> &tradeList, unordered_map<string, Trad
 	}
 }
 
-int CSingleUser::OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqQryTrade(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	ReqQueryData_STRUCT* pQuery = (ReqQueryData_STRUCT*)pRespone->pContent;
 
@@ -607,7 +607,7 @@ void CSingleUser::CompareTradeListAndEmit(list<TradeField*> &oldList, list<Trade
 }
 
 
-int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqUserLogin(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	if (pRespone->pErr)
 	{
@@ -629,7 +629,7 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 	
 	// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
 	GDLB_STRUCT** ppRS = nullptr;
-	CharTable2Login(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2Login(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, nullptr);
 
 	int count = GetCountStructs((void**)ppRS);
 
@@ -652,7 +652,7 @@ int CSingleUser::OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pR
 	return 0;
 }
 
-int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqQryInvestor(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	if (pRespone->pErr)
 	{
@@ -689,7 +689,7 @@ int CSingleUser::OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* 
 	return 0;
 }
 
-int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqQryTradingAccount(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	if (pRespone->pErr)
 	{
@@ -733,7 +733,7 @@ int CSingleUser::OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_ST
 	return 0;
 }
 
-int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqQryInvestorPosition(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	if (pRespone->pErr)
 	{
@@ -765,7 +765,7 @@ int CSingleUser::OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_
 	return 0;
 }
 
-int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqOrderInsert(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	Order_STRUCT* pTdxOrder = (Order_STRUCT*)pRespone->pContent;
 	OrderField* pOrder = (OrderField*)pRespone->pUserData_Public2;
@@ -831,7 +831,7 @@ int CSingleUser::OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* 
 	return 0;
 }
 
-int CSingleUser::OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CSingleUser::OnResponse_ReqOrderAction(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	WTLB_STRUCT* pTdxOrder = (WTLB_STRUCT*)pRespone->pContent;
 	OrderField* pOrder = (OrderField*)pRespone->pUserData_Public2;

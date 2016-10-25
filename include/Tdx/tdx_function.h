@@ -72,11 +72,11 @@ TDXAPI_API int GetCountStructs(void** ppResults);
 TDXAPI_API void DeleteStructs(void*** pppStructs);
 //////////////////////////////////////////////////////////////////////////
 // 股东列表处理，用于授权部分
-TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
-
-TDXAPI_API void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
-
-TDXAPI_API void DeleteRequestRespone(RequestRespone_STRUCT* pRespone);
+TDXAPI_API void CharTable2GDLB(FieldInfo_STRUCT** ppFieldInfos_1122, char** ppTable, GDLB_STRUCT*** pppResults, void* Client);
+// 由于部分券商股东列表中没有资金账号，只能从登录信息中另外获取
+TDXAPI_API void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos_1122, char** ppTable, GDLB_STRUCT*** pppResults, void* Client, FieldInfo_STRUCT** ppFieldInfos_148);
+// 删除请求和响应，进行内存释放
+TDXAPI_API void DeleteRequestRespone(RequestResponse_STRUCT* pRespone);
 
 
 

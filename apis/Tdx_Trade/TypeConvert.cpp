@@ -57,6 +57,7 @@ int ZTSM_str_2_int(char* pIn)
 }
 
 // 报价方式转，这是根据字符串的特点进行分类
+// TODO:报价方式还有申购，等待后期处理
 int BJFS_str_2_int(char* pIn)
 {
 	char* pX1 = strstr(pIn, "限");

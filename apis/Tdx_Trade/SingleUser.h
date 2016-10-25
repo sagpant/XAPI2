@@ -28,16 +28,16 @@ public:
 	void ReqQryOrder();
 	void ReqQryTrade();
 
-	int OnRespone_ReqQryOrder(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int OnRespone_ReqQryTrade(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnResponse_ReqQryOrder(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
+	int OnResponse_ReqQryTrade(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
 
-	int OnRespone_ReqUserLogin(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int OnRespone_ReqQryInvestor(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int OnRespone_ReqQryTradingAccount(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int OnRespone_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnResponse_ReqUserLogin(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
+	int OnResponse_ReqQryInvestor(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
+	int OnResponse_ReqQryTradingAccount(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
+	int OnResponse_ReqQryInvestorPosition(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
 
-	int OnRespone_ReqOrderInsert(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
-	int OnRespone_ReqOrderAction(CTdxApi* pApi, RequestRespone_STRUCT* pRespone);
+	int OnResponse_ReqOrderInsert(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
+	int OnResponse_ReqOrderAction(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
 
 private:
 	void CompareTradeMapAndEmit(unordered_map<string, TradeField*> &oldMap, unordered_map<string, TradeField*> &newMap);

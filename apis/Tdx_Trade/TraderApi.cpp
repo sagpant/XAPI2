@@ -100,7 +100,7 @@ void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double
 	m_msgQueue_Test->Input_Copy(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 }
 
-void CTraderApi::OnResponse(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+void CTraderApi::OnResponse(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	if (pRespone == nullptr)
 		return;
@@ -124,34 +124,34 @@ void CTraderApi::OnResponse(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
 	switch (pRespone->requestType)
 	{
 	case 0:
-		pUser->OnRespone_ReqUserLogin(pApi, pRespone);
+		pUser->OnResponse_ReqUserLogin(pApi, pRespone);
 		break;
 	case REQUEST_WT:
 	case REQUEST_ETF_SGSH:
 	case REQUEST_ZGHS:
 	case REQUEST_WT_QQ:
-		pUser->OnRespone_ReqOrderInsert(pApi, pRespone);
+		pUser->OnResponse_ReqOrderInsert(pApi, pRespone);
 		break;
 	case REQUEST_CD:
-		pUser->OnRespone_ReqOrderAction(pApi, pRespone);
+		pUser->OnResponse_ReqOrderAction(pApi, pRespone);
 		break;
 	case REQUEST_HQ:
-		OnRespone_Subscribe(pApi, pRespone);
+		OnResponse_Subscribe(pApi, pRespone);
 		break;
 	case REQUEST_GDLB:
-		pUser->OnRespone_ReqQryInvestor(pApi, pRespone);
+		pUser->OnResponse_ReqQryInvestor(pApi, pRespone);
 		break;
 	case REQUEST_DRWT:
-		pUser->OnRespone_ReqQryOrder(pApi, pRespone);
+		pUser->OnResponse_ReqQryOrder(pApi, pRespone);
 		break;
 	case REQUEST_DRCJ:
-		pUser->OnRespone_ReqQryTrade(pApi, pRespone);
+		pUser->OnResponse_ReqQryTrade(pApi, pRespone);
 		break;
 	case REQUEST_ZJYE:
-		pUser->OnRespone_ReqQryTradingAccount(pApi, pRespone);
+		pUser->OnResponse_ReqQryTradingAccount(pApi, pRespone);
 		break;
 	case REQUEST_GFLB:
-		pUser->OnRespone_ReqQryInvestorPosition(pApi, pRespone);
+		pUser->OnResponse_ReqQryInvestorPosition(pApi, pRespone);
 		break;
 	default:
 		break;
@@ -338,7 +338,7 @@ int CTraderApi::_ReqQuery(char type, void* pApi1, void* pApi2, double double1, d
 	ReqQueryData_STRUCT* pQuery = (ReqQueryData_STRUCT*)ptr1;
 
 	CSingleUser* pUser = Fill_UserID_Client(pQuery->KHH, &pQuery->Client);
-	RequestRespone_STRUCT* pRequest = m_pApi->MakeQueryData(pQuery);
+	RequestResponse_STRUCT* pRequest = m_pApi->MakeQueryData(pQuery);
 	pRequest->Client = pQuery->Client;
 	pRequest->pUserData_Public = pUser;
 	strcpy(pRequest->khh,pQuery->KHH);
@@ -549,7 +549,7 @@ int CTraderApi::_ReqOrderInsert(char type, void* pApi1, void* pApi2, double doub
 		// 主要是账号定位问题
 		CSingleUser* pUser = Fill_UserID_Client(order.KHH, &order.Client);
 
-		RequestRespone_STRUCT* pRequest = m_pApi->MakeOrder(&order);
+		RequestResponse_STRUCT* pRequest = m_pApi->MakeOrder(&order);
 		pRequest->pUserData_Public = pUser;
 		pRequest->pUserData_Public2 = ppOrders[i];
 		m_pApi->SendRequest(pRequest);
@@ -622,7 +622,7 @@ int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double doub
 	{
 		CSingleUser* pUser = Fill_UserID_Client(ppTdxOrders[i]->KHH, &ppTdxOrders[i]->Client);
 
-		RequestRespone_STRUCT* pRequest = m_pApi->MakeCancelOrder(ppTdxOrders[i]);
+		RequestResponse_STRUCT* pRequest = m_pApi->MakeCancelOrder(ppTdxOrders[i]);
 		pRequest->pUserData_Public = pUser;
 		pRequest->pUserData_Public2 = ppOrders[i];
 		m_pApi->SendRequest(pRequest);
@@ -647,14 +647,14 @@ int CTraderApi::_Subscribe(char type, void* pApi1, void* pApi2, double double1, 
 	strcpy(query.ZQDM, (char*)ptr1);
 	query.requestType = REQUEST_HQ;
 	CSingleUser* pUser = Fill_UserID_Client(query.KHH, &query.Client);
-	RequestRespone_STRUCT* pRequest = m_pApi->MakeQueryData(&query);
+	RequestResponse_STRUCT* pRequest = m_pApi->MakeQueryData(&query);
 	pRequest->pUserData_Public = pUser;
 	m_pApi->SendRequest(pRequest);
 
 	return 0;
 }
 
-int CTraderApi::OnRespone_Subscribe(CTdxApi* pApi, RequestRespone_STRUCT* pRespone)
+int CTraderApi::OnResponse_Subscribe(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	HQ_STRUCT** ppRS = nullptr;
 	CharTable2HQ(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);

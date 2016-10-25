@@ -31,7 +31,7 @@ struct Error_STRUCT
 // 响应，有两种类型
 // 一个请求只返回一行数据
 // 一个请求返回多行数据
-struct RequestRespone_STRUCT
+struct RequestResponse_STRUCT
 {
 	//请求类型
 	int	requestType;
@@ -126,9 +126,23 @@ struct GDLB_STRUCT
 	char RZRQBS[32];	// 281_融资融券标识
 	char YMTZH[32];	// 5925_一码通账号
 	char BLXX[32];	// 1213_保留信息
+	char JB[32];	// 1233_句柄
 
 	int ZHLB_;		// 125_帐号类别
 	int RZRQBS_;	// 281_融资融券标识
+
+	void* Client;	// 多账号
+};
+
+// 为了处理银河证券没有资金账号，只有句柄的问题
+// 149和101都会返回资金账号，但149不一定会出现
+struct REQ148_STRUCT
+{
+	char CPZH[32];	// 120_产品账号
+	char ZHLB[32];	// 125_帐号类别
+	char FJYZHBZ[32];	// 1224_非交易帐号标志
+	char RZRQBS[32];	// 281_融资融券标识
+	char BLXX[32];	// 1213_保留信息
 
 	void* Client;	// 多账号
 };
@@ -157,6 +171,7 @@ struct WTLB_STRUCT
 	char ZTSM[32];  // 147_状态说明
 	char DJZJ[32];  // 161_冻结资金
 	char BLXX[32];	// 1213_保留信息
+	char JB[32];	// 1233_句柄
 
 	//char WTJE[32];  // 148_委托金额
 	//char CJJE[32];	// 154_成交金额
@@ -243,6 +258,7 @@ struct GFLB_STRUCT
 	char JYSDM[32]; // 100_交易所代码
 	char JYSMC[32];  // 101_交易所名称
 	char BLXX[32];	// 1213_保留信息
+	char JB[32];	// 1233_句柄
 
 	int ZQSL_;
 	int KMSL_;

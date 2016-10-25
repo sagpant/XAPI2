@@ -99,8 +99,10 @@ ID一样，中文名可能不一样
 #define FIELD_BLXX			1213	//	1213_保留信息
 #define FIELD_JCFXBZ		1223	//	1223_检查风险标志
 #define FIELD_BZ_1217		1217	//	1217_备注	感觉是给当成备兑用了
+#define FIELD_FJYZHBZ		1224	//	1224_非交易帐号标志
 #define FIELD_CS			1227	//	1227_参数
 #define FIELD_XSYS			1231	//	1231_显示颜色
+#define FIELD_JB			1233	//	1233_句柄
 
 #define FIELD_KHQZ			5250	// 5250_客户群组
 #define FIELD_KHYYB			5251	// 5251_客户营业部
