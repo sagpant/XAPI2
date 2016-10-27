@@ -19,10 +19,10 @@ classdef XAPI < handle
             obj.api.SetServerInfo('ExtInfoChar128','D:\new_gjzq_v6\');
             obj.api.SetServerInfo('Address','D:\new_gjzq_v6\Login.lua');
 
-            obj.api.SetUserInfo('UserID','050000005908');
-            obj.api.SetUserInfo('Password','488323');
-            obj.api.SetUserInfo('UserID','31244679');
-            obj.api.SetUserInfo('Password','279130');
+            obj.api.SetUserInfo('UserID','123456');
+            obj.api.SetUserInfo('Password','123');
+            obj.api.SetUserInfo('UserID','123456');
+            obj.api.SetUserInfo('Password','123');
             
             obj.api.Connect();
         end

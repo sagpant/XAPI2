@@ -82,9 +82,15 @@ public:
 
 	virtual void OnRspQryInstrument(CXApi* pApi, InstrumentField* pInstrument, int size1, bool bIsLast){};
 	virtual void OnRspQryTradingAccount(CXApi* pApi, AccountField* pAccount, int size1, bool bIsLast){};
-	virtual void OnRspQryInvestorPosition(CXApi* pApi, PositionField* pPosition, int size1, bool bIsLast){};
+	virtual void OnRspQryInvestorPosition(CXApi* pApi, PositionField* pPosition, int size1, bool bIsLast)
+	{
+		printf("%s,%s\r\n", pPosition->InstrumentName, pPosition->InstrumentID);
+	}
 	virtual void OnRspQrySettlementInfo(CXApi* pApi, SettlementInfoField* pSettlementInfo, int size1, bool bIsLast){};
 	virtual void OnRspQryInvestor(CXApi* pApi, InvestorField* pInvestor, int size1, bool bIsLast){};
+	
+	
+	
 	virtual void OnRtnOrder(CXApi* pApi, OrderField* pOrder)
 	{
 		printf("%d,%s\r\n", pOrder->RawErrorID,pOrder->Text);
@@ -125,7 +131,7 @@ public:
 	int count;
 };
 
-int main(int argc, char* argv[])
+int main_123(int argc, char* argv[])
 {
 	CXSpiImpl* p = new CXSpiImpl();
 #if defined WINDOWS || _WIN32
@@ -304,11 +310,11 @@ int main_4(int argc, char* argv[])
 	return 0;
 }
 
-int main_555(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
 	CXSpiImpl* p = new CXSpiImpl();
 #if defined WINDOWS || _WIN32
-	char DLLPath1[250] = "Tdx_Trade\\Tdx_Trade_x86.dll";
+	char DLLPath1[250] = "C:\\Program Files\\SmartQuant Ltd\\OpenQuant 2014\\XAPI\\x86\\Tdx\\Tdx_Trade_x86.dl";
 #else
 	char DLLPath1[250] = "libQuantBox_CTP_Quote.so";
 #endif
