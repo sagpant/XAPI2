@@ -321,14 +321,18 @@ namespace XAPI
 
         static void test_Tdx_Main(string[] args)
         {
-            api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\Tdx\x86\QuantBox_Tdx_Trade.dll");
+            api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\Tdx\Tdx_Trade_x86.dll");
 
-            api.Server.BrokerID = "";
-            api.Server.Address = @"D:\new_hbzq_qq\Login.lua";
-            api.Server.ExtInfoChar128 = @"D:\new_hbzq_qq\";
 
-            api.User.UserID = "05000000000";
-            api.User.Password = "123456";
+            api.Server.Address = @"D:\tc_yhzq_v6\Login.lua";
+            api.Server.ExtInfoChar128 = @"D:\tc_yhzq_v6\";
+            api.User.UserID = "16206";
+            api.User.Password = "198450";
+
+            api.Server.Address = @"D:\new_gjzq_v6\Login.lua";
+            api.Server.ExtInfoChar128 = @"D:\new_gjzq_v6\";
+            api.User.UserID = "31244679";
+            api.User.Password = "400323";
 
             api.OnConnectionStatus = OnConnectionStatus;
             api.OnRtnDepthMarketData = OnRtnDepthMarketData;
@@ -336,13 +340,18 @@ namespace XAPI
             api.Connect();
 
             Console.ReadKey();
+            Console.WriteLine("回车后开始查持仓");
+            Console.ReadKey();
+
+            ReqQueryField query = new ReqQueryField();
+            query.Int32ID = -1;
+            api.ReqQuery(QueryType.ReqQryInvestorPosition, ref query);
+
+            // api.Dispose();
 
             Console.ReadKey();
 
-            api.Dispose();
-
-            Console.ReadKey();
-
+            Console.WriteLine("回车后退出");
             Console.ReadKey();
         }
 

@@ -29,6 +29,9 @@ void* CXApiImpl::_OnResponse(char type, void* pApi1, void* pApi2, double double1
 	case ResponseType_OnRtnError:
 		m_pSpi->OnRtnError(this, (ErrorField*)ptr1);
 		break;
+	case ResponseType_OnLog:
+		m_pSpi->OnLog(this, (LogField*)ptr1);
+		break;
 	case ResponseType_OnRtnDepthMarketData:
 		m_pSpi->OnRtnDepthMarketDataN(this, (DepthMarketDataNField*)ptr1);
 		break;
@@ -45,16 +48,26 @@ void* CXApiImpl::_OnResponse(char type, void* pApi1, void* pApi2, double double1
 		m_pSpi->OnRspQrySettlementInfo(this, (SettlementInfoField*)ptr1, size1, double1 != 0);
 		break;
 
+	case ResponseType_OnRspQryOrder:
+		m_pSpi->OnRspQryOrder(this, (OrderField*)ptr1, size1, double1 != 0);
+		break;
+	case ResponseType_OnRspQryTrade:
+		m_pSpi->OnRspQryTrade(this, (TradeField*)ptr1, size1, double1 != 0);
+		break;
+	case ResponseType_OnRspQryQuote:
+		m_pSpi->OnRspQryQuote(this, (QuoteField*)ptr1, size1, double1 != 0);
+		break;
+
 	case ResponseType_OnRtnOrder:
 		m_pSpi->OnRtnOrder(this, (OrderField*)ptr1);
 		break;
 	case ResponseType_OnRtnTrade:
 		m_pSpi->OnRtnTrade(this, (TradeField*)ptr1);
 		break;
-
 	case ResponseType_OnRtnQuote:
 		m_pSpi->OnRtnQuote(this, (QuoteField*)ptr1);
 		break;
+
 	case ResponseType_OnRtnQuoteRequest:
 		m_pSpi->OnRtnQuoteRequest(this, (QuoteRequestField*)ptr1);
 		break;
@@ -65,10 +78,10 @@ void* CXApiImpl::_OnResponse(char type, void* pApi1, void* pApi2, double double1
 	case ResponseType_OnRspQryHistoricalBars:
 		m_pSpi->OnRspQryHistoricalBars(this, (BarField*)ptr1, size1, (HistoricalDataRequestField*)ptr2, size2, double1 != 0);
 		break;
-
 	case ResponseType_OnRspQryInvestor:
 		m_pSpi->OnRspQryInvestor(this, (InvestorField*)ptr1, size1, double1 != 0);
 		break;
+
 	case ResponseType_OnFilterSubscribe:
 		return (void*)m_pSpi->OnFilterSubscribe(this, (ExchangeType)(char)double1, (int)size1, (int)size1, (int)size3, (char*)ptr1);
 	default:
