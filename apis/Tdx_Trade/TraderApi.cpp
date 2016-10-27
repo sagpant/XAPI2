@@ -280,6 +280,8 @@ void CTraderApi::ReqQuery(QueryType type, ReqQueryField* pQuery)
 	sprintf_s(query.ZZRQ, "%d", pQuery->DateEnd);
 	query.bAll = pQuery->Int32ID == -1;
 
+	//printf("===%d,%d", pQuery->Int32ID, query.bAll);
+
 	switch (type)
 	{
 	case QueryType_ReqQryInstrument:
@@ -352,6 +354,14 @@ int CTraderApi::_ReqQuery(char type, void* pApi1, void* pApi2, double double1, d
 
 CTraderApi::CTraderApi(void)
 {
+	// 弹出这个只是为了在Python这类的平台中调试，以后可能要关闭
+	//AllocConsole();
+	//freopen("CON", "r", stdin);
+	//freopen("CON", "w", stdout);
+	//freopen("CON", "w", stderr);
+	//::DeleteMenu(GetSystemMenu(GetConsoleWindow(), FALSE), SC_CLOSE, MF_BYCOMMAND);
+	//printf("===**********************===");
+
 	m_pIDGenerator = nullptr;
 	m_pApi = nullptr;
 	m_lRequestID = 0;

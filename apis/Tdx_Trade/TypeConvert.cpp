@@ -692,7 +692,7 @@ void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** 
 				strcpy_s(ppResults[i]->AskSize2, t);
 				break;
 			case FIELD_ASK_SIZE_3:
-				strcpy_s(ppResults[i]->AskSize2, t);
+				strcpy_s(ppResults[i]->AskSize3, t);
 				break;
 			case FIELD_ASK_SIZE_4:
 				strcpy_s(ppResults[i]->AskSize4, t);

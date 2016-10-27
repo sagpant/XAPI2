@@ -594,6 +594,9 @@ void String2GDLB2(FieldInfo_STRUCT** ppFieldInfos, char* szString, GDLB_STRUCT**
 
 		for (int j = 0; j < header_count; ++j)
 		{
+			if (pCurr == nullptr)
+				break;
+
 			*pCurr = 0;
 			char* t = pLast;
 
@@ -687,6 +690,10 @@ void String_148(FieldInfo_STRUCT** ppFieldInfos, char* szString, REQ148_STRUCT**
 
 		for (int j = 0; j < header_count; ++j)
 		{
+			// 国金，取出来的一条记录没有4个，只有3个
+			if (pCurr == nullptr)
+				break;
+
 			*pCurr = 0;
 			char* t = pLast;
 
