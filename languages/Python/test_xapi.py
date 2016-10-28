@@ -141,6 +141,11 @@ if __name__ == '__main__':
         if x == "q":
             break
 
-        _menu.get(int(x), usage)(api)
+        try:
+            i = int(x)
+        except:
+            continue
+
+        _menu.get(i, usage)(api)
 
     api.disconnect()
