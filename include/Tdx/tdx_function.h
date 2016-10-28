@@ -68,7 +68,7 @@ TDXAPI_API void DeleteErrors(Error_STRUCT** pErrs, int count);
 TDXAPI_API int GetCountErrors(Error_STRUCT** pErrs);
 //////////////////////////////////////////////////////////////////////////
 TDXAPI_API int GetCountStructs(void** ppResults);
-
+// 删除，注意，也存在Debug与Release的问题，所以在别的dll中生成的内存最好也在别的地方删
 TDXAPI_API void DeleteStructs(void*** pppStructs);
 //////////////////////////////////////////////////////////////////////////
 // 股东列表处理，用于授权部分
