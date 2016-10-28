@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from .XEnum import *
+from XEnum import *
 
 RequestType = enum_k(
     0,

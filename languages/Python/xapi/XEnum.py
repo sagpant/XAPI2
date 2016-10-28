@@ -3,11 +3,26 @@
 
 from ctypes import *
 
+#
+# # 根据位置自动完成数字
+# def enum(start, *sequential, **named):
+#     enums = dict(zip(sequential, range(start, start+len(sequential))), **named)
+#     reverse = dict((value, key) for key, value in enums.iteritems())
+#     enums['reverse_mapping'] = reverse
+#     return type('Enum', (c_char,), enums)
+#
+#
+# # 支持指定数字
+# def enum2(**enums):
+#     reverse = dict((value, key) for key, value in enums.iteritems())
+#     enums['reverse_mapping'] = reverse
+#     return type('Enum', (c_char,), enums)
+
 
 class EnumBase(type):
     def __init__(self, name, base, fields):
         super(EnumBase, self).__init__(name, base, fields)
-        self.__mapping = dict((v, k) for k, v in fields.items())
+        self.__mapping = dict((v, k) for k, v in fields.iteritems())
 
     def __getitem__(self, val):
         return self.__mapping[val]
