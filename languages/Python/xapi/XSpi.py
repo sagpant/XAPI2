@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pydevd
-from XStruct import *
+from .XStruct import *
 
 
 class XSpi(object):
@@ -12,37 +12,37 @@ class XSpi(object):
     def OnConnectionStatus(self, status, pUserLogin, size1):
         print(u'OnConnectionStatus={0}'.format(ConnectionStatus[status]))
         if size1 > 0:
-            print(unicode(pUserLogin))
+            print(pUserLogin)
 
     def OnRtnError(self, pError):
-        print(unicode(pError))
+        print(pError)
 
     def OnLog(self, pLog):
-        print(unicode(pLog))
+        print(pLog)
 
     def OnRspQryInvestorPosition(self, pPosition, size1, bIsLast):
         if size1 > 0:
-            print(unicode(pPosition))
+            print(pPosition)
 
     def OnRspQryOrder(self, pOrder, size1, bIsLast):
         if size1 > 0:
-            print(unicode(pOrder))
+            print(pOrder)
 
     def OnRspQryInvestor(self, pInvestor, size1, bIsLast):
         if size1 > 0:
-            print(unicode(pInvestor))
+            print(pInvestor)
 
     def OnRspQryTradingAccount(self, pAccount, size1, bIsLast):
         if size1 > 0:
-            print(unicode(pAccount))
+            print(pAccount)
 
     def OnRtnOrder(self, pOrder):
-        print(unicode(pOrder))
+        print(pOrder)
 
     def OnRtnDepthMarketData(self, ptr1, size1):
         # 这是从交易接口拿到的行情
         obj = cast(ptr1, POINTER(DepthMarketDataNField)).contents
-        print(unicode(obj))
+        print(obj)
 
         # 打印N档行情
         for i in range(obj.get_ticks_count()):

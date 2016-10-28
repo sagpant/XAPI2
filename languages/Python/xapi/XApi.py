@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from XQueueEnum import *
-from XSpi import *
+from .XQueueEnum import *
+from .XSpi import *
 
 
 # function
@@ -48,6 +48,8 @@ class XApi(object):
         func.restype = c_void_p
         func.argtypes = [c_char_p]
         self._lib = func(lib_path)
+        if self._lib == None:
+            return False
         func = self._cdll_api.X_GetFunction
         func.restype = c_void_p
         func.argtypes = [c_void_p, c_char_p]
@@ -65,21 +67,22 @@ class XApi(object):
         func = self._cdll_api.X_GetApiTypes
         func.restype = c_char
         func.argtypes = [c_void_p]
-        return func(self._fun)
+        ret = func(self._fun)
+        return ret
 
     def get_api_version(self):
         func = self._cdll_api.X_GetApiVersion
         func.restype = c_char_p
         func.argtypes = [c_void_p]
         ptr = func(self._fun)
-        return ptr
+        return ptr.decode('GBK')
 
     def get_api_name(self):
         func = self._cdll_api.X_GetApiName
         func.restype = c_char_p
         func.argtypes = [c_void_p]
         ptr = func(self._fun)
-        return ptr
+        return ptr.decode('GBK')
 
     def register_spi(self, spi):
         self._spi = spi
@@ -98,7 +101,7 @@ class XApi(object):
         func = self._cdll_api.X_Connect
         func.restype = None
         func.argtypes = [c_void_p, c_void_p, c_char_p, POINTER(ServerInfoField), POINTER(UserInfoField), c_int]
-        func(self._fun, self._api, '', byref(self.ServerInfo), byref(self.UserInfo), 1)
+        func(self._fun, self._api, b'', byref(self.ServerInfo), byref(self.UserInfo), 1)
 
     def disconnect(self):
         func = self._cdll_api.X_Disconnect
@@ -119,7 +122,10 @@ class XApi(object):
         func = self._cdll_api.X_ReqQuery
         func.restype = None
         func.argtypes = [c_void_p, c_void_p, c_char, POINTER(ReqQueryField)]
-        func(self._fun, self._api, chr(query_type), byref(query))
+        # c_char(query_type) python3中可用
+        # c_char(chr(query_type)) python2中可用
+        # query_type是int
+        func(self._fun, self._api, c_char(b'%c' % query_type), byref(query))
 
     def send_order(self, order, in_out_orderid, count):
         func = self._cdll_api.X_SendOrder
@@ -155,7 +161,7 @@ class XApi(object):
                                                                       ptr1, size1, ptr2, size2, ptr3, size3)
 
     def _on_default(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
-        print u"功能还没实现:%d" % ord(response_type)
+        print(u"功能还没实现:%d" % ord(response_type))
 
     def _OnConnectionStatus(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
         if size1 > 0:
@@ -165,14 +171,12 @@ class XApi(object):
         self._spi.OnConnectionStatus(int(double1), obj, size1)
 
     def _OnRtnError(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
-        # 不可能出现size1 == 0时返回的数据有效
         if size1 <= 0:
             return
         obj = cast(ptr1, POINTER(ErrorField)).contents
         self._spi.OnRtnError(obj)
 
     def _OnLog(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
-        # 不可能出现size1 == 0时返回的数据有效
         if size1 <= 0:
             return
         obj = cast(ptr1, POINTER(LogField)).contents
@@ -200,7 +204,6 @@ class XApi(object):
         self._spi.OnRspQryInvestor(obj, size1, bool(double1))
 
     def _OnRtnOrder(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
-        # 不可能出现size1 == 0时返回的数据有效
         if size1 <= 0:
             return
         obj = cast(ptr1, POINTER(OrderField)).contents
