@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from XDataType import *
-from XEnum import *
+import ctypes
 import pydevd
+from .XDataType import *
+from .XEnum import *
 
 # 定义枚举类型在C结接体中的类型
 _BusinessType = c_char
@@ -23,6 +24,23 @@ _IdCardType = c_char
 _ExchangeType = c_char
 _TradingPhaseType = c_char
 _InstLifePhaseType = c_char
+
+import sys
+
+# 转码工具，输入u，输出根据版本变化
+def to_str(s):
+    if isinstance(u'0', str):
+        # py3
+        # 但在PyCharm中的控制台中还是显示乱码
+        return s
+    else:
+        # py2
+        # DOS中需要设置成GBK
+        # 但PyCharm Debug中需要设置成UTF-8才能看
+        # print sys.stdin.encoding
+        return s.encode(sys.stdin.encoding)
+        #return s.encode('UTF-8')
+        #return s.encode('GBK')
 
 
 class ReqQueryField(Structure):
@@ -85,16 +103,24 @@ class PositionField(Structure):
         ("Business", _BusinessType),
     ]
 
+    def get_instrument_id(self):
+        return self.InstrumentID.decode('GBK')
+
+    def get_exchange_id(self):
+        return self.ExchangeID.decode('GBK')
+
     def get_instrument_name(self):
         return self.InstrumentName.decode('GBK')
 
     def __str__(self):
-        return u'[InstrumentID={0};ExchangeID={1};HedgeFlag={2};' \
-               u'Side={3};Position={4};TodayPosition={5};HistoryPosition={6}]'\
-            .format(self.InstrumentID, self.ExchangeID,
-                    HedgeFlagType[ord(self.HedgeFlag)],
-                    PositionSide[ord(self.Side)],
-                    self.Position, self.TodayPosition, self.HistoryPosition)
+        return to_str(
+            u'[InstrumentID={0};ExchangeID={1};HedgeFlag={2};'
+            u'Side={3};Position={4};TodayPosition={5};HistoryPosition={6}]'
+                .format(self.get_instrument_id(), self.get_exchange_id(),
+                        HedgeFlagType[ord(self.HedgeFlag)],
+                        PositionSide[ord(self.Side)],
+                        self.Position, self.TodayPosition, self.HistoryPosition)
+        )
 
 
 class QuoteField(Structure):
@@ -178,26 +204,43 @@ class OrderField(Structure):
         ("Business", _BusinessType),
     ]
 
+    def get_instrument_id(self):
+        return self.InstrumentID.decode('GBK')
+
+    def get_exchange_id(self):
+        return self.ExchangeID.decode('GBK')
+
+    def get_local_id(self):
+        return self.LocalID.decode('GBK')
+
+    def get_id(self):
+        return self.ID.decode('GBK')
+
+    def get_order_id(self):
+        return self.OrderID.decode('GBK')
+
     def get_text(self):
         return self.Text.decode('GBK')
 
     def __str__(self):
-        return u'[InstrumentID={0};ExchangeID={1};Side={2};Qty={3};LeavesQty={4};Price={5};' \
-               u'OpenClose={6};HedgeFlag={7};LocalID={8};ID={9};OrderID={10};' \
-               u'Date={11};Time={12};Type={13};TimeInForce={14};Status={15};ExecType={16};' \
-               u'XErrorID={17};RawErrorID={18};Text={19}]'\
-            .format(self.InstrumentID, self.ExchangeID, OrderSide[ord(self.Side)],
-                    self.Qty, self.LeavesQty, self.Price,
-                    OpenCloseType[ord(self.OpenClose)],
-                    HedgeFlagType[ord(self.HedgeFlag)],
-                    self.LocalID, self.ID, self.OrderID, self.Date, self.Time,
-                    OrderType[ord(self.Type)],
-                    TimeInForce[ord(self.TimeInForce)],
-                    OrderStatus[ord(self.Status)],
-                    ExecType[ord(self.ExecType)],
-                    self.XErrorID, self.RawErrorID, self.get_text())
+        return to_str(
+            u'[InstrumentID={0};ExchangeID={1};Side={2};Qty={3};LeavesQty={4};Price={5};'
+            u'OpenClose={6};HedgeFlag={7};LocalID={8};ID={9};OrderID={10};'
+            u'Date={11};Time={12};Type={13};TimeInForce={14};Status={15};ExecType={16};'
+            u'XErrorID={17};RawErrorID={18};Text={19}]'
+                .format(self.get_instrument_id(), self.get_exchange_id(), OrderSide[ord(self.Side)],
+                        self.Qty, self.LeavesQty, self.Price,
+                        OpenCloseType[ord(self.OpenClose)],
+                        HedgeFlagType[ord(self.HedgeFlag)],
+                        self.get_local_id(), self.get_id(), self.get_order_id(), self.Date, self.Time,
+                        OrderType[ord(self.Type)],
+                        TimeInForce[ord(self.TimeInForce)],
+                        OrderStatus[ord(self.Status)],
+                        ExecType[ord(self.ExecType)],
+                        self.XErrorID, self.RawErrorID, self.get_text())
+        )
 
-
+# 这个比较特殊，只是为了传一个结构体字符串
 class OrderIDTypeField(Structure):
     _pack_ = 1
     _fields_ = [
@@ -282,10 +325,14 @@ class ErrorField(Structure):
     def get_text(self):
         return self.Text.decode('GBK')
 
+    def get_source(self):
+        return self.Source.decode('GBK')
+
     def __str__(self):
-        # pydevd.settrace(suspend=True, trace_only_current_thread=True)
-        return u'[XErrorID={0};RawErrorID={1};Text={2};Source={3}]'\
-            .format(self.XErrorID, self.RawErrorID, self.get_text(), self.Source)
+        return to_str(
+            u'[XErrorID={0};RawErrorID={1};Text={2};Source={3}]'
+                .format(self.XErrorID, self.RawErrorID, self.get_text(), self.get_source())
+        )
 
 
 class LogField(Structure):
@@ -299,8 +346,9 @@ class LogField(Structure):
         return self.Message.decode('GBK')
 
     def __str__(self):
-        return u'[Level={0};Message={1}]'\
-            .format(LogLevel[ord(self.Level)], self.get_message())
+        return to_str(u'[Level={0};Message={1}]'
+                      .format(LogLevel[ord(self.Level)], self.get_message())
+                      )
 
 
 class RspUserLoginField(Structure):
@@ -319,6 +367,9 @@ class RspUserLoginField(Structure):
         ("Lang", Char32Type),
     ]
 
+    def get_session_id(self):
+        return self.SessionID.decode('GBK')
+
     def get_investor_name(self):
         return self.InvestorName.decode('GBK')
 
@@ -326,9 +377,12 @@ class RspUserLoginField(Structure):
         return self.Text.decode('GBK')
 
     def __str__(self):
-        return u'[TradingDay={0};LoginTime={1};SessionID={2};InvestorName={3};XErrorID={4};RawErrorID={5};Text={6}]'\
-            .format(self.TradingDay, self.LoginTime, self.SessionID, self.get_investor_name(),
-                    self.XErrorID, self.RawErrorID, self.get_text())
+        # 没有枚举，全转成b比较合适
+        return to_str(
+            u'[TradingDay={0};LoginTime={1};SessionID={2};InvestorName={3};XErrorID={4};RawErrorID={5};Text={6}]'
+                .format(self.TradingDay, self.LoginTime, self.get_session_id(), self.get_investor_name(),
+                        self.XErrorID, self.RawErrorID, self.get_text())
+        )
 
 
 # 深度行情N档
@@ -387,21 +441,26 @@ class DepthMarketDataNField(Structure):
         ("BidCount", SizeType)
     ]
 
+    def get_symbol(self):
+        return self.Symbol.decode('GBK')
+
     def get_bid_count(self):
         return self.BidCount
 
     def get_ticks_count(self):
         count = (self.Size - sizeof(DepthMarketDataNField))/sizeof(DepthField)
-        return count
+        return int(count)
 
     def get_ask_count(self):
-        return self.get_ticks_count() - self.BidCount
+        return int(self.get_ticks_count() - self.BidCount)
 
     def __str__(self):
         #pydevd.settrace(suspend=True, trace_only_current_thread=True)
-        return u'[TradingDay={0};ActionDay={1};UpdateTime={2};UpdateMillisec={3};Symbol={4};BidCount={5};AskCount={6}]'\
-            .format(self.TradingDay, self.ActionDay, self.UpdateTime, self.UpdateMillisec, self.Symbol,
-                    self.BidCount, self.get_ask_count())
+        return to_str(
+            u'[TradingDay={0};ActionDay={1};UpdateTime={2};UpdateMillisec={3};Symbol={4};BidCount={5};AskCount={6}]'
+                .format(self.TradingDay, self.ActionDay, self.UpdateTime, self.UpdateMillisec, self.get_symbol(),
+                        self.BidCount, self.get_ask_count())
+        )
 
 
 class DepthField(Structure):
@@ -413,8 +472,11 @@ class DepthField(Structure):
     ]
 
     def __str__(self):
-        return u'[Price={0};Size={1};Count={2}]'\
-            .format(self.Price, self.Size, self.Count)
+        return to_str(
+            u'[Price={0};Size={1};Count={2}]'
+                .format(self.Price, self.Size, self.Count)
+        )
+
 
 # 合约
 class InstrumentField(Structure):
@@ -494,9 +556,17 @@ class AccountField(Structure):
         ("CashIn", MoneyType),
     ]
 
+    def get_account_id(self):
+        return self.AccountID.decode('GBK')
+
+    def get_currency_id(self):
+        return self.CurrencyID.decode('GBK')
+
     def __str__(self):
-        return u'[AccountID={0};CurrencyID={1};Balance={2};Available={3}]'\
-            .format(self.AccountID, self.CurrencyID, self.Balance, self.Available)
+        return to_str(
+            u'[AccountID={0};CurrencyID={1};Balance={2};Available={3}]'
+                .format(self.get_account_id(), self.get_currency_id(), self.Balance, self.Available)
+        )
 
 
 # 发给做市商的询价请求
@@ -546,9 +616,21 @@ class InvestorField(Structure):
         ("InvestorName", PartyNameType),
     ]
 
+    def get_investor_id(self):
+        return self.InvestorID.decode('GBK')
+
+    def get_broker_id(self):
+        return self.BrokerID.decode('GBK')
+
+    def get_identified_card_no(self):
+        return self.IdentifiedCardNo.decode('GBK')
+
     def get_investor_name(self):
         return self.InvestorName.decode('GBK')
 
     def __str__(self):
-        return u'[BrokerID={0};InvestorID={1};IdentifiedCardType={2},IdentifiedCardNo={3};InvestorName={4}]'\
-            .format(self.BrokerID, self.InvestorID, IdCardType[ord(self.IdentifiedCardType)], self.IdentifiedCardNo, self.get_investor_name())
+        return to_str(
+            u'[BrokerID={0};InvestorID={1};IdentifiedCardType={2},IdentifiedCardNo={3};InvestorName={4}]'
+                .format(self.get_broker_id(), self.get_investor_id(), IdCardType[ord(self.IdentifiedCardType)],
+                        self.get_identified_card_no(), self.get_investor_name())
+        )
