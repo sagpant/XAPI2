@@ -31,6 +31,32 @@ void CreateID(char* pOut, char* pDate, char*pZh, char* wtbh)
 	}
 }
 
+// 解决创建与删除不在同一dll的问题
+void DeleteStructs(void*** pppStructs, CMsgQueue* pQueue)
+{
+	if (pppStructs == nullptr)
+		return;
+
+	if (*pppStructs == nullptr)
+		return;
+
+	void** ppStructs = *pppStructs;
+
+	int i = 0;
+	while (ppStructs[i] != 0)
+	{
+		delete[] ppStructs[i];
+		//pQueue->delete_block(ppStructs[i]);
+		ppStructs[i] = nullptr;
+
+		++i;
+	}
+
+	delete[] ppStructs;
+	//pQueue->delete_block(ppStructs);
+	*pppStructs = nullptr;
+}
+
 CSingleUser::CSingleUser(CTraderApi* pApi)
 {
 	m_pApi = pApi;
@@ -119,7 +145,7 @@ int CSingleUser::OnResponse_ReqQryOrder(CTdxApi* pApi, RequestResponse_STRUCT* p
 	}
 
 	WTLB_STRUCT** ppRS = nullptr;
-	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewOrderList.clear();
@@ -313,7 +339,7 @@ int CSingleUser::OnResponse_ReqQryOrder(CTdxApi* pApi, RequestResponse_STRUCT* p
 		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
 	}
 
-	DeleteStructs((void***)&ppRS);
+	DeleteStructs((void***)&ppRS, m_msgQueue);
 
 	return 0;
 }
@@ -383,7 +409,7 @@ int CSingleUser::OnResponse_ReqQryTrade(CTdxApi* pApi, RequestResponse_STRUCT* p
 	}
 
 	CJLB_STRUCT** ppRS = nullptr;
-	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewTradeList.clear();
@@ -535,7 +561,7 @@ int CSingleUser::OnResponse_ReqQryTrade(CTdxApi* pApi, RequestResponse_STRUCT* p
 	m_OldTradeList = m_NewTradeList;
 	m_NewTradeList.clear();
 
-	DeleteStructs((void***)&ppRS);
+	DeleteStructs((void***)&ppRS, m_msgQueue);
 
 	return 0;
 }
@@ -647,6 +673,7 @@ int CSingleUser::OnResponse_ReqUserLogin(CTdxApi* pApi, RequestResponse_STRUCT* 
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
 
+	// 这是由TdxApi.dll创建的
 	DeleteStructs((void***)&ppRS);
 
 	return 0;
@@ -684,7 +711,7 @@ int CSingleUser::OnResponse_ReqQryInvestor(CTdxApi* pApi, RequestResponse_STRUCT
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
 
-	DeleteStructs((void***)&ppRS);
+	DeleteStructs((void***)&ppRS, m_msgQueue);
 
 	return 0;
 }
@@ -709,7 +736,7 @@ int CSingleUser::OnResponse_ReqQryTradingAccount(CTdxApi* pApi, RequestResponse_
 	//}
 
 	ZJYE_STRUCT** ppRS = nullptr;
-	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
 
 	int count = GetCountStructs((void**)ppRS);
 	for (int i = 0; i < count; ++i)
@@ -728,7 +755,7 @@ int CSingleUser::OnResponse_ReqQryTradingAccount(CTdxApi* pApi, RequestResponse_
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQryTradingAccount, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
 	}
 
-	DeleteStructs((void***)&ppRS);
+	DeleteStructs((void***)&ppRS, m_msgQueue);
 
 	return 0;
 }
@@ -747,7 +774,7 @@ int CSingleUser::OnResponse_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespons
 	}
 
 	GFLB_STRUCT** ppRS = nullptr;
-	CharTable2GFLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2GFLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
 
 	int count = GetCountStructs((void**)ppRS);
 	for (int i = 0; i < count; ++i)
@@ -760,7 +787,7 @@ int CSingleUser::OnResponse_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespons
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
 	}
 
-	DeleteStructs((void***)&ppRS);
+	DeleteStructs((void***)&ppRS, m_msgQueue);
 
 	return 0;
 }

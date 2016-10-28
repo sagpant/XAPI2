@@ -599,6 +599,10 @@ char* CTraderApi::ReqOrderAction(OrderIDType* szId, int count, char* pzsRtn)
 			unordered_map<string, WTLB_STRUCT*>::iterator it = m_id_api_order.find(szId[i]);
 			if (it != m_id_api_order.end())
 				ppTdxOrders[i] = it->second;
+			else
+			{
+				// 找不到对应的ID，需要处理地，不然会报错
+			}
 		}
 
 		if (i < count - 1)
@@ -630,6 +634,9 @@ int CTraderApi::_ReqOrderAction(char type, void* pApi1, void* pApi2, double doub
 
 	for (int i = 0; i < count; ++i)
 	{
+		if (ppTdxOrders[i] == nullptr)
+			continue;
+
 		CSingleUser* pUser = Fill_UserID_Client(ppTdxOrders[i]->KHH, &ppTdxOrders[i]->Client);
 
 		RequestResponse_STRUCT* pRequest = m_pApi->MakeCancelOrder(ppTdxOrders[i]);
@@ -667,7 +674,7 @@ int CTraderApi::_Subscribe(char type, void* pApi1, void* pApi2, double double1, 
 int CTraderApi::OnResponse_Subscribe(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	HQ_STRUCT** ppRS = nullptr;
-	CharTable2HQ(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
+	CharTable2HQ(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
 
 	int count = GetCountStructs((void**)ppRS);
 

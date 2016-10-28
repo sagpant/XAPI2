@@ -11,6 +11,8 @@
 
 #include "../../include/toolkit.h"
 
+#include "../../common/Queue/MsgQueue.h"
+
 //////////////////////////////////////////////////////////////////////////
 int ZTSM_str_2_int(char* pIn)
 {
@@ -174,7 +176,7 @@ int WTLB_str_2_int(char* pIn)
 
 //////////////////////////////////////////////////////////////////////////
 
-void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults, void* Client)
+void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT*** pppResults, void* Client, CMsgQueue* pQueue)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -336,7 +338,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 	}
 }
 
-void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT*** pppResults, void* Client)
+void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT*** pppResults, void* Client, CMsgQueue* pQueue)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -450,7 +452,7 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 	}
 }
 
-void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT*** pppResults, void* Client)
+void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT*** pppResults, void* Client, CMsgQueue* pQueue)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -536,7 +538,7 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 	}
 }
 
-void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT*** pppResults, void* Client)
+void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT*** pppResults, void* Client, CMsgQueue* pQueue)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -597,7 +599,7 @@ void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT
 	}
 }
 
-void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults, void* Client)
+void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults, void* Client, CMsgQueue* pQueue)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
