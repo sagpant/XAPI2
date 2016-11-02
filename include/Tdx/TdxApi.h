@@ -51,6 +51,7 @@ public:
 	virtual void Version() = 0;
 
 	virtual int GetTableHeader(void* client, int request, FieldInfo_STRUCT*** pppResults) = 0;
+	virtual GDLB_STRUCT** GetGDLB(void* client) = 0;
 
 	virtual int SendRequest(IN RequestResponse_STRUCT* pRequest) = 0;
 
