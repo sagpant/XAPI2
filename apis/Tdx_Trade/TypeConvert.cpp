@@ -1093,6 +1093,7 @@ void GFLB_2_PositionField(GFLB_STRUCT* pIn, PositionField* pOut)
 	strcpy(pOut->InstrumentID, pIn->ZQDM);
 	strcpy(pOut->Symbol, pIn->ZQDM);
 	strcpy(pOut->AccountID, pIn->GDDM);
+	strcpy(pOut->ExchangeID, pIn->JYSDM);
 
 	// 还有一些信息没有
 }

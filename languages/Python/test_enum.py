@@ -28,10 +28,10 @@ def enum_k(start, *sequential, **named):
     return EnumBase('Enum', (), enums)
 
 Numbers = enum_kv(ONE=1, TWO=2, THREE='three')
-print Numbers.TWO
-print Numbers[Numbers.ONE]
-print Numbers[2]
-print Numbers['three']
+print(Numbers.TWO)
+print(Numbers[Numbers.ONE])
+print(Numbers[2])
+print(Numbers['three'])
 
 
 ConnectionStatus = enum_k(
@@ -52,8 +52,8 @@ ConnectionStatus = enum_k(
     'Unknown',
 )
 
-print ConnectionStatus
-print type(ConnectionStatus)
-print ConnectionStatus.Authorized
-print ConnectionStatus[ConnectionStatus.Authorized]
-print type(ConnectionStatus.Authorized)
+print(ConnectionStatus)
+print(type(ConnectionStatus))
+print(ConnectionStatus.Authorized)
+print(ConnectionStatus[ConnectionStatus.Authorized])
+print(type(ConnectionStatus.Authorized))

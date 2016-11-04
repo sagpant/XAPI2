@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import ctypes
-import pydevd
+
+# import pydevd
 from .XDataType import *
 from .XEnum import *
 

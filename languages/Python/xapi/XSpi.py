@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import pydevd
+# import pydevd
 from .XStruct import *
 
 

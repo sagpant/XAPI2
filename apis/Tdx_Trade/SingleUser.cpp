@@ -711,7 +711,7 @@ int CSingleUser::OnResponse_ReqQryInvestor(CTdxApi* pApi, RequestResponse_STRUCT
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 	}
 
-	DeleteStructs((void***)&ppRS, m_msgQueue);
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }

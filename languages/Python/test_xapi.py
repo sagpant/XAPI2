@@ -110,15 +110,16 @@ if __name__ == '__main__':
     # 本来想输入D:\new_gjzq_v6\ 但由于\会转义后面的'，导致出错
     api.ServerInfo.ExtInfoChar128 = br'D:\new_gjzq_v6' + b'\\'
     api.ServerInfo.Address = br'D:\new_gjzq_v6\Login.lua'
-    api.UserInfo.UserID = b'123'
-    api.UserInfo.Password = b'456'
+    api.UserInfo.UserID = b'18931244679'
+    api.UserInfo.Password = b'123'
+    api.UserInfo.ExtInfoChar64 = b''  # 华泰需要输入通迅密码
 
     # CTP接入示例
-    # api.init(r'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll')
-    # api.ServerInfo.Address = r'tcp://yhzx-front1.yhqh.com:41213'
+    # api.init(br'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll')
+    # api.ServerInfo.Address = br'tcp://yhzx-front1.yhqh.com:41213'
     # api.ServerInfo.BrokerID = 4040
-    # api.UserInfo.UserID = '111111'
-    # api.UserInfo.Password = '22222'
+    # api.UserInfo.UserID = b'111111'
+    # api.UserInfo.Password = b'22222'
 
     print(ord(api.get_api_type()))
     print(api.get_api_name())
@@ -141,6 +142,7 @@ if __name__ == '__main__':
         if x == "q":
             break
 
+        # 处理输入是回车或别符号的可能性
         try:
             i = int(x)
         except:
