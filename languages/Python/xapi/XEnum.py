@@ -187,6 +187,11 @@ ExecType = enum_k(
     'PendingReplace',
     'Replace',
     'ReplaceReject',
+    'TradeCorrect',
+    'TradeCancel',
+    'OrderStatus',
+    'PendingNew',
+    'ClearingHold',
 )
 
 """

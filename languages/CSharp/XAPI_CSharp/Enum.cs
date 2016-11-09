@@ -209,6 +209,11 @@ namespace XAPI
         PendingReplace,
         Replace,
         ReplaceReject,
+        TradeCorrect,
+        TradeCancel,
+        OrderStatus,
+        PendingNew,
+        ClearingHold,
     };
 
     [ComVisible(false)]

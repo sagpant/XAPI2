@@ -23,7 +23,10 @@ using namespace std;
 #pragma warning(push)
 #pragma warning(disable:4251)
 
-class DLL_PUBLIC CMsgQueue
+// 在队列dll中是导出函数
+// 在api dll中不是导出函数，是导入函数
+
+class QUEUE_DLL_PUBLIC CMsgQueue
 {
 public:
 	bool m_bDirectOutput;

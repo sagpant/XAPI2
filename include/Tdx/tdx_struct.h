@@ -94,6 +94,9 @@ struct CancelOrder_STRUCT
 	char WTBH[32];	// 146_委托编号
 	char JYSDM[32];	// 100_交易所代码
 	char XWDM[32];	// 173_席位代码
+	// 港股需要委托价格
+	char WTJG[32];	// 145_委托价格
+	char WTSL[32];  // 144_委托数量
 
 	void* Client;	// 多账号
 };

@@ -781,6 +781,7 @@ void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUC
 	}
 
 	// 香港账号可能没有开头的一些数字，只能自己识别
+	// 光证国际，登录时的资金帐号，查询股东列表，两个数据完全不一样，再查一次会覆盖
 	if (!bFind)
 	{
 		int count = 1;
@@ -796,7 +797,6 @@ void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUC
 
 		while (p != nullptr)
 		{
-			//CharTable2GDLB3(ppTable[i * COL_EACH_ROW + 0], pppResults, Client);
 			char * flag = ppTable[i * COL_EACH_ROW + 10];
 			if (strcmp(flag, "资金帐号") == 0)
 			{

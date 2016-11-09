@@ -15,7 +15,7 @@
 
 
 
-class DLL_PUBLIC CRemoteQueue :
+class QUEUE_DLL_PUBLIC CRemoteQueue :
 	public CMsgQueue
 {
 public:

@@ -27,5 +27,10 @@
 
 #endif
 
+#ifdef BUILDING_QUEUE_DLL
+#define QUEUE_DLL_PUBLIC DLL_PUBLIC
+#else
+#define QUEUE_DLL_PUBLIC
+#endif
 
 #endif // _CROSS_PLATFORM_H_

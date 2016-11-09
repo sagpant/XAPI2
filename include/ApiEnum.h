@@ -146,6 +146,11 @@ enum ExecType : char
 	ExecType_PendingReplace,
 	ExecType_Replace,
 	ExecType_ReplaceReject,
+	ExecType_TradeCorrect,
+	ExecType_TradeCancel,
+	ExecType_OrderStatus,
+	ExecType_PendingNew,
+	ExecType_ClearingHold,
 };
 
 ///开平标志，没有提供专门的平昨，而是用Close
