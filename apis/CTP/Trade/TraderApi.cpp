@@ -510,10 +510,6 @@ void CTraderApi::OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField
 		if (m_ServerInfo.PrivateTopicResumeType > ResumeType::ResumeType_Restart
 			&& (m_ServerInfo.PrivateTopicResumeType<ResumeType::ResumeType_Undefined))
 		{
-			//ReqQryOrder();
-			////ReqQryTrade();
-			//ReqQryQuote();
-
 			ReqQueryField body = { 0 };
 			ReqQuery(QueryType::QueryType_ReqQryOrder, &body);
 			ReqQuery(QueryType::QueryType_ReqQryQuote, &body);
@@ -589,6 +585,10 @@ void CTraderApi::Clear()
 	for (unordered_map<string, PositionField*>::iterator it = m_id_platform_position.begin(); it != m_id_platform_position.end(); ++it)
 		delete it->second;
 	m_id_platform_position.clear();
+
+	for (unordered_map<string, CThostFtdcInvestorPositionField*>::iterator it = m_id_api_position.begin(); it != m_id_api_position.end(); ++it)
+		delete it->second;
+	m_id_api_position.clear();
 }
 
 char* CTraderApi::ReqOrderInsert(
@@ -1269,17 +1269,6 @@ void CTraderApi::OnErrRtnQuoteAction(CThostFtdcQuoteActionField *pQuoteAction, C
 	}
 }
 
-//void CTraderApi::ReqQryTradingAccount()
-//{
-//	CThostFtdcQryTradingAccountField* pBody = (CThostFtdcQryTradingAccountField*)m_msgQueue_Query->new_block(sizeof(CThostFtdcQryTradingAccountField));
-//
-//	strncpy(pBody->BrokerID, m_RspUserLogin.BrokerID,sizeof(TThostFtdcBrokerIDType));
-//	strncpy(pBody->InvestorID, m_RspUserLogin.UserID,sizeof(TThostFtdcInvestorIDType));
-//
-//	m_msgQueue_Query->Input_NoCopy(RequestType::E_QryTradingAccountField, m_msgQueue_Query, this, 0, 0,
-//		pBody, sizeof(CThostFtdcQryTradingAccountField), nullptr, 0, nullptr, 0);
-//}
-
 int CTraderApi::_ReqQryTradingAccount(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	CThostFtdcQryTradingAccountField body = { 0 };
@@ -1316,17 +1305,6 @@ void CTraderApi::OnRspQryTradingAccount(CThostFtdcTradingAccountField *pTradingA
 	}
 }
 
-//void CTraderApi::ReqQryInvestorPosition(const string& szInstrumentId, const string& szExchange)
-//{
-//	CThostFtdcQryInvestorPositionField* pBody = (CThostFtdcQryInvestorPositionField*)m_msgQueue_Query->new_block(sizeof(CThostFtdcQryInvestorPositionField));
-//
-//	strncpy(pBody->BrokerID, m_RspUserLogin.BrokerID,sizeof(TThostFtdcBrokerIDType));
-//	strncpy(pBody->InvestorID, m_RspUserLogin.UserID,sizeof(TThostFtdcInvestorIDType));
-//	strncpy(pBody->InstrumentID,szInstrumentId.c_str(),sizeof(TThostFtdcInstrumentIDType));
-//
-//	m_msgQueue_Query->Input_NoCopy(RequestType::E_QryInvestorPositionField, m_msgQueue_Query, this, 0, 0,
-//		pBody, sizeof(CThostFtdcQryInvestorPositionField), nullptr, 0, nullptr, 0);
-//}
 
 int CTraderApi::_ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
@@ -1339,6 +1317,49 @@ int CTraderApi::_ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, dou
 	strncpy(body.InstrumentID, pQuery->InstrumentID, sizeof(TThostFtdcInstrumentIDType));
 
 	return m_pApi->ReqQryInvestorPosition(&body, ++m_lRequestID);
+}
+
+void CTraderApi::GetPositionID(CThostFtdcInvestorPositionField *pInvestorPosition, PositionIDType positionId)
+{
+
+#ifdef HAS_ExchangeID
+	//PositionIDType positionId = { 0 };
+	sprintf(positionId, "%s:%s:%d:%c:%c",
+		pInvestorPosition->ExchangeID,
+		pInvestorPosition->InstrumentID,
+		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
+		pInvestorPosition->HedgeFlag,
+		pInvestorPosition->PositionDate);
+#else
+	//PositionIDType positionId = { 0 };
+	sprintf(positionId, "%s:%s:%d:%c:%c",
+		"",
+		pInvestorPosition->InstrumentID,
+		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
+		pInvestorPosition->HedgeFlag,
+		pInvestorPosition->PositionDate);
+
+#endif // HAS_ExchangeID
+}
+
+void CTraderApi::GetPositionID2(CThostFtdcInvestorPositionField *pInvestorPosition, PositionIDType positionId)
+{
+#ifdef HAS_ExchangeID
+	//PositionIDType positionId = { 0 };
+	sprintf(positionId, "%s:%s:%d:%c",
+		pInvestorPosition->ExchangeID,
+		pInvestorPosition->InstrumentID,
+		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
+		pInvestorPosition->HedgeFlag);
+#else
+	//PositionIDType positionId = { 0 };
+	sprintf(positionId, "%s:%s:%d:%c",
+		"",
+		pInvestorPosition->InstrumentID,
+		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
+		pInvestorPosition->HedgeFlag);
+
+#endif // HAS_ExchangeID
 }
 
 // 如果是请求查询，就将数据全部返回
@@ -1356,53 +1377,83 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			return;
 		}
 
-#ifdef HAS_ExchangeID
+		// 得到持仓ID
 		PositionIDType positionId = { 0 };
-		sprintf(positionId, "%s:%s:%d:%c",
-			pInvestorPosition->ExchangeID,
-			pInvestorPosition->InstrumentID,
-			TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-			pInvestorPosition->HedgeFlag);
-#else
-		PositionIDType positionId = { 0 };
-		sprintf(positionId, "%s:%s:%d:%c",
-			"",
-			pInvestorPosition->InstrumentID,
-			TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-			pInvestorPosition->HedgeFlag);
+		GetPositionID(pInvestorPosition, positionId);
 
-#endif // HAS_ExchangeID
-
-		PositionField* pField = nullptr;
-		unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId);
-		if (it == m_id_platform_position.end())
+		// 先将原始的持仓都记录下来
 		{
-			pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
-
-			//sprintf(pField->Symbol, "%s.%s", pInvestorPosition->InstrumentID, pInvestorPosition->ExchangeID);
-			strcpy(pField->Symbol, pInvestorPosition->InstrumentID);
-			strcpy(pField->InstrumentID, pInvestorPosition->InstrumentID);
-
-#ifdef HAS_ExchangeID
-			strcpy(pField->ExchangeID, pInvestorPosition->ExchangeID);
-#endif // HAS_ExchangeID
-
-			pField->Side = TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection);
-			pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag);
-
-			m_id_platform_position.insert(pair<string, PositionField*>(positionId, pField));
-		}
-		else
-		{
-			pField = it->second;
+			unordered_map<string, CThostFtdcInvestorPositionField*>::iterator it = m_id_api_position.find(positionId);
+			if (it == m_id_api_position.end())
+			{
+				// 找不到此订单，表示是新单
+				CThostFtdcInvestorPositionField* pField = (CThostFtdcInvestorPositionField*)m_msgQueue->new_block(sizeof(CThostFtdcInvestorPositionField));
+				memcpy(pField, pInvestorPosition, sizeof(CThostFtdcInvestorPositionField));
+				m_id_api_position.insert(pair<string, CThostFtdcInvestorPositionField*>(positionId, pField));
+			}
+			else
+			{
+				// 找到了订单
+				// 需要再复制保存最后一次的状态，还是只要第一次的用于撤单即可？记下，这样最后好比较
+				CThostFtdcInvestorPositionField* pField = it->second;
+				memcpy(pField, pInvestorPosition, sizeof(CThostFtdcInvestorPositionField));
+			}
 		}
 
-		pField->Position = pInvestorPosition->Position;
-		pField->TodayPosition = pInvestorPosition->TodayPosition;
-		pField->HistoryPosition = pInvestorPosition->Position - pInvestorPosition->TodayPosition;
+		// 等最后一条记录，开始遍历列表，将所有持仓整理后推送出去
+		// 为何要这样做？因为今昨是两条记录，但我记在一个里面
+		if (!bIsLast)
+			return;
 
-		// 等数据收集全了再遍历通知一次，为何要这样做？因为今昨是两条记录，但我记在一个里面
-		if (bIsLast)
+		// 清理一下否则可能加错
+		for (unordered_map<string, PositionField*>::iterator it = m_id_platform_position.begin(); it != m_id_platform_position.end(); ++it)
+			delete it->second;
+		m_id_platform_position.clear();
+
+		// 遍历原始的持仓，生成自己的结构体
+		for (unordered_map<string, CThostFtdcInvestorPositionField*>::iterator iter = m_id_api_position.begin(); iter != m_id_api_position.end(); iter++)
+		{
+			CThostFtdcInvestorPositionField* pField2 = iter->second;
+
+			// 得到持仓ID
+			PositionIDType positionId2 = { 0 };
+			GetPositionID2(pField2, positionId2);
+
+			// 没到找，创建
+			// 找到了，求和，修改
+			PositionField* pField = nullptr;
+			unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId);
+			if (it == m_id_platform_position.end())
+			{
+				pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
+
+				strcpy(pField->InstrumentID, pField2->InstrumentID);
+#ifdef HAS_ExchangeID
+				strcpy(pField->ExchangeID, pField2->ExchangeID);
+#endif // HAS_ExchangeID
+				sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pField->ExchangeID);
+				strcpy(pField->AccountID, pField2->InvestorID);
+
+				pField->Side = TThostFtdcPosiDirectionType_2_PositionSide(pField2->PosiDirection);
+				pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pField2->HedgeFlag);
+
+				m_id_platform_position.insert(pair<string, PositionField*>(positionId, pField));
+
+				pField->Position = pField2->Position;
+				pField->TodayPosition = pField2->TodayPosition;
+			}
+			else
+			{
+				pField = it->second;
+
+				pField->Position += pField2->Position;
+				pField->TodayPosition += pField2->TodayPosition;
+			}
+
+			pField->HistoryPosition = pField2->Position - pField2->TodayPosition;
+		}
+
+		// 将持仓通知出来
 		{
 			int cnt = 0;
 			size_t count = m_id_platform_position.size();
@@ -1593,7 +1644,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 		if (it == m_id_api_order.end())
 		{
 			// 找不到此订单，表示是新单
-			CThostFtdcOrderField* pField = new CThostFtdcOrderField();
+			CThostFtdcOrderField* pField = (CThostFtdcOrderField*)m_msgQueue->new_block(sizeof(CThostFtdcOrderField));
 			memcpy(pField, pOrder, sizeof(CThostFtdcOrderField));
 			m_id_api_order.insert(pair<string, CThostFtdcOrderField*>(orderId, pField));
 		}
@@ -1740,6 +1791,7 @@ void CTraderApi::OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsL
 				// 是否要通知接口
 			}
 
+			// 实时根据本地持仓进行计算
 			OnTrade(pField);
 		}
 	}
