@@ -1422,7 +1422,7 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			// 没到找，创建
 			// 找到了，求和，修改
 			PositionField* pField = nullptr;
-			unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId);
+			unordered_map<string, PositionField*>::iterator it = m_id_platform_position.find(positionId2);
 			if (it == m_id_platform_position.end())
 			{
 				pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
@@ -1437,7 +1437,7 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 				pField->Side = TThostFtdcPosiDirectionType_2_PositionSide(pField2->PosiDirection);
 				pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pField2->HedgeFlag);
 
-				m_id_platform_position.insert(pair<string, PositionField*>(positionId, pField));
+				m_id_platform_position.insert(pair<string, PositionField*>(positionId2, pField));
 
 				pField->Position = pField2->Position;
 				pField->TodayPosition = pField2->TodayPosition;
@@ -1792,7 +1792,7 @@ void CTraderApi::OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsL
 			}
 
 			// 实时根据本地持仓进行计算
-			OnTrade(pField);
+			//OnTrade(pField);
 		}
 	}
 	else
