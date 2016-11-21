@@ -5,6 +5,7 @@ xcopy "include\Kingstar\win32\*.*" "bin\Debug\x86\Kingstar" /Y
 xcopy "include\LTS_v2\win32\*.dll" "bin\Debug\x86\LTS_v2" /Y
 xcopy "include\UFX\win32\*.*" "bin\Debug\x86\UFX" /Y
 xcopy "include\Wind\win32\*.dll" "bin\Debug\x86\Wind" /Y
+xcopy "include\Sgit\win32\*.dll" "bin\Debug\x86\Sgit" /Y
 
 REM 32位发布版
 xcopy "include\Tdx\win32\*.*" "bin\Release\x86\Tdx" /Y
@@ -13,6 +14,7 @@ xcopy "include\Kingstar\win32\*.*" "bin\Release\x86\Kingstar" /Y
 xcopy "include\LTS_v2\win32\*.dll" "bin\Release\x86\LTS_v2" /Y
 xcopy "include\UFX\win32\*.*" "bin\Release\x86\UFX" /Y
 xcopy "include\Wind\win32\*.dll" "bin\Release\x86\Wind" /Y
+xcopy "include\Sgit\win32\*.dll" "bin\Release\x86\Sgit" /Y
 
 REM 64位调试版
 xcopy "include\CTP\win64\*.dll" "bin\Debug64\x64\CTP" /Y

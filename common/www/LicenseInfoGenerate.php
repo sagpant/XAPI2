@@ -147,9 +147,9 @@ else
     echo "生成License失败<br/>";
 }
 
-
-
 ?>
 <p>请将License文件和Signature文件放到与dll同目录下</p>
+<p>如果你拿到的授权文件为Xxx.License和Xxx.Signature，但dll名为Xxx_x86.dll，请将两个授权名改为Xxx_x86.License和Xxx_x86.Signature。
+因为有可能授权分发者对x86与x64使用相同的授权</p>
 </body>
 </html>

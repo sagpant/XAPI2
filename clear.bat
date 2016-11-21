@@ -40,6 +40,16 @@ rd apis\Tdx_Trade\x64 /S /Q
 rd apis\TongShi_Quote\Debug /S /Q
 rd apis\TongShi_Quote\Release /S /Q
 rd apis\TongShi_Quote\x64 /S /Q
+rd apis\Sgit_Quote\Debug /S /Q
+rd apis\Sgit_Quote\Debug64 /S /Q
+rd apis\Sgit_Quote\Release /S /Q
+rd apis\Sgit_Quote\Release64 /S /Q
+rd apis\Sgit_Quote\x64 /S /Q
+rd apis\Sgit_Trade\Debug /S /Q
+rd apis\Sgit_Trade\Debug64 /S /Q
+rd apis\Sgit_Trade\Release /S /Q
+rd apis\Sgit_Trade\Release64 /S /Q
+rd apis\Sgit_Trade\x64 /S /Q
 
 rd apis\Kingstar_Quote\Release64 /S /Q
 rd apis\Kingstar_Trade\Release64 /S /Q

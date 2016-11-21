@@ -33,8 +33,10 @@ class CTraderApi :
 	enum RequestType
 	{
 		E_Init = 100,
+		E_Disconnect,
 		E_ReqAuthenticateField,
 		E_ReqUserLoginField,
+		E_UserLogoutField,
 		E_SettlementInfoConfirmField,
 
 		E_QryInvestorField,
@@ -114,12 +116,18 @@ private:
 	void Clear();
 
 	int _Init();
+	void _Disconnect(bool IsInQueue);
+	void _DisconnectInThread();
 
 	void ReqAuthenticate();
 	int _ReqAuthenticate(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	void ReqUserLogin();
 	int _ReqUserLogin(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+
+	void ReqUserLogout();
+	int _ReqUserLogout(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+
 
 	void ReqSettlementInfoConfirm();
 	int _ReqSettlementInfoConfirm(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
