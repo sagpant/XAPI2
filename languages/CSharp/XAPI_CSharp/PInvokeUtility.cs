@@ -100,9 +100,11 @@ namespace XAPI
 
         public static SettlementInfoClass GetSettlementInfoClass(IntPtr ptr)
         {
-            SettlementInfoField obj = (SettlementInfoField)Marshal.PtrToStructure(ptr, typeof(SettlementInfoField));
-
             SettlementInfoClass cls = new SettlementInfoClass();
+            if (ptr == IntPtr.Zero)
+                return cls;
+
+            SettlementInfoField obj = (SettlementInfoField)Marshal.PtrToStructure(ptr, typeof(SettlementInfoField));
 
             int size = Marshal.SizeOf(typeof (SettlementInfoField));
             IntPtr pContent = new IntPtr(ptr.ToInt64() + size);

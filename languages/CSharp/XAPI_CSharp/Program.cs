@@ -57,7 +57,7 @@ namespace XAPI
 
         static void OnRspQrySettlementInfo(object sender, ref SettlementInfoClass settlementInfo, int size1, bool bIsLast)
         {
-
+            Console.WriteLine(settlementInfo.Content);
         }
 
         static void OnRtnOrder(object sender, ref OrderField order)
@@ -119,7 +119,7 @@ namespace XAPI
 
             //for (int i = 0; i < 10000; ++i)
             {
-                test_Tdx_Main(args);
+                test_CTP_Main(args);
             }
             Console.ReadKey();
         }
@@ -243,26 +243,28 @@ namespace XAPI
 
             //api.Server.BrokerID = "1017";
             //api.Server.Address = "tcp://ctpmn1-front1.citicsf.com:51213";
-            api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86\QuantBox_CTP_Trade.dll");
+            api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Trade_x86.dll");
 
-            api.Server.BrokerID = "1017";
-            api.Server.Address = "tcp://ctpmn1-front1.citicsf.com:51205";
+            api.Server.BrokerID = "4040";
+            api.Server.Address = "tcp://180.166.103.21:51205";
             api.Server.PrivateTopicResumeType = ResumeType.Undefined;
 
-            api.User.UserID = "00000015";
-            api.User.Password = "123456";
+            api.User.UserID = "";
+            api.User.Password = "";
 
             api.OnConnectionStatus = OnConnectionStatus;
             api.OnRtnDepthMarketData = OnRtnDepthMarketData;
             api.OnRspQryInstrument = OnRspQryInstrument;
+            api.OnRspQrySettlementInfo = OnRspQrySettlementInfo;
 
             api.Connect();
-            Thread.Sleep(10 * 1000);
+            Thread.Sleep(5 * 1000);
             //api.Subscribe("IF1502", "");
             ReqQueryField query = default(ReqQueryField);
-            api.ReqQuery(QueryType.ReqQryInstrument, ref query);
+            query.DateStart = 20161124;
+            api.ReqQuery(QueryType.ReqQrySettlementInfo, ref query);
 
-            Thread.Sleep(300 * 1000);
+            Thread.Sleep(10 * 1000);
 
             api.Dispose();
 
