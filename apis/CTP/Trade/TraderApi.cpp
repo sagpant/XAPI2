@@ -1571,7 +1571,7 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			pField->TodayPosition = tmp;
 			pField->HistoryPosition = pField->HistoryPosition;
 #else
-			pField->HistoryPosition = pField2->Position - pField2->TodayPosition;
+			pField->HistoryPosition = pField->Position - pField->TodayPosition;
 #endif
 		}
 
