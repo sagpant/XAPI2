@@ -1,5 +1,5 @@
 %% 查询委托
-function tbl = ReqQryOrder(td)
+function tbl = ReqQryOrder(td,sec)
 
 SetWait(0);
 
@@ -11,7 +11,7 @@ td.SetQuery('Int32ID',-1);
 td.ReqQuery('ReqQryOrder');
 
 % 需要循环等待才行
-Wait();
+Wait(sec);
 
 % 返回
 tbl = order_table;

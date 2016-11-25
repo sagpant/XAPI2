@@ -1,11 +1,13 @@
 % 需要循环等待才行
-function Wait()
+function Wait(sec)
 
 global wait_lock;
-cnt = 10;
+global timing_lock;
+
 while isempty(wait_lock) || wait_lock==0
-    cnt = cnt - 1;
-    if cnt<0
+    d = now - timing_lock;
+    disp(datestr(d,'MM:SS.FFF'))
+    if (d>sec/86400)
         break;
     end
     

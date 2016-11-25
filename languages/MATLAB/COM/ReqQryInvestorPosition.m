@@ -1,5 +1,5 @@
 %% 查询持仓
-function tbl = ReqQryInvestorPosition(td)
+function tbl = ReqQryInvestorPosition(td, sec)
 
 SetWait(0);
 
@@ -11,7 +11,7 @@ td.SetQuery('Int32ID',-1);
 td.ReqQuery('ReqQryInvestorPosition');
 
 % 需要循环等待才行
-Wait();
+Wait(sec);
 
 % 返回
 tbl = position_table;
