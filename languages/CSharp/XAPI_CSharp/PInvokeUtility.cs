@@ -72,6 +72,7 @@ namespace XAPI
             cls.SettlementPrice = obj.SettlementPrice;
             cls.UpperLimitPrice = obj.UpperLimitPrice;
             cls.LowerLimitPrice = obj.LowerLimitPrice;
+            cls.PreClosePrice = obj.PreClosePrice;
             cls.PreSettlementPrice = obj.PreSettlementPrice;
             cls.PreOpenInterest = obj.PreOpenInterest;
             cls.TradingPhase = obj.TradingPhase;

@@ -146,7 +146,7 @@ namespace XAPI.COM
             api.OnRspQryInstrument = OnRspQryInstrument_callback;
             api.OnRspQryTradingAccount = OnRspQryTradingAccount_callback;
             api.OnRspQryInvestorPosition = OnRspQryInvestorPosition_callback;
-            //base.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
+            //api.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
 
             api.OnRspQryOrder = OnRspQryOrder_callback;
             api.OnRspQryTrade = OnRspQryTrade_callback;

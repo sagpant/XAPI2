@@ -19,6 +19,11 @@ rd apis\CTP_Trade\Debug64 /S /Q
 rd apis\CTP_Trade\Release /S /Q
 rd apis\CTP_Trade\Release64 /S /Q
 rd apis\CTP_Trade\x64 /S /Q
+rd apis\CTP_SOPT_Trade\Debug /S /Q
+rd apis\CTP_SOPT_Trade\Debug64 /S /Q
+rd apis\CTP_SOPT_Trade\Release /S /Q
+rd apis\CTP_SOPT_Trade\Release64 /S /Q
+rd apis\CTP_SOPT_Trade\x64 /S /Q
 rd apis\Kingstar_Quote\Debug /S /Q
 rd apis\Kingstar_Quote\Release /S /Q
 rd apis\Kingstar_Quote\x64 /S /Q

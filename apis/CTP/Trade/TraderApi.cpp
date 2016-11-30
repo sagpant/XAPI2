@@ -783,7 +783,7 @@ char* CTraderApi::ReqOrderInsert(
 		break;
 	}
 
-	long long nRet = 0;
+	int nRet = 0;
 	{
 		//可能报单太快，m_nMaxOrderRef还没有改变就提交了
 		lock_guard<mutex> cl(m_csOrderRef);
