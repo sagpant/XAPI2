@@ -22,6 +22,7 @@
     <ProjectGuid>{9FBB0318-E21C-4B7C-A258-98E6A3860B35}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CTP_Trade</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -76,6 +77,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\CTP</OutDir>
     <IncludePath>./;$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
