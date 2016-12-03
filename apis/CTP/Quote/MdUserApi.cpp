@@ -49,7 +49,7 @@ CMdUserApi::CMdUserApi(void)
 
 CMdUserApi::~CMdUserApi(void)
 {
-	Disconnect();
+	_Disconnect(false);
 }
 
 void CMdUserApi::QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
@@ -60,6 +60,10 @@ void CMdUserApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 	case E_Init:
 		iRet = _Init();
 		break;
+	case E_Disconnect:
+		_Disconnect(true);
+		// 不再循环
+		return;
 	case E_ReqUserLoginField:
 		iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
@@ -268,14 +272,33 @@ int CMdUserApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 
 void CMdUserApi::Disconnect()
 {
+	//_Disconnect(false);
+	_DisconnectInThread();
+}
+
+void CMdUserApi::_DisconnectInThread()
+{
+	m_msgQueue_Query->Input_NoCopy(RequestType::E_Disconnect, m_msgQueue_Query, this, 0, 0,
+		nullptr, 0, nullptr, 0, nullptr, 0);
+}
+
+void CMdUserApi::_Disconnect(bool IsInQueue)
+{
 	// 清理查询队列
-	if (m_msgQueue_Query)
+	if (IsInQueue)
 	{
-		m_msgQueue_Query->StopThread();
-		m_msgQueue_Query->Register(nullptr,nullptr);
-		m_msgQueue_Query->Clear();
-		delete m_msgQueue_Query;
-		m_msgQueue_Query = nullptr;
+
+	}
+	else
+	{
+		if (m_msgQueue_Query)
+		{
+			m_msgQueue_Query->StopThread();
+			m_msgQueue_Query->Register(nullptr, nullptr);
+			m_msgQueue_Query->Clear();
+			delete m_msgQueue_Query;
+			m_msgQueue_Query = nullptr;
+		}
 	}
 
 	if(m_pApi)

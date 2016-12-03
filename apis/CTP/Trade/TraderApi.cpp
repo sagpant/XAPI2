@@ -155,7 +155,7 @@ CTraderApi::CTraderApi(void)
 
 CTraderApi::~CTraderApi(void)
 {
-	Disconnect();
+	_Disconnect(false);
 
 #ifdef ENABLE_LICENSE
 	if (m_pLicense == nullptr)
