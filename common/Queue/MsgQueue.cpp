@@ -78,15 +78,13 @@ void CMsgQueue::StartThread()
 void CMsgQueue::StopThread()
 {
     m_bRunning = false;
-	this_thread::sleep_for(chrono::milliseconds(1));
 	m_cv.notify_all();
-	this_thread::sleep_for(chrono::milliseconds(1));
+	this_thread::sleep_for(chrono::milliseconds(10));
 	lock_guard<mutex> cl(m_mtx_del);
     if(m_hThread)
     {
-		//m_cv.notify_all();
-        m_hThread->join();
-        delete m_hThread;
+		// 这里很少有机会执行
+		m_hThread->detach();
         m_hThread = nullptr;
     }
 }
@@ -120,6 +118,16 @@ void CMsgQueue::RunInThread()
 	{
 
 	}
+	
+	// 这句加了有效果吗？
+	// 加了后可能报以下错，但不当了
+/*
+	************** Exception Text **************
+		System.Runtime.InteropServices.SEHException(0x80004005) : External component has thrown an exception.
+		at XAPI.Proxy.XRequest(Byte type, IntPtr pApi1, IntPtr pApi2, Double double1, Double double2, IntPtr ptr1, Int32 size1, IntPtr ptr2, Int32 size2, IntPtr ptr3, Int32 size3) in D : \Users\Kan\Documents\GitHub\XAPI2\languages\CSharp\XAPI_CSharp\Proxy.cs:line 79
+*/
+	//m_hThread->detach();
+
 	
 	// 清理线程
 	m_hThread = nullptr;
