@@ -45,6 +45,8 @@ CMdUserApi::CMdUserApi(void)
 	//m_msgQueue->m_bDirectOutput = true;
 
 	m_remoteQueue = nullptr;
+
+	//m_delete = false;
 }
 
 CMdUserApi::~CMdUserApi(void)
@@ -283,6 +285,11 @@ void CMdUserApi::_DisconnectInThread()
 
 void CMdUserApi::_Disconnect(bool IsInQueue)
 {
+	//if (m_delete)
+	//	return;
+
+	//m_delete = true;
+
 	// 清理查询队列
 	if (IsInQueue)
 	{

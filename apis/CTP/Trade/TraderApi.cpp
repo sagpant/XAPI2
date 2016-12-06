@@ -150,6 +150,8 @@ CTraderApi::CTraderApi(void)
 	string signatureString = m_pLicense->LoadStringFromFile(m_pLicense->m_SignaturePath);
 	m_pLicense->SetSignatureString(signatureString.c_str());
 #endif
+
+	//m_delete = false;
 }
 
 
@@ -604,6 +606,11 @@ void CTraderApi::_DisconnectInThread()
 
 void CTraderApi::_Disconnect(bool IsInQueue)
 {
+	//if (m_delete)
+	//	return;
+
+	//m_delete = true;
+
 	// 由于飞鼠一次只能登录一个账号，以前的方法连接可能没有断开，这里只能主动退出，其它的程序就不管了
 #ifdef IS_SGIT_API
 	ReqUserLogout();
@@ -1795,6 +1802,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 
 				// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
 				CThostFtdcOrderField_2_OrderField_0(orderId, pOrder, pField);
+				pField->Time = GetTime(pOrder->InsertTime);
 
 				// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
 				m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));
@@ -1810,6 +1818,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 				pField->ExecType = CThostFtdcOrderField_2_ExecType(pOrder);
 				strcpy(pField->OrderID, pOrder->OrderSysID);
 				strncpy(pField->Text, pOrder->StatusMsg, sizeof(Char256Type));
+				//pField->Time = GetTime(pOrder->InsertTime);
 			}
 
 			m_msgQueue->Input_Copy(ResponseType::ResponseType_OnRtnOrder, m_msgQueue, m_pClass, 0, 0, pField, sizeof(OrderField), nullptr, 0, nullptr, 0);
@@ -1821,6 +1830,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 
 			// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
 			CThostFtdcOrderField_2_OrderField_0(orderId, pOrder, pField);
+			pField->Time = GetTime(pOrder->InsertTime);
 
 			// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
 			//m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));

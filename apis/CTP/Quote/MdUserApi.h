@@ -77,6 +77,7 @@ private:
 	bool IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo);//不送出错消息
 
 private:
+	//bool						m_delete;
 	mutex						m_csMapInstrumentIDs;
 	mutex						m_csMapQuoteInstrumentIDs;
 
