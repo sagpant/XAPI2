@@ -1885,6 +1885,7 @@ void CTraderApi::OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsL
 	TradeField* pField = (TradeField*)m_msgQueue->new_block(sizeof(TradeField));
 	strcpy(pField->InstrumentID, pTrade->InstrumentID);
 	strcpy(pField->ExchangeID, pTrade->ExchangeID);
+	strcpy(pField->AccountID, pTrade->InvestorID);
 	pField->Side = TThostFtdcDirectionType_2_OrderSide(pTrade->Direction);
 	pField->Qty = pTrade->Volume;
 	pField->Price = pTrade->Price;
@@ -1951,6 +1952,7 @@ void CTraderApi::OnTrade(TradeField *pTrade)
 		strcpy(pField->Symbol, pTrade->InstrumentID);
 		strcpy(pField->InstrumentID, pTrade->InstrumentID);
 		strcpy(pField->ExchangeID, pTrade->ExchangeID);
+		strcpy(pField->AccountID, pTrade->AccountID);
 		pField->Side = TradeField_2_PositionSide(pTrade);
 		pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pTrade->HedgeFlag);
 
@@ -2081,6 +2083,7 @@ void CTraderApi::OnQuote(CThostFtdcQuoteField *pQuote, int nRequestID, bool bIsL
 
 				strcpy(pField->InstrumentID, pQuote->InstrumentID);
 				strcpy(pField->ExchangeID, pQuote->ExchangeID);
+				strcpy(pField->AccountID, pQuote->InvestorID);
 
 				pField->AskQty = pQuote->AskVolume;
 				pField->AskPrice = pQuote->AskPrice;
@@ -2135,6 +2138,7 @@ void CTraderApi::OnQuote(CThostFtdcQuoteField *pQuote, int nRequestID, bool bIsL
 
 				strcpy(pField->InstrumentID, pQuote->InstrumentID);
 				strcpy(pField->ExchangeID, pQuote->ExchangeID);
+				strcpy(pField->AccountID, pQuote->InvestorID);
 
 				pField->AskQty = pQuote->AskVolume;
 				pField->AskPrice = pQuote->AskPrice;
