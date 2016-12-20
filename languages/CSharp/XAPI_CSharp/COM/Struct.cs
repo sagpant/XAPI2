@@ -457,28 +457,11 @@ namespace XAPI.COM
         public string QuoteID;
     }
 
-    /// <summary>
-    /// 结算信息
-    /// </summary>
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct SettlementInfoField
-    {
-        public int Size;
-        /// <summary>
-        /// 交易日
-        /// </summary>
-        public int TradingDay;
-        ///// <summary>
-        ///// 消息正文
-        ///// </summary>
-        //[MarshalAs(UnmanagedType.ByValArray, SizeConst = 501)]
-        //public byte[] Content;
-    }
 
-    [ComVisible(false)]
-    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-    public struct SettlementInfoClass
+    [ComVisible(true)]
+    [Guid("E08904CE-0E96-48B5-9D87-F4C5ACE3E560")]
+    [ClassInterface(ClassInterfaceType.AutoDual)]
+    public class SettlementInfoClass
     {
         /// <summary>
         /// 交易日

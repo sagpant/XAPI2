@@ -9,7 +9,7 @@ td.SetLibPath('C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\Tdx\Tdx_T
 td.SetServerInfo('ExtInfoChar128','D:\new_gjzq_v6\');
 td.SetServerInfo('Address','D:\new_gjzq_v6\Login.lua');
 
-td.SetUserInfo('UserID','123');
+td.SetUserInfo('UserID','890626');
 td.SetUserInfo('Password','123');
 
 registerevent(td,{'OnConnectionStatus' @OnTdConnectionStatus});

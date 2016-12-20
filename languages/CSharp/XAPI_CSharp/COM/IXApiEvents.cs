@@ -32,16 +32,17 @@ namespace XAPI.COM
         void OnRspQryTradingAccount(XApiCom sender, AccountClass account, int size1, bool bIsLast);
         [DispId(8)]
         void OnRspQryInvestorPosition(XApiCom sender, PositionClass position, int size1, bool bIsLast);
-        //public delegate void DelegateOnRspQrySettlementInfo(object sender, SettlementInfoClass settlementInfo, int size1, bool bIsLast);
-        //public delegate void DelegateOnRspQryInvestor(object sender, InvestorField investor, int size1, bool bIsLast);
         [DispId(9)]
-        void OnRtnOrder(XApiCom sender, OrderClass order);
+        void OnRspQrySettlementInfo(object sender, SettlementInfoClass settlementInfo, int size1, bool bIsLast);
+        //public delegate void DelegateOnRspQryInvestor(object sender, InvestorField investor, int size1, bool bIsLast);
         [DispId(10)]
+        void OnRtnOrder(XApiCom sender, OrderClass order);
+        [DispId(11)]
         void OnRtnTrade(XApiCom sender, TradeClass trade);
         //public delegate void DelegateOnRtnQuote(object sender, QuoteField quote);
-        [DispId(11)]
-        void OnRspQryOrder(XApiCom sender, OrderClass order, int size1, bool bIsLast);
         [DispId(12)]
+        void OnRspQryOrder(XApiCom sender, OrderClass order, int size1, bool bIsLast);
+        [DispId(13)]
         void OnRspQryTrade(XApiCom sender, TradeClass trade, int size1, bool bIsLast);
         //public delegate void DelegateOnRspQryQuote(object sender, QuoteField quote, int size1, bool bIsLast);
 

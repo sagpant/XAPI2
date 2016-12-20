@@ -24,7 +24,8 @@ namespace XAPI.COM
     public delegate void DelegateOnRspQryTradingAccount(XApiCom sender, AccountClass account, int size1, bool bIsLast);
     [ComVisible(false)]
     public delegate void DelegateOnRspQryInvestorPosition(XApiCom sender, PositionClass position, int size1, bool bIsLast);
-    //public delegate void DelegateOnRspQrySettlementInfo(object sender, SettlementInfoClass settlementInfo, int size1, bool bIsLast);
+    [ComVisible(false)]
+    public delegate void DelegateOnRspQrySettlementInfo(object sender, SettlementInfoClass settlementInfo, int size1, bool bIsLast);
     //public delegate void DelegateOnRspQryInvestor(object sender, InvestorField investor, int size1, bool bIsLast);
     [ComVisible(false)]
     public delegate void DelegateOnRtnOrder(XApiCom sender, OrderClass order);

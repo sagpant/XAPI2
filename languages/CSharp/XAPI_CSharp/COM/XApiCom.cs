@@ -53,6 +53,7 @@ namespace XAPI.COM
         public event DelegateOnRspQryInstrument OnRspQryInstrument;
         public event DelegateOnRspQryTradingAccount OnRspQryTradingAccount;
         public event DelegateOnRspQryInvestorPosition OnRspQryInvestorPosition;
+        public event DelegateOnRspQrySettlementInfo OnRspQrySettlementInfo;
         public event DelegateOnRtnOrder OnRtnOrder;
         public event DelegateOnRtnTrade OnRtnTrade;
         public event DelegateOnRspQryOrder OnRspQryOrder;
@@ -146,7 +147,7 @@ namespace XAPI.COM
             api.OnRspQryInstrument = OnRspQryInstrument_callback;
             api.OnRspQryTradingAccount = OnRspQryTradingAccount_callback;
             api.OnRspQryInvestorPosition = OnRspQryInvestorPosition_callback;
-            //api.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
+            api.OnRspQrySettlementInfo = OnRspQrySettlementInfo_callback;
 
             api.OnRspQryOrder = OnRspQryOrder_callback;
             api.OnRspQryTrade = OnRspQryTrade_callback;
@@ -701,6 +702,36 @@ namespace XAPI.COM
                 OnRspQryInvestorPosition(this, cls, size1, bIsLast);
             }
         }
+
+        private void OnRspQrySettlementInfo_callback(object sender, [In] ref XAPI.SettlementInfoClass settlementInfo, int size1, bool bIsLast)
+        {
+            if (null == OnRspQrySettlementInfo)
+                return;
+
+            XAPI.SettlementInfoClass field = settlementInfo;
+
+            XAPI.COM.SettlementInfoClass cls = new XAPI.COM.SettlementInfoClass();
+            cls.TradingDay = field.TradingDay;
+            cls.Content = field.Content;
+
+            if (null == OnRspQrySettlementInfo)
+            {
+                QueueData qd = new QueueData();
+                qd.Type = (int)ResponseType.OnRspQrySettlementInfo;
+                qd.Type_String = Enum<XAPI.ResponseType>.ToString(ResponseType.OnRspQrySettlementInfo);
+                qd.Sender = this;
+                qd.Data1 = cls;
+                qd.Data2 = size1;
+                qd.Data3 = bIsLast;
+
+                MessageQueue.Enqueue(qd);
+            }
+            else
+            {
+                OnRspQrySettlementInfo(this, cls, size1, bIsLast);
+            }
+        }
+
 
         private void OnRspQryTradingAccount_callback(object sender, [In] ref AccountField account, int size1, bool bIsLast)
         {
