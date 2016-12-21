@@ -52,6 +52,7 @@ class CTraderApi:public CTdxSpi
 	enum RequestType
 	{
 		E_Init = 100,
+		E_Disconnect,
 		E_ReqUserLoginField,
 		E_QryInvestorField,
 		E_InputOrderField,
@@ -76,6 +77,7 @@ class CTraderApi:public CTdxSpi
 		E_QryQuoteField,
 
 		E_ReqQueryData_STRUCT,
+		E_Heartbeat,
 	};
 
 public:
@@ -108,7 +110,6 @@ public:
 
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
-	void StartQueryThread();
 	void RemoveUser(CSingleUser* pUser);
 
 private:
@@ -117,12 +118,13 @@ private:
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	
-	friend void* __stdcall Test(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	//friend void* __stdcall Test(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void TestInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	int _Init();
 	int _ReqQuery(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-
+	void _Disconnect(bool IsInQueue);
+	void _DisconnectInThread();
 
 	//登录请求
 	void ReqUserLogin();
@@ -146,7 +148,7 @@ private:
 	//检查是否出错
 	//bool IsErrorRspInfo(Error_STRUCT *pRspInfo, int nRequestID, bool bIsLast);//向消息队列输出信息
 	bool IsErrorRspInfo(const char* szSource, Error_STRUCT *pRspInfo);//不输出信息
-	void OutputQueryTime(time_t t, double db,const char* szSource);
+	//void OutputQueryTime(time_t t, double db,const char* szSource);
 
 	CSingleUser* Fill_UserID_Client(char* khh, void** Client);
 
@@ -175,9 +177,7 @@ private:
 
 
 	CMsgQueue*					m_msgQueue;				//消息队列指针
-	CMsgQueue*					m_msgQueue_Query;		//发送消息队列指针
-	CMsgQueue*					m_msgQueue_Order;		//报单消息队列指针
-	CMsgQueue*					m_msgQueue_Test;		//测试用
+	CMsgQueue*					m_msgQueue_Query;		//测试用
 
 	UserInfoField*				m_pUserInfos;
 	int							m_UserInfo_Pos;

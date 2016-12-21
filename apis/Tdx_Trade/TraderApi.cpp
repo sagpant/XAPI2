@@ -36,6 +36,10 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 	case E_Init:
 		iRet = _Init();
 		break;
+	case E_Disconnect:
+		_Disconnect(true);
+		// 不再循环
+		return;
 	case E_ReqUserLoginField:
 		iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 		break;
@@ -74,16 +78,26 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 		m_nSleep *= 4;
 		m_nSleep %= 1023;
 	}
+
+	// 将时定时查询功能放在查询队列中，这样退出就不会出问题了
+	// 由于队列中一直没有东西，所以不会再来触发这个循环，需要隔一定的时间向队列中放一个，最好放在最后
+	TestInThread(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+	if (m_msgQueue_Query->Size() == 0)
+	{
+		m_msgQueue_Query->Input_Copy(E_Heartbeat, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+		m_nSleep = 32;
+	}
+
 	this_thread::sleep_for(chrono::milliseconds(m_nSleep));
 }
 
-void* __stdcall Test(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
-{
-	// 由内部调用，不用检查是否为空
-	CTraderApi* pApi = (CTraderApi*)pApi2;
-	pApi->TestInThread(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	return nullptr;
-}
+//void* __stdcall Test(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
+//{
+//	// 由内部调用，不用检查是否为空
+//	CTraderApi* pApi = (CTraderApi*)pApi2;
+//	pApi->TestInThread(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+//	return nullptr;
+//}
 
 void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
@@ -95,9 +109,6 @@ void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double
 		pUser->CheckThenQueryOrder(_now);
 		pUser->CheckThenQueryTrade(_now);
 	}
-
-	this_thread::sleep_for(chrono::milliseconds(1000));
-	m_msgQueue_Test->Input_Copy(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 }
 
 void CTraderApi::OnResponse(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
@@ -257,12 +268,6 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 	return 0;
 }
 
-void CTraderApi::StartQueryThread()
-{
-	// 启动定时查询功能使用
-	m_msgQueue_Test->Input_Copy(ResponseType::ResponseType_OnRtnOrder, m_msgQueue_Test, this, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
-}
-
 void CTraderApi::RemoveUser(CSingleUser* pUser)
 {
 	m_UserID_User_Map.erase(pUser->m_UserID);
@@ -370,13 +375,9 @@ CTraderApi::CTraderApi(void)
 	// 自己维护两个消息队列
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
-	m_msgQueue_Test = new CMsgQueue();
 
 	m_msgQueue_Query->Register(Query,this);
 	m_msgQueue_Query->StartThread();
-
-	m_msgQueue_Test->Register(Test, this);
-	m_msgQueue_Test->StartThread();
 
 	m_pDefaultUser = nullptr;
 }
@@ -384,7 +385,7 @@ CTraderApi::CTraderApi(void)
 
 CTraderApi::~CTraderApi(void)
 {
-	Disconnect();
+	_Disconnect(false);
 }
 
 void CTraderApi::Register(void* pCallback, void* pClass)
@@ -394,19 +395,16 @@ void CTraderApi::Register(void* pCallback, void* pClass)
 		return;
 
 	m_msgQueue_Query->Register(Query,this);
-	m_msgQueue_Test->Register(Test, this);
 	m_msgQueue->Register(pCallback,this);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();
 		m_msgQueue->StartThread();
-		m_msgQueue_Test->StartThread();
 	}
 	else
 	{
 		m_msgQueue_Query->StopThread();
 		m_msgQueue->StopThread();
-		m_msgQueue_Test->StopThread();
 	}
 }
 
@@ -449,22 +447,31 @@ void CTraderApi::Connect(const string& szPath,
 
 void CTraderApi::Disconnect()
 {
-	if (m_msgQueue_Query)
-	{
-		m_msgQueue_Query->StopThread();
-		m_msgQueue_Query->Register(nullptr,nullptr);
-		m_msgQueue_Query->Clear();
-		delete m_msgQueue_Query;
-		m_msgQueue_Query = nullptr;
-	}
+	_Disconnect(false);
+}
 
-	if (m_msgQueue_Test)
+void CTraderApi::_DisconnectInThread()
+{
+	m_msgQueue_Query->Input_NoCopy(RequestType::E_Disconnect, m_msgQueue_Query, this, 0, 0,
+		nullptr, 0, nullptr, 0, nullptr, 0);
+}
+
+void CTraderApi::_Disconnect(bool IsInQueue)
+{
+	if (IsInQueue)
 	{
-		m_msgQueue_Test->StopThread();
-		m_msgQueue_Test->Register(nullptr, nullptr);
-		m_msgQueue_Test->Clear();
-		delete m_msgQueue_Test;
-		m_msgQueue_Test = nullptr;
+
+	}
+	else
+	{
+		if (m_msgQueue_Query)
+		{
+			m_msgQueue_Query->StopThread();
+			m_msgQueue_Query->Register(nullptr, nullptr);
+			m_msgQueue_Query->Clear();
+			delete m_msgQueue_Query;
+			m_msgQueue_Query = nullptr;
+		}
 	}
 
 	if(m_pApi)

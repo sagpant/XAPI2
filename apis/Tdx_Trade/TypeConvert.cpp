@@ -109,6 +109,11 @@ int BJFS_str_2_int(char* pIn)
 			{
 				return WTFS_Best_Forward;
 			}
+			char* pH = strstr(pIn, "回"); // 回购
+			if (pH)
+			{
+				return WTFS_Limit;
+			}
 		}
 
 		return WTFS_Limit;

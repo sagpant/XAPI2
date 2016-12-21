@@ -62,6 +62,8 @@ CSingleUser::CSingleUser(CTraderApi* pApi)
 	m_pApi = pApi;
 	m_pClient = nullptr;
 	memset(m_UserID, 0, sizeof(m_UserID));
+
+	m_ConnectionStatus = ConnectionStatus::ConnectionStatus_Uninitialized;
 }
 
 
@@ -84,6 +86,9 @@ void CSingleUser::OutputQueryTime(time_t t, double db, const char* szSource)
 
 void CSingleUser::CheckThenQueryOrder(time_t _now)
 {
+	if (m_ConnectionStatus != ConnectionStatus::ConnectionStatus_Done)
+		return;
+
 	if (_now > m_QueryOrderTime)
 	{
 		double _queryTime = QUERY_TIME_MAX;
@@ -96,6 +101,9 @@ void CSingleUser::CheckThenQueryOrder(time_t _now)
 
 void CSingleUser::CheckThenQueryTrade(time_t _now)
 {
+	if (m_ConnectionStatus != ConnectionStatus::ConnectionStatus_Done)
+		return;
+
 	if (_now > m_QueryTradeTime)
 	{
 		double _queryTime = QUERY_TIME_MAX;
@@ -643,14 +651,13 @@ int CSingleUser::OnResponse_ReqUserLogin(CTdxApi* pApi, RequestResponse_STRUCT* 
 		strcpy(pField->Text, pRespone->pErr->ErrInfo);
 
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, pField, sizeof(RspUserLoginField), nullptr, 0, nullptr, 0);
-
+		m_ConnectionStatus = ConnectionStatus::ConnectionStatus_Disconnected;
 		m_pApi->RemoveUser((CSingleUser*)pRespone->pUserData_Public);
 	}
 	else
 	{
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Logined, 0, nullptr, 0, nullptr, 0, nullptr, 0);
-
-		m_pApi->StartQueryThread();
+		m_ConnectionStatus = ConnectionStatus::ConnectionStatus_Logined;
 	}
 	
 	// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
@@ -671,6 +678,7 @@ int CSingleUser::OnResponse_ReqUserLogin(CTdxApi* pApi, RequestResponse_STRUCT* 
 		}
 
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+		m_ConnectionStatus = ConnectionStatus::ConnectionStatus_Done;
 	}
 
 	// 这是由TdxApi.dll创建的

@@ -798,13 +798,16 @@ void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUC
 		while (p != nullptr)
 		{
 			char * flag = ppTable[i * COL_EACH_ROW + 10];
-			if (strcmp(flag, "资金帐号") == 0)
+			if (flag)
 			{
-				ppResults[pos] = new GDLB_STRUCT();
+				if (strcmp(flag, "资金帐号") == 0)
+				{
+					ppResults[pos] = new GDLB_STRUCT();
 
-				strcpy_s(ppResults[pos]->ZJZH, ppTable[i * COL_EACH_ROW + 0]);
-				strcpy_s(ppResults[pos]->GDMC, ppTable[i * COL_EACH_ROW + 1]);
-				++pos;
+					strcpy_s(ppResults[pos]->ZJZH, ppTable[i * COL_EACH_ROW + 0]);
+					strcpy_s(ppResults[pos]->GDMC, ppTable[i * COL_EACH_ROW + 1]);
+					++pos;
+				}
 			}
 
 			++i;

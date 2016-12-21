@@ -70,5 +70,6 @@ public:
 	void*						m_pClass;
 	CMsgQueue*					m_msgQueue;
 	char						m_UserID[64];
+	ConnectionStatus			m_ConnectionStatus;
 };
 

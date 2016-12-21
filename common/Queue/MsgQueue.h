@@ -41,6 +41,10 @@ public:
 public:
 	//清空队列
 	void Clear();
+	unsigned long Size()
+	{
+		return m_queue.size();
+	}
 
 	//可以由外部发起，顺序处理队列触发回调函数
 	bool Process();
