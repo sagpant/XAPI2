@@ -1721,12 +1721,15 @@ void CTraderApi::OnRspQrySettlementInfo(CThostFtdcSettlementInfoField *pSettleme
 					strcat(pContent, p->Content);
 				}
 				m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQrySettlementInfo, m_msgQueue, this, bIsLast, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
-			}
-			//SettlementInfoField field = { 0 };
-			//strncpy(field.TradingDay, pSettlementInfo->TradingDay, sizeof(TThostFtdcDateType));
-			//strncpy(field.Content, pSettlementInfo->Content, sizeof(TThostFtdcContentType));
 
-			//m_msgQueue->Input_Copy(ResponseType::OnRspQrySettlementInfo, m_msgQueue, this, bIsLast, 0, &field, sizeof(SettlementInfoField), nullptr, 0, nullptr, 0);
+				// 需要将结算单清理
+				for (vector<CThostFtdcSettlementInfoField *>::iterator it = vct_SettlementInfo.begin(); it != vct_SettlementInfo.end(); ++it)
+				{
+					CThostFtdcSettlementInfoField* p = *it;
+					delete[] p;
+				}
+				vct_SettlementInfo.clear();
+			}
 		}
 		else
 		{
