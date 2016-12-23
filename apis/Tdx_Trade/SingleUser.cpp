@@ -662,7 +662,8 @@ int CSingleUser::OnResponse_ReqUserLogin(CTdxApi* pApi, RequestResponse_STRUCT* 
 	
 	// 查询股东列表，华泰证券可能一开始查会返回非知请求[1122]
 	GDLB_STRUCT** ppRS = nullptr;
-	CharTable2Login(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, nullptr);
+	char CPZH[32] = { 0 };
+	CharTable2Login(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, nullptr, CPZH);
 
 	int count = GetCountStructs((void**)ppRS);
 

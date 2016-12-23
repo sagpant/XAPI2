@@ -337,7 +337,7 @@ void CThostFtdcOrderField_2_OrderField_0(OrderIDType OrderID,CThostFtdcOrderFiel
 	strcpy(pOut->LocalID, pOut->ID);
 	strcpy(pOut->InstrumentID, pIn->InstrumentID);
 	strcpy(pOut->ExchangeID, pIn->ExchangeID);
-	strcpy(pIn->AccountID, pIn->InvestorID);
+	strcpy(pOut->AccountID, pIn->InvestorID);
 	pOut->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pIn->CombHedgeFlag[0]);
 	pOut->Side = TThostFtdcDirectionType_2_OrderSide(pIn->Direction);
 	pOut->Price = pIn->LimitPrice;
