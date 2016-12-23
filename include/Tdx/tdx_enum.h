@@ -9,6 +9,11 @@
 // 37 期权
 // 40 沪港通
 
+//	603_交易类型
+#define JYLX_Creation			0	// ETF申购
+#define JYLX_Redemption			1	// ETF赎回
+#define MMBZ_ETF_Creation		JYLX_Creation	// ETF申购
+#define MMBZ_ETF_Redemption		JYLX_Redemption	// ETF赎回
 
 // 130_买卖标志
 // 下单时使用买卖标志来指定报单类型
@@ -43,19 +48,17 @@
 #define WTLB_Sell				REQUEST_WT*100+ MMBZ_Sell_Limit		// 卖出
 #define WTLB_Buy_Cancel			REQUEST_WT*100+ 2		// 撤买
 #define WTLB_Sell_Cancel		REQUEST_WT*100+ 3		// 撤卖
-#define WTLB_LOFCreation		REQUEST_WT*100+ 79		// 基金申购
-#define WTLB_LOFRedemption		REQUEST_WT*100+ 80		// 基金赎回
-#define WTLB_ETFCreation		REQUEST_ETF_SGSH*100+ MMBZ_Creation	// ETF申购
-#define WTLB_ETFRedemption		REQUEST_ETF_SGSH*100+ MMBZ_Redemption	// ETF赎回
+#define WTLB_LOFCreation		REQUEST_WT*100+ MMBZ_Creation		// 基金申购
+#define WTLB_LOFRedemption		REQUEST_WT*100+ MMBZ_Redemption		// 基金赎回
+#define WTLB_ETFCreation		REQUEST_ETF_SGSH*100+ MMBZ_ETF_Creation	// ETF申购
+#define WTLB_ETFRedemption		REQUEST_ETF_SGSH*100+ MMBZ_ETF_Redemption	// ETF赎回
 #define WTLB_Merge				REQUEST_WT*100+ MMBZ_Merge		// 合并
 #define WTLB_Split				REQUEST_WT*100+ MMBZ_Split		// 分拆
 
 #define MMBZ_CB_Conv	 		0	// 204下:可转债转股
 #define MMBZ_CB_Red				1	// 204下:债券回售
 
-//	603_交易类型
-#define JYLX_Creation			0	// ETF申购
-#define JYLX_Redemption			1	// ETF赎回
+
 
 
 // 5565_委托类别
