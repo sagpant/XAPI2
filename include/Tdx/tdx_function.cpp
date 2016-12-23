@@ -737,7 +737,7 @@ void CharTable2GDLB3(char* ppTable, GDLB_STRUCT*** pppResults, void* Client)
 
 }
 
-void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client, FieldInfo_STRUCT** ppFieldInfos_148)
+void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUCT*** pppResults, void* Client, FieldInfo_STRUCT** ppFieldInfos_148,char* CPZH)
 {
 	*pppResults = nullptr;
 	if (ppTable == nullptr)
@@ -750,7 +750,7 @@ void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUC
 	char* p = ppTable[i * COL_EACH_ROW + j];
 
 	// 产品账号，即资金账号
-	char CPZH[32] = { 0 };
+	//char CPZH[32] = { 0 };
 	while (p != nullptr)
 	{
 		int requstid = atoi(p);
@@ -764,7 +764,7 @@ void CharTable2Login(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GDLB_STRUC
 			int count = GetCountStructs((void**)ppRS);
 			if (count > 0)
 			{
-				strcpy_s(CPZH, ppRS[0]->CPZH);
+				strcpy(CPZH, ppRS[0]->CPZH);
 			}
 
 			DeleteStructs((void***)&ppRS);
