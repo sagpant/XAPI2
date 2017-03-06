@@ -371,13 +371,132 @@ struct HQ_STRUCT
 //// 以下的在整理完后要删除
 //
 
+//
+//// 登录结果
+//struct DLJG_STRUCT
+//{
+//	char COL1[128];
+//	char COL2[128];
+//	char COL3[128];
+//
+//	void* Client;	// 多账号
+//};
 
-// 登录结果
-struct DLJG_STRUCT
+////////////////////////////////////////////////////////////////////////////
+// 打新相关结构体
+
+// 新股配号查询 REQUEST_XGSG_XGPHCX 1116
+struct XGPHCX_STRUCT
 {
-	char COL1[128];
-	char COL2[128];
-	char COL3[128];
+	char PHRQ[32];	// 170_配号日期
+	char ZQDM[32];  // 140_证券代码
+	char ZQMC[32];  // 141_证券名称
+	char QSPH[32];  // 171_起始配号
+	char PHSL[32];  // 172_配号数量
+	char ZHLB[32];	// 125_帐号类别
+	char BLXX[32];	// 1213_保留信息
+
+	int PHRQ_;
+	int QSPH_;
+	int PHSL_;
+	int ZHLB_;
+
+	void* Client;	// 多账号
+};
+
+// 新股中签查询 REQUEST_XGSG_XGZQCX 1126
+struct XGZQCX_STRUCT
+{
+	char CJRQ[32];	// 150_成交日期
+	char ZQDM[32];  // 140_证券代码
+	char ZQMC[32];  // 141_证券名称
+	char CJJG[32];  // 153_成交价格
+	char ZQS[32];  // 174_中签数
+	char ZHLB[32];	// 125_帐号类别
+	char BLXX[32];	// 1213_保留信息
+
+	int CJRQ_;
+	int CJJG_;
+	int ZQS_;
+	int ZHLB_;
+
+	void* Client;	// 多账号
+};
+
+// 可申购新股查询 REQUEST_XGSG_KSGXGCX 1156
+struct KSGXGCX_STRUCT
+{
+	char ZQDM[32];  // 140_证券代码
+	char ZQMC[32];  // 141_证券名称
+	char FXJG[32];  // 418_发行价格
+	char ZDSL[32];  // 962_最低数量
+	char ZGSL[32];  // 961_最高数量
+	char WTSL[32];  // 144_委托数量
+	char WTRQ[32];  // 142_委托日期
+	char JYSDM[32];  // 100_交易所代码
+	char JYSMC[32];  // 101_交易所名称
+	char CZSJ[32];  // 50_(参数)操作数据
+	char JB[32];	// 1233_句柄
+	char BLXX[32];	// 1213_保留信息
+
+	char SGSX[32];	// 5905_申购上限
+	char WTJG[32];	// 145_委托价格
+	char ZHLB[32];	// 125_帐号类别
+
+	double FXJG_;
+	double ZDSL_;
+	double ZGSL_;
+	double WTSL_;
+	int WTRQ_;
+	int JYSDM_;
+	double SGSX_;
+	double WTJG_;
+	int ZHLB_;
+
+	void* Client;	// 多账号
+};
+
+// 新股申购额度查询 REQUEST_XGSG_XGSGEDCX 1340
+struct XGSGEDCX_STRUCT
+{
+	char ZJZH[32];  // 121_资金帐号
+	char CS[32];  // 1227_参数
+	char ZHLB[32];  // 125_帐号类别
+	char GDDM[32];  // 123_股东代码
+	char JYSMC[32];  // 101_交易所名称
+	char XGSGED[32];  // 5679_新股申购额度
+	char KSGED[32];  // 5801_可申购额度,光大证券
+	char CZSJ[32];  // 50_(参数)操作数据
+	char JB[32];	// 1233_句柄
+	char BLXX[32];	// 1213_保留信息
+
+	char SGED_961[32]; //	961_申购额度，在申万宏源中居然也是961
+
+	double CS_;
+	double XGSGED_;
+	int ZHLB_;
+	double SGED_961_;
+	double KSGED_;
+
+	void* Client;	// 多账号
+};
+
+// 新股申购待缴款查询 REQUEST_XGSG_XGSGDJKCX 1370
+struct XGSGDJKCX_STRUCT
+{
+	char ZQDM[32];  // 140_证券代码
+	char ZQS[32];  // 174_中签数
+	char FQSL[32];  // 98_放弃数量
+	char ZQJE[32];  // 1088_中签金额
+	char QKZJ[32];  // 1091_缺口资金
+	char GDDM[32];  // 123_股东代码
+	char ZHLB[32];  // 125_帐号类别
+	char CZSJ[32];  // 50_(参数)操作数据
+	char JB[32];	// 1233_句柄
+	char BLXX[32];	// 1213_保留信息
+
+	double CS_;
+	double XGSGED_;
 
 	void* Client;	// 多账号
 };

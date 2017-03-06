@@ -7,6 +7,7 @@
 ID一样，中文名可能不一样
 */
 
+#define FIELD_CZSJ			50 // 50_(参数)操作数据
 #define FIELD_JYSDM			100 // 100_交易所代码
 #define FIELD_JYSMC			101 // 101_交易所名称
 #define FIELD_WTFS_110		110 // 110_委托方式
@@ -49,6 +50,9 @@ ID一样，中文名可能不一样
 #define FIELD_WTFS			166	//	166_委托方式
 #define FIELD_CDBZ			167	//	167_撤单标志
 #define FIELD_168			168	//	?
+#define FIELD_PHRQ			170	//	170_配号日期
+#define FIELD_QSPH			171	//	171_起始配号
+#define FIELD_PHSL			172	//	172_配号数量
 #define FIELD_XWDM			173	//	173_席位代码
 #define FIELD_ZXJYGS		187	//	187_最小交易股数
 #define FIELD_BJFS			194	//	194_报价方式
@@ -82,6 +86,7 @@ ID一样，中文名可能不一样
 #define FIELD_FNLX			333	//	333_方案类型
 #define FIELD_ZZC_350		350	//	350_总资产
 #define FIELD_CPDM			391	//	391_产品代码
+#define FIELD_FXJG			418	//	418_发行价格
 #define FIELD_TJRDM			485	//	485_推荐人代码
 #define FIELD_HYDM			510	//	510_合约代码
 #define FIELD_HYMC			511	//	511_合约名称
@@ -95,6 +100,9 @@ ID一样，中文名可能不一样
 #define FIELD_PCH			606	//	606_批次号
 #define FIELD_FXD			700	//	700_风险度
 #define FIELD_718			718	//	?
+#define FIELD_ZGSL			961	//	961_最高数量
+#define FIELD_SGED_961		961	//	961_申购额度，在申万宏源中居然也是961
+#define FIELD_ZDSL			962	//	962_最低数量
 #define FIELD_QSXH			1207	//	1207_起始序号
 #define FIELD_BLXX			1213	//	1213_保留信息
 #define FIELD_JCFXBZ		1223	//	1223_检查风险标志
@@ -118,11 +126,15 @@ ID一样，中文名可能不一样
 #define FIELD_JYF			5630	// 5630_交易费
 #define FIELD_DSGF			5638	// 5638_代收规费
 #define FIELD_GYWTBS		5639	// 5639_隔夜委托标识
+#define FIELD_FXRQ_5653		5653	// 5653_发行日期
 #define FIELD_ZZHBH			5673	// 5673_子账户编号
 #define FIELD_JSJG			5674	// 5674_结算机构
 #define FIELD_JSZH			5675	// 5675_结算账号
 #define FIELD_DJRQ			5676	// 5676_登记日期
-
+#define FIELD_XGSGED		5679	// 5679_新股申购额度
+#define FIELD_KSGED			5801	// 5801_可申购额度
+#define FIELD_SGSX			5905	// 5905_申购上限
+#define FIELD_FXRQ_5906		5906	// 5906_发行日期
 #define FIELD_YMTZH			5925	// 5925_一码通账号
 #define FIELD_MMFX			5935	// 5935_买卖方向
 #define FIELD_BJFS_6027		6027	// 6027_报价方式

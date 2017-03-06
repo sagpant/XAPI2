@@ -6,10 +6,7 @@
 #include <regex>
 #include <time.h>
 
-// BOOLEAN与asn.h中的冲突，不得不将asn.h中的改了，希望有人帮忙解决这个问题
-#include <windows.h>
-#include <iphlpapi.h>
-#pragma comment(lib, "IPHLPAPI.lib")
+
 
 #include "../../include/inirw.h"
 

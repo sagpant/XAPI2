@@ -844,6 +844,237 @@ void DeleteRequestRespone(RequestResponse_STRUCT* pRespone)
 	//delete[] pRespone;
 }
 
+void CharTable2XGSGEDCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGSGEDCX_STRUCT*** pppResults, void* Client)
+{
+	*pppResults = nullptr;
+	if (ppTable == nullptr)
+		return;
+
+	int count = GetRowCountTableBody(ppTable);
+	if (count <= 0)
+		return;
+
+	XGSGEDCX_STRUCT** ppResults = new XGSGEDCX_STRUCT*[count + 1]();
+	ppResults[count] = nullptr;
+	*pppResults = ppResults;
+
+	for (int i = 0; i < count; ++i)
+	{
+		ppResults[i] = new XGSGEDCX_STRUCT();
+
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_ZJZH:
+				strcpy_s(ppResults[i]->ZJZH, t);
+				break;
+			case FIELD_CS:
+				strcpy_s(ppResults[i]->CS, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			case FIELD_GDDM:
+				strcpy_s(ppResults[i]->GDDM, t);
+				break;
+			case FIELD_JYSMC:
+				strcpy_s(ppResults[i]->JYSMC, t);
+				break;
+			case FIELD_XGSGED:
+				strcpy_s(ppResults[i]->XGSGED, t);
+				break;
+			case FIELD_KSGED:
+				strcpy_s(ppResults[i]->KSGED, t);
+				break;
+			case FIELD_CZSJ:
+				strcpy_s(ppResults[i]->CZSJ, t);
+				break;
+			case FIELD_JB:
+				strcpy_s(ppResults[i]->JB, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			case FIELD_SGED_961:
+				strcpy_s(ppResults[i]->SGED_961, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
+
+		
+		ppResults[i]->CS_ = atof(ppResults[i]->CS);
+		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
+		ppResults[i]->XGSGED_ = atof(ppResults[i]->XGSGED);
+		ppResults[i]->SGED_961_ = atof(ppResults[i]->SGED_961);
+		ppResults[i]->KSGED_ = atof(ppResults[i]->KSGED);
+
+		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->SGED_961_);
+		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->KSGED_);
+
+		ppResults[i]->Client = Client;
+	}
+}
+
+
+void CharTable2KSGXGCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, KSGXGCX_STRUCT*** pppResults, void* Client)
+{
+	*pppResults = nullptr;
+	if (ppTable == nullptr)
+		return;
+
+	int count = GetRowCountTableBody(ppTable);
+	if (count <= 0)
+		return;
+
+	KSGXGCX_STRUCT** ppResults = new KSGXGCX_STRUCT*[count + 1]();
+	ppResults[count] = nullptr;
+	*pppResults = ppResults;
+
+	for (int i = 0; i < count; ++i)
+	{
+		ppResults[i] = new KSGXGCX_STRUCT();
+
+		int j = 0;
+		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+		while (pRow != 0)
+		{
+			char* t = ppTable[i * COL_EACH_ROW + j];
+			switch (pRow->FieldID)
+			{
+			case FIELD_ZQDM:
+				strcpy_s(ppResults[i]->ZQDM, t);
+				break;
+			case FIELD_ZQMC:
+				strcpy_s(ppResults[i]->ZQMC, t);
+				break;
+			case FIELD_FXJG:
+				strcpy_s(ppResults[i]->FXJG, t);
+				break;
+			case FIELD_ZDSL:
+				strcpy_s(ppResults[i]->ZDSL, t);
+				break;
+			case FIELD_ZGSL:
+				strcpy_s(ppResults[i]->ZGSL, t);
+				break;
+			case FIELD_WTSL:
+				strcpy_s(ppResults[i]->WTSL, t);
+				break;
+			case FIELD_WTRQ:
+				strcpy_s(ppResults[i]->WTRQ, t);
+				break;
+			case FIELD_JYSDM:
+				strcpy_s(ppResults[i]->JYSDM, t);
+				break;
+			case FIELD_JYSMC:
+				strcpy_s(ppResults[i]->JYSMC, t);
+				break;
+			case FIELD_CZSJ:
+				strcpy_s(ppResults[i]->CZSJ, t);
+				break;
+			case FIELD_JB:
+				strcpy_s(ppResults[i]->JB, t);
+				break;
+			case FIELD_BLXX:
+				strcpy_s(ppResults[i]->BLXX, t);
+				break;
+			case FIELD_SGSX:
+				strcpy_s(ppResults[i]->SGSX, t);
+				break;
+			case FIELD_WTJG:
+				strcpy_s(ppResults[i]->WTJG, t);
+				break;
+			case FIELD_ZHLB:
+				strcpy_s(ppResults[i]->ZHLB, t);
+				break;
+			}
+			++j;
+			pRow = ppFieldInfos[j];
+		}
+
+		ppResults[i]->FXJG_ = atof(ppResults[i]->FXJG);
+		ppResults[i]->ZDSL_ = atof(ppResults[i]->ZDSL);
+		ppResults[i]->ZGSL_ = atof(ppResults[i]->ZGSL);
+		ppResults[i]->WTSL_ = atof(ppResults[i]->WTSL);
+		ppResults[i]->WTRQ_ = atoi(ppResults[i]->WTRQ);
+		ppResults[i]->JYSDM_ = atoi(ppResults[i]->JYSDM);
+		ppResults[i]->SGSX_ = atof(ppResults[i]->SGSX);
+		ppResults[i]->WTJG_ = atof(ppResults[i]->WTJG);
+		ppResults[i]->ZHLB_ = atof(ppResults[i]->ZHLB);
+
+		ppResults[i]->ZGSL_ = max(ppResults[i]->ZGSL_, ppResults[i]->SGSX_);
+		ppResults[i]->FXJG_ = max(ppResults[i]->FXJG_, ppResults[i]->WTJG_);
+		ppResults[i]->JYSDM_ = max(ppResults[i]->JYSDM_, ppResults[i]->ZHLB_);
+
+		ppResults[i]->Client = Client;
+	}
+}
+
+//void CharTable2XGPHCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGPHCX_STRUCT*** pppResults, void* Client)
+//{
+//	*pppResults = nullptr;
+//	if (ppTable == nullptr)
+//		return;
+//
+//	int count = GetRowCountTableBody(ppTable);
+//	if (count <= 0)
+//		return;
+//
+//	XGPHCX_STRUCT** ppResults = new XGPHCX_STRUCT*[count + 1]();
+//	ppResults[count] = nullptr;
+//	*pppResults = ppResults;
+//
+//	for (int i = 0; i < count; ++i)
+//	{
+//		ppResults[i] = new XGPHCX_STRUCT();
+//
+//		int j = 0;
+//		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
+//		while (pRow != 0)
+//		{
+//			char* t = ppTable[i * COL_EACH_ROW + j];
+//			switch (pRow->FieldID)
+//			{
+//			case FIELD_PHRQ:
+//				strcpy_s(ppResults[i]->PHRQ, t);
+//				break;
+//			case FIELD_ZQDM:
+//				strcpy_s(ppResults[i]->ZQDM, t);
+//				break;
+//			case FIELD_ZQMC:
+//				strcpy_s(ppResults[i]->ZQMC, t);
+//				break;
+//			case FIELD_QSPH:
+//				strcpy_s(ppResults[i]->QSPH, t);
+//				break;
+//			case FIELD_PHSL:
+//				strcpy_s(ppResults[i]->PHSL, t);
+//				break;
+//			case FIELD_ZHLB:
+//				strcpy_s(ppResults[i]->ZHLB, t);
+//				break;
+//			case FIELD_BLXX:
+//				strcpy_s(ppResults[i]->BLXX, t);
+//				break;
+//			}
+//			++j;
+//			pRow = ppFieldInfos[j];
+//		}
+//
+//		ppResults[i]->PHRQ_ = atoi(ppResults[i]->PHRQ);
+//		ppResults[i]->QSPH_ = atoi(ppResults[i]->QSPH);
+//		ppResults[i]->PHSL_ = atoi(ppResults[i]->PHSL);
+//		ppResults[i]->ZHLB_ = atoi(ppResults[i]->ZHLB);
+//
+//		ppResults[i]->Client = Client;
+//	}
+//}
+
 #else
 
 
