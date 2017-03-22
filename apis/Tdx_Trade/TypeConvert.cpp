@@ -164,7 +164,7 @@ int WTLB_str_2_int(char* pIn)
 		}
 		return WTLB_LOFRedemption;
 	}
-	
+
 	char* pHe = strstr(pIn, "合");
 	if (pHe)
 	{
@@ -302,7 +302,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		}
 
 
-		if (col_147>=0)
+		if (col_147 >= 0)
 		{
 			// 第一个的字符，并转成数字，其实也可以全走文本比较的方式，但认为这样更快
 			if (ppResults[i]->ZTSM[1] == '-')
@@ -317,7 +317,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		else
 		{
 			// 信达证券没有状态说明，需要模拟计算出来，这种情况下，撤单数量怎么都要有
-			if (ppResults[i]->CDSL_>0)
+			if (ppResults[i]->CDSL_ > 0)
 			{
 				ppResults[i]->ZTSM_ = ZTSM_AllCancelled;
 			}
@@ -334,7 +334,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 				ppResults[i]->ZTSM_ = ZTSM_PartiallyFilled;
 			}
 		}
-		
+
 
 		ppResults[i]->BJFS_ = BJFS_str_2_int(ppResults[i]->BJFS);
 		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
@@ -825,7 +825,7 @@ OrderStatus ZTSM_2_OrderStatus(int In)
 	case ZTSM_AllCancelled:
 		return OrderStatus::OrderStatus_Cancelled;
 	case ZTSM_PartiallyFilled:
-			return OrderStatus::OrderStatus_PartiallyFilled;
+		return OrderStatus::OrderStatus_PartiallyFilled;
 	case ZTSM_WaitingForReport:
 		return OrderStatus::OrderStatus_New;
 	default:
@@ -933,7 +933,7 @@ OrderSide MMBZ_2_OrderSide(int In)
 	default:
 		break;
 	}
-	
+
 	return OrderSide::OrderSide_Unknown;
 }
 
@@ -955,7 +955,7 @@ void CJLB_2_TradeField(CJLB_STRUCT* pIn, TradeField* pOut)
 
 	pOut->OpenClose = pOut->Side % 2 == 0 ? OpenCloseType::OpenCloseType_Open : OpenCloseType::OpenCloseType_Close;
 	pOut->HedgeFlag = HedgeFlagType::HedgeFlagType_Speculation;
-	
+
 }
 
 void WTLB_2_OrderField_0(WTLB_STRUCT* pIn, OrderField* pOut)
@@ -1079,12 +1079,12 @@ void ZJYE_2_AccountField(ZJYE_STRUCT* pIn, AccountField* pOut)
 {
 	strcpy(pOut->AccountID, pIn->ZJZH);
 	//strcpy(pOut->ClientID, pIn->ZJZH);
-	
+
 	pOut->Available = pIn->KYZJ_;
 
 	// 还有很多不知道如何对应，有可能需要扩展XAPI部分
 	pOut->Balance = pIn->ZZC_;
-	
+
 }
 
 void GFLB_2_PositionField(GFLB_STRUCT* pIn, PositionField* pOut)
@@ -1100,5 +1100,8 @@ void GFLB_2_PositionField(GFLB_STRUCT* pIn, PositionField* pOut)
 	strcpy(pOut->AccountID, pIn->GDDM);
 	strcpy(pOut->ExchangeID, pIn->JYSDM);
 
-	// 还有一些信息没有
+
+	sprintf(pOut->ID, "%s:%s:%d:%d",
+		pOut->InstrumentID, pOut->ExchangeID,
+		pOut->Side, pOut->HedgeFlag);
 }

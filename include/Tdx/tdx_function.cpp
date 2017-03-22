@@ -902,6 +902,9 @@ void CharTable2XGSGEDCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGSGEDC
 			case FIELD_SGED_961:
 				strcpy_s(ppResults[i]->SGED_961, t);
 				break;
+			case FIELD_XGSGED_5564:
+				strcpy_s(ppResults[i]->XGSGED_5564, t);
+				break;
 			}
 			++j;
 			pRow = ppFieldInfos[j];
@@ -913,9 +916,12 @@ void CharTable2XGSGEDCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGSGEDC
 		ppResults[i]->XGSGED_ = atof(ppResults[i]->XGSGED);
 		ppResults[i]->SGED_961_ = atof(ppResults[i]->SGED_961);
 		ppResults[i]->KSGED_ = atof(ppResults[i]->KSGED);
+		ppResults[i]->XGSGED_5564_ = atof(ppResults[i]->XGSGED_5564);
 
 		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->SGED_961_);
 		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->KSGED_);
+		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->XGSGED_5564_);
+
 
 		ppResults[i]->Client = Client;
 	}

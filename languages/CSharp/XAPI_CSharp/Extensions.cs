@@ -231,9 +231,9 @@ CZC
         public static string ToFormattedString([In]this PositionField field)
         {
             return string.Format("[InstrumentID={0};ExchangeID={1};HedgeFlag={2};Side={3};"
-                + "Position={4};TodayPosition={5};HistoryPosition={6}]",
+                + "Position={4};TodayPosition={5};HistoryPosition={6};ID={7}]",
                 field.InstrumentID, field.ExchangeID, Enum<HedgeFlagType>.ToString(field.HedgeFlag), Enum<PositionSide>.ToString(field.Side),
-                field.Position, field.TodayPosition, field.HistoryPosition);
+                field.Position, field.TodayPosition, field.HistoryPosition, field.ID);
         }
 
         public static string ToFormattedHeader([In]this TickField field)

@@ -115,6 +115,9 @@ struct PositionField
 	///今日申赎持仓冻结
 	QtyType			TodayPRFrozen;
 
+	///同一账号下的唯一ID，本地拼接成的，方便其它程序存到dict中
+	PositionIDType	ID;
+
 	/// 基金
 	IDChar32Type	PortfolioID1;
 	/// 资产单元

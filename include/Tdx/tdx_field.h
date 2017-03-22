@@ -120,6 +120,7 @@ ID一样，中文名可能不一样
 #define FIELD_HHH			5255	// 5255_会话号
 #define FIELD_KHDM			5256	// 5256_客户代码
 
+#define FIELD_XGSGED_5564	5564	// 5564_新股申购额度
 #define FIELD_WTLB_5565		5565	// 5565_委托类别
 #define FIELD_JSHL			5599	// 5599_结算汇率
 

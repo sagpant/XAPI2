@@ -90,6 +90,9 @@ namespace XAPI
         ///今日申赎持仓冻结
         public double TodayPRFrozen;
 
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string ID;
+
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string PortfolioID1;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]

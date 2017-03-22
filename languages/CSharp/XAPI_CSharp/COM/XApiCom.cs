@@ -677,6 +677,7 @@ namespace XAPI.COM
             cls.TodayBSFrozen = field.TodayBSFrozen;
             cls.TodayPRPosition = field.TodayPRPosition;
             cls.TodayPRFrozen = field.TodayPRFrozen;
+            cls.ID = field.ID;
 
             cls.PortfolioID1 = field.PortfolioID1;
             cls.PortfolioID2 = field.PortfolioID2;

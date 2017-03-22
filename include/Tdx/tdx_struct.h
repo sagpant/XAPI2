@@ -470,12 +470,14 @@ struct XGSGEDCX_STRUCT
 	char JB[32];	// 1233_句柄
 	char BLXX[32];	// 1213_保留信息
 
-	char SGED_961[32]; //	961_申购额度，在申万宏源中居然也是961
+	char SGED_961[32];		//	961_申购额度，在申万宏源中居然也是961
+	char XGSGED_5564[32];	// 5564_新股申购额度
 
 	double CS_;
 	double XGSGED_;
 	int ZHLB_;
 	double SGED_961_;
+	double XGSGED_5564_;
 	double KSGED_;
 
 	void* Client;	// 多账号

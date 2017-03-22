@@ -1546,6 +1546,8 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			{
 				pField = (PositionField*)m_msgQueue->new_block(sizeof(PositionField));
 
+				strcpy(pField->ID, positionId2);
+
 				strcpy(pField->InstrumentID, pField2->InstrumentID);
 #ifdef HAS_ExchangeID
 				strcpy(pField->ExchangeID, pField2->ExchangeID);

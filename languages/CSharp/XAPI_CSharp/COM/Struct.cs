@@ -40,6 +40,8 @@ namespace XAPI.COM
         public double TodayPRPosition;
         ///今日申赎持仓冻结
         public double TodayPRFrozen;
+
+        public string ID;
         
         public string PortfolioID1;
         public string PortfolioID2;

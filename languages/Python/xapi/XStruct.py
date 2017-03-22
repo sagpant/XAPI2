@@ -27,6 +27,7 @@ _InstLifePhaseType = c_char
 
 import sys
 
+
 # 转码工具，输入u，输出根据版本变化
 def to_str(s):
     if isinstance(u'0', str):
@@ -39,8 +40,8 @@ def to_str(s):
         # 但PyCharm Debug中需要设置成UTF-8才能看
         # print sys.stdin.encoding
         return s.encode(sys.stdin.encoding)
-        #return s.encode('UTF-8')
-        #return s.encode('GBK')
+        # return s.encode('UTF-8')
+        # return s.encode('GBK')
 
 
 class ReqQueryField(Structure):
@@ -96,6 +97,7 @@ class PositionField(Structure):
         ("TodayBSFrozen", QtyType),
         ("TodayPRPosition", QtyType),
         ("TodayPRFrozen", QtyType),
+        ("ID", PositionIDType),
 
         ("PortfolioID1", IDChar32Type),
         ("PortfolioID2", IDChar32Type),
@@ -112,15 +114,21 @@ class PositionField(Structure):
     def get_instrument_name(self):
         return self.InstrumentName.decode('GBK')
 
+    def get_id(self):
+        return self.ID.decode('GBK')
+
     def __str__(self):
         return to_str(
             u'[InstrumentID={0};ExchangeID={1};HedgeFlag={2};'
-            u'Side={3};Position={4};TodayPosition={5};HistoryPosition={6}]'
+            u'Side={3};Position={4};TodayPosition={5};HistoryPosition={6};ID={7}]'
                 .format(self.get_instrument_id(), self.get_exchange_id(),
                         HedgeFlagType[ord(self.HedgeFlag)],
                         PositionSide[ord(self.Side)],
-                        self.Position, self.TodayPosition, self.HistoryPosition)
+                        self.Position, self.TodayPosition, self.HistoryPosition, self.get_id())
         )
+
+    def __len__(self):
+        return sizeof(self)
 
 
 class QuoteField(Structure):
@@ -239,6 +247,7 @@ class OrderField(Structure):
                         ExecType[ord(self.ExecType)],
                         self.XErrorID, self.RawErrorID, self.get_text())
         )
+
 
 # 这个比较特殊，只是为了传一个结构体字符串
 class OrderIDTypeField(Structure):
@@ -398,46 +407,46 @@ class DepthMarketDataNField(Structure):
         ("UpdateTime", TimeIntType),
         ("UpdateMillisec", TimeIntType),
 
-        #唯一符号
+        # 唯一符号
         ("Symbol", SymbolType),
         ("InstrumentID", InstrumentIDType),
         ("ExchangeID", ExchangeIDType),
         ("Exchange", _ExchangeType),
 
-        #最新价
+        # 最新价
         ("LastPrice", PriceType),
-        #数量
+        # 数量
         ("Volume", LargeVolumeType),
-        #成交金额
+        # 成交金额
         ("Turnover", MoneyType),
-        #持仓量
+        # 持仓量
         ("OpenInterest", LargeVolumeType),
-        #当日均价
+        # 当日均价
         ("AveragePrice", PriceType),
-        #今开盘
+        # 今开盘
         ("OpenPrice", PriceType),
-        #最高价
+        # 最高价
         ("HighestPrice", PriceType),
-        #最低价
+        # 最低价
         ("LowestPrice", PriceType),
-        #今收盘
+        # 今收盘
         ("ClosePrice", PriceType),
-        #本次结算价
+        # 本次结算价
         ("SettlementPrice", PriceType),
 
-        #涨停板价
+        # 涨停板价
         ("UpperLimitPrice", PriceType),
-        #跌停板价
+        # 跌停板价
         ("LowerLimitPrice", PriceType),
-        #昨收盘
+        # 昨收盘
         ("PreClosePrice", PriceType),
-        #上次结算价
+        # 上次结算价
         ("PreSettlementPrice", PriceType),
-        #昨持仓量
+        # 昨持仓量
         ("PreOpenInterest", LargeVolumeType),
 
         ("TradingPhase", _TradingPhaseType),
-        #买档个数
+        # 买档个数
         ("BidCount", SizeType)
     ]
 
@@ -448,14 +457,14 @@ class DepthMarketDataNField(Structure):
         return self.BidCount
 
     def get_ticks_count(self):
-        count = (self.Size - sizeof(DepthMarketDataNField))/sizeof(DepthField)
+        count = (self.Size - sizeof(DepthMarketDataNField)) / sizeof(DepthField)
         return int(count)
 
     def get_ask_count(self):
         return int(self.get_ticks_count() - self.BidCount)
 
     def __str__(self):
-        #pydevd.settrace(suspend=True, trace_only_current_thread=True)
+        # pydevd.settrace(suspend=True, trace_only_current_thread=True)
         return to_str(
             u'[TradingDay={0};ActionDay={1};UpdateTime={2};UpdateMillisec={3};Symbol={4};BidCount={5};AskCount={6}]'
                 .format(self.TradingDay, self.ActionDay, self.UpdateTime, self.UpdateMillisec, self.get_symbol(),
