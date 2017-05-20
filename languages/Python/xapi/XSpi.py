@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 # import pydevd
@@ -20,6 +20,14 @@ class XSpi(object):
     def OnLog(self, pLog):
         print(pLog)
 
+    def OnRspQryInstrument(self, pInstrument, size1, bIsLast):
+        if size1 > 0:
+            print(pInstrument)
+
+    def OnRspQryTradingAccount(self, pAccount, size1, bIsLast):
+        if size1 > 0:
+            print(pAccount)
+
     def OnRspQryInvestorPosition(self, pPosition, size1, bIsLast):
         if size1 > 0:
             print(pPosition)
@@ -32,12 +40,11 @@ class XSpi(object):
         if size1 > 0:
             print(pInvestor)
 
-    def OnRspQryTradingAccount(self, pAccount, size1, bIsLast):
-        if size1 > 0:
-            print(pAccount)
-
     def OnRtnOrder(self, pOrder):
         print(pOrder)
+
+    def OnRtnTrade(self, pTrade):
+        print(pTrade)
 
     def OnRtnDepthMarketData(self, ptr1, size1):
         # 这是从交易接口拿到的行情
@@ -46,13 +53,6 @@ class XSpi(object):
 
         # 打印N档行情
         for i in range(obj.get_ticks_count()):
-            p = ptr1 + sizeof(DepthMarketDataNField) + sizeof(DepthField)*i
+            p = ptr1 + sizeof(DepthMarketDataNField) + sizeof(DepthField) * i
             d = cast(p, POINTER(DepthField)).contents
             print(d)
-
-
-
-
-
-
-

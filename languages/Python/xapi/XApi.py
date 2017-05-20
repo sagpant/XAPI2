@@ -1,31 +1,29 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from .XQueueEnum import *
 from .XSpi import *
 
-
 # function
 fnOnRespone = WINFUNCTYPE(c_void_p, c_char, c_void_p, c_void_p, c_double, c_double, c_void_p, c_int, c_void_p, c_int,
                           c_void_p, c_int)
+
+
 # fnOnRespone = CFUNCTYPE(c_void_p, c_char, c_void_p, c_void_p, c_double, c_double, c_void_p, c_int, c_void_p, c_int,
 #                           c_void_p, c_int)
 
 
 class XApi(object):
-    _cdll_api = None
-    _lib = None
-    _fun = None
-    _api = None
-    _response = None
-    _spi = None
-
-    ServerInfo = ServerInfoField()
-    UserInfo = UserInfoField()
-
-    _response_type_dict = None
-
     def __init__(self, xapi_path):
+        self._lib = None
+        self._fun = None
+        self._api = None
+        self._spi = None
+        self._log = None
+
+        self.ServerInfo = ServerInfoField()
+        self.UserInfo = UserInfoField()
+
         # 加载XAPI_CPP_x86.dll，使用它来加载其它的API的C封装
         self._cdll_api = CDLL(xapi_path)
         # 记录回调函数
@@ -35,10 +33,12 @@ class XApi(object):
             ResponseType.OnConnectionStatus: self._OnConnectionStatus,
             ResponseType.OnRtnError: self._OnRtnError,
             ResponseType.OnLog: self._OnLog,
+            ResponseType.OnRspQryInstrument: self._OnRspQryInstrument,
             ResponseType.OnRspQryOrder: self._OnRspQryOrder,
             ResponseType.OnRspQryInvestorPosition: self._OnRspQryInvestorPosition,
             ResponseType.OnRspQryInvestor: self._OnRspQryInvestor,
             ResponseType.OnRtnOrder: self._OnRtnOrder,
+            ResponseType.OnRtnTrade: self._OnRtnTrade,
             ResponseType.OnRtnDepthMarketData: self._OnRtnDepthMarketData,
             ResponseType.OnRspQryTradingAccount: self._OnRspQryTradingAccount,
         }
@@ -48,7 +48,7 @@ class XApi(object):
         func.restype = c_void_p
         func.argtypes = [c_char_p]
         self._lib = func(lib_path)
-        if self._lib == None:
+        if self._lib is None:
             return False
         func = self._cdll_api.X_GetFunction
         func.restype = c_void_p
@@ -156,14 +156,16 @@ class XApi(object):
     def _on_response(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
         # 解决在回调函数中断点不生效的问题，把这行代码放在要断的地方的前面
         # http://stackoverflow.com/questions/34299082/not-working-python-breakpoints-in-c-thread-in-pycharm-or-eclipsepydev
-        #pydevd.settrace(suspend=True, trace_only_current_thread=True)
-        self._response_type_dict.get(ord(response_type), self._on_default)(response_type, p_api1, p_api2, double1, double2,
-                                                                      ptr1, size1, ptr2, size2, ptr3, size3)
+        # pydevd.settrace(suspend=True, trace_only_current_thread=True)
+        self._response_type_dict.get(ord(response_type), self._on_default)(response_type, p_api1, p_api2, double1,
+                                                                           double2,
+                                                                           ptr1, size1, ptr2, size2, ptr3, size3)
 
     def _on_default(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
         print(u"功能还没实现:%d" % ord(response_type))
 
-    def _OnConnectionStatus(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
+    def _OnConnectionStatus(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
+                            size3):
         if size1 > 0:
             obj = cast(ptr1, POINTER(RspUserLoginField)).contents
         else:
@@ -189,12 +191,21 @@ class XApi(object):
             obj = OrderField()
         self._spi.OnRspQryOrder(obj, size1, bool(double1))
 
-    def _OnRspQryInvestorPosition(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
+    def _OnRspQryInvestorPosition(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
+                                  size3):
         if size1 > 0:
             obj = cast(ptr1, POINTER(PositionField)).contents
         else:
             obj = PositionField()
         self._spi.OnRspQryInvestorPosition(obj, size1, bool(double1))
+
+    def _OnRspQryInstrument(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
+                            size3):
+        if size1 > 0:
+            obj = cast(ptr1, POINTER(InstrumentField)).contents
+        else:
+            obj = InstrumentField()
+        self._spi.OnRspQryInstrument(obj, size1, bool(double1))
 
     def _OnRspQryInvestor(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
         if size1 > 0:
@@ -209,11 +220,19 @@ class XApi(object):
         obj = cast(ptr1, POINTER(OrderField)).contents
         self._spi.OnRtnOrder(obj)
 
-    def _OnRtnDepthMarketData(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
+    def _OnRtnTrade(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
+        if size1 <= 0:
+            return
+        obj = cast(ptr1, POINTER(TradeField)).contents
+        self._spi.OnRtnTrade(obj)
+
+    def _OnRtnDepthMarketData(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
+                              size3):
         # 由于这个结构体比较特殊，内存区域需要解析，所以直接传回去
         self._spi.OnRtnDepthMarketData(ptr1, size1)
 
-    def _OnRspQryTradingAccount(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
+    def _OnRspQryTradingAccount(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
+                                size3):
         if size1 > 0:
             obj = cast(ptr1, POINTER(AccountField)).contents
         else:

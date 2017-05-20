@@ -88,6 +88,8 @@ TDXAPI_API void CharTable2KSGXGCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTabl
 //// 新股配号查询，只有收盘后或第二天才能查询到
 //TDXAPI_API void CharTable2XGPHCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGPHCX_STRUCT*** pppResults, void* Client);
 
-
+//////////////////////////////////////////////////////////////////////////
+// 行情解析
+TDXAPI_API void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults, void* Client);
 
 

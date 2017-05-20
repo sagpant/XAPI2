@@ -681,7 +681,7 @@ int CTraderApi::_Subscribe(char type, void* pApi1, void* pApi2, double double1, 
 int CTraderApi::OnResponse_Subscribe(CTdxApi* pApi, RequestResponse_STRUCT* pRespone)
 {
 	HQ_STRUCT** ppRS = nullptr;
-	CharTable2HQ(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
+	CharTable2HQ(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
 	int count = GetCountStructs((void**)ppRS);
 
