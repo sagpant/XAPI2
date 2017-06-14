@@ -204,6 +204,9 @@ def calc_target_orders(df, target_position, init_position):
     df['Open_Amount'] = df[target_position] - df[init_position]
     df2 = df[df['Open_Amount'] != 0]  # 只留下仓位有变化的
 
+    if df2.empty:
+        return None
+
     df2['CloseToday_Flag'] = 0  # 新建一列，0表示昨仓或平仓，1表示今仓
 
     # 对于要平仓的数据，可以试着用循环的方法生成两条进行处理
@@ -213,6 +216,9 @@ def calc_target_orders(df, target_position, init_position):
         # 上海的平仓操作需要分解成两个
         if s['IsSHFE'] and s['Open_Amount'] < 0:
             # 扩展成两个，这里只做平仓，不做开仓，所以逻辑会简单一些
+            # 但是针对不同的产品，开平的先后是有区别的
+            # 如果平今与平昨的价格相差不大，先开先平是没有区别的
+            # 如果开仓钱不够，还是应当先平
             df3.extend(close_one_row(s, True))
         else:
             # 不用扩展

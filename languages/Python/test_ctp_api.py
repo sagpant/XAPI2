@@ -16,10 +16,13 @@ class MyXSpi(XSpi):
     """
 
     def __init__(self):
+        # 测试时从本地读取数据
+        self.test_query_from_local = False
+
         self.symbols = None
 
         self.target_position = None
-        self.target_position_path = r'd:\y.csv'
+        self.target_position_path = r'd:\target_position.csv'
         self.target_orders = None
 
         # 合约
@@ -48,7 +51,8 @@ class MyXSpi(XSpi):
 
         # 行情连接
         self.md = XApi(r'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\XAPI_CPP_x86.dll')
-        self.md.ServerInfo.Address = br'tcp://180.168.146.187:10010'
+        # self.md.ServerInfo.Address = br'tcp://180.168.146.187:10010'
+        self.md.ServerInfo.Address = br'tcp://218.202.237.33:10012'
         self.md.ServerInfo.BrokerID = b'9999'
         self.md.UserInfo.UserID = b'111'
         self.md.UserInfo.Password = b'123456'
@@ -56,6 +60,7 @@ class MyXSpi(XSpi):
         # 交易连接
         self.td = XApi(r'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\XAPI_CPP_x86.dll')
         self.td.ServerInfo.Address = br'tcp://180.168.146.187:10000'
+        # self.td.ServerInfo.Address = br'tcp://218.202.237.33:10002'
         self.td.ServerInfo.BrokerID = b'9999'
         self.td.UserInfo.UserID = b'111'
         self.td.UserInfo.Password = b'123456'
@@ -106,7 +111,7 @@ class MyXSpi(XSpi):
 
         self.position_df = ctypes_dict_2_dataframe(self.position_dict, self.position_dtype)
         self.position_df = decode_dataframe(self.position_df)
-        # print(self.position_df)
+        self.position_df.sort_values(by=['Symbol', 'Side'], ascending=True, inplace=True)
         print(self.position_df[['Symbol', 'Side', 'Position', 'TodayPosition', 'HistoryPosition']])
         # 每次查询完同时保存，做个记录
         f = shelve.open(self.position_df_path)
@@ -119,10 +124,10 @@ class MyXSpi(XSpi):
 
     def OnRtnDepthMarketData(self, ptr1, size1):
         obj = cast(ptr1, POINTER(DepthMarketDataNField)).contents
-        print(obj)
+        # print(obj)
         cp_obj = copy.copy(obj)
         # self.marketdata_dict[obj.get_symbol()] = cp_obj
-        # 由于是期货，直接使用合约名就可以定位，这里先这个凑合
+        # 由于是期货，直接使用合约名就可以定位，这里先这个凑合用，下次一定要改
         self.marketdata_dict[obj.get_instrument_id()] = cp_obj
 
         # 先偷懒，不以买卖价为参考
@@ -174,16 +179,17 @@ class MyXSpi(XSpi):
         return
 
     def load_positions(self):
-        # 表格中东西很多，能否改成只取自己想要的部分？这样在表格合并时就不会出现大量的_x,_y
+        # 表格中东西很多，改成只取自己想要的部分？这样在表格合并时就不会出现大量的_x,_y
         self.target_position = pd.read_csv(self.target_position_path, dtype={'Symbol': str})
         print(self.target_position)
 
     def query_positions(self):
-        # 测试使用，用完要注了
-        f = shelve.open(self.position_df_path, 'r')
-        self.position_df = f['position_df']
-        f.close()
-        return
+        # 测试使用
+        if self.test_query_from_local:
+            f = shelve.open(self.position_df_path, 'r')
+            self.position_df = f['position_df']
+            f.close()
+            return
 
         query = ReqQueryField()
         # 查持仓，需要先清空
@@ -192,19 +198,24 @@ class MyXSpi(XSpi):
         self.td.req_query(QueryType.ReqQryInvestorPosition, query)
 
     def query_instruments(self):
-        query = ReqQueryField()
+        # 测试使用
+        if self.test_query_from_local:
+            f = shelve.open(self.instrument_df_path, 'r')
+            self.instrument_df = f['instrument_df']
+            f.close()
+            return
 
+        query = ReqQueryField()
         self.instrument_dict = {}
         self.instrument_df = pd.DataFrame(columns=self.instrument_dtype.names)
         self.td.req_query(QueryType.ReqQryInstrument, query)
 
     def query_account(self):
         query = ReqQueryField()
-
         self.td.req_query(QueryType.ReqQryTradingAccount, query)
 
     def sub_quote(self):
-        # 期货不用指定交易所，股票需要指定
+        # 期货不用指定交易所，股票需要指定，但这里合并的时候没有使用到交易所
         a = set()
         b = set()
         if self.target_position is not None:
@@ -230,22 +241,39 @@ class MyXSpi(XSpi):
         z.fillna(0, inplace=True)
         z['IsSHFE'] = False
         # 需要标记出上期所，对于UFX这种不区分今昨的平台，不要做IsSHFE的修改
-        z['IsSHFE'] = list(map(is_shfe, map(get_product, z['Symbol'])))
+        z['IsSHFE'] = list(map(is_shfe, map(get_product, z['InstrumentID'])))
 
+        # 这里有计算先平进还是平昨的过程
         self.target_orders = calc_target_orders(z, 'Position_y', 'Position_x')
-        return
+        if self.target_orders is None:
+            print('交易清单为空')
+        else:
+            # 这里最好能对交易清单进行排序，在反手时，股指最好是先锁仓后平仓，而其它合约先平仓后开仓
+            self.target_orders.sort_values(by='Open_Amount', ascending=True, inplace=True)
+            print(self.target_orders[['InstrumentID', 'Long_Flag', 'Open_Amount', 'CloseToday_Flag', 'Buy_Amount']])
 
     def send_orders(self):
+        if self.target_orders is None:
+            print('交易清单为空，不下单')
+            return
+
+        # 提供一个临时变量用于下单
         order = (OrderField * 1)()
         orderid = (OrderIDTypeField * 1)()
         orderid[0].OrderIDType = b''
 
+        # 将str转成b用于下单
         self.target_orders['InstrumentID_'] = encode_dataframe(self.target_orders[['InstrumentID']])
+        # 如果一开始没有持仓等信息，有可能持仓是空的，这个地方会出错
         self.target_orders['ExchangeID_'] = encode_dataframe(self.target_orders[['ExchangeID']])
         for i in range(len(self.target_orders)):
             row = self.target_orders.iloc[i, :]
             order[0].InstrumentID = row['InstrumentID_']
-            order[0].ExchangeID = row['ExchangeID_']
+            try:
+                # 数字0的转换问题，最好能解决掉
+                order[0].ExchangeID = row['ExchangeID_']
+            except:
+                pass
             order[0].Type = OrderType.Limit
             order[0].Side = OrderSide.Buy if row['Buy_Amount'] > 0 else OrderSide.Sell
             order[0].Qty = abs(row['Buy_Amount'])
@@ -270,9 +298,9 @@ class MyXSpi(XSpi):
 
             # 自己修改是挂单还是吃单
             if row['Buy_Amount'] > 0:
-                price -= 2 * tickSize
-            else:
                 price += 2 * tickSize
+            else:
+                price -= 2 * tickSize
 
             # 是否进行涨跌停修正
             if marketdata is not None:
@@ -306,7 +334,11 @@ class MyXSpi(XSpi):
 
     def print_orders(self):
         # 这里是否订单太多，能否只显示一部分呢？
-        print(self.order_dict.values())
+        # print(self.order_dict.values())
+
+        self.order_df = ctypes_dict_2_dataframe(self.order_dict, self.order_dtype)
+        self.order_df = decode_dataframe(self.order_df)
+        print(self.order_df)
 
     def usage(self):
         # 1. 在保证没有挂单的前提下，再次查询持仓，计算仓差然后补单
