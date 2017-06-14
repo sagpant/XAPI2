@@ -32,32 +32,21 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 	case E_Init:
 		iRet = _Init();
 		break;
-	case E_ReqUserLoginField:
-		iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_AuthRandCodeField:
-		iRet = _ReqFetchAuthRandCode(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	//case E_QryTradingAccountField:
-	//	iRet = _ReqQryTradingAccount(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	//	break;
-	//case E_QryInvestorPositionField:
-	//	iRet = _ReqQryInvestorPosition(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	//	break;
-	//case E_QryInstrumentField:
-	//	iRet = _ReqQryInstrument(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	//	break;
-	//case E_QryInvestorField:
-	//	iRet = _ReqQryInvestor(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	//	break;
-	//case E_QryOrderField:
-	//	iRet = _ReqQryOrder(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	//	break;
-	//case E_QryTradeField:
-	//	iRet = _ReqQryTrade(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-	//	break;
-	default:
-		break;
+	}
+
+	if (m_pApi)
+	{
+		switch (type)
+		{
+		case E_ReqUserLoginField:
+			iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_AuthRandCodeField:
+			iRet = _ReqFetchAuthRandCode(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (0 == iRet)

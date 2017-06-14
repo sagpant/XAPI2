@@ -66,11 +66,19 @@ void CMdUserApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 		_Disconnect(true);
 		// 不再循环
 		return;
-	case E_ReqUserLoginField:
-		iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	default:
-		break;
+
+	}
+
+	if (m_pApi)
+	{
+		switch (type)
+		{
+		case E_ReqUserLoginField:
+			iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		default:
+			break;
+		}
 	}
 
 	if (0 == iRet)

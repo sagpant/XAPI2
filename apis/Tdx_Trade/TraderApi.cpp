@@ -40,30 +40,37 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 		_Disconnect(true);
 		// 不再循环
 		return;
-	case E_ReqUserLoginField:
-		iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_InputOrderField:
-		iRet = _ReqOrderInsert(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_InputOrderActionField:
-		iRet = _ReqOrderAction(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_QryDepthMarketDataField:
-		iRet = _Subscribe(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
+	}
 
-	//case QueryType::ReqQryOrder :
-	//case QueryType::ReqQryTrade:
-	//case QueryType::ReqQryInvestor:
-	//case QueryType::ReqQryTradingAccount:
-	//case QueryType::ReqQryInvestorPosition:
-	case E_ReqQueryData_STRUCT:
-		iRet = _ReqQuery(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	
-	default:
-		break;
+	if (m_pApi)
+	{
+		switch (type)
+		{
+		case E_ReqUserLoginField:
+			iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_InputOrderField:
+			iRet = _ReqOrderInsert(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_InputOrderActionField:
+			iRet = _ReqOrderAction(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_QryDepthMarketDataField:
+			iRet = _Subscribe(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+
+			//case QueryType::ReqQryOrder :
+			//case QueryType::ReqQryTrade:
+			//case QueryType::ReqQryInvestor:
+			//case QueryType::ReqQryTradingAccount:
+			//case QueryType::ReqQryInvestorPosition:
+		case E_ReqQueryData_STRUCT:
+			iRet = _ReqQuery(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	if (0 == iRet)

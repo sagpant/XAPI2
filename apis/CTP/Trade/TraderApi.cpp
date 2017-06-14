@@ -43,50 +43,56 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 	case E_Init:
 		iRet = _Init();
 		break;
-	case E_ReqAuthenticateField:
-		iRet = _ReqAuthenticate(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_ReqUserLoginField:
-		iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_UserLogoutField:
-		iRet = _ReqUserLogout(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case E_SettlementInfoConfirmField:
-		iRet = _ReqSettlementInfoConfirm(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
 	case E_Disconnect:
 		_Disconnect(true);
 		// 不再循环
 		return;
+	}
 
-	case QueryType::QueryType_ReqQryTradingAccount:
-		iRet = _ReqQryTradingAccount(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQryInvestorPosition:
-		iRet = _ReqQryInvestorPosition(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQryInstrument:
-		iRet = _ReqQryInstrument(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQryInvestor:
-		iRet = _ReqQryInvestor(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQryOrder:
-		iRet = _ReqQryOrder(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQryTrade:
-		iRet = _ReqQryTrade(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQryQuote:
-		iRet = _ReqQryQuote(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
-	case QueryType::QueryType_ReqQrySettlementInfo:
-		iRet = _ReqQrySettlementInfo(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-		break;
+	if (m_pApi)
+	{
+		switch (type)
+		{
+		case E_ReqAuthenticateField:
+			iRet = _ReqAuthenticate(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_ReqUserLoginField:
+			iRet = _ReqUserLogin(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_UserLogoutField:
+			iRet = _ReqUserLogout(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case E_SettlementInfoConfirmField:
+			iRet = _ReqSettlementInfoConfirm(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryTradingAccount:
+			iRet = _ReqQryTradingAccount(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryInvestorPosition:
+			iRet = _ReqQryInvestorPosition(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryInstrument:
+			iRet = _ReqQryInstrument(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryInvestor:
+			iRet = _ReqQryInvestor(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryOrder:
+			iRet = _ReqQryOrder(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryTrade:
+			iRet = _ReqQryTrade(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQryQuote:
+			iRet = _ReqQryQuote(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
+		case QueryType::QueryType_ReqQrySettlementInfo:
+			iRet = _ReqQrySettlementInfo(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
 
-	default:
-		break;
+		default:
+			break;
+		}
 	}
 
 	if (0 == iRet)
