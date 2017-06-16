@@ -176,10 +176,10 @@ def close_one_row(series, close_today_first):
         if sum_ < 0:
             series['Open_Amount'] = - series[fields[i]]
             if series['Open_Amount'] != 0:
-                ss.append(series.copy())
+                ss.append(series)
         else:
             series['Open_Amount'] = leave
-            ss.append(series.copy())
+            ss.append(series)
         leave = sum_
 
     return ss
@@ -208,12 +208,13 @@ def calc_target_orders(df, target_position, init_position):
     if df2.empty:
         return None
 
-    df2['CloseToday_Flag'] = 0  # 新建一列，0表示昨仓或平仓，1表示今仓
+    # df2.loc[:, 'CloseToday_Flag'] = 0  # 新建一列，0表示昨仓或平仓，1表示今仓
+    df2 = df2.assign(CloseToday_Flag=0)  # 换成这个后不再出现SettingWithCopy警告
 
     # 对于要平仓的数据，可以试着用循环的方法生成两条进行处理
     df3 = []
     for i in range(len(df2)):
-        s = df2.iloc[i]
+        s = df2.iloc[i].copy()  # copy一下，后再才不会再出SettingWithCopy警告
         # 上海的平仓操作需要分解成两个
         if s['IsSHFE'] and s['Open_Amount'] < 0:
             # 扩展成两个，这里只做平仓，不做开仓，所以逻辑会简单一些
@@ -227,6 +228,6 @@ def calc_target_orders(df, target_position, init_position):
         pass
     df4 = pd.DataFrame.from_records(df3)
     # 重新计算买卖数量,正负就是买卖
-    df4['Buy_Amount'] = df4['Long_Flag'] * df4['Open_Amount']
+    df4.loc[:, 'Buy_Amount'] = df4['Long_Flag'] * df4['Open_Amount']
 
     return df4

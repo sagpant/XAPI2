@@ -274,9 +274,9 @@ class MyXSpi(XSpi):
         orderid[0].OrderIDType = b''
 
         # 将str转成b用于下单
-        self.target_orders['InstrumentID_'] = encode_dataframe(self.target_orders[['InstrumentID']])
+        self.target_orders['InstrumentID_'] = encode_dataframe(self.target_orders[['InstrumentID']].copy())
         # 如果一开始没有持仓等信息，有可能持仓是空的，这个地方会出错
-        self.target_orders['ExchangeID_'] = encode_dataframe(self.target_orders[['ExchangeID']])
+        self.target_orders['ExchangeID_'] = encode_dataframe(self.target_orders[['ExchangeID']].copy())
         for i in range(len(self.target_orders)):
             row = self.target_orders.iloc[i, :]
             order[0].InstrumentID = row['InstrumentID_']
@@ -354,18 +354,13 @@ class MyXSpi(XSpi):
     def usage(self):
         # 1. 在保证没有挂单的前提下，再次查询持仓，计算仓差然后补单
         # 2. 生成委托单列表后，再下单时根据列表的完成度进行补单，这种方法下单比较快，但代码复杂，先不实现
-        print(u'1 - 读取目标仓位')
-        print(u'2 - 查询实盘仓位')
-        print(u'3 - 订阅行情')
-        print(u'4 - 计算交易清单,显示进度')
-        print(u'5 - 批量下单')
-        print(u'6 - 利用回报批量撤单')
+        print(u'-' * 60)
+        print(u'1 - 读取目标仓位\t2 - 查询实盘仓位\t3 - 订阅行情')
+        print(u'4 - 计算交易清单\t5 - 批量下单    \t6 - 利用回报批量撤单')
+        print(u'10 - 查合约列表  \t11 - 查资金      \t12 - 打印订单')
+        print(u'13 - 取消订阅行情\t100 - 重连')
         print(u'q - 退出')
-        print(u'10 - 查合约列表，得到最小变动价位，并保存')
-        print(u'11 - 查资金')
-        print(u'12 - 打印订单')
-        print(u'13 - 取消订阅行情')
-        print(u'100 - 重连')
+        print(u'-' * 60)
 
     def input(self, x):
         _menu = {
@@ -396,7 +391,7 @@ if __name__ == '__main__':
 
         # 输入数字时，python3是str，python2是int，需要处理一下
         print(x)
-        print(type(x))
+        # print(type(x))
 
         if x == "q":
             break
