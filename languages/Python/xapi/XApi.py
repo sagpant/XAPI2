@@ -153,6 +153,12 @@ class XApi(object):
         func.argtypes = [c_void_p, c_void_p, c_char_p, c_char_p]
         func(self._fun, self._api, c_char_p(instruments), c_char_p(exchange))
 
+    def unsubscribe(self, instruments, exchange):
+        func = self._cdll_api.X_Unsubscribe
+        func.restype = None
+        func.argtypes = [c_void_p, c_void_p, c_char_p, c_char_p]
+        func(self._fun, self._api, c_char_p(instruments), c_char_p(exchange))
+
     def _on_response(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
         # 解决在回调函数中断点不生效的问题，把这行代码放在要断的地方的前面
         # http://stackoverflow.com/questions/34299082/not-working-python-breakpoints-in-c-thread-in-pycharm-or-eclipsepydev

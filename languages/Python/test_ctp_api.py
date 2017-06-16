@@ -117,6 +117,7 @@ class MyXSpi(XSpi):
         f = shelve.open(self.position_df_path)
         f['position_df'] = self.position_df
         f.close()
+        self.update_symbols()
 
     def OnRtnOrder(self, pOrder):
         self.order_dict[pOrder.get_id()] = copy.copy(pOrder)
@@ -182,6 +183,7 @@ class MyXSpi(XSpi):
         # 表格中东西很多，改成只取自己想要的部分？这样在表格合并时就不会出现大量的_x,_y
         self.target_position = pd.read_csv(self.target_position_path, dtype={'Symbol': str})
         print(self.target_position)
+        self.update_symbols()
 
     def query_positions(self):
         # 测试使用
@@ -189,6 +191,7 @@ class MyXSpi(XSpi):
             f = shelve.open(self.position_df_path, 'r')
             self.position_df = f['position_df']
             f.close()
+            self.update_symbols()
             return
 
         query = ReqQueryField()
@@ -214,7 +217,7 @@ class MyXSpi(XSpi):
         query = ReqQueryField()
         self.td.req_query(QueryType.ReqQryTradingAccount, query)
 
-    def sub_quote(self):
+    def update_symbols(self):
         # 期货不用指定交易所，股票需要指定，但这里合并的时候没有使用到交易所
         a = set()
         b = set()
@@ -225,9 +228,17 @@ class MyXSpi(XSpi):
         self.symbols = list(a | b)
         print(self.symbols)
 
+    def sub_quote(self):
+        self.update_symbols()
+
         symbols_ = pd.Series(self.symbols).str.encode('gbk')
         for i in range(len(symbols_)):
             self.md.subscribe(symbols_[i], b'')
+
+    def unsub_quote(self):
+        symbols_ = pd.Series(self.symbols).str.encode('gbk')
+        for i in range(len(symbols_)):
+            self.md.unsubscribe(symbols_[i], b'')
 
     def calc_orders(self):
         """
@@ -345,7 +356,7 @@ class MyXSpi(XSpi):
         # 2. 生成委托单列表后，再下单时根据列表的完成度进行补单，这种方法下单比较快，但代码复杂，先不实现
         print(u'1 - 读取目标仓位')
         print(u'2 - 查询实盘仓位')
-        print(u'3 - 两仓位归集后，订阅行情')
+        print(u'3 - 订阅行情')
         print(u'4 - 计算交易清单,显示进度')
         print(u'5 - 批量下单')
         print(u'6 - 利用回报批量撤单')
@@ -353,6 +364,7 @@ class MyXSpi(XSpi):
         print(u'10 - 查合约列表，得到最小变动价位，并保存')
         print(u'11 - 查资金')
         print(u'12 - 打印订单')
+        print(u'13 - 取消订阅行情')
         print(u'100 - 重连')
 
     def input(self, x):
@@ -366,6 +378,7 @@ class MyXSpi(XSpi):
             10: self.query_instruments,
             11: self.query_account,
             12: self.print_orders,
+            13: self.unsub_quote,
             100: self.reconnect,
         }
 

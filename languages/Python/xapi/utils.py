@@ -175,7 +175,8 @@ def close_one_row(series, close_today_first):
         sum_ = series[fields[i]] + leave
         if sum_ < 0:
             series['Open_Amount'] = - series[fields[i]]
-            ss.append(series.copy())
+            if series['Open_Amount'] != 0:
+                ss.append(series.copy())
         else:
             series['Open_Amount'] = leave
             ss.append(series.copy())
