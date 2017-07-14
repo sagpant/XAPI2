@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 from itertools import *
 
+from xapi.symbol import get_product
+
 
 def get_fields_columns_formats(struct):
     # 想转成DataFrame
@@ -176,10 +178,10 @@ def close_one_row(series, close_today_first):
         if sum_ < 0:
             series['Open_Amount'] = - series[fields[i]]
             if series['Open_Amount'] != 0:
-                ss.append(series)
+                ss.append(series.copy())
         else:
             series['Open_Amount'] = leave
-            ss.append(series)
+            ss.append(series.copy())
         leave = sum_
 
     return ss
@@ -221,7 +223,7 @@ def calc_target_orders(df, target_position, init_position):
             # 但是针对不同的产品，开平的先后是有区别的
             # 如果平今与平昨的价格相差不大，先开先平是没有区别的
             # 如果开仓钱不够，还是应当先平
-            df3.extend(close_one_row(s, True))
+            df3.extend(close_one_row(s, False))
         else:
             # 不用扩展
             df3.append(s)
@@ -231,3 +233,76 @@ def calc_target_orders(df, target_position, init_position):
     df4.loc[:, 'Buy_Amount'] = df4['Long_Flag'] * df4['Open_Amount']
 
     return df4
+
+
+def merge_hedge_positions(df, hedge):
+    """
+    将一个表中的多条记录进行合并，然后对冲
+    :param self:
+    :param df:
+    :return:
+    """
+    # 临时使用，主要是因为i1709.与i1709一类在分组时会出问题，i1709.是由api中查询得到
+    df['Symbol'] = df['InstrumentID']
+    # 合并
+    df = df.groupby(by=['Symbol', 'InstrumentID', 'HedgeFlag', 'Side'])[
+        'Position'].sum().to_frame().reset_index()
+    # print(df)
+    # 对冲
+    if hedge:
+        df['Net'] = df['Side'] * df['Position']
+        df = df.groupby(by=['Symbol', 'InstrumentID', 'HedgeFlag'])['Net'].sum().to_frame().reset_index()
+        df['Position'] = abs(df['Net'])
+        df['Side'] = df['Net'] / df['Position']
+    df = df[df['Position'] != 0]
+    df = df[['Symbol', 'InstrumentID', 'HedgeFlag', 'Side', 'Position']]
+    # print(df)
+    return df
+
+
+def get_market_data(marketdata_dict_symbol, marketdata_dict_instrument, symbol, instrument):
+    """
+    返回行情
+    :param marketdata_dict:
+    :param symbol:
+    :param instrument:
+    :return:
+    """
+    marketdata = None
+    try:
+        marketdata = marketdata_dict_symbol[symbol]
+    except:
+        try:
+            marketdata = marketdata_dict_instrument[instrument]
+        except:
+            pass
+
+    return marketdata
+
+
+def get_tick_size(instrument_dict3, symbol, instrument):
+    """
+    先按symbol找，再按instrumentid找，最后按product找
+    :param instrument_dict3:
+    :param symbol:
+    :param instrument:
+    :return:
+    """
+    _tick_size = 1
+    try:
+        # 直接存在，立即查找
+        _tick_size = instrument_dict3[symbol].PriceTick
+    except:
+        try:
+            # 不存在，查找同产品名的
+            _tick_size = instrument_dict3[instrument].PriceTick
+        except:
+            print('-' * 30, '有[新合约]出现，请抽空更新合约列表', '-' * 30)
+            try:
+                # 不存在，查找同产品名的
+                _product = get_product(instrument)
+                _tick_size = instrument_dict3[_product].PriceTick
+            except:
+                print('+' * 30, '有[新产品]出现，请立即更新合约列表', '+' * 30)
+                _tick_size = 1
+    return _tick_size

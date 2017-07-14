@@ -515,9 +515,10 @@ class DepthMarketDataNField(Structure):
     def __str__(self):
         # pydevd.settrace(suspend=True, trace_only_current_thread=True)
         return to_str(
-            u'[TradingDay={0};ActionDay={1};UpdateTime={2};UpdateMillisec={3};Symbol={4};BidCount={5};AskCount={6}]'
+            u'[TradingDay={0};ActionDay={1};UpdateTime={2};UpdateMillisec={3};Symbol={4};BidCount={5};AskCount={6};'
+            u'LastPrice={7}]'
                 .format(self.TradingDay, self.ActionDay, self.UpdateTime, self.UpdateMillisec, self.get_symbol(),
-                        self.BidCount, self.get_ask_count())
+                        self.BidCount, self.get_ask_count(), self.LastPrice)
         )
 
 
@@ -570,6 +571,15 @@ class InstrumentField(Structure):
 
     def get_symbol(self):
         return self.Symbol.decode('GBK')
+
+    def get_instrument_id(self):
+        return self.InstrumentID.decode('GBK')
+
+    def get_exchange_id(self):
+        return self.ExchangeID.decode('GBK')
+
+    def get_product_id(self):
+        return self.ProductID.decode('GBK')
 
     def get_instrument_name(self):
         return self.InstrumentName.decode('GBK')
