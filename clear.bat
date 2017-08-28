@@ -55,6 +55,16 @@ rd apis\Sgit_Trade\Debug64 /S /Q
 rd apis\Sgit_Trade\Release /S /Q
 rd apis\Sgit_Trade\Release64 /S /Q
 rd apis\Sgit_Trade\x64 /S /Q
+rd apis\ATP_Quote\Debug /S /Q
+rd apis\ATP_Quote\Debug64 /S /Q
+rd apis\ATP_Quote\Release /S /Q
+rd apis\ATP_Quote\Release64 /S /Q
+rd apis\ATP_Quote\x64 /S /Q
+rd apis\ATP_Trade\Debug /S /Q
+rd apis\ATP_Trade\Debug64 /S /Q
+rd apis\ATP_Trade\Release /S /Q
+rd apis\ATP_Trade\Release64 /S /Q
+rd apis\ATP_Trade\x64 /S /Q
 
 rd apis\Kingstar_Quote\Release64 /S /Q
 rd apis\Kingstar_Trade\Release64 /S /Q

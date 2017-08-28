@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 configs = {
-    'root_dir': r'd:' + '\\test',
+    'root_dir': r'd:' + '\\test_ctp',
     'md': {
         'Address': br'tcp://218.202.237.33:10012',
         'BrokerID': b'9999',

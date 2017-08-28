@@ -30,6 +30,6 @@
 #endif
 
 // CTP有多个版本有些没有ExchangeID，而有些有
-#define HAS_ExchangeID	1
+#define HAS_ExchangeID_Position	1
 // 飞鼠的Quote中没有交易所
 #undef HAS_ExchangeID_Quote

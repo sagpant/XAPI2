@@ -1,5 +1,7 @@
 ﻿#include "stdafx.h"
 #include "License.h"
+#include <IPHlpApi.h>
+#pragma comment(lib, "iphlpapi.lib")
 
 #ifdef ENABLE_LICENSE
 

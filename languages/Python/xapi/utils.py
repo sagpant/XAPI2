@@ -104,7 +104,7 @@ def ctypes_dict_2_dataframe(dict, dtype):
     return df
 
 
-def extend_dataframe_product(df, symbols, columns=['InstrumentID', 'Side', 'HedgeFlag']):
+def extend_dataframe_product(df, iterables, columns=['InstrumentID', 'Side', 'HedgeFlag']):
     """
     将持仓列表按合约，方向，投保，进行扩展
     扩展的目的是为了后期计算方便
@@ -117,7 +117,8 @@ def extend_dataframe_product(df, symbols, columns=['InstrumentID', 'Side', 'Hedg
     :return:
     """
     # 生成叉乘序列
-    x = product(symbols, [0, 1], [0, 1])
+    # x = product(symbols, [0, 1])
+    x = product(*iterables)  # symbols, [0, 1]
     y = pd.DataFrame(list(x), columns=columns)
 
     if df is None:
@@ -153,13 +154,11 @@ def lock_positions(df, columns, input_position, output_position):
 def close_one_row(series, close_today_first):
     """
     平当前一行
-    这里需要指定先平今还是先平昨
-
+    对今昨按指定要求先后平仓
     :param series:
-    :param close_today_first:
+    :param close_today_first: 是否先平今
     :return:
     """
-
     ss = []
     # 选择先平今还是平昨，先平的放循环前面
     if close_today_first:
@@ -187,10 +186,9 @@ def close_one_row(series, close_today_first):
     return ss
 
 
-def calc_target_orders(df, target_position, init_position):
+def calc_target_orders(df, target_position, init_position, dont_close_today, shares_per_lot):
     """
     计算中间变动委托单的记录
-    一开始计算出来的是不区别平今与平昨的列表
     :param df:
     :param target_position:
     :param init_position:
@@ -198,9 +196,6 @@ def calc_target_orders(df, target_position, init_position):
     """
     # 先将Long/Short转成1/-1，可用于后面的计算
     # 目前从XAPI中拿到的是0/1转成1/-1
-
-    # df['Long_Flag'] = 1
-    # df['Long_Flag'][df['Side'] == 1] = -1
     df['Long_Flag'] = 1 - 2 * df['Side']  # 多空方向
 
     # 正负就是开平仓，后面会对它进行修改
@@ -210,7 +205,6 @@ def calc_target_orders(df, target_position, init_position):
     if df2.empty:
         return None
 
-    # df2.loc[:, 'CloseToday_Flag'] = 0  # 新建一列，0表示昨仓或平仓，1表示今仓
     df2 = df2.assign(CloseToday_Flag=0)  # 换成这个后不再出现SettingWithCopy警告
 
     # 对于要平仓的数据，可以试着用循环的方法生成两条进行处理
@@ -231,6 +225,66 @@ def calc_target_orders(df, target_position, init_position):
     df4 = pd.DataFrame.from_records(df3)
     # 重新计算买卖数量,正负就是买卖
     df4.loc[:, 'Buy_Amount'] = df4['Long_Flag'] * df4['Open_Amount']
+
+    # 对于区分今昨的数据，不平今仓
+    # 这个可以给股票使用
+    if dont_close_today:
+        df4 = df4[df4['CloseToday_Flag'] == 0]
+
+    # 股票买入时，需要按100的整数倍买
+    if shares_per_lot is not None:
+        # 由于负数调整成100时会导致下单数过多，所以转一下
+        # df4.ix[df4['Buy_Amount'] < 0, 'Buy_Amount'] = -(-df4['Buy_Amount'] // shares_per_lot * shares_per_lot)
+        df4.ix[df4['Buy_Amount'] > 0, 'Buy_Amount'] = df4['Buy_Amount'] // shares_per_lot * shares_per_lot
+        df4 = df4[df4['Buy_Amount'] != 0]  # 只留下仓位有变化的
+
+    if df4.empty:
+        return None
+
+    return df4
+
+
+def calc_target_orders_for_stock(df, target_position, init_position):
+    """
+    计算中间变动委托单的记录
+    :param df:
+    :param target_position:
+    :param init_position:
+    :return:
+    """
+    # 先将Long/Short转成1/-1，可用于后面的计算
+    # 目前从XAPI中拿到的是0/1转成1/-1
+    df['Long_Flag'] = 1 - 2 * df['Side']  # 多空方向
+
+    # 正负就是开平仓，后面会对它进行修改
+    df['Open_Amount'] = df[target_position] - df[init_position]
+    df2 = df[df['Open_Amount'] != 0]  # 只留下仓位有变化的
+
+    if df2.empty:
+        return None
+
+    df2 = df2.assign(CloseToday_Flag=0)  # 换成这个后不再出现SettingWithCopy警告
+
+    # 对于要平仓的数据，可以试着用循环的方法生成两条进行处理
+    df3 = []
+    for i in range(len(df2)):
+        s = df2.iloc[i].copy()  # copy一下，后再才不会再出SettingWithCopy警告
+        # 上海的平仓操作需要分解成两个
+        if s['IsSSE'] and s['Open_Amount'] < 0:
+            # 扩展成两个，这里只做平仓，不做开仓，所以逻辑会简单一些
+            # 但是针对不同的产品，开平的先后是有区别的
+            # 如果平今与平昨的价格相差不大，先开先平是没有区别的
+            # 如果开仓钱不够，还是应当先平
+            df3.extend(close_one_row(s, False))
+        else:
+            # 不用扩展
+            df3.append(s)
+        pass
+    df4 = pd.DataFrame.from_records(df3)
+    # 重新计算买卖数量,正负就是买卖
+    df4.loc[:, 'Buy_Amount'] = df4['Long_Flag'] * df4['Open_Amount']
+
+    df4 = df4[df4['CloseToday_Flag'] == 0]
 
     return df4
 

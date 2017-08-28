@@ -512,13 +512,37 @@ class DepthMarketDataNField(Structure):
     def get_ask_count(self):
         return int(self.get_ticks_count() - self.BidCount)
 
+    def get_bid(self, ptr, pos):
+        """
+        获取买档，pos=1表示买1
+        :param pos:
+        :return:
+        """
+        if pos < 0 or pos >= self.BidCount:
+            return None
+        p = ptr + sizeof(DepthMarketDataNField) + sizeof(DepthField) * pos
+        return cast(p, POINTER(DepthField)).contents
+
+    def get_ask(self, ptr, pos):
+        """
+        获取卖档，pos=1表示卖1
+        :param p_market_data:
+        :param pos:
+        :return:
+        """
+        if pos < 0 or pos >= self.get_ask_count():
+            return None
+        p = ptr + sizeof(DepthMarketDataNField) + sizeof(DepthField) * (
+            self.BidCount + pos)
+        return cast(p, POINTER(DepthField)).contents
+
     def __str__(self):
         # pydevd.settrace(suspend=True, trace_only_current_thread=True)
         return to_str(
             u'[TradingDay={0};ActionDay={1};UpdateTime={2};UpdateMillisec={3};Symbol={4};BidCount={5};AskCount={6};'
-            u'LastPrice={7}]'
+            u'LastPrice={7};UpperLimitPrice={8};LowerLimitPrice={9}]'
                 .format(self.TradingDay, self.ActionDay, self.UpdateTime, self.UpdateMillisec, self.get_symbol(),
-                        self.BidCount, self.get_ask_count(), self.LastPrice)
+                        self.BidCount, self.get_ask_count(), self.LastPrice, self.UpperLimitPrice, self.LowerLimitPrice)
         )
 
 

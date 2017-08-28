@@ -721,7 +721,10 @@ char* CTraderApi::ReqOrderInsert(
 
 	//合约
 	strncpy(body.InstrumentID, pOrder->InstrumentID, sizeof(TThostFtdcInstrumentIDType));
+#ifdef HAS_ExchangeID_Order
 	strncpy(body.ExchangeID, pOrder->ExchangeID, sizeof(TThostFtdcExchangeIDType));
+#endif // HAS_ExchangeID_Order
+	
 	//买卖
 	body.Direction = OrderSide_2_TThostFtdcDirectionType(pOrder->Side);
 	//开平
@@ -1152,8 +1155,11 @@ char* CTraderApi::ReqQuoteInsert(
 	//数量
 	body.AskVolume = (int)pQuote->AskQty;
 	body.BidVolume = (int)pQuote->BidQty;
-
+#ifdef HAS_ExchangeID_Quote_ForQuoteSysID
 	strncpy(body.ForQuoteSysID, pQuote->QuoteReqID, sizeof(TThostFtdcOrderSysIDType));
+#endif // HAS_ExchangeID_Quote_ForQuoteSysID
+
+	
 
 	int nRet = 0;
 	{
@@ -1420,6 +1426,9 @@ void CTraderApi::OnRspQryTradingAccount(CThostFtdcTradingAccountField *pTradingA
 			pField->PositionProfit = pTradingAccount->PositionProfit;
 			pField->Balance = pTradingAccount->Balance;
 			pField->Available = pTradingAccount->Available;
+			pField->Deposit = pTradingAccount->Deposit;
+			pField->Withdraw = pTradingAccount->Withdraw;
+			pField->WithdrawQuota = pTradingAccount->WithdrawQuota;
 
 			m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQryTradingAccount, m_msgQueue, m_pClass, bIsLast, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
 		}
@@ -1447,7 +1456,7 @@ int CTraderApi::_ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, dou
 void CTraderApi::GetPositionID(CThostFtdcInvestorPositionField *pInvestorPosition, PositionIDType positionId)
 {
 
-#ifdef HAS_ExchangeID
+#ifdef HAS_ExchangeID_Position
 	//PositionIDType positionId = { 0 };
 	sprintf(positionId, "%s:%s:%d:%c:%c",
 		pInvestorPosition->ExchangeID,
@@ -1469,7 +1478,7 @@ void CTraderApi::GetPositionID(CThostFtdcInvestorPositionField *pInvestorPositio
 
 void CTraderApi::GetPositionID2(CThostFtdcInvestorPositionField *pInvestorPosition, PositionIDType positionId)
 {
-#ifdef HAS_ExchangeID
+#ifdef HAS_ExchangeID_Position
 	//PositionIDType positionId = { 0 };
 	sprintf(positionId, "%s:%s:%d:%c",
 		pInvestorPosition->ExchangeID,
@@ -1555,7 +1564,7 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 				strcpy(pField->ID, positionId2);
 
 				strcpy(pField->InstrumentID, pField2->InstrumentID);
-#ifdef HAS_ExchangeID
+#ifdef HAS_ExchangeID_Position
 				strcpy(pField->ExchangeID, pField2->ExchangeID);
 #endif // HAS_ExchangeID
 				sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pField->ExchangeID);

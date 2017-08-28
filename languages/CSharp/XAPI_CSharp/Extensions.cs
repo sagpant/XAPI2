@@ -224,8 +224,8 @@ CZC
 
         public static string ToFormattedString([In]this AccountField field)
         {
-            return string.Format("[AccountID={0};CurrencyID={1};Balance={2};Available={3}]",
-                field.AccountID, field.CurrencyID, field.Balance, field.Available);
+            return string.Format("[AccountID={0};CurrencyID={1};Balance={2};Available={3};Deposit={4};Withdraw={5}]",
+                field.AccountID, field.CurrencyID, field.Balance, field.Available, field.Deposit,field.Withdraw);
         }
 
         public static string ToFormattedString([In]this PositionField field)

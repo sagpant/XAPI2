@@ -30,7 +30,12 @@
 #endif
 
 // CTP有多个版本有些没有ExchangeID，而有些有
-//#define HAS_ExchangeID	1
-#undef HAS_ExchangeID
-// 飞鼠的Quote中没有交易所
+#define HAS_ExchangeID_Position	1
+#define HAS_ExchangeID_Order	1
 #define HAS_ExchangeID_Quote	1
+#define HAS_ExchangeID_Quote_ForQuoteSysID	1
+
+#undef HAS_ExchangeID_Position
+//#undef HAS_ExchangeID_Order
+//#undef HAS_ExchangeID_Quote
+//#undef HAS_ExchangeID_Quote_ForQuoteSysID
