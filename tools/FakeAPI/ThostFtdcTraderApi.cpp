@@ -338,7 +338,7 @@ private:
 	CThostFtdcTraderSpi *m_pSpi;
 };
 
-CThostFtdcTraderApi *MyClassCTP::CreateFtdcTraderApi(const char *pszFlowPath)
+CThostFtdcTraderApi *CThostFtdcTraderApi::CreateFtdcTraderApi(const char *pszFlowPath)
 {
 	return new MyClassCTP();
 }
