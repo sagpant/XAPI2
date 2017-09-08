@@ -297,6 +297,8 @@ def merge_hedge_positions(df, hedge):
     :return:
     """
     # 临时使用，主要是因为i1709.与i1709一类在分组时会出问题，i1709.是由api中查询得到
+    if df.empty:
+        return df
     df['Symbol'] = df['InstrumentID']
     # 合并
     df = df.groupby(by=['Symbol', 'InstrumentID', 'HedgeFlag', 'Side'])[

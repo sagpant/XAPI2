@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
     # 不想公开自己的账号密码
     if password == "":
-        password = "bczmwyvnedqvkcahbc"  #
+        password = "123456"  #
 
     today = datetime.date.today()
     today_Ymd = today.strftime('%Y%m%d')

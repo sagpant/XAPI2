@@ -53,7 +53,7 @@ public:
 	virtual int GetTableHeader(void* client, int request, FieldInfo_STRUCT*** pppResults) = 0;
 	virtual bool IsLogined(void* client) = 0;
 
-	virtual int SendRequest(IN RequestResponse_STRUCT* pRequest) = 0;
+	virtual int SendRequest(RequestResponse_STRUCT* pRequest) = 0;
 
 	virtual RequestResponse_STRUCT* MakeQueryData(ReqQueryData_STRUCT* query) = 0;
 
@@ -61,7 +61,7 @@ public:
 	// 撤单
 	virtual RequestResponse_STRUCT* MakeCancelOrder(CancelOrder_STRUCT* pCancelOrder) = 0;
 	virtual RequestResponse_STRUCT* MakeCancelOrder(WTLB_STRUCT* pOrder) = 0;
-	
+
 protected:
 	CTdxApi();
 	~CTdxApi(){};

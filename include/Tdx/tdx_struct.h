@@ -472,6 +472,8 @@ struct XGSGEDCX_STRUCT
 
 	char SGED_961[32];		//	961_申购额度，在申万宏源中居然也是961
 	char XGSGED_5564[32];	// 5564_新股申购额度
+	char XGSGED_5718[32];	// 5718_新股申购额度
+	char KHSZED_5759[32];	// 5759_客户市值额度
 	char ZHED[32];			// 5772_账户额度
 
 
@@ -480,8 +482,10 @@ struct XGSGEDCX_STRUCT
 	int ZHLB_;
 	double SGED_961_;
 	double XGSGED_5564_;
+	double XGSGED_5718_;
 	double KSGED_;
 	double ZHED_;
+	double KHSZED_5759_;
 
 	void* Client;	// 多账号
 };

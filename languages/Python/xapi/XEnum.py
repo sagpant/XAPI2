@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ctypes import *
-
+# 参考此文进行测试
+# 提供的方法很多，最后找了一个简单又能达到目的
+# http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
 
 class EnumBase(type):
     def __init__(self, name, base, fields):
@@ -313,3 +314,16 @@ BusinessType = enum_k(
     'Stock',
     'Option',
 )
+
+
+# Numbers = enum_kv(ONE=1, TWO=2, THREE='three')
+# print(Numbers.TWO)
+# print(Numbers[Numbers.ONE])
+# print(Numbers[2])
+# print(Numbers['three'])
+
+# print(ConnectionStatus)
+# print(type(ConnectionStatus))
+# print(ConnectionStatus.Authorized)
+# print(ConnectionStatus[ConnectionStatus.Authorized])
+# print(type(ConnectionStatus.Authorized))

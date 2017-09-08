@@ -884,7 +884,7 @@ void CharTable2XGSGEDCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGSGEDC
 			case FIELD_JYSMC:
 				strcpy_s(ppResults[i]->JYSMC, t);
 				break;
-			case FIELD_XGSGED:
+			case FIELD_XGSGED_5679:
 				strcpy_s(ppResults[i]->XGSGED, t);
 				break;
 			case FIELD_KSGED:
@@ -905,6 +905,12 @@ void CharTable2XGSGEDCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGSGEDC
 			case FIELD_XGSGED_5564:
 				strcpy_s(ppResults[i]->XGSGED_5564, t);
 				break;
+			case FIELD_XGSGED_5718:
+				strcpy_s(ppResults[i]->XGSGED_5718, t);
+				break;
+			case FIELD_KHSZED_5759:
+				strcpy_s(ppResults[i]->KHSZED_5759, t);
+				break;
 			case FIELD_ZHED:
 				strcpy_s(ppResults[i]->ZHED, t);
 				break;
@@ -920,12 +926,16 @@ void CharTable2XGSGEDCX(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, XGSGEDC
 		ppResults[i]->SGED_961_ = atof(ppResults[i]->SGED_961);
 		ppResults[i]->KSGED_ = atof(ppResults[i]->KSGED);
 		ppResults[i]->XGSGED_5564_ = atof(ppResults[i]->XGSGED_5564);
+		ppResults[i]->XGSGED_5718_ = atof(ppResults[i]->XGSGED_5718);
 		ppResults[i]->ZHED_ = atof(ppResults[i]->ZHED);
+		ppResults[i]->KHSZED_5759_ = atof(ppResults[i]->KHSZED_5759);
 
 		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->SGED_961_);
 		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->KSGED_);
 		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->XGSGED_5564_);
+		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->XGSGED_5718_);
 		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->ZHED_);
+		ppResults[i]->XGSGED_ = max(ppResults[i]->XGSGED_, ppResults[i]->KHSZED_5759_);
 
 
 		ppResults[i]->Client = Client;

@@ -28,14 +28,13 @@
 4. 在要下断点的地方加上pydevd.settrace(suspend=True, trace_only_current_thread=True)即可
 5. 对于运行过程中忽然崩溃退出，问题可能出在C层，需要用VS启动Python.exe和.py进行C层代码的调试
 
-## 改进
-1. 例如，可以将test_xapi.py和MyXSpi.py写到一个类里
-
 ## 感谢
 本项目参考学习了 https://github.com/jasonweiyi/xapi_python/tree/master/Python 感谢他们所做的工作
 
 ## 新测试项目
-- 新建了一个test_ctp_api.py，主要功能是编辑target_position.csv文件，确定目标仓位是多少。启动后通过1至6等几个步骤，快速的将当前持仓调整为目标持仓。
+- 新建了test_ctp_api.py/test_tdx_api.py，主要功能是编辑target_position.csv文件，确定目标仓位是多少。启动后通过1至6等几个步骤，快速的将当前持仓调整为目标持仓。
 - 此测试的功能适用于交易频率比低的团队，例如每天交易一两次的。
-- 已经在期货上测试通过，股票还未测试
+- 已经在期货上测试通过，股票已经完成，还没有严格测试
 - 对于上海的先平今还是先平昨，对于股指是先锁仓再平仓，没有细化，后期可以再改进
+- 股票部分
+
