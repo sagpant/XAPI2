@@ -84,7 +84,7 @@ void CMsgQueue::StopThread()
     if(m_hThread)
     {
 		// 这里很少有机会执行
-		m_hThread->detach();
+		m_hThread->join();
         m_hThread = nullptr;
     }
 }
