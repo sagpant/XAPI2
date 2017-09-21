@@ -1458,19 +1458,19 @@ void CTraderApi::GetPositionID(CThostFtdcInvestorPositionField *pInvestorPositio
 
 #ifdef HAS_ExchangeID_Position
 	//PositionIDType positionId = { 0 };
-	sprintf(positionId, "%s:%s:%d:%c:%c",
+	sprintf(positionId, "%s:%s:%d:%d:%c",
 		pInvestorPosition->ExchangeID,
 		pInvestorPosition->InstrumentID,
 		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-		pInvestorPosition->HedgeFlag,
+		TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag),
 		pInvestorPosition->PositionDate);
 #else
 	//PositionIDType positionId = { 0 };
-	sprintf(positionId, "%s:%s:%d:%c:%c",
+	sprintf(positionId, "%s:%s:%d:%d:%c",
 		"",
 		pInvestorPosition->InstrumentID,
 		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-		pInvestorPosition->HedgeFlag,
+		TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag),
 		pInvestorPosition->PositionDate);
 
 #endif // HAS_ExchangeID
@@ -1480,18 +1480,18 @@ void CTraderApi::GetPositionID2(CThostFtdcInvestorPositionField *pInvestorPositi
 {
 #ifdef HAS_ExchangeID_Position
 	//PositionIDType positionId = { 0 };
-	sprintf(positionId, "%s:%s:%d:%c",
+	sprintf(positionId, "%s:%s:%d:%d",
 		pInvestorPosition->ExchangeID,
 		pInvestorPosition->InstrumentID,
 		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-		pInvestorPosition->HedgeFlag);
+		TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag));
 #else
 	//PositionIDType positionId = { 0 };
-	sprintf(positionId, "%s:%s:%d:%c",
+	sprintf(positionId, "%s:%s:%d:%d",
 		"",
 		pInvestorPosition->InstrumentID,
 		TThostFtdcPosiDirectionType_2_PositionSide(pInvestorPosition->PosiDirection),
-		pInvestorPosition->HedgeFlag);
+		TThostFtdcHedgeFlagType_2_HedgeFlagType(pInvestorPosition->HedgeFlag));
 
 #endif // HAS_ExchangeID
 }
@@ -1960,7 +1960,7 @@ void CTraderApi::OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsL
 void CTraderApi::OnTrade(TradeField *pTrade)
 {
 	PositionIDType positionId = { 0 };
-	sprintf(positionId, "%s:%s:%d:%c",
+	sprintf(positionId, "%s:%s:%d:%d",
 		pTrade->ExchangeID, pTrade->InstrumentID, TradeField_2_PositionSide(pTrade), pTrade->HedgeFlag);
 
 	PositionField* pField = nullptr;
@@ -1974,7 +1974,7 @@ void CTraderApi::OnTrade(TradeField *pTrade)
 		strcpy(pField->ExchangeID, pTrade->ExchangeID);
 		strcpy(pField->AccountID, pTrade->AccountID);
 		pField->Side = TradeField_2_PositionSide(pTrade);
-		pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pTrade->HedgeFlag);
+		pField->HedgeFlag = pTrade->HedgeFlag;
 
 		m_id_platform_position.insert(pair<string, PositionField*>(positionId, pField));
 	}
