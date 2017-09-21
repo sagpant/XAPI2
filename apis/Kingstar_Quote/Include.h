@@ -36,3 +36,6 @@ using namespace KingstarAPI;
 #define KS_LKC_EXT	"lkc"
 
 #define KS_COPYFILE 1
+
+// 条件编译
+#include "../CTP/include_pub.h"

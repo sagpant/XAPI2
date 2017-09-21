@@ -37,7 +37,5 @@ using namespace KingstarAPI;
 
 #define KS_COPYFILE 1
 
-// CTP有多个版本有些没有ExchangeID，而有些有
-#define HAS_ExchangeID_Position	1
-// 飞鼠的Quote中没有交易所
-#define HAS_ExchangeID_Quote	1
+// 条件编译
+#include "../CTP/include_pub.h"

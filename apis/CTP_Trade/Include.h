@@ -29,13 +29,7 @@
 	#endif
 #endif
 
-// CTP有多个版本有些没有ExchangeID，而有些有
-#define HAS_ExchangeID_Position	1
-#define HAS_ExchangeID_Order	1
-#define HAS_ExchangeID_Quote	1
-#define HAS_ExchangeID_Quote_ForQuoteSysID	1
+// 条件编译
+#include "../CTP/include_pub.h"
 
 #undef HAS_ExchangeID_Position
-//#undef HAS_ExchangeID_Order
-//#undef HAS_ExchangeID_Quote
-//#undef HAS_ExchangeID_Quote_ForQuoteSysID

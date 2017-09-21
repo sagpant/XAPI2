@@ -85,6 +85,7 @@ public:
 	int ReqOrderAction(OrderField *pOrder, int count, OrderIDType* pOutput);
 	char* ReqOrderAction(CThostFtdcOrderField *pOrder, int count, char* pzsRtn);
 
+#ifdef HAS_Quote
 	char* ReqQuoteInsert(
 		QuoteField* pQuote,
 		OrderIDType* pAskRef,
@@ -92,6 +93,7 @@ public:
 
 	int ReqQuoteAction(CThostFtdcQuoteField *pQuote, OrderIDType* pOutput);
 	int ReqQuoteAction(const string& szId, OrderIDType* pOutput);
+#endif // HAS_Quote
 
 	//void ReqQryTradingAccount();
 	//void ReqQryInvestorPosition(const string& szInstrumentId, const string& szExchange);
@@ -128,23 +130,24 @@ private:
 	void ReqUserLogout();
 	int _ReqUserLogout(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
-
+#ifdef HAS_Settlement
 	void ReqSettlementInfoConfirm();
 	int _ReqSettlementInfoConfirm(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	int _ReqQrySettlementInfo(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+#endif // HAS_Settlement
 
+	
 	int _ReqQryInstrument(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int _ReqQryTradingAccount(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int _ReqQryInvestorPosition(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int _ReqQryInvestor(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int _ReqQrySettlementInfo(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-
+	
 	int _ReqQryOrder(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-	int _ReqQryQuote(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
-
+	
 	void OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsLast);
 	void OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsLast);
-	void OnQuote(CThostFtdcQuoteField *pQuote, int nRequestID, bool bIsLast);
+	
 
 	void OnTrade(TradeField *pTrade);
 
@@ -159,7 +162,6 @@ private:
 	//认证
 	virtual void OnRspAuthenticate(CThostFtdcRspAuthenticateField *pRspAuthenticateField, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	virtual void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspQryInvestor(CThostFtdcInvestorField *pInvestor, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
 	//下单
@@ -178,6 +180,10 @@ private:
 	virtual void OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnTrade(CThostFtdcTradeField *pTrade);
 
+#ifdef HAS_Quote
+	int _ReqQryQuote(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	void OnQuote(CThostFtdcQuoteField *pQuote, int nRequestID, bool bIsLast);
+
 	//报价录入
 	virtual void OnRspQuoteInsert(CThostFtdcInputQuoteField *pInputQuote, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnErrRtnQuoteInsert(CThostFtdcInputQuoteField *pInputQuote, CThostFtdcRspInfoField *pRspInfo);
@@ -188,6 +194,17 @@ private:
 	virtual void OnRspQuoteAction(CThostFtdcInputQuoteActionField *pInputQuoteAction, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnErrRtnQuoteAction(CThostFtdcQuoteActionField *pQuoteAction, CThostFtdcRspInfoField *pRspInfo);
 
+#endif // HAS_Quote
+
+#ifdef HAS_Settlement
+	virtual void OnRspSettlementInfoConfirm(CThostFtdcSettlementInfoConfirmField *pSettlementInfoConfirm, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+	//请求查询投资者结算结果响应
+	virtual void OnRspQrySettlementInfo(CThostFtdcSettlementInfoField *pSettlementInfo, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+
+#endif // HAS_Settlement
+
+	
 	//仓位
 	virtual void OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInvestorPosition, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
@@ -202,17 +219,21 @@ private:
 	//查询行情响应
 	//virtual void OnRspQryDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 
-	//请求查询投资者结算结果响应
-	virtual void OnRspQrySettlementInfo(CThostFtdcSettlementInfoField *pSettlementInfo, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-
+	
 	//其它
 	virtual void OnRspError(CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
+#ifdef HAS_InstrumentStatus
 	virtual void OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrumentStatus);
+#endif // HAS_InstrumentStatus
+
+	
 
 	// 今昨分开
 	void GetPositionID(CThostFtdcInvestorPositionField *pInvestorPosition, PositionIDType positionId);
 	// 今昨一起
 	void GetPositionID2(CThostFtdcInvestorPositionField *pInvestorPosition, PositionIDType positionId);
+
+	void QueryOrderTrade(bool bForceQuery);
 
 private:
 	//bool						m_delete;
@@ -238,9 +259,11 @@ private:
 	unordered_map<string, CThostFtdcOrderField*>		m_id_api_order;
 	unordered_map<string, string>					m_sysId_orderId;
 
+#ifdef HAS_Quote
 	unordered_map<string, QuoteField*>				m_id_platform_quote;
 	unordered_map<string, CThostFtdcQuoteField*>		m_id_api_quote;
 	unordered_map<string, string>					m_sysId_quoteId;
+#endif // HAS_Quote
 
 	unordered_map<string, PositionField*>			m_id_platform_position;
 	unordered_map<string, CThostFtdcInvestorPositionField*>			m_id_api_position;

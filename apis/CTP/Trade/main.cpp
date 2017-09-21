@@ -56,12 +56,15 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 		break;
 	case RequestType_ReqOrderInsert:
 		return (void*)pApi->ReqOrderInsert((OrderField*)ptr1, size1, (char*)ptr2);
-	case RequestType_ReqQuoteInsert:
-		return pApi->ReqQuoteInsert((QuoteField*)ptr1, (OrderIDType*)ptr2, (OrderIDType*)ptr3);
 	case RequestType_ReqOrderAction:
 		return (void*)pApi->ReqOrderAction((OrderIDType*)ptr1, size1, (char*)ptr2);
+#ifdef HAS_Quote
+	case RequestType_ReqQuoteInsert:
+		return pApi->ReqQuoteInsert((QuoteField*)ptr1, (OrderIDType*)ptr2, (OrderIDType*)ptr3);
 	case RequestType_ReqQuoteAction:
 		return (void*)pApi->ReqQuoteAction((const char*)ptr1, (OrderIDType*)ptr2);
+#endif // HAS_Quote
+
 	default:
 		break;
 	}

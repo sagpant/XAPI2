@@ -1,8 +1,8 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../../include/ApiStruct.h"
 
-// ÓÉÓÚÕâ¸öInclude.hĞèÒªÊ¹ÓÃÃ¿¸öÏîÄ¿×Ô¼ºµÄÎÄ¼ş£¬ËùÒÔĞèÒªÔÚVC++ Directories->Include DirectoriesÖĞÌí¼ÓÒ»¸ö"./"
+// ç”±äºè¿™ä¸ªInclude.héœ€è¦ä½¿ç”¨æ¯ä¸ªé¡¹ç›®è‡ªå·±çš„æ–‡ä»¶ï¼Œæ‰€ä»¥éœ€è¦åœ¨VC++ Directories->Include Directoriesä¸­æ·»åŠ ä¸€ä¸ª"./"
 #include "Include.h"
 
 #include <set>
@@ -40,8 +40,10 @@ public:
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 	void Unsubscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
+#ifdef HAS_Quote
 	void SubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID);
 	void UnsubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID);
+#endif // HAS_Quote
 
 private:
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
@@ -51,11 +53,11 @@ private:
 	void _Disconnect(bool IsInQueue);
 	void _DisconnectInThread();
 
-	//µÇÂ¼ÇëÇó
+	//ç™»å½•è¯·æ±‚
 	void ReqUserLogin();
 	int _ReqUserLogin(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
-	//¶©ÔÄĞĞÇé
+	//è®¢é˜…è¡Œæƒ…
 	void Subscribe(const set<string>& instrumentIDs, const string& szExchangeID);
 	void SubscribeQuote(const set<string>& instrumentIDs, const string& szExchangeID);
 
@@ -68,31 +70,33 @@ private:
 	virtual void OnRspUnSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData);
 
+	//æ£€æŸ¥æ˜¯å¦å‡ºé”™
+	bool IsErrorRspInfo(const char* szSource, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//å°†å‡ºé”™æ¶ˆæ¯é€åˆ°æ¶ˆæ¯é˜Ÿåˆ—
+	bool IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo);//ä¸é€å‡ºé”™æ¶ˆæ¯
+
+#ifdef HAS_Quote
 	virtual void OnRspSubForQuoteRsp(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspUnSubForQuoteRsp(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp);
-
-	//¼ì²éÊÇ·ñ³ö´í
-	bool IsErrorRspInfo(const char* szSource, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//½«³ö´íÏûÏ¢ËÍµ½ÏûÏ¢¶ÓÁĞ
-	bool IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo);//²»ËÍ³ö´íÏûÏ¢
+#endif // HAS_Quote
 
 private:
 	//bool						m_delete;
 	mutex						m_csMapInstrumentIDs;
 	mutex						m_csMapQuoteInstrumentIDs;
 
-	atomic<int>					m_lRequestID;			//ÇëÇóID£¬Ã¿´ÎÇëÇóÇ°×ÔÔö
+	atomic<int>					m_lRequestID;			//è¯·æ±‚IDï¼Œæ¯æ¬¡è¯·æ±‚å‰è‡ªå¢
 
-	set<string>					m_setInstrumentIDs;		//ÕıÔÚ¶©ÔÄµÄºÏÔ¼
-	set<string>					m_setQuoteInstrumentIDs;		//ÕıÔÚ¶©ÔÄµÄºÏÔ¼
-	CThostFtdcMdApi*			m_pApi;					//ĞĞÇéAPI
+	set<string>					m_setInstrumentIDs;		//æ­£åœ¨è®¢é˜…çš„åˆçº¦
+	set<string>					m_setQuoteInstrumentIDs;		//æ­£åœ¨è®¢é˜…çš„åˆçº¦
+	CThostFtdcMdApi*			m_pApi;					//è¡Œæƒ…API
 
-	string						m_szPath;				//Éú³ÉÅäÖÃÎÄ¼şµÄÂ·¾¶
+	string						m_szPath;				//ç”Ÿæˆé…ç½®æ–‡ä»¶çš„è·¯å¾„
 	ServerInfoField				m_ServerInfo;
 	UserInfoField				m_UserInfo;
 	int							m_nSleep;
 
-	CMsgQueue*					m_msgQueue;				//ÏûÏ¢¶ÓÁĞÖ¸Õë
+	CMsgQueue*					m_msgQueue;				//æ¶ˆæ¯é˜Ÿåˆ—æŒ‡é’ˆ
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 

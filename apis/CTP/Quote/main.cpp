@@ -57,12 +57,16 @@ void* __stdcall XRequest(char type, void* pApi1, void* pApi2, double double1, do
 	case RequestType_Unsubscribe:
 		pApi->Unsubscribe((const char*)ptr1, (const char*)ptr2);
 		break;
+
+#if HAS_Quote
 	case RequestType_SubscribeQuote:
 		pApi->SubscribeQuote((const char*)ptr1, (const char*)ptr2);
 		break;
 	case RequestType_UnsubscribeQuote:
 		pApi->UnsubscribeQuote((const char*)ptr1, (const char*)ptr2);
 		break;
+#endif // HAS_Quote
+
 	default:
 		break;
 	}

@@ -26,8 +26,7 @@ TimeInForce CThostFtdcOrderField_2_TimeInForce(CThostFtdcOrderField* pIn);
 OrderStatus CThostFtdcOrderField_2_OrderStatus(CThostFtdcOrderField* pIn);
 ExecType CThostFtdcOrderField_2_ExecType(CThostFtdcOrderField* pIn);
 
-OrderStatus CThostFtdcQuoteField_2_OrderStatus(CThostFtdcQuoteField* pIn);
-ExecType CThostFtdcQuoteField_2_ExecType(CThostFtdcQuoteField* pIn);
+
 
 InstrumentType CThostFtdcInstrumentField_2_InstrumentType(CThostFtdcInstrumentField* pIn);
 
@@ -36,3 +35,10 @@ IdCardType TThostFtdcIdCardTypeType_2_IdCardType(TThostFtdcIdCardTypeType In);
 ExchangeType TThostFtdcExchangeIDType_2_ExchangeType(TThostFtdcExchangeIDType In);
 
 void CThostFtdcOrderField_2_OrderField_0(OrderIDType OrderID, CThostFtdcOrderField* pIn, OrderField* pOut);
+
+
+#ifdef HAS_Quote
+OrderStatus CThostFtdcQuoteField_2_OrderStatus(CThostFtdcQuoteField* pIn);
+ExecType CThostFtdcQuoteField_2_ExecType(CThostFtdcQuoteField* pIn);
+#endif // HAS_Quote
+
