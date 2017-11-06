@@ -527,6 +527,12 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 			case FIELD_BLXX:
 				strcpy_s(ppResults[i]->BLXX, t);
 				break;
+			case FIELD_DQSL:
+				strcpy_s(ppResults[i]->DQSL, t);
+				break;
+			case FIELD_SJSL:
+				strcpy_s(ppResults[i]->SJSL, t);
+				break;
 			}
 			++j;
 			pRow = ppFieldInfos[j];
@@ -538,6 +544,11 @@ void CharTable2GFLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, GFLB_STRUCT
 		ppResults[i]->DQJ_ = atof(ppResults[i]->DQJ);
 		ppResults[i]->ZXSZ_ = atof(ppResults[i]->ZXSZ);
 		ppResults[i]->DJSL_ = atof(ppResults[i]->DJSL);
+		ppResults[i]->DQSL_ = atof(ppResults[i]->DQSL);
+		ppResults[i]->SJSL_ = atof(ppResults[i]->SJSL);
+
+		ppResults[i]->ZQSL_ = max(ppResults[i]->ZQSL_, ppResults[i]->DQSL_);
+		ppResults[i]->ZQSL_ = max(ppResults[i]->ZQSL_, ppResults[i]->SJSL_);
 
 		ppResults[i]->Client = Client;
 	}
@@ -603,179 +614,6 @@ void CharTable2ZJYE(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, ZJYE_STRUCT
 		ppResults[i]->Client = Client;
 	}
 }
-
-//void CharTable2HQ(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, HQ_STRUCT*** pppResults, void* Client, CMsgQueue* pQueue)
-//{
-//	*pppResults = nullptr;
-//	if (ppTable == nullptr)
-//		return;
-//
-//	int count = GetRowCountTableBody(ppTable);
-//	if (count <= 0)
-//		return;
-//
-//	HQ_STRUCT** ppResults = new HQ_STRUCT*[count + 1]();
-//	ppResults[count] = nullptr;
-//	*pppResults = ppResults;
-//
-//	for (int i = 0; i < count; ++i)
-//	{
-//		ppResults[i] = new HQ_STRUCT();
-//
-//		int j = 0;
-//		FieldInfo_STRUCT* pRow = ppFieldInfos[j];
-//		while (pRow != 0)
-//		{
-//			char* t = ppTable[i * COL_EACH_ROW + j];
-//			switch (pRow->FieldID)
-//			{
-//			case FIELD_ZQDM:
-//				strcpy_s(ppResults[i]->ZQDM, t);
-//				break;
-//			case FIELD_ZQMC:
-//				strcpy_s(ppResults[i]->ZQMC, t);
-//				break;
-//			case FIELD_ZSJ:
-//				strcpy_s(ppResults[i]->ZSJ, t);
-//				break;
-//			case FIELD_JKJ:
-//				strcpy_s(ppResults[i]->JKJ, t);
-//				break;
-//			case FIELD_GZLX:
-//				strcpy_s(ppResults[i]->GZLX, t);
-//				break;
-//			case FIELD_DQJ:
-//				strcpy_s(ppResults[i]->DQJ, t);
-//				break;
-//			case FIELD_BID_PRICE_1:
-//				strcpy_s(ppResults[i]->BidPrice1, t);
-//				break;
-//			case FIELD_BID_PRICE_2:
-//				strcpy_s(ppResults[i]->BidPrice2, t);
-//				break;
-//			case FIELD_BID_PRICE_3:
-//				strcpy_s(ppResults[i]->BidPrice3, t);
-//				break;
-//			case FIELD_BID_PRICE_4:
-//				strcpy_s(ppResults[i]->BidPrice4, t);
-//				break;
-//			case FIELD_BID_PRICE_5:
-//				strcpy_s(ppResults[i]->BidPrice5, t);
-//				break;
-//			case FIELD_BID_SIZE_1:
-//				strcpy_s(ppResults[i]->BidSize1, t);
-//				break;
-//			case FIELD_BID_SIZE_2:
-//				strcpy_s(ppResults[i]->BidSize2, t);
-//				break;
-//			case FIELD_BID_SIZE_3:
-//				strcpy_s(ppResults[i]->BidSize3, t);
-//				break;
-//			case FIELD_BID_SIZE_4:
-//				strcpy_s(ppResults[i]->BidSize4, t);
-//				break;
-//			case FIELD_BID_SIZE_5:
-//				strcpy_s(ppResults[i]->BidSize5, t);
-//				break;
-//			case FIELD_ASK_PRICE_1:
-//				strcpy_s(ppResults[i]->AskPrice1, t);
-//				break;
-//			case FIELD_ASK_PRICE_2:
-//				strcpy_s(ppResults[i]->AskPrice2, t);
-//				break;
-//			case FIELD_ASK_PRICE_3:
-//				strcpy_s(ppResults[i]->AskPrice3, t);
-//				break;
-//			case FIELD_ASK_PRICE_4:
-//				strcpy_s(ppResults[i]->AskPrice4, t);
-//				break;
-//			case FIELD_ASK_PRICE_5:
-//				strcpy_s(ppResults[i]->AskPrice5, t);
-//				break;
-//			case FIELD_ASK_SIZE_1:
-//				strcpy_s(ppResults[i]->AskSize1, t);
-//				break;
-//			case FIELD_ASK_SIZE_2:
-//				strcpy_s(ppResults[i]->AskSize2, t);
-//				break;
-//			case FIELD_ASK_SIZE_3:
-//				strcpy_s(ppResults[i]->AskSize3, t);
-//				break;
-//			case FIELD_ASK_SIZE_4:
-//				strcpy_s(ppResults[i]->AskSize4, t);
-//				break;
-//			case FIELD_ASK_SIZE_5:
-//				strcpy_s(ppResults[i]->AskSize5, t);
-//				break;
-//			case FIELD_JYSDM:
-//				strcpy_s(ppResults[i]->JYSDM, t);
-//				break;
-//			case FIELD_ZXJYGS:
-//				strcpy_s(ppResults[i]->ZXJYGS, t);
-//				break;
-//			case FIELD_ZXMRBDJW:
-//				strcpy_s(ppResults[i]->ZXMRBDJW, t);
-//				break;
-//			case FIELD_ZXMCBDJW:
-//				strcpy_s(ppResults[i]->ZXMCBDJW, t);
-//				break;
-//			case FIELD_ZHLB:
-//				strcpy_s(ppResults[i]->ZHLB, t);
-//				break;
-//			case FIELD_BZ:
-//				strcpy_s(ppResults[i]->BZ, t);
-//				break;
-//			case FIELD_GZBS:
-//				strcpy_s(ppResults[i]->GZBS, t);
-//				break;
-//			case FIELD_ZTJG:
-//				strcpy_s(ppResults[i]->ZTJG, t);
-//				break;
-//			case FIELD_DTJG:
-//				strcpy_s(ppResults[i]->DTJG, t);
-//				break;
-//			case FIELD_BLXX:
-//				strcpy_s(ppResults[i]->BLXX, t);
-//				break;
-//			}
-//			++j;
-//			pRow = ppFieldInfos[j];
-//		}
-//
-//		ppResults[i]->ZSJ_ = atof(ppResults[i]->ZSJ);
-//		ppResults[i]->JKJ_ = atof(ppResults[i]->JKJ);
-//		ppResults[i]->GZLX_ = atof(ppResults[i]->GZLX);
-//		ppResults[i]->DQJ_ = atof(ppResults[i]->DQJ);
-//		ppResults[i]->BidPrice1_ = atof(ppResults[i]->BidPrice1);
-//		ppResults[i]->BidPrice2_ = atof(ppResults[i]->BidPrice2);
-//		ppResults[i]->BidPrice3_ = atof(ppResults[i]->BidPrice3);
-//		ppResults[i]->BidPrice4_ = atof(ppResults[i]->BidPrice4);
-//		ppResults[i]->BidPrice5_ = atof(ppResults[i]->BidPrice5);
-//		ppResults[i]->AskPrice1_ = atof(ppResults[i]->AskPrice1);
-//		ppResults[i]->AskPrice2_ = atof(ppResults[i]->AskPrice2);
-//		ppResults[i]->AskPrice3_ = atof(ppResults[i]->AskPrice3);
-//		ppResults[i]->AskPrice4_ = atof(ppResults[i]->AskPrice4);
-//		ppResults[i]->AskPrice5_ = atof(ppResults[i]->AskPrice5);
-//		ppResults[i]->BidSize1_ = atoi(ppResults[i]->BidSize1);
-//		ppResults[i]->BidSize2_ = atoi(ppResults[i]->BidSize2);
-//		ppResults[i]->BidSize3_ = atoi(ppResults[i]->BidSize3);
-//		ppResults[i]->BidSize4_ = atoi(ppResults[i]->BidSize4);
-//		ppResults[i]->BidSize5_ = atoi(ppResults[i]->BidSize5);
-//		ppResults[i]->AskSize1_ = atoi(ppResults[i]->AskSize1);
-//		ppResults[i]->AskSize2_ = atoi(ppResults[i]->AskSize2);
-//		ppResults[i]->AskSize3_ = atoi(ppResults[i]->AskSize3);
-//		ppResults[i]->AskSize4_ = atoi(ppResults[i]->AskSize4);
-//		ppResults[i]->AskSize5_ = atoi(ppResults[i]->AskSize5);
-//
-//		ppResults[i]->ZXJYGS_ = atoi(ppResults[i]->ZXJYGS);
-//		ppResults[i]->ZXMRBDJW_ = atof(ppResults[i]->ZXMRBDJW);
-//		ppResults[i]->ZXMCBDJW_ = atof(ppResults[i]->ZXMCBDJW);
-//		ppResults[i]->ZTJG_ = atof(ppResults[i]->ZTJG);
-//		ppResults[i]->DTJG_ = atof(ppResults[i]->DTJG);
-//
-//		ppResults[i]->Client = Client;
-//	}
-//}
 
 //////////////////////////////////////////////////////////////////////////
 
