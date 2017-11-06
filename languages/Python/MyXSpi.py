@@ -38,6 +38,7 @@ class MyXSpi(XSpi):
         # 根目录
         self.root_dir = root_dir
         self.target_position_path = os.path.join(self.root_dir, 'target_position.csv')
+        self.target_orders_path = os.path.join(self.root_dir, 'target_orders.csv')
         # 子投资组合的仓位，合并成目标持仓时会做对冲
         self.portfolios_path = [os.path.join(self.root_dir, p) for p in portfolios]
         # 增量
@@ -378,6 +379,8 @@ class MyXSpi(XSpi):
             # 这里最好能对交易清单进行排序，在反手时，股指最好是先锁仓后平仓，而其它合约先平仓后开仓
             print("Long_Flag:多1空-1\tOpen_Amount:开+平-\tCloseToday_Flag:平今1\tBuy_Amount:买+卖-")
             self.target_orders.sort_values(by='Open_Amount', ascending=True, inplace=True)
+            # 控制台中太长，看不清，写文件
+            self.target_orders.to_csv(self.target_orders_path, index=False, encoding='utf-8-sig')
             print(self.target_orders[['InstrumentID', 'Long_Flag', 'Open_Amount', 'CloseToday_Flag', 'Buy_Amount']])
             return len(self.target_orders)
 

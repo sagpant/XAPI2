@@ -263,12 +263,17 @@ struct GFLB_STRUCT
 	char BLXX[32];	// 1213_保留信息
 	char JB[32];	// 1233_句柄
 
+	char DQSL[32];  // 5712_当前数量
+	char SJSL[32];  // 5508_实际数量
+
 	int ZQSL_;
 	int KMSL_;
 	double TBCBJ_;
 	double DQJ_;
 	double ZXSZ_;
 	double DJSL_;
+	double DQSL_;
+	double SJSL_;
 
 	void* Client;	// 多账号
 };

@@ -66,6 +66,7 @@ ID一样，中文名可能不一样
 #define FIELD_CJF			208	//	208_成交费
 #define FIELD_JSF			209	//	209_结算费
 #define FIELD_YHS			210	//	210_印花税
+#define FIELD_JMSL			215	//	215_今买数量
 #define FIELD_ZXMRBDJW		226	//	226_最小买入变动价位
 #define FIELD_ZXMCBDJW		227	//	227_最小卖出变动价位
 #define FIELD_CKYKBL		230	//	230_参考盈亏比例(%)
@@ -120,6 +121,9 @@ ID一样，中文名可能不一样
 #define FIELD_HHH			5255	// 5255_会话号
 #define FIELD_KHDM			5256	// 5256_客户代码
 
+#define FIELD_GFZY			5507	// 5507_股份昨余
+#define FIELD_SJSL			5508	// 5508_实际数量
+
 #define FIELD_XGSGED_5564	5564	// 5564_新股申购额度
 #define FIELD_WTLB_5565		5565	// 5565_委托类别
 #define FIELD_JSHL			5599	// 5599_结算汇率
@@ -133,6 +137,7 @@ ID一样，中文名可能不一样
 #define FIELD_JSZH			5675	// 5675_结算账号
 #define FIELD_DJRQ			5676	// 5676_登记日期
 #define FIELD_XGSGED_5679	5679	// 5679_新股申购额度
+#define FIELD_DQSL			5712	// 5712_当前数量
 #define FIELD_XGSGED_5718	5718	// 5718_新股申购额度
 #define FIELD_KHSZED_5759	5759	// 5759_客户市值额度
 #define FIELD_KHSZED		5771	// 5771_客户市值额度
