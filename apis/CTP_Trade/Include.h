@@ -33,3 +33,4 @@
 #include "../CTP/include_pub.h"
 
 #undef HAS_ExchangeID_Position
+#undef USE_LONG_ORDER_REF

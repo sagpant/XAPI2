@@ -40,3 +40,4 @@
 #undef HAS_TradingDay_UserLogin
 #undef HAS_InstrumentStatus
 #undef HAS_Settlement
+#undef USE_LONG_ORDER_REF

@@ -32,3 +32,5 @@
 
 // 条件编译
 #include "../CTP/include_pub.h"
+
+#undef USE_LONG_ORDER_REF
