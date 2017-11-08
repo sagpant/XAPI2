@@ -78,6 +78,9 @@ namespace XAPI.Callback
                 case ResponseType.OnRspQryInvestor:
                     _OnRspQryInvestor(ptr1, size1, double1);
                     break;
+                case ResponseType.OnRtnInstrumentStatus:
+                    _OnRtnInstrumentStatus(ptr1, size1);
+                    break;
                 case ResponseType.OnRtnOrder:
                     _OnRtnOrder(ptr1, size1);
                     break;

@@ -77,6 +77,7 @@ enum ResponseType :char
 	ResponseType_OnRspQryHistoricalTicks,
 	ResponseType_OnRspQryHistoricalBars,
 	ResponseType_OnRspQryInvestor,
+	ResponseType_OnRtnInstrumentStatus,
 
 	ResponseType_OnFilterSubscribe,
 };

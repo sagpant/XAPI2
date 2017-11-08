@@ -260,6 +260,29 @@ IdCardType TThostFtdcIdCardTypeType_2_IdCardType(TThostFtdcIdCardTypeType In)
 	}
 }
 
+TradingPhaseType TThostFtdcInstrumentStatusType_2_TradingPhaseType(TThostFtdcInstrumentStatusType In)
+{
+	switch (In)
+	{
+	case THOST_FTDC_IS_BeforeTrading:
+		return TradingPhaseType::TradingPhaseType_BeforeTrading;
+	case THOST_FTDC_IS_NoTrading:
+		return TradingPhaseType::TradingPhaseType_NoTrading;
+	case THOST_FTDC_IS_Continous:
+		return TradingPhaseType::TradingPhaseType_Continuous;
+	case THOST_FTDC_IS_AuctionOrdering:
+		return TradingPhaseType::TradingPhaseType_AuctionOrdering;
+	case THOST_FTDC_IS_AuctionBalance:
+		return TradingPhaseType::TradingPhaseType_AuctionBalance;
+	case THOST_FTDC_IS_AuctionMatch:
+		return TradingPhaseType::TradingPhaseType_AuctionMatch;
+	case THOST_FTDC_IS_Closed:
+		return TradingPhaseType::TradingPhaseType_Closed;
+	default:
+		return TradingPhaseType::TradingPhaseType_NoTrading;
+	}
+}
+
 ExchangeType TThostFtdcExchangeIDType_2_ExchangeType(TThostFtdcExchangeIDType In)
 {
 	switch (In[1])

@@ -24,7 +24,15 @@ namespace XAPI.Callback
         }
         // 这种写法的主要目的是求快
         private DelegateOnFilterSubscribe OnFilterSubscribe_;
-        
+
+        public DelegateOnRtnInstrumentStatus OnRtnInstrumentStatus
+        {
+            get { return OnRtnInstrumentStatus_; }
+            set { OnRtnInstrumentStatus_ = value; }
+        }
+
+        private DelegateOnRtnInstrumentStatus OnRtnInstrumentStatus_;
+
 
         #region 已经订阅的行情
         public int MaxSubscribedInstrumentsCount;
@@ -133,6 +141,17 @@ namespace XAPI.Callback
             //    return;
             DepthMarketDataNClass cls = PInvokeUtility.GetDepthMarketDataNClass(ptr1);
             OnRtnDepthMarketData_(this, ref cls);
+        }
+
+        private void _OnRtnInstrumentStatus(IntPtr ptr1, int size1)
+        {
+            // 求快，不加
+            if (OnRtnInstrumentStatus_ == null)
+                return;
+
+            InstrumentStatusField obj = (InstrumentStatusField)Marshal.PtrToStructure(ptr1, typeof(InstrumentStatusField));
+
+            OnRtnInstrumentStatus_(this, ref obj);
         }
 
         private bool _OnFilterSubscribe(double double1, int size1, int size2, int size3, IntPtr ptr1)

@@ -38,6 +38,8 @@ namespace XAPI
     public delegate void DelegateOnRspQryTrade(object sender, [In] ref TradeField trade, int size1, bool bIsLast);
     [ComVisible(false)]
     public delegate void DelegateOnRspQryQuote(object sender, [In] ref QuoteField quote, int size1, bool bIsLast);
+    [ComVisible(false)]
+    public delegate void DelegateOnRtnInstrumentStatus(object sender, [In] ref InstrumentStatusField pInstrumentStatus);
 
     [ComVisible(false)]
     public delegate void DelegateOnRspQryHistoricalTicks(object sender, IntPtr pTicks, int size1, [In] ref HistoricalDataRequestField request, int size2, bool bIsLast);

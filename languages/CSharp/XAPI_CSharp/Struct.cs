@@ -75,7 +75,7 @@ namespace XAPI
         public HedgeFlagType HedgeFlag;
         public int Date;
         public double PositionCost;
-        
+
         public double Position;
         public double TodayPosition;
         public double HistoryPosition;
@@ -438,7 +438,7 @@ namespace XAPI
         /// </summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
         public string SessionID;
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -470,7 +470,7 @@ namespace XAPI
         public byte[] Text;
     }
 
-    
+
 
     /// <summary>
     /// DepthField行情
@@ -941,6 +941,35 @@ namespace XAPI
         public DepthField[] Asks;
     }
 
+
+    /// <summary>
+    /// 深度行情N档
+    /// </summary>
+    [ComVisible(false)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    public struct InstrumentStatusField
+    {
+        /// <summary>
+        /// 合约代码
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string Symbol;
+        /// <summary>
+        /// 合约代码
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 31)]
+        public string InstrumentID;
+        /// <summary>
+        /// 交易所代码
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 9)]
+        public string ExchangeID;
+
+        ///交易阶段类型
+        public TradingPhaseType InstrumentStatus;
+
+        public int EnterTime;
+    };
 
 
 

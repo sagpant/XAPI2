@@ -36,6 +36,8 @@ ExchangeType TThostFtdcExchangeIDType_2_ExchangeType(TThostFtdcExchangeIDType In
 
 void CThostFtdcOrderField_2_OrderField_0(OrderIDType OrderID, CThostFtdcOrderField* pIn, OrderField* pOut);
 
+TradingPhaseType TThostFtdcInstrumentStatusType_2_TradingPhaseType(TThostFtdcInstrumentStatusType In);
+
 
 #ifdef HAS_Quote
 OrderStatus CThostFtdcQuoteField_2_OrderStatus(CThostFtdcQuoteField* pIn);

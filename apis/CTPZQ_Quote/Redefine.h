@@ -17,6 +17,7 @@
 #define TThostFtdcProductInfoType			TZQThostFtdcProductInfoType
 #define TThostFtdcAuthCodeType				TZQThostFtdcAuthCodeType
 #define	TThostFtdcOrderRefType				TZQThostFtdcOrderRefType
+#define TThostFtdcInstrumentStatusType		TZQThostFtdcInstrumentStatusType
 
 // ½á¹¹Ìå
 #define CThostFtdcRspInfoField				CZQThostFtdcRspInfoField
@@ -105,6 +106,15 @@
 #define THOST_FTDC_ICT_SocialID				ZQTHOST_FTDC_ICT_SocialID
 #define THOST_FTDC_ICT_LocalID				ZQTHOST_FTDC_ICT_LocalID
 #define THOST_FTDC_ICT_OtherCard			ZQTHOST_FTDC_ICT_OtherCard
+
+#define THOST_FTDC_IS_BeforeTrading			ZQTHOST_FTDC_IS_BeforeTrading
+#define THOST_FTDC_IS_NoTrading				ZQTHOST_FTDC_IS_NoTrading
+#define THOST_FTDC_IS_Continous				ZQTHOST_FTDC_IS_Continous
+#define THOST_FTDC_IS_AuctionOrdering		ZQTHOST_FTDC_IS_AuctionOrdering
+#define THOST_FTDC_IS_AuctionBalance		ZQTHOST_FTDC_IS_AuctionBalance
+#define	THOST_FTDC_IS_AuctionMatch			ZQTHOST_FTDC_IS_AuctionMatch
+#define THOST_FTDC_IS_Closed				ZQTHOST_FTDC_IS_Closed
+
 
 #define THOST_TE_RESUME_TYPE				ZQTHOST_TE_RESUME_TYPE
 #define THOST_TERT_QUICK					ZQTHOST_TERT_QUICK

@@ -1796,6 +1796,19 @@ void CTraderApi::OnRspQryTrade(CThostFtdcTradeField *pTrade, CThostFtdcRspInfoFi
 #ifdef HAS_InstrumentStatus
 void CTraderApi::OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrumentStatus)
 {
+	if (pInstrumentStatus)
+	{
+		InstrumentStatusField* pField = (InstrumentStatusField*)m_msgQueue->new_block(sizeof(InstrumentStatusField));
+
+		strcpy(pField->InstrumentID, pInstrumentStatus->InstrumentID);
+		strcpy(pField->ExchangeID, pInstrumentStatus->ExchangeID);
+		sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pField->ExchangeID);
+
+		pField->InstrumentStatus = TThostFtdcInstrumentStatusType_2_TradingPhaseType(pInstrumentStatus->InstrumentStatus);
+		pField->EnterTime = GetTime(pInstrumentStatus->EnterTime);
+
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnInstrumentStatus, m_msgQueue, m_pClass, true, 0, pField, sizeof(InstrumentStatusField), nullptr, 0, nullptr, 0);
+	}
 }
 #endif // HAS_InstrumentStatus
 

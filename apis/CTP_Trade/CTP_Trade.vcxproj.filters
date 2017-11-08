@@ -27,12 +27,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ApiEnum.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ApiStruct.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="..\CTP\TypeConvert.h">
       <Filter>Header Files</Filter>
     </ClInclude>

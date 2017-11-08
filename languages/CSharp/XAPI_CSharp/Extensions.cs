@@ -99,7 +99,7 @@ CZC
         public static DateTime ExchangeDateTime_([In]this DepthMarketDataNClass field)
         {
             // 表示传回来的时间可能有问题，要检查一下
-            if(field.UpdateTime == 0)
+            if (field.UpdateTime == 0)
             {
                 DateTime now = DateTime.Now;
 
@@ -155,7 +155,7 @@ CZC
                 + "LocalID={8};ID={9};OrderID={10};Date={11};Time={12};"
                 + "Type={13};TimeInForce={14};Status={15};ExecType={16};"
                 + "XErrorID={17};RawErrorID={18};Text={19}]",
-                field.InstrumentID, field.ExchangeID, Enum<OrderSide>.ToString(field.Side), field.Qty,field.LeavesQty, field.Price, Enum<OpenCloseType>.ToString(field.OpenClose), Enum<HedgeFlagType>.ToString(field.HedgeFlag),
+                field.InstrumentID, field.ExchangeID, Enum<OrderSide>.ToString(field.Side), field.Qty, field.LeavesQty, field.Price, Enum<OpenCloseType>.ToString(field.OpenClose), Enum<HedgeFlagType>.ToString(field.HedgeFlag),
                 field.LocalID, field.ID, field.OrderID, field.Date, field.Time,
                 Enum<OrderType>.ToString(field.Type), Enum<TimeInForce>.ToString(field.TimeInForce), Enum<OrderStatus>.ToString(field.Status), Enum<ExecType>.ToString(field.ExecType),
                 field.XErrorID, field.RawErrorID, field.Text());
@@ -181,7 +181,7 @@ CZC
                 + "AskOpenClose={15};AskHedgeFlag={16};BidOpenClose={17};BidHedgeFlag={18}]",
                 field.InstrumentID, field.ExchangeID,
                 field.AskPrice, field.AskQty, field.BidPrice, field.BidQty,
-                field.LocalID,field.ID,field.AskOrderID,field.BidOrderID,
+                field.LocalID, field.ID, field.AskOrderID, field.BidOrderID,
                 Enum<OrderStatus>.ToString(field.Status), Enum<ExecType>.ToString(field.ExecType),
                 field.XErrorID, field.RawErrorID, field.Text(),
                 Enum<OpenCloseType>.ToString(field.AskOpenClose), Enum<HedgeFlagType>.ToString(field.AskHedgeFlag), Enum<OpenCloseType>.ToString(field.BidOpenClose), Enum<HedgeFlagType>.ToString(field.BidHedgeFlag));
@@ -225,7 +225,7 @@ CZC
         public static string ToFormattedString([In]this AccountField field)
         {
             return string.Format("[AccountID={0};CurrencyID={1};Balance={2};Available={3};Deposit={4};Withdraw={5}]",
-                field.AccountID, field.CurrencyID, field.Balance, field.Available, field.Deposit,field.Withdraw);
+                field.AccountID, field.CurrencyID, field.Balance, field.Available, field.Deposit, field.Withdraw);
         }
 
         public static string ToFormattedString([In]this PositionField field)
@@ -234,6 +234,13 @@ CZC
                 + "Position={4};TodayPosition={5};HistoryPosition={6};ID={7}]",
                 field.InstrumentID, field.ExchangeID, Enum<HedgeFlagType>.ToString(field.HedgeFlag), Enum<PositionSide>.ToString(field.Side),
                 field.Position, field.TodayPosition, field.HistoryPosition, field.ID);
+        }
+
+        public static string ToFormattedString([In]this InstrumentStatusField field)
+        {
+            return string.Format("[Symbol={0};ExchangeID={1};InstrumentID={2};InstrumentStatus={3};"
+                + "EnterTime={4}]",
+                field.Symbol, field.ExchangeID, field.InstrumentID, Enum<TradingPhaseType>.ToString(field.InstrumentStatus), field.EnterTime);
         }
 
         public static string ToFormattedHeader([In]this TickField field)
@@ -254,7 +261,7 @@ CZC
             string date = string.Format("{0}-{1:D2}-{2:D2} {3:D2}:{4:D2}:{5:D2}.{6:D3}", yyyy, MM, dd, hh, mm, ss, field.Millisecond);
             return string.Format("{0},{1},{2},{3},{4},{5},{6},{7}",
                 date, field.LastPrice, field.Volume, field.OpenInterest,
-                field.BidPrice1,field.BidSize1,field.AskPrice1,field.AskSize1);
+                field.BidPrice1, field.BidSize1, field.AskPrice1, field.AskSize1);
         }
 
         public static string ToFormattedHeader([In]this BarField field)
@@ -277,6 +284,6 @@ CZC
                 date, field.Open, field.High, field.Low, field.Close, field.Volume, field.OpenInterest);
         }
 
-        
+
     }
 }
