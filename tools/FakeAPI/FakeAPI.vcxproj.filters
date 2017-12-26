@@ -41,13 +41,13 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SecurityFtdcTraderApi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ThostFtdcTraderApi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StockDrv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SecurityFtdcTraderApi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ZQThostFtdcTraderApi.cpp">
