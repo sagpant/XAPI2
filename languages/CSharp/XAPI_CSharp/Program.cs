@@ -17,6 +17,7 @@ namespace XAPI
         {
             if (size1>0)
             {
+                Console.WriteLine("333333" + status);
                 Console.WriteLine("333333" + userLogin.ToFormattedStringLong());
             }
             else
@@ -29,6 +30,7 @@ namespace XAPI
         {
             if (size1 > 0)
             {
+                Console.WriteLine("222222" + status);
                 Console.WriteLine("222222" + userLogin.ToFormattedStringLong());
             }
             else
@@ -201,8 +203,8 @@ namespace XAPI
 
             Console.ReadKey();
 
-            ReqQueryField query = default(ReqQueryField);
-            api2.ReqQuery(QueryType.ReqQryInstrument, ref query);
+            ReqQueryField query = new ReqQueryField();
+            api2.ReqQuery(QueryType.ReqQryInstrument, query);
 
             Console.ReadKey();
 
@@ -212,7 +214,7 @@ namespace XAPI
         }
 		#endregion
 
-        static XApi api;
+        static IXApi api;
 
         static void test_TongShi_Main(string[] args)
         {
@@ -223,12 +225,11 @@ namespace XAPI
 
             api.OnConnectionStatus = OnConnectionStatus;
             api.OnRtnDepthMarketData = OnRtnDepthMarketData;
-            api.OnFilterSubscribe = OnFilterSubscribe;
 
             api.Connect();
             Thread.Sleep(10 * 1000);
-            ReqQueryField query = default(ReqQueryField);
-            api.ReqQuery(QueryType.ReqQryInstrument, ref query);
+            ReqQueryField query = new ReqQueryField();
+            api.ReqQuery(QueryType.ReqQryInstrument, query);
 
             Thread.Sleep(300 * 1000);
 
@@ -239,18 +240,22 @@ namespace XAPI
 
         static void test_CTP_Main(string[] args)
         {
+            Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
+            var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Trade_x86.dll");
+
             //api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86\QuantBox_CTP_Quote.dll");
 
             //api.Server.BrokerID = "1017";
             //api.Server.Address = "tcp://ctpmn1-front1.citicsf.com:51213";
-            api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Trade_x86.dll");
+            //api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Trade_x86.dll");
+            api = a;
 
-            api.Server.BrokerID = "4040";
-            api.Server.Address = "tcp://180.166.103.21:51205";
+            api.Server.BrokerID = "9999";
+            api.Server.Address = "tcp://218.202.237.33:10002";
             api.Server.PrivateTopicResumeType = ResumeType.Undefined;
 
-            api.User.UserID = "";
-            api.User.Password = "";
+            api.User.UserID = "037505";
+            api.User.Password = "123456";
 
             api.OnConnectionStatus = OnConnectionStatus;
             api.OnRtnDepthMarketData = OnRtnDepthMarketData;
@@ -260,9 +265,9 @@ namespace XAPI
             api.Connect();
             Thread.Sleep(5 * 1000);
             //api.Subscribe("IF1502", "");
-            ReqQueryField query = default(ReqQueryField);
+            ReqQueryField query = new ReqQueryField();
             query.DateStart = 20161124;
-            api.ReqQuery(QueryType.ReqQrySettlementInfo, ref query);
+            api.ReqQuery(QueryType.ReqQrySettlementInfo, query);
 
             Thread.Sleep(10 * 1000);
 
@@ -347,7 +352,7 @@ namespace XAPI
 
             ReqQueryField query = new ReqQueryField();
             query.Int32ID = -1;
-            api.ReqQuery(QueryType.ReqQryInvestorPosition, ref query);
+            api.ReqQuery(QueryType.ReqQryInvestorPosition, query);
 
             // api.Dispose();
 

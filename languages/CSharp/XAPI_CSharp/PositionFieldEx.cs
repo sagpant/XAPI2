@@ -17,6 +17,12 @@ namespace XAPI
         public PositionField Long { get; private set; }
         public PositionField Short { get; private set; }
 
+        public PositionFieldEx()
+        {
+            Long = new PositionField();
+            Short = new PositionField();
+        }
+
         public void AddPosition(PositionField position)
         {
             Symbol = position.Symbol;

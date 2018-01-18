@@ -132,7 +132,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>XAPI.COM.ManagedCOMLocalServer</StartupObject>
+    <StartupObject>XAPI.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -170,7 +170,8 @@
     <Compile Include="Event\XApiWrapper.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GB2312Marshaler.cs" />
-    <Compile Include="Interface\IXApi.cs" />
+    <Compile Include="IXSpi.cs" />
+    <Compile Include="IXApi.cs" />
     <Compile Include="InvokeBase.cs" />
     <Compile Include="IObjectSafety.cs" />
     <Compile Include="OptimizedEnum.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="SoInvoke.cs" />
     <Compile Include="Struct.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="XApiHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -208,6 +210,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

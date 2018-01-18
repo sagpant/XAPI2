@@ -1,4 +1,4 @@
-﻿using XAPI.Interface;
+﻿using XAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 
 namespace XAPI.Callback
 {
-    public partial class XApi : IXQuery
+    public partial class XApi
     {
         public DelegateOnRspQryTradingAccount OnRspQryTradingAccount
         {

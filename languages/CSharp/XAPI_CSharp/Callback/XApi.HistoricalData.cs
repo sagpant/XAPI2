@@ -1,4 +1,4 @@
-﻿using XAPI.Interface;
+﻿using XAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 
 namespace XAPI.Callback
 {
-    public partial class XApi : IXHistoricalData
+    public partial class XApi
     {
         public DelegateOnRspQryHistoricalTicks OnRspQryHistoricalTicks { get; set; }
         public DelegateOnRspQryHistoricalBars OnRspQryHistoricalBars { get; set; }

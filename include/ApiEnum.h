@@ -23,7 +23,7 @@ enum ConnectionStatus :char
 // API功能类型，功能可叠加
 enum ApiType :char
 {
-	ApiType_Nono = 0,				/// 无
+	ApiType_None = 0,				/// 无
 	ApiType_Trade = 1,				/// 交易，只下单撤单
 	ApiType_MarketData = 2,			/// 行情
 	ApiType_Level2 = 4,				///	Level2行情，这是否有保留的必要？

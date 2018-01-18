@@ -1,4 +1,4 @@
-﻿using XAPI.Interface;
+﻿using XAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 
 namespace XAPI.Callback
 {
-    public partial class XApi : IXTrade
+    public partial class XApi
     {
         public DelegateOnRtnOrder OnRtnOrder
         {
@@ -31,11 +31,11 @@ namespace XAPI.Callback
         private DelegateOnRtnQuote OnRtnQuote_;
 
 
-        public string SendOrder(ref OrderField order)
+        public string SendOrder(OrderField order)
         {
             OrderField[] orders = new OrderField[1];
             orders[0] = order;
-            return SendOrder(ref orders);
+            return SendOrder(orders);
         }
 
         public string CancelOrder(string szId)
@@ -45,7 +45,7 @@ namespace XAPI.Callback
             return CancelOrder(szIds);
         }
 
-        public string SendOrder(ref OrderField[] orders)
+        public string SendOrder(OrderField[] orders)
         {
             int OrderField_size = Marshal.SizeOf(typeof(OrderField));
             int OrderIDType_size = Marshal.SizeOf(typeof(OrderIDType));
@@ -97,7 +97,7 @@ namespace XAPI.Callback
             return ret;
         }
 
-        public string SendQuote(ref QuoteField quote)
+        public string SendQuote(QuoteField quote)
         {
             int QuoteField_size = Marshal.SizeOf(typeof(QuoteField));
             int OrderIDType_size = Marshal.SizeOf(typeof(OrderIDType));

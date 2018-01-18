@@ -73,7 +73,7 @@ void X_FreeLib(void* lib)
 ApiType X_GetApiTypes(void* pFun)
 {
 	if (pFun == nullptr)
-		return ApiType::ApiType_Nono;
+		return ApiType::ApiType_None;
 
     void* p = ((fnOnResponse)pFun)(RequestType::RequestType_GetApiTypes, nullptr, nullptr, 0, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 

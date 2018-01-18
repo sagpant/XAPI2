@@ -196,7 +196,7 @@ namespace XAPI.COM
             try
             {
                 object obj = Helper.ChangeType(value, field.FieldType);
-                field.SetValueForValueType(ref _Server, obj);
+                field.SetValue(_Server, obj);
             }
             catch(Exception ex)
             {
@@ -215,7 +215,7 @@ namespace XAPI.COM
             try
             {
                 object obj = Helper.ChangeType(value, field.FieldType);
-                field.SetValueForValueType(ref _User, obj);
+                field.SetValue(_User, obj);
             }
             catch (Exception ex)
             {
@@ -260,7 +260,7 @@ namespace XAPI.COM
             try
             {
                 object obj = Helper.ChangeType(value, field.FieldType);
-                field.SetValueForValueType(ref _Order, obj);
+                field.SetValue(_Order, obj);
             }
             catch (Exception ex)
             {
@@ -270,7 +270,7 @@ namespace XAPI.COM
 
         public string SendOrder()
         {
-            return api.SendOrder(ref _Order);
+            return api.SendOrder(_Order);
         }
         public string CancelOrder(string id)
         {
@@ -292,7 +292,7 @@ namespace XAPI.COM
             try
             {
                 object obj = Helper.ChangeType(value, field.FieldType);
-                field.SetValueForValueType(ref _Query, obj);
+                field.SetValue(_Query, obj);
             }
             catch (Exception ex)
             {
@@ -303,7 +303,7 @@ namespace XAPI.COM
         public void ReqQuery(string type)
         {
             QueryType obj = Enum<QueryType>.Parse(type);
-            api.ReqQuery(obj, ref _Query);
+            api.ReqQuery(obj, _Query);
         }
 
         public QueueData TryDequeue()

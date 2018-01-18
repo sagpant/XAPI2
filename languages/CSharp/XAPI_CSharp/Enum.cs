@@ -90,7 +90,7 @@ namespace XAPI
     [Flags]
     public enum ApiType : byte
     {
-        Nono = 0,
+        None = 0,
         Trade = 1,
         MarketData = 2,
         Level2 = 4,

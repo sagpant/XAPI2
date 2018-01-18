@@ -1,4 +1,4 @@
-﻿using XAPI.Interface;
+﻿using XAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +47,7 @@ namespace XAPI.Callback
             }
         }
 
-        public void ReqQuery(QueryType type, ref ReqQueryField query)
+        public void ReqQuery(QueryType type, ReqQueryField query)
         {
             int ReqQueryField_size = Marshal.SizeOf(typeof(ReqQueryField));
             IntPtr ReqQueryField_Ptr = Marshal.AllocHGlobal(ReqQueryField_size);
@@ -100,7 +100,7 @@ namespace XAPI.Callback
                     _OnRspQryQuote(ptr1, size1, double1);
                     break;
                 case ResponseType.OnRtnDepthMarketData:
-                    _OnRtnDepthMarketData(ptr1,size1,double1);
+                    _OnRtnDepthMarketData(ptr1, size1, double1);
                     break;
                 case ResponseType.OnRtnQuoteRequest:
                     _OnRtnQuoteRequest(ptr1, size1);
@@ -113,7 +113,7 @@ namespace XAPI.Callback
                     _OnRspQryHistoricalBars(ptr1, size1, ptr2, size2, double1);
                     break;
                 case ResponseType.OnFilterSubscribe:
-                    if(_OnFilterSubscribe(double1, size1, size2, size3, ptr1))
+                    if (_OnFilterSubscribe(double1, size1, size2, size3, ptr1))
                     {
                         return new IntPtr(1);
                     }

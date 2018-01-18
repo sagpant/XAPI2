@@ -13,7 +13,7 @@ namespace XAPI.Callback
     {
         // 没有必要专门引入一个库，但又很少用
         //public Logger Log;
-        public object Log;
+        public object Log { get; set; }
 
         protected Proxy proxy;
         protected IntPtr Handle = IntPtr.Zero;
@@ -22,8 +22,9 @@ namespace XAPI.Callback
         [CLSCompliant(false)]
         protected XCall _XRespone;
 
-        public ServerInfoField Server;
-        public UserInfoField User;
+        public RspUserLoginField UserLogin { get; set; }
+        public ServerInfoField Server { get; set; }
+        public UserInfoField User { get; set; }
         public List<UserInfoField> UserList = new List<UserInfoField>();
 
         public DelegateOnConnectionStatus OnConnectionStatus
@@ -45,7 +46,7 @@ namespace XAPI.Callback
         private DelegateOnRtnError OnRtnError_;
         private DelegateOnLog OnLog_;
 
-        public RspUserLoginField UserLoginField;
+
 
 
         protected object locker = new object();
@@ -55,17 +56,18 @@ namespace XAPI.Callback
         public int ReconnectInterval
         {
             get { return _reconnectInterval; }
-            set {
+            set
+            {
 
                 if (_reconnectInterval == value)
                     return;
-                
+
                 _reconnectInterval = value;
                 _Timer.Elapsed -= _Timer_Elapsed;
                 if (_reconnectInterval >= 10)
                 {
                     _Timer.Elapsed += _Timer_Elapsed;
-                    _Timer.Interval = _reconnectInterval*1000;
+                    _Timer.Interval = _reconnectInterval * 1000;
                 }
                 _Timer.Enabled = _reconnectInterval >= 10;
             }
@@ -85,6 +87,9 @@ namespace XAPI.Callback
             : this()
         {
             LibPath = path;
+            Server = new ServerInfoField();
+            User = new UserInfoField();
+            UserLogin = new RspUserLoginField();
         }
 
         void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -100,7 +105,7 @@ namespace XAPI.Callback
                     Connect();
                 }
             }
-            
+
             _Timer.Enabled = true;
         }
 
@@ -113,7 +118,7 @@ namespace XAPI.Callback
         private bool disposed;
 
         // 一定要先调用API的，再调用队列的，否则会出错
-		public void Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
@@ -135,11 +140,11 @@ namespace XAPI.Callback
             //base.Dispose(disposing);
         }
 
-        
+
 
         public virtual void Connect()
         {
-            lock(locker)
+            lock (locker)
             {
                 // XSpeed多次连接出问题，发现会生成多次
                 if (proxy == null)
@@ -180,25 +185,25 @@ namespace XAPI.Callback
                 Marshal.FreeHGlobal(UserListIntPtr);
             }
 
-            
+
         }
 
         public virtual void Disconnect()
         {
-            lock(locker)
+            lock (locker)
             {
                 _Timer.Enabled = false;
 
                 IsConnected = false;
 
-                if (proxy != null && Handle.ToInt64() !=0)
-                {                    
+                if (proxy != null && Handle.ToInt64() != 0)
+                {
                     proxy.XRequest((byte)RequestType.Disconnect, Handle, IntPtr.Zero, 0, 0, IntPtr.Zero, 0, IntPtr.Zero, 0, IntPtr.Zero, 0);
                     proxy.XRequest((byte)RequestType.Release, Handle, IntPtr.Zero, 0, 0, IntPtr.Zero, 0, IntPtr.Zero, 0, IntPtr.Zero, 0);
 
                     proxy.Dispose();
                 }
-                
+
                 proxy = null;
                 Handle = IntPtr.Zero;
             }
@@ -227,7 +232,8 @@ namespace XAPI.Callback
 
         public ApiType GetApiTypes
         {
-            get{
+            get
+            {
                 if (proxy == null)
                 {
                     proxy = new Proxy(LibPath);
@@ -265,10 +271,10 @@ namespace XAPI.Callback
         private IntPtr _OnRespone(byte type, IntPtr pApi1, IntPtr pApi2, double double1, double double2, IntPtr ptr1, int size1, IntPtr ptr2, int size2, IntPtr ptr3, int size3)
         {
             // 队列过来的消息，如何处理？
-            switch((ResponseType)type)
+            switch ((ResponseType)type)
             {
                 case ResponseType.OnConnectionStatus:
-                    _OnConnectionStatus(double1, ptr1,size1);
+                    _OnConnectionStatus(double1, ptr1, size1);
                     break;
                 case ResponseType.OnRtnError:
                     _OnRtnError(ptr1);
@@ -304,10 +310,10 @@ namespace XAPI.Callback
             }
 
             RspUserLoginField obj = default(RspUserLoginField);
-            if(size1>0)
+            if (size1 > 0)
             {
                 obj = PInvokeUtility.GetObjectFromIntPtr<RspUserLoginField>(ptr1);
-                UserLoginField = obj;
+                UserLogin = obj;
             }
 
             if (OnConnectionStatus_ != null)
@@ -320,7 +326,7 @@ namespace XAPI.Callback
                 return;
 
             ErrorField obj = PInvokeUtility.GetObjectFromIntPtr<ErrorField>(ptr1);
-            
+
             OnRtnError_(this, ref obj);
         }
 
