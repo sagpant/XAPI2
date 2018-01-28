@@ -2,14 +2,13 @@
 #include "TraderApi.h"
 
 #include "../../include/QueueEnum.h"
-#include "../../include/QueueHeader.h"
 
 #include "../../include/ApiHeader.h"
 #include "../../include/ApiStruct.h"
 
 #include "../../include/toolkit.h"
 
-#include "../../common/Queue/MsgQueue.h"
+#include "../../include/queue/MsgQueue.h"
 
 #include "../CTP/TypeConvert.h"
 
@@ -122,8 +121,8 @@ void CTraderApi::Register(void* pCallback, void* pClass)
 	if (m_msgQueue == nullptr)
 		return;
 
-	m_msgQueue_Query->Register((void*)Query, this);
-	m_msgQueue->Register(pCallback, this);
+	m_msgQueue_Query->Register((void*)Query);
+	m_msgQueue->Register(pCallback);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();
@@ -146,7 +145,7 @@ CTraderApi::CTraderApi(void)
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
 
-	m_msgQueue_Query->Register((void*)Query, this);
+	m_msgQueue_Query->Register((void*)Query);
 	m_msgQueue_Query->StartThread();
 
 #ifdef ENABLE_LICENSE
@@ -657,7 +656,7 @@ void CTraderApi::_Disconnect(bool IsInQueue)
 		if (m_msgQueue_Query)
 		{
 			m_msgQueue_Query->StopThread();
-			m_msgQueue_Query->Register(nullptr, nullptr);
+			m_msgQueue_Query->Register(nullptr);
 			m_msgQueue_Query->Clear();
 			delete m_msgQueue_Query;
 			m_msgQueue_Query = nullptr;
@@ -681,7 +680,7 @@ void CTraderApi::_Disconnect(bool IsInQueue)
 	if (m_msgQueue)
 	{
 		m_msgQueue->StopThread();
-		m_msgQueue->Register(nullptr, nullptr);
+		m_msgQueue->Register(nullptr);
 		m_msgQueue->Clear();
 		delete m_msgQueue;
 		m_msgQueue = nullptr;

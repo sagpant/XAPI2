@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "MdUserApi.h"
 #include "../../include/QueueEnum.h"
-#include "../../include/QueueHeader.h"
 
 #include "../../include/ApiHeader.h"
 #include "../../include/ApiStruct.h"
@@ -9,13 +8,15 @@
 #include "../../include/toolkit.h"
 #include "../../include/ApiProcess.h"
 
-#include "../../common/Queue/MsgQueue.h"
-#ifdef _REMOTE
-#include "../../common/Queue/RemoteQueue.h"
-#endif
+#include "../../include/queue/MsgQueue.h"
 
-#include <string.h>
+#include "../../include/CSubscribeManager.h"
+#include "../../include/synthetic/CSyntheticConfig.h"
+#include "../../include/synthetic/CSyntheticManager.h"
+#include "../../include/CSyntheticCalculate_DepthMarketDataNField.h"
 
+
+#include <string>
 #include <mutex>
 #include <vector>
 using namespace std;
@@ -47,14 +48,17 @@ CMdUserApi::CMdUserApi(void)
 	m_lRequestID = 0;
 	m_nSleep = 1;
 
+	m_pSyntheticConfig = new CSyntheticConfig();
+	m_pSyntheticManager = new CSyntheticManager();
+	m_pCalculateFactory = new CSyntheticCalculateFactory_XAPI();
+	m_pSubscribeManager = new CSubscribeManager(m_pSyntheticConfig, m_pSyntheticManager, m_pCalculateFactory);
+	
 	// 自己维护两个消息队列
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
 
-	m_msgQueue_Query->Register((void*)Query, this);
+	m_msgQueue_Query->Register((void*)Query);
 	m_msgQueue_Query->StartThread();
-
-	m_remoteQueue = nullptr;
 }
 
 CMdUserApi::~CMdUserApi(void)
@@ -98,8 +102,8 @@ void CMdUserApi::Register(void* pCallback, void* pClass)
 	if (m_msgQueue == nullptr)
 		return;
 
-	m_msgQueue_Query->Register((void*)Query,this);
-	m_msgQueue->Register(pCallback,this);
+	m_msgQueue_Query->Register((void*)Query);
+	m_msgQueue->Register(pCallback);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();
@@ -220,7 +224,7 @@ void CMdUserApi::Disconnect()
 	if (m_msgQueue_Query)
 	{
 		m_msgQueue_Query->StopThread();
-		m_msgQueue_Query->Register(nullptr,nullptr);
+		m_msgQueue_Query->Register(nullptr);
 		m_msgQueue_Query->Clear();
 		delete m_msgQueue_Query;
 		m_msgQueue_Query = nullptr;
@@ -243,59 +247,41 @@ void CMdUserApi::Disconnect()
 	if (m_msgQueue)
 	{
 		m_msgQueue->StopThread();
-		m_msgQueue->Register(nullptr,nullptr);
+		m_msgQueue->Register(nullptr);
 		m_msgQueue->Clear();
 		delete m_msgQueue;
 		m_msgQueue = nullptr;
 	}
 
-	// 清理队列
-	if (m_remoteQueue)
+	if (m_pSubscribeManager)
 	{
-		m_remoteQueue->StopThread();
-		m_remoteQueue->Register(nullptr, nullptr);
-		m_remoteQueue->Clear();
-		delete m_remoteQueue;
-		m_remoteQueue = nullptr;
+		delete m_pSubscribeManager;
+		m_pSubscribeManager = nullptr;
+	}
+	if (m_pSyntheticConfig)
+	{
+		delete m_pSyntheticConfig;
+		m_pSyntheticConfig = nullptr;
+	}
+	if (m_pSyntheticManager)
+	{
+		delete m_pSyntheticManager;
+		m_pSyntheticManager = nullptr;
+	}
+	if (m_pCalculateFactory)
+	{
+		delete m_pCalculateFactory;
+		m_pCalculateFactory = nullptr;
 	}
 }
 
-
 void CMdUserApi::Subscribe(const string& szInstrumentIDs, const string& szExchangeID)
 {
-	if(nullptr == m_pApi)
+	if (nullptr == m_pApi)
 		return;
 
-	vector<char*> vct;
-	set<char*> st;
-
-	lock_guard<mutex> cl(m_csMapInstrumentIDs);
-
-	set<string> _setInstrumentIDs;
-	map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(szExchangeID);
-	if (it != m_mapInstrumentIDs.end())
-	{
-		_setInstrumentIDs = it->second;
-	}
-
-	char* pBuf = GetSetFromString(szInstrumentIDs.c_str(), _QUANTBOX_SEPS_, vct, st, 1, _setInstrumentIDs);
-	m_mapInstrumentIDs[szExchangeID] = _setInstrumentIDs;
-
-	if(vct.size()>0)
-	{
-		//转成字符串数组
-		char** pArray = new char*[vct.size()];
-		for (size_t j = 0; j<vct.size(); ++j)
-		{
-			pArray[j] = vct[j];
-		}
-
-		//订阅
-		m_pApi->SubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchangeID.c_str()));
-
-		delete[] pArray;
-	}
-	delete[] pBuf;
+	set<string> ss_new = m_pSubscribeManager->String2Set(szInstrumentIDs.c_str());
+	Subscribe(ss_new, szExchangeID);
 }
 
 void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExchangeID)
@@ -303,49 +289,62 @@ void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExc
 	if(nullptr == m_pApi)
 		return;
 
-	string szInstrumentIDs;
-	for(set<string>::iterator i=instrumentIDs.begin();i!=instrumentIDs.end();++i)
-	{
-		szInstrumentIDs.append(*i);
-		szInstrumentIDs.append(";");
-	}
+	if (instrumentIDs.size() == 0)
+		return;
 
-	if (szInstrumentIDs.length()>1)
+	set<string> s_dif = m_pSubscribeManager->Subscribe(instrumentIDs, szExchangeID);
+	string str_dif = m_pSubscribeManager->Set2String(s_dif);
+
+	vector<char*> vct;
+	char* pBuf = m_pSubscribeManager->String2Buf(str_dif.c_str(), vct);
+
+	if (vct.size() > 0)
 	{
-		Subscribe(szInstrumentIDs, szExchangeID);
+		//转成字符串数组
+		char** pArray = new char*[vct.size()];
+		for (size_t j = 0; j < vct.size(); ++j)
+		{
+			pArray[j] = vct[j];
+		}
+		m_pApi->SubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchangeID.c_str()));
+
+		delete[] pArray;
 	}
+	delete[] pBuf;
 }
 
 void CMdUserApi::Unsubscribe(const string& szInstrumentIDs, const string& szExchangeID)
 {
-	if(nullptr == m_pApi)
+	if (nullptr == m_pApi)
 		return;
 
+	set<string> ss_new = m_pSubscribeManager->String2Set(szInstrumentIDs.c_str());
+	Unsubscribe(ss_new, szExchangeID);
+}
+
+void CMdUserApi::Unsubscribe(const set<string>& instrumentIDs, const string& szExchangeID)
+{
+	if (nullptr == m_pApi)
+		return;
+
+	if (instrumentIDs.size() == 0)
+		return;
+
+	set<string> s_dif = m_pSubscribeManager->Unsubscribe(instrumentIDs, szExchangeID);
+	string str_dif = m_pSubscribeManager->Set2String(s_dif);
+
 	vector<char*> vct;
-	set<char*> st;
+	char* pBuf = m_pSubscribeManager->String2Buf(str_dif.c_str(), vct);
 
-	lock_guard<mutex> cl(m_csMapInstrumentIDs);
-
-	set<string> _setInstrumentIDs;
-	map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(szExchangeID);
-	if (it != m_mapInstrumentIDs.end())
-	{
-		_setInstrumentIDs = it->second;
-	}
-
-	char* pBuf = GetSetFromString(szInstrumentIDs.c_str(), _QUANTBOX_SEPS_, vct, st, -1, _setInstrumentIDs);
-	m_mapInstrumentIDs[szExchangeID] = _setInstrumentIDs;
-
-	if(vct.size()>0)
+	if (vct.size() > 0)
 	{
 		//转成字符串数组
 		char** pArray = new char*[vct.size()];
-		for (size_t j = 0; j<vct.size(); ++j)
+		for (size_t j = 0; j < vct.size(); ++j)
 		{
 			pArray[j] = vct[j];
 		}
 
-		//订阅
 		m_pApi->UnSubscribeMarketData(pArray, (int)vct.size(), (char*)(szExchangeID.c_str()));
 
 		delete[] pArray;
@@ -389,19 +388,13 @@ void CMdUserApi::OnRspUserLogin(CSecurityFtdcRspUserLoginField *pRspUserLogin, C
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Done, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 		//有可能断线了，本处是断线重连后重新订阅
-		map<string, set<string> > mapOld = m_mapInstrumentIDs;//记下上次订阅的合约
-
-		for (map<string, set<string> >::iterator i = mapOld.begin(); i != mapOld.end(); ++i)
+		set<string> exchanges = m_pSubscribeManager->GetExchanges();
+		for (auto exchange = exchanges.begin(); exchange != exchanges.end(); ++exchange)
 		{
-			string strkey = i->first;
-			set<string> setValue = i->second;
-
-			Subscribe(setValue, strkey);//订阅
+			set<string> mapOld = m_pSubscribeManager->GetParentInstruments(exchange->data());//记下上次订阅的合约
+			m_pSubscribeManager->Clear();
+			Subscribe(mapOld, exchange->data());//订阅
 		}
-
-		//有可能断线了，本处是断线重连后重新订阅
-		//mapOld = m_setQuoteInstrumentIDs;//记下上次订阅的合约
-		//SubscribeQuote(mapOld, "");//订阅
 	}
 	else
 	{
@@ -423,17 +416,6 @@ void CMdUserApi::OnRspSubMarketData(CSecurityFtdcSpecificInstrumentField *pSpeci
 	if (!IsErrorRspInfo("OnRspSubMarketData", pRspInfo, nRequestID, bIsLast)
 		&&pSpecificInstrument)
 	{
-		lock_guard<mutex> cl(m_csMapInstrumentIDs);
-
-		set<string> _setInstrumentIDs;
-		map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(pSpecificInstrument->ExchangeID);
-		if (it != m_mapInstrumentIDs.end())
-		{
-			_setInstrumentIDs = it->second;
-		}
-
-		_setInstrumentIDs.insert(pSpecificInstrument->InstrumentID);
-		m_mapInstrumentIDs[pSpecificInstrument->ExchangeID] = _setInstrumentIDs;
 	}
 }
 
@@ -443,16 +425,6 @@ void CMdUserApi::OnRspUnSubMarketData(CSecurityFtdcSpecificInstrumentField *pSpe
 	if (!IsErrorRspInfo("OnRspUnSubMarketData", pRspInfo, nRequestID, bIsLast)
 		&&pSpecificInstrument)
 	{
-		lock_guard<mutex> cl(m_csMapInstrumentIDs);
-
-		set<string> _setInstrumentIDs;
-		map<string, set<string> >::iterator it = m_mapInstrumentIDs.find(pSpecificInstrument->ExchangeID);
-		if (it != m_mapInstrumentIDs.end())
-		{
-			_setInstrumentIDs = it->second;
-		}
-		_setInstrumentIDs.erase(pSpecificInstrument->InstrumentID);
-		m_mapInstrumentIDs[pSpecificInstrument->ExchangeID] = _setInstrumentIDs;
 	}
 }
 

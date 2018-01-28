@@ -8,7 +8,7 @@
 #include "../../include/toolkit.h"
 #include "../../include/ApiProcess.h"
 
-#include "../../common/Queue/MsgQueue.h"
+#include "../../include/queue/MsgQueue.h"
 
 #include "../../include/XApiC.h"
 
@@ -150,7 +150,7 @@ void CMdUserApi::Register(void* pCallback,void* pClass)
 		return;
 
 	//m_msgQueue_Query->Register((void*)Query,this);
-	m_msgQueue->Register(pCallback,this);
+	m_msgQueue->Register(pCallback);
 	if (pCallback)
 	{
 		//m_msgQueue_Query->StartThread();
@@ -279,7 +279,7 @@ void CMdUserApi::Disconnect()
 	if (m_msgQueue)
 	{
 		m_msgQueue->StopThread();
-		m_msgQueue->Register(nullptr,nullptr);
+		m_msgQueue->Register(nullptr);
 		m_msgQueue->Clear();
 		delete m_msgQueue;
 		m_msgQueue = nullptr;

@@ -56,59 +56,59 @@ double my_round(float val, int x)
 }
 
 
-char* GetSetFromString(const char* szString, const char* seps, vector<char*>& vct, set<char*>& st, int modify, set<string>& st2, int before, const char* prefix)
-{
-	vct.clear();
-	st.clear();
-
-	if(nullptr == szString
-		||nullptr == seps)
-		return nullptr;
-
-	if(strlen(szString)==0
-		||strlen(seps)==0)
-		return nullptr;
-
-	//这里不知道要添加的字符有多长，很悲剧
-	size_t len = (size_t)(strlen(szString)*1.5+1);
-	char* buf = new char[len];
-	strncpy(buf,szString,len);
-
-	char* token = strtok(buf, seps);
-	while(token)
-	{
-		if (strlen(token)>0)
-		{
-			char temp[64] = {0};
-			if (prefix)
-			{
-				if (before>0)
-				{
-					sprintf(temp, "%s%s", prefix,token);
-				}
-				else
-				{
-					sprintf(temp, "%s%s", token,prefix);
-				}
-			}
-			else
-			{
-				sprintf(temp, "%s", token);
-			}
-
-			if (modify > 0)
-				st2.insert(temp);
-			else if (modify<0)
-				st2.erase(temp);
-
-			vct.push_back(token);
-			st.insert(token);
-		}
-		token = strtok( nullptr, seps);
-	}
-
-	return buf;
-}
+//char* GetSetFromString(const char* szString, const char* seps, vector<char*>& vct, set<char*>& st, int modify, set<string>& st2, int before, const char* prefix)
+//{
+//	vct.clear();
+//	st.clear();
+//
+//	if(nullptr == szString
+//		||nullptr == seps)
+//		return nullptr;
+//
+//	if(strlen(szString)==0
+//		||strlen(seps)==0)
+//		return nullptr;
+//
+//	//这里不知道要添加的字符有多长，很悲剧
+//	size_t len = (size_t)(strlen(szString)*1.5+1);
+//	char* buf = new char[len];
+//	strncpy(buf,szString,len);
+//
+//	char* token = strtok(buf, seps);
+//	while(token)
+//	{
+//		if (strlen(token)>0)
+//		{
+//			char temp[64] = {0};
+//			if (prefix)
+//			{
+//				if (before>0)
+//				{
+//					sprintf(temp, "%s%s", prefix,token);
+//				}
+//				else
+//				{
+//					sprintf(temp, "%s%s", token,prefix);
+//				}
+//			}
+//			else
+//			{
+//				sprintf(temp, "%s", token);
+//			}
+//
+//			if (modify > 0)
+//				st2.insert(temp);
+//			else if (modify<0)
+//				st2.erase(temp);
+//
+//			vct.push_back(token);
+//			st.insert(token);
+//		}
+//		token = strtok( nullptr, seps);
+//	}
+//
+//	return buf;
+//}
 
 void GetUpdateTime_HH_mm_ss(char* UpdateTime,int* _HH,int* _mm,int* _ss)
 {

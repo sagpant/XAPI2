@@ -18,18 +18,8 @@
 
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/CTPZQ/win64/zqthostmdapi.lib")
-	#ifdef _DEBUG
-	#pragma comment(lib, "../../lib/Queue_x64d.lib")
-	#else
-	#pragma comment(lib, "../../lib/Queue_x64.lib")
-	#endif
 #else
 	#pragma comment(lib, "../../include/CTPZQ/win32/zqthostmdapi.lib")
-	#ifdef _DEBUG
-	#pragma comment(lib, "../../lib/Queue_x86d.lib")
-	#else
-	#pragma comment(lib, "../../lib/Queue_x86.lib")
-	#endif
 #endif
 
 

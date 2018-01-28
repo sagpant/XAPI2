@@ -13,8 +13,8 @@ void WriteLog(const char *fmt, ...);
 void makedirs(const char* dir);
 
 //将字符串按指定字符分割
-typedef void fnGetSetFromStringProcess(char* token);
-char* GetSetFromString(const char* szString, const char* seps, vector<char*>& vct, set<char*>& st, int modify, set<string>& st2, int before = 1, const char* prefix = nullptr);
+//typedef void fnGetSetFromStringProcess(char* token);
+//char* GetSetFromString(const char* szString, const char* seps, vector<char*>& vct, set<char*>& st, int modify, set<string>& st2, int before = 1, const char* prefix = nullptr);
 
 int GetUpdateTime(char* UpdateTime, int* _UpdateTime, int* UpdateMillisec);
 void GetExchangeTime_CZCE(int iTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);

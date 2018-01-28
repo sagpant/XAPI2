@@ -17,18 +17,8 @@ using namespace KingstarAPI;
 
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/Kingstar/win64/KSMarketDataAPI.lib")
-	#ifdef _DEBUG
-	#pragma comment(lib, "../../lib/Queue_x64d.lib")
-	#else
-	#pragma comment(lib, "../../lib/Queue_x64.lib")
-	#endif
 #else
 	#pragma comment(lib, "../../include/Kingstar/win32/KSMarketDataAPI.lib")
-	#ifdef _DEBUG
-	#pragma comment(lib, "../../lib/Queue_x86d.lib")
-	#else
-	#pragma comment(lib, "../../lib/Queue_x86.lib")
-	#endif
 #endif
 
 // 为了解决金仕达授权问题而加的功能

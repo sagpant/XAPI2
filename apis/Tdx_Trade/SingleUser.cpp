@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "SingleUser.h"
 
-#include "../../common/Queue/MsgQueue.h"
+#include "../../include/queue/MsgQueue.h"
 #include "TypeConvert.h"
 #include "TraderApi.h"
 
@@ -32,7 +32,7 @@ void CreateID(char* pOut, char* pDate, char*pZh, char* wtbh)
 }
 
 // 解决创建与删除不在同一dll的问题
-void DeleteStructs(void*** pppStructs, CMsgQueue* pQueue)
+void DeleteStructs(void*** pppStructs)
 {
 	if (pppStructs == nullptr)
 		return;
@@ -46,14 +46,12 @@ void DeleteStructs(void*** pppStructs, CMsgQueue* pQueue)
 	while (ppStructs[i] != 0)
 	{
 		delete[] ppStructs[i];
-		//pQueue->delete_block(ppStructs[i]);
 		ppStructs[i] = nullptr;
 
 		++i;
 	}
 
 	delete[] ppStructs;
-	//pQueue->delete_block(ppStructs);
 	*pppStructs = nullptr;
 }
 
@@ -153,7 +151,7 @@ int CSingleUser::OnResponse_ReqQryOrder(CTdxApi* pApi, RequestResponse_STRUCT* p
 	}
 
 	WTLB_STRUCT** ppRS = nullptr;
-	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
+	CharTable2WTLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewOrderList.clear();
@@ -347,7 +345,7 @@ int CSingleUser::OnResponse_ReqQryOrder(CTdxApi* pApi, RequestResponse_STRUCT* p
 		OutputQueryTime(m_QueryTradeTime, _queryTime, "NextQueryTrade_QueryOrder");
 	}
 
-	DeleteStructs((void***)&ppRS, m_msgQueue);
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -417,7 +415,7 @@ int CSingleUser::OnResponse_ReqQryTrade(CTdxApi* pApi, RequestResponse_STRUCT* p
 	}
 
 	CJLB_STRUCT** ppRS = nullptr;
-	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
+	CharTable2CJLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
 	// 操作前清空，按说之前已经清空过一次了
 	m_NewTradeList.clear();
@@ -569,7 +567,7 @@ int CSingleUser::OnResponse_ReqQryTrade(CTdxApi* pApi, RequestResponse_STRUCT* p
 	m_OldTradeList = m_NewTradeList;
 	m_NewTradeList.clear();
 
-	DeleteStructs((void***)&ppRS, m_msgQueue);
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -745,7 +743,7 @@ int CSingleUser::OnResponse_ReqQryTradingAccount(CTdxApi* pApi, RequestResponse_
 	//}
 
 	ZJYE_STRUCT** ppRS = nullptr;
-	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
+	CharTable2ZJYE(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
 	int count = GetCountStructs((void**)ppRS);
 	for (int i = 0; i < count; ++i)
@@ -764,7 +762,7 @@ int CSingleUser::OnResponse_ReqQryTradingAccount(CTdxApi* pApi, RequestResponse_
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQryTradingAccount, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(AccountField), nullptr, 0, nullptr, 0);
 	}
 
-	DeleteStructs((void***)&ppRS, m_msgQueue);
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }
@@ -783,7 +781,7 @@ int CSingleUser::OnResponse_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespons
 	}
 
 	GFLB_STRUCT** ppRS = nullptr;
-	CharTable2GFLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client, m_msgQueue);
+	CharTable2GFLB(pRespone->ppFieldInfo, pRespone->ppResults, &ppRS, pRespone->Client);
 
 	int count = GetCountStructs((void**)ppRS);
 	for (int i = 0; i < count; ++i)
@@ -796,7 +794,7 @@ int CSingleUser::OnResponse_ReqQryInvestorPosition(CTdxApi* pApi, RequestRespons
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, i == count - 1, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
 	}
 
-	DeleteStructs((void***)&ppRS, m_msgQueue);
+	DeleteStructs((void***)&ppRS);
 
 	return 0;
 }

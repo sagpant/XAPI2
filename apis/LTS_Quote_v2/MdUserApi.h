@@ -5,18 +5,8 @@
 
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/LTS_v2/win64/securitymduserapi.lib")
-	#ifdef _DEBUG
-	#pragma comment(lib, "../../lib/Queue_x64d.lib")
-	#else
-	#pragma comment(lib, "../../lib/Queue_x64.lib")
-	#endif
 #else
 	#pragma comment(lib, "../../include/LTS_v2/win32/securitymduserapi.lib")
-	#ifdef _DEBUG
-	#pragma comment(lib, "../../lib/Queue_x86d.lib")
-	#else
-	#pragma comment(lib, "../../lib/Queue_x86.lib")
-	#endif
 #endif
 
 #include <set>
@@ -28,6 +18,11 @@
 using namespace std;
 
 class CMsgQueue;
+
+class CSubscribeManager;
+class CSyntheticConfig;
+class CSyntheticManager;
+class CSyntheticCalculateFactory;
 
 class CMdUserApi :
 	public CSecurityFtdcMdSpi
@@ -52,9 +47,6 @@ public:
 	void Subscribe(const string& szInstrumentIDs, const string& szExchangeID);
 	void Unsubscribe(const string& szInstrumentIDs, const string& szExchangeID);
 
-	//void SubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID);
-	//void UnsubscribeQuote(const string& szInstrumentIDs, const string& szExchangeID);
-
 private:
 	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
@@ -66,7 +58,8 @@ private:
 
 	//订阅行情
 	void Subscribe(const set<string>& instrumentIDs, const string& szExchangeID);
-	//void SubscribeQuote(const set<string>& instrumentIDs, const string& szExchangeID);
+	void Unsubscribe(const set<string>& instrumentIDs, const string& szExchangeID);
+
 	virtual void OnFrontConnected();
 	virtual void OnFrontDisconnected(int nReason);
 	virtual void OnRspUserLogin(CSecurityFtdcRspUserLoginField *pRspUserLogin, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
@@ -75,10 +68,6 @@ private:
 	virtual void OnRspSubMarketData(CSecurityFtdcSpecificInstrumentField *pSpecificInstrument, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRspUnSubMarketData(CSecurityFtdcSpecificInstrumentField *pSpecificInstrument, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
 	virtual void OnRtnDepthMarketData(CSecurityFtdcDepthMarketDataField *pDepthMarketData);
-
-	//virtual void OnRspSubForQuoteRsp(CSecurityFtdcSpecificInstrumentField *pSpecificInstrument, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRspUnSubForQuoteRsp(CSecurityFtdcSpecificInstrumentField *pSpecificInstrument, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);
-	//virtual void OnRtnForQuoteRsp(CSecurityFtdcForQuoteRspField *pForQuoteRsp);
 
 	//检查是否出错
 	bool IsErrorRspInfo(const char* szSource, CSecurityFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast);//将出错消息送到消息队列
@@ -90,8 +79,6 @@ private:
 
 	atomic<int>					m_lRequestID;			//请求ID，每次请求前自增
 	
-	map<string, set<string> >	m_mapInstrumentIDs;		//正在订阅的合约
-	map<string, set<string> >	m_mapQuoteInstrumentIDs;		//正在订阅的合约
 	CSecurityFtdcMdApi*			m_pApi;					//行情API
 	
 	string						m_szPath;				//生成配置文件的路径
@@ -103,6 +90,9 @@ private:
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 
-	CMsgQueue*					m_remoteQueue;
+	CSubscribeManager*			m_pSubscribeManager;
+	CSyntheticConfig*			m_pSyntheticConfig;
+	CSyntheticManager*			m_pSyntheticManager;
+	CSyntheticCalculateFactory*	m_pCalculateFactory;
 };
 

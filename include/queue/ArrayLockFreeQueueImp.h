@@ -11,9 +11,7 @@ ArrayLockFreeQueue<ELEM_T, Q_SIZE>::ArrayLockFreeQueue() :
 	m_readIndex(0),
 	m_maximumReadIndex(0)
 {
-
 	m_count = 0;
-
 }
 
 template <typename ELEM_T, QUEUE_INT Q_SIZE>

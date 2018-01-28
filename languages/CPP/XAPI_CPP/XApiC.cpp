@@ -3,11 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../../include/XApiC.h"
-#include "../../../include/QueueHeader.h"
 #include "../../../include/QueueEnum.h"
 
 #if defined WINDOWS || WIN32
-#include <libloaderapi.h>
+//#include <libloaderapi.h>
 #else
 #include <dlfcn.h>
 #include <errno.h>

@@ -1,0 +1,10 @@
+
+[License]
+ExpireDate=20170313
+Trial=5
+MachineID=".*"
+
+[User]
+Account=".*"
+UserName=""
+Info="A0C58943F8AE:05000000000|*|"

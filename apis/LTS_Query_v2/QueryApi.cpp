@@ -2,14 +2,13 @@
 #include "QueryApi.h"
 
 #include "../../include/QueueEnum.h"
-#include "../../include/QueueHeader.h"
 
 #include "../../include/ApiHeader.h"
 #include "../../include/ApiStruct.h"
 
 #include "../../include/toolkit.h"
 
-#include "../../common/Queue/MsgQueue.h"
+#include "../../include/queue/MsgQueue.h"
 
 // 这里用的是与交易同一个类型转换
 #include "../LTS_Trade_v2/TypeConvert.h"
@@ -89,8 +88,8 @@ void CQueryApi::Register(void* pCallback, void* pClass)
 	if (m_msgQueue == nullptr)
 		return;
 
-	m_msgQueue_Query->Register((void*)Query_Q, this);
-	m_msgQueue->Register(pCallback, this);
+	m_msgQueue_Query->Register((void*)Query_Q);
+	m_msgQueue->Register(pCallback);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();
@@ -113,7 +112,7 @@ CQueryApi::CQueryApi(void)
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
 
-	m_msgQueue_Query->Register((void*)Query_Q, this);
+	m_msgQueue_Query->Register((void*)Query_Q);
 	m_msgQueue_Query->StartThread();
 }
 
@@ -222,7 +221,7 @@ void CQueryApi::Disconnect()
 	if (m_msgQueue_Query)
 	{
 		m_msgQueue_Query->StopThread();
-		m_msgQueue_Query->Register(nullptr, nullptr);
+		m_msgQueue_Query->Register(nullptr);
 		m_msgQueue_Query->Clear();
 		delete m_msgQueue_Query;
 		m_msgQueue_Query = nullptr;
@@ -244,7 +243,7 @@ void CQueryApi::Disconnect()
 	if (m_msgQueue)
 	{
 		m_msgQueue->StopThread();
-		m_msgQueue->Register(nullptr, nullptr);
+		m_msgQueue->Register(nullptr);
 		m_msgQueue->Clear();
 		delete m_msgQueue;
 		m_msgQueue = nullptr;

@@ -1,7 +1,6 @@
 #pragma once
 #include "../../../include/XApiCpp.h"
 
-#include "../../../include/QueueHeader.h"
 
 class CXApiImpl :
 	public CXApi

@@ -14,12 +14,13 @@
     <ProjectGuid>{D4387736-0623-4442-A4AC-AF79239F9419}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>LTS_Quote</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -90,6 +91,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\ApiProcess.h" />
+    <ClInclude Include="..\..\include\CSubscribeManager.h" />
+    <ClInclude Include="..\..\include\CSubscribeManager1.h" />
+    <ClInclude Include="..\..\include\CSubscribeManager2.h" />
+    <ClInclude Include="..\..\include\CSyntheticCalculate_DepthMarketDataNField.h" />
+    <ClInclude Include="..\..\include\synthetic\CSyntheticConfig.h" />
+    <ClInclude Include="..\..\include\synthetic\CSyntheticManager.h" />
+    <ClInclude Include="..\..\include\synthetic\CSyntheticMarketData.h" />
     <ClInclude Include="..\..\include\toolkit.h" />
     <ClInclude Include="MdUserApi.h" />
     <ClInclude Include="stdafx.h" />
@@ -97,6 +105,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\ApiProcess.cpp" />
+    <ClCompile Include="..\..\include\CSubscribeManager.cpp" />
+    <ClCompile Include="..\..\include\CSubscribeManager1.cpp" />
+    <ClCompile Include="..\..\include\CSubscribeManager2.cpp" />
+    <ClCompile Include="..\..\include\CSyntheticCalculate_DepthMarketDataNField.cpp" />
+    <ClCompile Include="..\..\include\synthetic\CSyntheticConfig.cpp" />
+    <ClCompile Include="..\..\include\synthetic\CSyntheticManager.cpp" />
+    <ClCompile Include="..\..\include\synthetic\CSyntheticMarketData.cpp" />
     <ClCompile Include="..\..\include\toolkit.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="main.cpp" />

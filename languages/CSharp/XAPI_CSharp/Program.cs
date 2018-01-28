@@ -43,8 +43,9 @@ namespace XAPI
         {
             Debugger.Log(0, null, "CTP:C#");
             Console.WriteLine(marketData.InstrumentID);
-            Console.WriteLine(marketData.Exchange);
+            //Console.WriteLine(marketData.Exchange);
             Console.WriteLine(marketData.LastPrice);
+            //Console.WriteLine(marketData.OpenInterest);
         }
 
         static void OnRspQryInstrument(object sender, ref InstrumentField instrument,int size1, bool bIsLast)
@@ -241,7 +242,7 @@ namespace XAPI
         static void test_CTP_Main(string[] args)
         {
             Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
-            var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Trade_x86.dll");
+            var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll");
 
             //api = new XApi(@"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\CTP\x86\QuantBox_CTP_Quote.dll");
 
@@ -251,7 +252,7 @@ namespace XAPI
             api = a;
 
             api.Server.BrokerID = "9999";
-            api.Server.Address = "tcp://218.202.237.33:10002";
+            api.Server.Address = "tcp://180.168.146.187:10010";
             api.Server.PrivateTopicResumeType = ResumeType.Undefined;
 
             api.User.UserID = "037505";
@@ -263,13 +264,23 @@ namespace XAPI
             api.OnRspQrySettlementInfo = OnRspQrySettlementInfo;
 
             api.Connect();
-            Thread.Sleep(5 * 1000);
-            //api.Subscribe("IF1502", "");
-            ReqQueryField query = new ReqQueryField();
-            query.DateStart = 20161124;
-            api.ReqQuery(QueryType.ReqQrySettlementInfo, query);
+            Thread.Sleep(3 * 1000);
+            api.Subscribe("IF1802;au1806;au000;IF000", "");
 
-            Thread.Sleep(10 * 1000);
+            Console.ReadKey();
+            api.Unsubscribe("au1806", "");
+            Console.ReadKey();
+            api.Unsubscribe("au000", "");
+            Console.ReadKey();
+            api.Unsubscribe("au1806", "");
+            Console.ReadKey();
+
+
+            api.Subscribe("au1806;au000", "");
+            Console.ReadKey();
+            api.Unsubscribe("au000", "");
+            Console.ReadKey();
+            Thread.Sleep(1000 * 1000);
 
             api.Dispose();
 

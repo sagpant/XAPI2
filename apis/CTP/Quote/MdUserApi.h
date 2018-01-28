@@ -5,14 +5,20 @@
 // 由于这个Include.h需要使用每个项目自己的文件，所以需要在VC++ Directories->Include Directories中添加一个"./"
 #include "Include.h"
 
-#include <set>
 #include <string>
 #include <atomic>
 #include <mutex>
+#include <set>
+
 
 using namespace std;
 
 class CMsgQueue;
+
+class CSubscribeManager;
+class CSyntheticConfig;
+class CSyntheticManager;
+class CSyntheticCalculateFactory;
 
 class CMdUserApi :
 	public CThostFtdcMdSpi
@@ -59,7 +65,9 @@ private:
 
 	//订阅行情
 	void Subscribe(const set<string>& instrumentIDs, const string& szExchangeID);
+	void Unsubscribe(const set<string>& instrumentIDs, const string& szExchangeID);
 	void SubscribeQuote(const set<string>& instrumentIDs, const string& szExchangeID);
+	void UnsubscribeQuote(const set<string>& instrumentIDs, const string& szExchangeID);
 
 	virtual void OnFrontConnected();
 	virtual void OnFrontDisconnected(int nReason);
@@ -82,13 +90,12 @@ private:
 
 private:
 	//bool						m_delete;
-	mutex						m_csMapInstrumentIDs;
-	mutex						m_csMapQuoteInstrumentIDs;
 
 	atomic<int>					m_lRequestID;			//请求ID，每次请求前自增
 
-	set<string>					m_setInstrumentIDs;		//正在订阅的合约
-	set<string>					m_setQuoteInstrumentIDs;		//正在订阅的合约
+
+
+
 	CThostFtdcMdApi*			m_pApi;					//行情API
 
 	string						m_szPath;				//生成配置文件的路径
@@ -100,8 +107,12 @@ private:
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 
-	CMsgQueue*					m_remoteQueue;
-
 	int							m_TradingDay;
+
+	CSubscribeManager*			m_pSubscribeManager;
+	CSubscribeManager*			m_pQuoteSubscribeManager;
+	CSyntheticConfig*			m_pSyntheticConfig;
+	CSyntheticManager*			m_pSyntheticManager;
+	CSyntheticCalculateFactory*	m_pCalculateFactory;
 };
 
