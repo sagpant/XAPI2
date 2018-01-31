@@ -60,25 +60,85 @@ void CSyntheticConfig::Write(const char* filename)
 
 	rapidjson::Value info_array(rapidjson::kArrayType);
 
-	for (int i = 0; i < 2; i++) {
+	{
 		rapidjson::Value info_object(rapidjson::kObjectType);
 		info_object.SetObject();
 		info_object.AddMember("Symbol", "IF000", allocator);
 		info_object.AddMember("Method", "OpenInterest", allocator);
-		//info_object.AddMember("Emit", "IF1802", allocator);
 
 		rapidjson::Value emits_array(rapidjson::kArrayType);
 		emits_array.SetArray();
 		emits_array.PushBack("IF1802", allocator);
 		emits_array.PushBack("IF1806", allocator);
 		info_object.AddMember("Emits", emits_array, allocator);
-		
+
 		rapidjson::Value legs_object(rapidjson::kObjectType);
 		legs_object.SetObject();
 		legs_object.AddMember("IF1802", 1.0, allocator);
 		legs_object.AddMember("IF1803", 1.0, allocator);
 		legs_object.AddMember("IF1806", 1.0, allocator);
 		legs_object.AddMember("IF1809", 1.0, allocator);
+
+		info_object.AddMember("Legs", legs_object, allocator);
+		doc.PushBack(info_object, allocator);
+	}
+
+	{
+		rapidjson::Value info_object(rapidjson::kObjectType);
+		info_object.SetObject();
+		info_object.AddMember("Symbol", "IF_WI", allocator);
+		info_object.AddMember("Method", "Weight", allocator);
+
+		rapidjson::Value emits_array(rapidjson::kArrayType);
+		emits_array.SetArray();
+		emits_array.PushBack("IF1802", allocator);
+		info_object.AddMember("Emits", emits_array, allocator);
+
+		rapidjson::Value legs_object(rapidjson::kObjectType);
+		legs_object.SetObject();
+		legs_object.AddMember("IF1802", 0.25, allocator);
+		legs_object.AddMember("IF1803", 0.25, allocator);
+		legs_object.AddMember("IF1806", 0.25, allocator);
+		legs_object.AddMember("IF1809", 0.25, allocator);
+
+		info_object.AddMember("Legs", legs_object, allocator);
+		doc.PushBack(info_object, allocator);
+	}
+
+	{
+		rapidjson::Value info_object(rapidjson::kObjectType);
+		info_object.SetObject();
+		info_object.AddMember("Symbol", "IF_IH_1803", allocator);
+		info_object.AddMember("Method", "Spread", allocator);
+
+		rapidjson::Value emits_array(rapidjson::kArrayType);
+		emits_array.SetArray();
+		emits_array.PushBack("IF1803", allocator);
+		info_object.AddMember("Emits", emits_array, allocator);
+
+		rapidjson::Value legs_object(rapidjson::kObjectType);
+		legs_object.SetObject();
+		legs_object.AddMember("IF1803", 1.0, allocator);
+		legs_object.AddMember("IH1803", -1.2, allocator);
+
+		info_object.AddMember("Legs", legs_object, allocator);
+		doc.PushBack(info_object, allocator);
+	}
+
+	{
+		rapidjson::Value info_object(rapidjson::kObjectType);
+		info_object.SetObject();
+		info_object.AddMember("Symbol", "IF888", allocator);
+		info_object.AddMember("Method", "Copy", allocator);
+
+		rapidjson::Value emits_array(rapidjson::kArrayType);
+		emits_array.SetArray();
+		emits_array.PushBack("IF1802", allocator);
+		info_object.AddMember("Emits", emits_array, allocator);
+
+		rapidjson::Value legs_object(rapidjson::kObjectType);
+		legs_object.SetObject();
+		legs_object.AddMember("IF1802", 1.0, allocator);
 
 		info_object.AddMember("Legs", legs_object, allocator);
 		doc.PushBack(info_object, allocator);

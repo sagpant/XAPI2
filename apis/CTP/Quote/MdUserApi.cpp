@@ -682,7 +682,7 @@ void CMdUserApi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMark
 	} while (false);
 
 	// 不使用CThostFtdcDepthMarketDataField是因为不通用
-	char* pBuf = m_pSyntheticManager->Update(pField->InstrumentID, pField, sizeof(DepthMarketDataNField));
+	char* pBuf = m_pSyntheticManager->Update(pField->InstrumentID, pField, pField->Size);
 
 	// 先通知成分，再通知合成，这样合成要触发事件时，成分的数据已经完成了
 	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnDepthMarketData, m_msgQueue, m_pClass, 0, 0, pField, pField->Size, nullptr, 0, nullptr, 0);
@@ -690,14 +690,16 @@ void CMdUserApi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMark
 	if (pBuf)
 	{
 		// 0号位是标记位
-		auto pSyntheticBuf = (DepthMarketDataNField*)(pBuf + 1);
+		auto pSyntheticBuf = (DepthMarketDataNField*)(pBuf);
+		// 合约不能为空，空了就不知道通知谁了
+		int offest = pSyntheticBuf->InstrumentID - pBuf;
 		// 有相关的合约与数据
 		auto products = m_pSyntheticManager->GetByInstrument(pSyntheticBuf->InstrumentID);
 		for (auto iter = products.begin(); iter != products.end(); iter++)
 		{
 			auto p = *iter;
 			// 只对需要的进行计算和触发
-			if (p->CheckEmit(pSyntheticBuf->InstrumentID))
+			if (p->CheckEmit(pSyntheticBuf->InstrumentID, offest))
 			{
 				// 0号位是标记位
 				auto q = (DepthMarketDataNField*)p->Calculate(pBuf);

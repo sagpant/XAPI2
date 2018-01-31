@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "CSyntheticMarketData.h"
 
 
@@ -10,7 +10,7 @@ CSyntheticMarketData::CSyntheticMarketData(const char* product, set<string> emit
 	memset(m_emit_buf,0, sizeof(m_emit_buf));
 	if (m_emits.size() == 1)
 	{
-		// Ö»±£´æµÚÒ»¸ö
+		// åªä¿å­˜ç¬¬ä¸€ä¸ª
 		strncpy(m_emit_buf, emits.begin()->data(), sizeof(m_emit_buf));
 		m_emit = m_emit_buf;
 	}
@@ -50,7 +50,7 @@ void CSyntheticMarketData::Create(const char* instrument, double weight, char* p
 	else
 	{
 	}
-	// ÓÉÓÚÕâ¸ö´úÂëÊÇÔÚRegisterÖĞµ÷ÓÃ£¬ºÏ³ÉºÏÔ¼µÄ³É·İ´óĞ¡ÊÇ¹Ì¶¨µÄ
+	// ç”±äºè¿™ä¸ªä»£ç æ˜¯åœ¨Registerä¸­è°ƒç”¨ï¼Œåˆæˆåˆçº¦çš„æˆä»½å¤§å°æ˜¯å›ºå®šçš„
 	m_size = m_map.size();
 }
 
@@ -79,31 +79,31 @@ void* CSyntheticMarketData::Calculate(char* pBuf)
 
 	for (auto iter = m_map.begin(); iter != m_map.end(); iter++)
 	{
-		// ÇóºÍ
+		// æ±‚å’Œ
 		m_pCal->Sum(this, &iter->second, &m_leg);
 	}
 
 	for (auto iter = m_map.begin(); iter != m_map.end(); iter++)
 	{
-		// ËãÈ¨ÖØ,»òÈ¨ÖØÒÑ¾­ËãºÃ
+		// ç®—æƒé‡,æˆ–æƒé‡å·²ç»ç®—å¥½
 		m_pCal->ForEach(this, &iter->second, &m_leg);
 	}
 
 	m_pCal->End(this, pBuf, &m_leg);
 
-	return m_leg.pBuf + 1;
+	return m_leg.pBuf;
 }
 
-bool CSyntheticMarketData::CheckEmit(const char* instrument)
+bool CSyntheticMarketData::CheckEmit(const char* instrument, int offest)
 {
-	// ÏëÍ³¼ÆÓĞ¶àÉÙÊı¾İÆëÁËÊ±£¬·¢ÏÖÄÚ´æÇøÆäÊµ³õÊ¼»¯Ê±¾ÍÒÑ¾­ÆëÁË
-	// Ö»ºÃÇ¿ĞĞ¼ÓÒ»¸ö±êÖ¾Î»
+	// æƒ³ç»Ÿè®¡æœ‰å¤šå°‘æ•°æ®é½äº†æ—¶ï¼Œå‘ç°å†…å­˜åŒºå…¶å®åˆå§‹åŒ–æ—¶å°±å·²ç»é½äº†
+	// åªå¥½å¼ºè¡ŒåŠ ä¸€ä¸ªæ ‡å¿—ä½
 	if (m_size != m_count)
 	{
 		char ch = 0;
 		for (auto iter = m_map.begin(); iter != m_map.end(); iter++)
 		{
-			auto c = iter->second.pBuf[0];
+			auto c = iter->second.pBuf[offest];
 			ch += c;
 		}
 		m_count = ch;
@@ -112,17 +112,24 @@ bool CSyntheticMarketData::CheckEmit(const char* instrument)
 	{
 		if (m_emit)
 		{
-			// ¾õµÃstrcmpÒª±ÈsetÖĞµÄfindÒª¿ì£¬ËùÒÔ¡£¡£¡£
+			// è§‰å¾—strcmpè¦æ¯”setä¸­çš„findè¦å¿«ï¼Œæ‰€ä»¥ã€‚ã€‚ã€‚
 			return strcmp(m_emit, instrument) == 0;
 		}
-		// ÏàÍ¬ÅĞ¶ÏÊÇ·ñÖ¸¶¨ºÏÔ¼
+
+		// æ²¡æœ‰æŒ‡å®šè§¦å‘åˆçº¦ï¼Œéƒ½è§¦å‘
+		if (m_emits.size() == 0)
+		{
+			return true;
+		}
+
+		// ç›¸åŒåˆ¤æ–­æ˜¯å¦æŒ‡å®šåˆçº¦
 		auto it = m_emits.find(instrument);
 		return it != m_emits.end();
 	}
 	else
 	{
 		m_last_count = m_count;
-		// ²»Í¬±íÊ¾ÕıÔÚÆğ²½¼¸¸öÊı¾İ°ü
+		// ä¸åŒè¡¨ç¤ºæ­£åœ¨èµ·æ­¥å‡ ä¸ªæ•°æ®åŒ…
 		return m_size == m_count;
 	}
 }

@@ -46,6 +46,14 @@ namespace XAPI
             //Console.WriteLine(marketData.Exchange);
             Console.WriteLine(marketData.LastPrice);
             //Console.WriteLine(marketData.OpenInterest);
+            if(marketData.Bids.Count()>0)
+            {
+                Console.WriteLine(marketData.Bids[0].Price);
+            }
+            if (marketData.Asks.Count() > 0)
+            {
+                Console.WriteLine(marketData.Asks[0].Price);
+            }
         }
 
         static void OnRspQryInstrument(object sender, ref InstrumentField instrument,int size1, bool bIsLast)
@@ -240,6 +248,37 @@ namespace XAPI
         }
 
         static void test_CTP_Main(string[] args)
+        {
+            Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
+            var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll");
+
+            api = a;
+
+            api.Server.BrokerID = "9999";
+            api.Server.Address = "tcp://180.168.146.187:10010";
+            api.Server.PrivateTopicResumeType = ResumeType.Undefined;
+
+            api.User.UserID = "037505";
+            api.User.Password = "123456";
+
+            api.OnConnectionStatus = OnConnectionStatus;
+            api.OnRtnDepthMarketData = OnRtnDepthMarketData;
+            api.OnRspQryInstrument = OnRspQryInstrument;
+            api.OnRspQrySettlementInfo = OnRspQrySettlementInfo;
+
+            api.Connect();
+            Thread.Sleep(3 * 1000);
+            api.Subscribe("IF000;IF_WI;IF_IH_1803;IF888", "");
+
+            Console.ReadKey();
+            Thread.Sleep(1000 * 1000);
+
+            api.Dispose();
+
+            Thread.Sleep(5 * 1000);
+        }
+
+        static void test_CTP_Main2(string[] args)
         {
             Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
             var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll");

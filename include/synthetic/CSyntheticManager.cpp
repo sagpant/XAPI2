@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "CSyntheticManager.h"
 
 
@@ -23,7 +23,7 @@ CSyntheticManager::~CSyntheticManager()
 
 CSyntheticMarketData* CSyntheticManager::Register(const char* product, set<string> emits, map<string, double> legs, CSyntheticCalculate* pCal)
 {
-	// ÓÃÓÚ×¢²á¶àÉÙ¸öºÏ³ÉºÏÔ¼
+	// ç”¨äºæ³¨å†Œå¤šå°‘ä¸ªåˆæˆåˆçº¦
 	CSyntheticMarketData* pSMD = nullptr;
 	auto it = m_map_by_product.find(product);
 	if (it == m_map_by_product.end())
@@ -36,14 +36,14 @@ CSyntheticMarketData* CSyntheticManager::Register(const char* product, set<strin
 		pSMD = it->second;
 	}
 
-	// µÇ¼ÇĞèÒªÓÃµ½¶àÉÙÊµ¼ÊºÏÔ¼
+	// ç™»è®°éœ€è¦ç”¨åˆ°å¤šå°‘å®é™…åˆçº¦
 	for (auto iter = legs.begin(); iter != legs.end(); iter++)
 	{
 		char* pBuf = nullptr;
 		auto it = m_map_by_instrument.find(iter->first);
 		if (it == m_map_by_instrument.end())
 		{
-			// ´´½¨
+			// åˆ›å»º
 			pBuf = new char[LEG_DATA_BUF_LEN]();
 			memset(pBuf, 0, LEG_DATA_BUF_LEN);
 			m_map_by_instrument.insert(pair<string, char*>(iter->first, pBuf));
@@ -55,7 +55,7 @@ CSyntheticMarketData* CSyntheticManager::Register(const char* product, set<strin
 
 		pSMD->Create(iter->first.c_str(), iter->second, pBuf);
 
-		// ¹ØÁªÊµÅÌºÏÔ¼ÓëËùÄÜºÏ³ÉµÄºÏÔ¼ 
+		// å…³è”å®ç›˜åˆçº¦ä¸æ‰€èƒ½åˆæˆçš„åˆçº¦ 
 		auto it2 = m_map_set_by_instrument.find(iter->first);
 		if (it2 == m_map_set_by_instrument.end())
 		{
@@ -68,8 +68,8 @@ CSyntheticMarketData* CSyntheticManager::Register(const char* product, set<strin
 			it2->second.insert(pSMD);
 		}
 	}
-	// ²»¹ÜÓĞÃ»ÓĞÓÃµ½È¨ÖØ£¬¸üĞÂÒ»ÏÂ
-	pSMD->UpdateWeight();
+	// ä¸ç®¡æœ‰æ²¡æœ‰ç”¨åˆ°æƒé‡ï¼Œæ›´æ–°ä¸€ä¸‹
+	//pSMD->UpdateWeight();
 	return pSMD;
 }
 
@@ -78,30 +78,30 @@ set<string> CSyntheticManager::UnRegister(const char* product)
 	auto it = m_map_by_product.find(product);
 	if (it == m_map_by_product.end())
 	{
-		// Ã»ÕÒµ½£¬ÕâÊÇ¿ªÍæĞ¦µÄ°É
+		// æ²¡æ‰¾åˆ°ï¼Œè¿™æ˜¯å¼€ç©ç¬‘çš„å§
 		set<string> ss;
 		return ss;
 	}
 	else
 	{
-		// ÕÒµ½ºÏ³ÉÆ÷Ö¸Õë
+		// æ‰¾åˆ°åˆæˆå™¨æŒ‡é’ˆ
 		auto p = it->second;
-		// ÕÒµ½ÁË£¬ĞèÒªµÃµ½ÓÃµ½ÁËÄÄĞ©ºÏÔ¼
+		// æ‰¾åˆ°äº†ï¼Œéœ€è¦å¾—åˆ°ç”¨åˆ°äº†å“ªäº›åˆçº¦
 		auto ss = p->GetInstruments();
 		for (auto s1 = ss.begin(); s1 != ss.end(); s1++)
 		{
 			auto s2 = m_map_set_by_instrument.find(s1->data());
 			if (s2 == m_map_set_by_instrument.end())
 			{
-				// Ã»ÕÒµ½£¬ÕâÊÇ¿ªÍæĞ¦µÄ°É
+				// æ²¡æ‰¾åˆ°ï¼Œè¿™æ˜¯å¼€ç©ç¬‘çš„å§
 			}
 			else
 			{
-				// ½«´ËÊµ¼ÊºÏÔ¼¿ÉÒÔ×éºÏ³ÉµÄºÏ³ÉÆ÷É¾ÁË
+				// å°†æ­¤å®é™…åˆçº¦å¯ä»¥ç»„åˆæˆçš„åˆæˆå™¨åˆ äº†
 				s2->second.erase(p);
 				if (s2->second.size() == 0)
 				{
-					// Ã»ÓĞÒª¶©µÄ£¬ĞèÒªÉ¾³ı
+					// æ²¡æœ‰è¦è®¢çš„ï¼Œéœ€è¦åˆ é™¤
 					m_map_by_instrument.erase(s1->data());
 				}
 			}
@@ -118,14 +118,15 @@ char* CSyntheticManager::Update(const char* instrument, void* pData, int size)
 	auto it = m_map_by_instrument.find(instrument);
 	if (it == m_map_by_instrument.end())
 	{
-		// Ã»ÕÒµ½
+		// æ²¡æ‰¾åˆ°
 		return nullptr;
 	}
 	else
 	{
-		// ÓÃµÚÒ»¸ö×Ö½Ú±ê¼ÇÊı¾İÒÑ¾­ÊÕµ½
-		*it->second = 1;
-		memcpy(it->second+1, pData, size);
+		//// ç”¨ç¬¬ä¸€ä¸ªå­—èŠ‚æ ‡è®°æ•°æ®å·²ç»æ”¶åˆ°
+		//*it->second = 1;
+		//memcpy(it->second+1, pData, size);
+		memcpy(it->second, pData, size);
 		return it->second;
 	}
 }

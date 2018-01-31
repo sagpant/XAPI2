@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <list>
 #include <map>
@@ -8,16 +8,22 @@
 using namespace std;
 
 #define LEG_DATA_BUF_LEN (512)
-// ÓÃÓÚÄÚ²¿¼ÆËãÓÃµÄ½á¹¹Ìå
+// ç”¨äºå†…éƒ¨è®¡ç®—ç”¨çš„ç»“æ„ä½“
 struct LegData
 {
-	// È¨ÖØ£¬¿ÉÄÜÔÚÍâ²¿ÒÑ¾­Ö¸¶¨ºÃ£¬Ò²¿ÉÒÔÏÈÇóºÍ£¬È»ºóÔÙËãÈ¨ÖØ
+	// æƒé‡ï¼Œå¯èƒ½åœ¨å¤–éƒ¨å·²ç»æŒ‡å®šå¥½ï¼Œä¹Ÿå¯ä»¥å…ˆæ±‚å’Œï¼Œç„¶åå†ç®—æƒé‡
 	double weight;
-	// Ìí¼Ó´Ë±äÁ¿ÊÇÓÃÓÚ½â¾ö¿ÉÄÜ³öÏÖµÄÊı¾İÒç³öÎÊÌâ
+	// æ·»åŠ æ­¤å˜é‡æ˜¯ç”¨äºè§£å†³å¯èƒ½å‡ºç°çš„æ•°æ®æº¢å‡ºé—®é¢˜
 	double sum;
-	// ¼ÆÊı
+	// è®¡æ•°
 	int count;
-	// Ê¹ÓÃÄÚ´æ¿éÀ´¼æÈİ²»Í¬ÀàĞÍ,Êı¾İÇøµÄµÚÒ»¸ö×Ö½Ú·Ç0±íÊ¾Êı¾İÒÑ¾­×¼±¸ºÃ
+
+	double ask;
+	double askSize;
+	double bid;
+	double bidSize;
+
+	// ä½¿ç”¨å†…å­˜å—æ¥å…¼å®¹ä¸åŒç±»å‹,æ•°æ®åŒºçš„ç¬¬ä¸€ä¸ªå­—èŠ‚é0è¡¨ç¤ºæ•°æ®å·²ç»å‡†å¤‡å¥½
 	char* pBuf;
 };
 
@@ -25,7 +31,7 @@ class CSyntheticMarketData;
 
 class CSyntheticCalculate
 {
-	// ×¢Òâ£ºpBufºÍLegData->pBuf¶¼ÊÇ0ºÅÎ»ÊÇ±ê¼ÇÎ»
+	// æ³¨æ„ï¼špBufå’ŒLegData->pBuféƒ½æ˜¯0å·ä½æ˜¯æ ‡è®°ä½
 public:
 	virtual void Begin(CSyntheticMarketData* pCall, char* pBuf, LegData* pOut) = 0;
 	virtual void Sum(CSyntheticMarketData* pCall, LegData* pIn, LegData* pOut) = 0;
@@ -39,9 +45,9 @@ public:
 	virtual CSyntheticCalculate* Create(string method) = 0;
 };
 
-// ´¦ÀíµÄÊÇÄ³Ò»¸öºÏ³ÉÖ¸Êı
-// ÈçIF000,ÄÏ»ªÉÌÆ·Ö¸ÊıµÈ
-// ÓÉÍâ²ãµÄkey×îºó¾ö¶¨ºÏÔ¼Ãû
+// å¤„ç†çš„æ˜¯æŸä¸€ä¸ªåˆæˆæŒ‡æ•°
+// å¦‚IF000,å—åå•†å“æŒ‡æ•°ç­‰
+// ç”±å¤–å±‚çš„keyæœ€åå†³å®šåˆçº¦å
 class CSyntheticMarketData
 {
 public:
@@ -50,16 +56,16 @@ public:
 
 	void Create(const char* instrument, double weight, char* pData);
 	void UpdateWeight();
-	// ×¢Òâ£¬ÓÃÓÚ¼ÆËãµÄÄÚ´æ¿é£¬µÚ0ºÅÎ»ÊÇ±ê¼ÇÎ»
+	// æ³¨æ„ï¼Œç”¨äºè®¡ç®—çš„å†…å­˜å—ï¼Œç¬¬0å·ä½æ˜¯æ ‡è®°ä½
 	void* Calculate(char* pBuf);
 	void* GetValue();
 
 	set<string> GetEmits() { return m_emits; }
 	string GetProduct() { return m_product; }
 	set<string> GetInstruments();
-
-	bool CheckEmit(const char* instrument);
-
+	// åˆ¤æ–­æŒ‡å®šä½ç½®å­—ç¬¦æ˜¯å¦ä¸º0ï¼Œæ¥ç¡®è®¤æ•°æ®æ˜¯å¦å·²ç»æœ‰äº†
+	bool CheckEmit(const char* instrument,int offest);
+	
 private:
 	string							m_product;
 	set<string>						m_emits;

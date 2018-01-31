@@ -11,9 +11,6 @@
 
 CSubscribeManager::CSubscribeManager(CSyntheticConfig* pConfig, CSyntheticManager* pManager, CSyntheticCalculateFactory* pCalculateFactory)
 {
-	//m_pSubscribeManager1 = new CSubscribeManager1();
-	//m_pSubscribeManager2 = new CSubscribeManager2();
-
 	m_pConfig = pConfig;
 	m_pManager = pManager;
 	m_pCalculateFactory = pCalculateFactory;
