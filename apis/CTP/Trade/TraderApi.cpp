@@ -1586,6 +1586,8 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 				pField = it->second;
 				strcpy(pField->ID, orderId);
 				strcpy(pField->LocalID, pField->ID);
+				// 为了解决发送时交易所与接收时交易所不一样的情况
+				strcpy(pField->ExchangeID, pOrder->ExchangeID);
 				pField->LeavesQty = pOrder->VolumeTotal;
 				pField->Price = pOrder->LimitPrice;
 				pField->Status = CThostFtdcOrderField_2_OrderStatus(pOrder);
