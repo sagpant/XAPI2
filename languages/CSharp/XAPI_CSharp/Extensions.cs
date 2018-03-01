@@ -230,9 +230,9 @@ CZC
 
         public static string ToFormattedString([In]this PositionField field)
         {
-            return string.Format("[InstrumentID={0};ExchangeID={1};HedgeFlag={2};Side={3};"
-                + "Position={4};TodayPosition={5};HistoryPosition={6};ID={7}]",
-                field.InstrumentID, field.ExchangeID, Enum<HedgeFlagType>.ToString(field.HedgeFlag), Enum<PositionSide>.ToString(field.Side),
+            return string.Format("[InstrumentID={0};ExchangeID={1};InstrumentName={2};HedgeFlag={3};Side={4};"
+                + "Position={5};TodayPosition={6};HistoryPosition={7};ID={8}]",
+                field.InstrumentID, field.ExchangeID, field.InstrumentName(), Enum<HedgeFlagType>.ToString(field.HedgeFlag), Enum<PositionSide>.ToString(field.Side),
                 field.Position, field.TodayPosition, field.HistoryPosition, field.ID);
         }
 

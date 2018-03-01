@@ -97,14 +97,6 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 	this_thread::sleep_for(chrono::milliseconds(m_nSleep));
 }
 
-//void* __stdcall Test(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
-//{
-//	// 由内部调用，不用检查是否为空
-//	CTraderApi* pApi = (CTraderApi*)pApi2;
-//	pApi->TestInThread(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
-//	return nullptr;
-//}
-
 void CTraderApi::TestInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	time_t _now = time(nullptr);

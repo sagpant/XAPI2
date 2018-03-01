@@ -16,10 +16,15 @@ public:
 	void SetPrefix(const char* prefix);
 
 	const char* GetIDString();
-	long GetID();
+	unsigned int GetID();
+	// 保证当天不重复
+	unsigned int GetTimeID();
+
+	const unsigned int sec_per_year = 86400 * 365;
 private:
-	atomic<long> m_id;
+	atomic<unsigned int> m_id;
 	OrderIDType m_IDString;
 	OrderIDType m_Prefix;
+
 };
 
