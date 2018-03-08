@@ -88,8 +88,8 @@ void CQueryApi::Register(void* pCallback, void* pClass)
 	if (m_msgQueue == nullptr)
 		return;
 
-	m_msgQueue_Query->Register((void*)Query_Q);
-	m_msgQueue->Register(pCallback);
+	m_msgQueue_Query->Register(Query_Q);
+	m_msgQueue->Register((fnOnResponse)pCallback);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();
@@ -112,7 +112,7 @@ CQueryApi::CQueryApi(void)
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
 
-	m_msgQueue_Query->Register((void*)Query_Q);
+	m_msgQueue_Query->Register(Query_Q);
 	m_msgQueue_Query->StartThread();
 }
 

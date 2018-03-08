@@ -50,7 +50,7 @@ CMdUserApi::CMdUserApi(void)
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
 
-	m_msgQueue_Query->Register((void*)Query);
+	m_msgQueue_Query->Register(Query);
 	m_msgQueue_Query->StartThread();
 
 	//m_msgQueue->m_bDirectOutput = true;
@@ -112,8 +112,8 @@ void CMdUserApi::Register(void* pCallback, void* pClass)
 	if (m_msgQueue == nullptr)
 		return;
 
-	m_msgQueue_Query->Register((void*)Query);
-	m_msgQueue->Register(pCallback);
+	m_msgQueue_Query->Register(Query);
+	m_msgQueue->Register((fnOnResponse)pCallback);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();

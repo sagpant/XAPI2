@@ -270,21 +270,31 @@ namespace XAPI.Callback
 
         private IntPtr _OnRespone(byte type, IntPtr pApi1, IntPtr pApi2, double double1, double double2, IntPtr ptr1, int size1, IntPtr ptr2, int size2, IntPtr ptr3, int size3)
         {
-            // 队列过来的消息，如何处理？
-            switch ((ResponseType)type)
+            //try
             {
-                case ResponseType.OnConnectionStatus:
-                    _OnConnectionStatus(double1, ptr1, size1);
-                    break;
-                case ResponseType.OnRtnError:
-                    _OnRtnError(ptr1);
-                    break;
-                case ResponseType.OnLog:
-                    _OnLog(ptr1);
-                    break;
-                default:
-                    return OnResponse(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+                // 队列过来的消息，如何处理？
+                switch ((ResponseType)type)
+                {
+                    case ResponseType.OnConnectionStatus:
+                        _OnConnectionStatus(double1, ptr1, size1);
+                        break;
+                    case ResponseType.OnRtnError:
+                        _OnRtnError(ptr1);
+                        break;
+                    case ResponseType.OnLog:
+                        _OnLog(ptr1);
+                        break;
+                    default:
+                        return OnResponse(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+                }
             }
+            //catch(Exception ex)
+            //{
+            //    // 有些封装老是出错，没办法，只好报一个例外出来
+            //    Console.WriteLine(ex.Message);
+            //    Console.WriteLine(ex.StackTrace);
+            //}
+
 
             return IntPtr.Zero;
         }

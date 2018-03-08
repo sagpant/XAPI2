@@ -28,7 +28,7 @@ struct ResponeItem
 	void*		ptr3;	// 需要delete
 	int			size3;
 
-	bool		bNeedDelete;
+	bool		bNeedDelete;	// 是否需要删除
 };
 
 
@@ -36,7 +36,10 @@ struct ResponeItem
 extern "C" {
 #endif
 
-	typedef void* (__stdcall *fnOnResponse) (char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	typedef void* (__stdcall *fnOnResponse) (char type,
+		void* pApi1, void* pApi2,
+		double double1, double double2,
+		void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 #ifdef __cplusplus
 }
 #endif
@@ -54,6 +57,8 @@ class CMsgQueue
 {
 public:
 	bool m_bDirectOutput;
+	FILE* m_infile;
+	FILE* m_outfile;
 
 	CMsgQueue()//:m_queue(1024)
 	{
@@ -61,13 +66,31 @@ public:
 		m_bRunning = false;
 		m_bDirectOutput = false;
 
+		m_infile = nullptr;
+		m_outfile = nullptr;
+
 		//回调函数地址指针
 		m_fnOnResponse = nullptr;
 	}
 	virtual ~CMsgQueue()
 	{
+		if (m_infile)
+		{
+			fclose(m_infile);
+			m_infile = nullptr;
+		}
+		if (m_outfile)
+		{
+			fclose(m_outfile);
+			m_outfile = nullptr;
+		}
 		StopThread();
 		Clear();
+	}
+
+	void SaveFileTo(const char* filename)
+	{
+		m_outfile = fopen(filename, "wb");
 	}
 
 public:
@@ -91,6 +114,65 @@ public:
 	unsigned long Size()
 	{
 		return m_queue.size();
+	}
+
+	void Save(FILE* outfile, ResponeItem* pItem)
+	{
+		if (outfile == nullptr)
+			return;
+
+		if (pItem == nullptr)
+			return;
+
+		int rc = fwrite(pItem, sizeof(ResponeItem), 1, outfile);
+		// 文件没有写进去
+		if (rc == 0)
+			return;
+		if (pItem->size1 > 0)
+		{
+			fwrite(pItem->ptr1, sizeof(char), pItem->size1, outfile);
+		}
+		if (pItem->size2 > 0)
+		{
+			fwrite(pItem->ptr2, sizeof(char), pItem->size2, outfile);
+		}
+		if (pItem->size3 > 0)
+		{
+			fwrite(pItem->ptr3, sizeof(char), pItem->size3, outfile);
+		}
+		// 主要是为了保存数据，后期调试要用
+		fflush(outfile);
+	}
+
+	ResponeItem* Load(FILE* infile)
+	{
+		if (infile == nullptr)
+			return nullptr;
+
+		ResponeItem* pItem = new ResponeItem();
+		int rc = fread(pItem, sizeof(ResponeItem), 1, infile);
+		// 到文件结尾了
+		if (rc == 0)
+			return nullptr;
+		if (pItem->size1 > 0)
+		{
+			char* ptr1 = new char[pItem->size1];
+			fread(ptr1, sizeof(char), pItem->size1, infile);
+			pItem->ptr1 = ptr1;
+		}
+		if (pItem->size2 > 0)
+		{
+			char* ptr2 = new char[pItem->size2];
+			fread(ptr2, sizeof(char), pItem->size2, infile);
+			pItem->ptr2 = ptr2;
+		}
+		if (pItem->size3 > 0)
+		{
+			char* ptr3 = new char[pItem->size3];
+			fread(ptr3, sizeof(char), pItem->size3, infile);
+			pItem->ptr3 = ptr3;
+		}
+		return pItem;
 	}
 
 	//可以由外部发起，顺序处理队列触发回调函数
@@ -145,9 +227,9 @@ public:
 	}
 
 	//将外部的函数地址注册到队列
-	void Register(void* pCallback)
+	void Register(fnOnResponse pCallback)
 	{
-		m_fnOnResponse = (fnOnResponse)pCallback;
+		m_fnOnResponse = pCallback;
 	}
 
 	void* new_block(int size)
@@ -227,6 +309,7 @@ public:
 			memcpy(pItem->ptr3, ptr3, size3);
 		}
 
+		Save(m_outfile, pItem);
 		m_queue.enqueue(pItem);
 		// 将Sleep改成用条件变量
 		m_cv.notify_all();
@@ -264,6 +347,7 @@ public:
 		pItem->ptr3 = ptr3;
 		pItem->size3 = size3;
 
+		Save(m_outfile, pItem);
 		m_queue.enqueue(pItem);
 		// 将Sleep改成用条件变量
 		m_cv.notify_all();
@@ -296,6 +380,7 @@ public:
 		pItem->ptr3 = ptr3;
 		pItem->size3 = size3;
 
+		Save(m_outfile, pItem);
 		m_queue.enqueue(pItem);
 		// 将Sleep改成用条件变量
 		m_cv.notify_all();
@@ -351,7 +436,10 @@ protected:
 		try
 		{
 			if (m_fnOnResponse)
-				(*m_fnOnResponse)(pItem->type, pItem->pApi1, pItem->pApi2, pItem->double1, pItem->double2, pItem->ptr1, pItem->size1, pItem->ptr2, pItem->size2, pItem->ptr3, pItem->size3);
+				(*m_fnOnResponse)(pItem->type,
+					pItem->pApi1, pItem->pApi2,
+					pItem->double1, pItem->double2,
+					pItem->ptr1, pItem->size1, pItem->ptr2, pItem->size2, pItem->ptr3, pItem->size3);
 		}
 		catch (...)
 		{
@@ -366,7 +454,6 @@ private:
 			lpParam->RunInThread();
 	}
 protected:
-	//volatile bool						m_bRunning;
 	atomic_bool							m_bRunning;
 	mutex								m_mtx;
 	mutex								m_mtx_del;

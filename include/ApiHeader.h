@@ -14,8 +14,10 @@ extern "C" {
 }
 #endif
 
-#define SAFE_STRNCPY(x,y) if(y) strncpy(x, y, sizeof(x) - 1);
-#define SAFE_SNPRINTF(x, ...) snprintf(x,sizeof(x),##__VA_ARGS__);
-#define SAFE_STRNCAT(x,y) if(y) strncat(x, y, sizeof(x) - 1);
+// 长度不够时，后面会填0，但长度超出会写出界
+#define SAFE_STRNCPY(x,y) if(y) strncpy_s(x, y, sizeof(x));x[sizeof(x)-1]=0;
+#define SAFE_STRNCAT(x,y) if(y) strncat_s(x, y, sizeof(x));x[sizeof(x)-1]=0;
+// 有循环问题，不能乱用，比如abc%s,结果将变成abcabc
+#define SAFE_SNPRINTF(x, ...) _snprintf_s(x,sizeof(x),##__VA_ARGS__);x[sizeof(x)-1]=0;
 
 #endif//end of _API_HEADER_H_

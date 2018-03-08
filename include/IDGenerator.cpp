@@ -33,12 +33,12 @@ unsigned int CIDGenerator::GetTimeID()
 	// long 其实是无符号int,所以*10000会溢出
 	// *1000 在当天下单数超过1000时才会影响前面的秒
 	// 如果快速的重复登录，出现第一次已经下到1000笔，第二次登录时在1秒后又下，才会出现ID重复
-	unsigned int x = ((ptr->tm_wday*24 + ptr->tm_hour)*450 + (ptr->tm_min*60 + ptr->tm_sec))*100 + GetID();
+	unsigned int x = ((ptr->tm_wday * 24 + ptr->tm_hour) * 450 + (ptr->tm_min * 60 + ptr->tm_sec)) * 100 + GetID();
 	return x;
 }
 
 const char* CIDGenerator::GetIDString()
 {
-	snprintf(m_IDString,sizeof(m_IDString), "%s:%ld", m_Prefix, ++m_id);
+	snprintf(m_IDString, sizeof(m_IDString), "%s:%ld", m_Prefix, ++m_id);
 	return m_IDString;
 }

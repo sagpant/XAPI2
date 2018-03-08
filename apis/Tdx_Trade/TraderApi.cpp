@@ -393,7 +393,7 @@ void CTraderApi::Register(void* pCallback, void* pClass)
 		return;
 
 	m_msgQueue_Query->Register(Query);
-	m_msgQueue->Register(pCallback);
+	m_msgQueue->Register((fnOnResponse)pCallback);
 	if (pCallback)
 	{
 		m_msgQueue_Query->StartThread();

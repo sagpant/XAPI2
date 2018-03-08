@@ -150,7 +150,7 @@ void CMdUserApi::Register(void* pCallback,void* pClass)
 		return;
 
 	//m_msgQueue_Query->Register((void*)Query,this);
-	m_msgQueue->Register(pCallback);
+	m_msgQueue->Register((fnOnResponse)pCallback);
 	if (pCallback)
 	{
 		//m_msgQueue_Query->StartThread();
