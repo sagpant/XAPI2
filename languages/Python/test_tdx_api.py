@@ -7,9 +7,11 @@ import getopt
 
 from MyXSpi import MyXSpi
 from xapi import *
-# 从当前config_tdx类中加载配置文件
-import config_tdx as config
 
+# 从当前config_tdx类中加载配置文件
+# import config_tdx as config
+# import importlib
+# config = importlib.import_module('config_tdx2')
 
 def init(config):
     # 交易连接
@@ -33,10 +35,10 @@ def init(config):
     return td, td
 
 
-if __name__ == '__main__':
+def main(configs):
     print(sys.stdin.encoding)
-    td, md = init(config.configs)
-    spi = MyXSpi(root_dir=config.configs['root_dir'],
+    td, md = init(configs)
+    spi = MyXSpi(root_dir=configs['root_dir'],
                  portfolios=['portfolio_1.csv', 'portfolio_2.csv', 'portfolio_3.csv'],
                  td=td, md=md, is_stock=True)
     spi.connect()
@@ -55,7 +57,7 @@ if __name__ == '__main__':
                 print(x)
                 i = int(x)
                 spi.input(i)
-            exit(0)
+            # exit(0)
 
     while True:
         spi.usage()

@@ -8,7 +8,7 @@ from MyXSpi import MyXSpi
 from xapi import *
 
 # 从当前config类中加载配置文件
-import config
+# import config
 
 def init(config):
     # 交易连接
@@ -45,7 +45,7 @@ def init(config):
     return td, md
 
 
-if __name__ == '__main__':
+def main(configs):
     print(sys.stdin.encoding)
     td, md = init(config.configs)
     spi = MyXSpi(root_dir=config.configs['root_dir'],
@@ -67,7 +67,7 @@ if __name__ == '__main__':
                 print(x)
                 i = int(x)
                 spi.input(i)
-            exit(0)
+            # exit(0)
 
     while True:
         spi.usage()
