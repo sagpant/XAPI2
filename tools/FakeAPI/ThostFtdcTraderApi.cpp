@@ -16,11 +16,11 @@ public:
 
 	///获取API的版本信息
 	///@retrun 获取到的版本号
-	static const char *GetApiVersion(){ return 0; }
+	static const char *GetApiVersion() { return 0; }
 
 	///删除接口对象本身
 	///@remark 不再使用本接口对象时,调用该函数删除接口对象
-	virtual void Release(){}
+	virtual void Release() {}
 
 	///初始化
 	///@remark 初始化运行环境,只有调用后,接口才开始工作
@@ -31,29 +31,36 @@ public:
 
 	///等待接口线程结束运行
 	///@return 线程退出代码
-	virtual int Join(){ return 0; }
+	virtual int Join() { return 0; }
 
 	///获取当前交易日
 	///@retrun 获取到的交易日
 	///@remark 只有登录成功后,才能得到正确的交易日
-	virtual const char *GetTradingDay(){ return 0; }
+	virtual const char *GetTradingDay() { return 0; }
 
 	///注册前置机网络地址
 	///@param pszFrontAddress：前置机网络地址。
 	///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:17001”。 
 	///@remark “tcp”代表传输协议，“127.0.0.1”代表服务器地址。”17001”代表服务器端口号。
-	virtual void RegisterFront(char *pszFrontAddress){}
+	virtual void RegisterFront(char *pszFrontAddress)
+	{
+		char buf[512] = { 0 };
+		sprintf(buf, "RegisterFront\n\npszFrontAddress:%s\n已经复制到剪贴板",
+			pszFrontAddress);
+
+		ShowMessageBox(buf);
+	}
 
 	///注册名字服务器网络地址
 	///@param pszNsAddress：名字服务器网络地址。
 	///@remark 网络地址的格式为：“protocol://ipaddress:port”，如：”tcp://127.0.0.1:12001”。 
 	///@remark “tcp”代表传输协议，“127.0.0.1”代表服务器地址。”12001”代表服务器端口号。
 	///@remark RegisterNameServer优先于RegisterFront
-	virtual void RegisterNameServer(char *pszNsAddress){}
+	virtual void RegisterNameServer(char *pszNsAddress) {}
 
 	///注册名字服务器用户信息
 	///@param pFensUserInfo：用户信息。
-	virtual void RegisterFensUserInfo(CThostFtdcFensUserInfoField * pFensUserInfo){}
+	virtual void RegisterFensUserInfo(CThostFtdcFensUserInfoField * pFensUserInfo) {}
 
 	///注册回调接口
 	///@param pSpi 派生自回调接口类的实例
@@ -68,7 +75,7 @@ public:
 	///        THOST_TERT_RESUME:从上次收到的续传
 	///        THOST_TERT_QUICK:只传送登录后私有流的内容
 	///@remark 该方法要在Init方法前调用。若不调用则不会收到私有流的数据。
-	virtual void SubscribePrivateTopic(THOST_TE_RESUME_TYPE nResumeType){}
+	virtual void SubscribePrivateTopic(THOST_TE_RESUME_TYPE nResumeType) {}
 
 	///订阅公共流。
 	///@param nResumeType 公共流重传方式  
@@ -76,31 +83,18 @@ public:
 	///        THOST_TERT_RESUME:从上次收到的续传
 	///        THOST_TERT_QUICK:只传送登录后公共流的内容
 	///@remark 该方法要在Init方法前调用。若不调用则不会收到公共流的数据。
-	virtual void SubscribePublicTopic(THOST_TE_RESUME_TYPE nResumeType){}
+	virtual void SubscribePublicTopic(THOST_TE_RESUME_TYPE nResumeType) {}
 
 	///客户端认证请求
 	virtual int ReqAuthenticate(CThostFtdcReqAuthenticateField *pReqAuthenticateField, int nRequestID)
 	{
 		char buf[512] = { 0 };
-		sprintf(buf, "UserProductInfo:%s\nAuthCode:%s\n已经复制到剪贴板",
+		sprintf(buf, "ReqAuthenticate\n\nBrokerID:%s\nUserProductInfo:%s\nAuthCode:%s\n已经复制到剪贴板",
+			pReqAuthenticateField->BrokerID,
 			pReqAuthenticateField->UserProductInfo,
 			pReqAuthenticateField->AuthCode);
 
-		if (OpenClipboard(NULL))
-		{
-			int len = strlen(buf) + 1;
-
-			HGLOBAL hmem = GlobalAlloc(GHND, len);
-			char *pmem = (char*)GlobalLock(hmem);
-
-			EmptyClipboard();
-			strcpy(pmem, buf);
-			SetClipboardData(CF_TEXT, hmem);
-			CloseClipboard();
-			GlobalFree(hmem);
-		}
-
-		MessageBoxA(nullptr, buf, "", MB_OK);
+		ShowMessageBox(buf);
 
 		return 0;
 	}
@@ -109,26 +103,15 @@ public:
 	virtual int ReqUserLogin(CThostFtdcReqUserLoginField *pReqUserLoginField, int nRequestID)
 	{
 		char buf[512] = { 0 };
-		sprintf(buf, "UserID:%s\nPassword:%s\nUserProductInfo:%s\n已经复制到剪贴板",
+		sprintf(buf, "ReqUserLogin\n\nBrokerID:%s\nUserID:%s\nPassword:%s\nUserProductInfo:%s\nInterfaceProductInfo:%s\nProtocolInfo:%s\n已经复制到剪贴板",
+			pReqUserLoginField->BrokerID,
 			pReqUserLoginField->UserID,
 			pReqUserLoginField->Password,
-			pReqUserLoginField->UserProductInfo);
+			pReqUserLoginField->UserProductInfo,
+			pReqUserLoginField->InterfaceProductInfo,
+			pReqUserLoginField->ProtocolInfo);
 
-		if (OpenClipboard(NULL))
-		{
-			int len = strlen(buf) + 1;
-
-			HGLOBAL hmem = GlobalAlloc(GHND, len);
-			char *pmem = (char*)GlobalLock(hmem);
-
-			EmptyClipboard();
-			strcpy(pmem, buf);
-			SetClipboardData(CF_TEXT, hmem);
-			CloseClipboard();
-			GlobalFree(hmem);
-		}
-
-		MessageBoxA(nullptr, buf, "", MB_OK);
+		ShowMessageBox(buf);
 
 		return 0;
 	}
@@ -146,26 +129,15 @@ public:
 	virtual int ReqUserLogin2(CThostFtdcReqUserLoginField *pReqUserLogin, int nRequestID)
 	{
 		char buf[512] = { 0 };
-		sprintf(buf, "UserID:%s\nPassword:%s\nUserProductInfo:%s\n已经复制到剪贴板",
+		sprintf(buf, "ReqUserLogin2\n\nBrokerID:%s\nUserID:%s\nPassword:%s\nUserProductInfo:%s\nInterfaceProductInfo:%s\nProtocolInfo:%s\n已经复制到剪贴板",
+			pReqUserLogin->BrokerID,
 			pReqUserLogin->UserID,
 			pReqUserLogin->Password,
-			pReqUserLogin->UserProductInfo);
+			pReqUserLogin->UserProductInfo,
+			pReqUserLogin->InterfaceProductInfo,
+			pReqUserLogin->ProtocolInfo);
 
-		if (OpenClipboard(NULL))
-		{
-			int len = strlen(buf) + 1;
-
-			HGLOBAL hmem = GlobalAlloc(GHND, len);
-			char *pmem = (char*)GlobalLock(hmem);
-
-			EmptyClipboard();
-			strcpy(pmem, buf);
-			SetClipboardData(CF_TEXT, hmem);
-			CloseClipboard();
-			GlobalFree(hmem);
-		}
-
-		MessageBoxA(nullptr, buf, "", MB_OK);
+		ShowMessageBox(buf);
 
 		return 0;
 	}
