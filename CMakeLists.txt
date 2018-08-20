@@ -25,6 +25,12 @@ endif()
 # set use folder in vs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# include and link directories
+link_directories(
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+	${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+)
+
 # add XAPI_CPP
 file(GLOB_RECURSE XAPI_CPP_h ${CMAKE_CURRENT_LIST_DIR}/languages/CPP/XAPI_CPP/*.h)
 file(GLOB_RECURSE XAPI_CPP_cpp ${CMAKE_CURRENT_LIST_DIR}/languages/CPP/XAPI_CPP/*.cpp)
@@ -39,6 +45,7 @@ if (WIN32)
 	set_target_properties(XAPI_CPP
 		PROPERTIES
 		FOLDER "languages/CPP"
+		OUTPUT_NAME XAPI_CPP_$(PlatformTarget)
 	)
 else()
 	add_library(XAPI_CPP SHARED
@@ -137,6 +144,7 @@ function(add_quote name folders)
 	set_target_properties(${name}
 		PROPERTIES
 		FOLDER "apis"
+		OUTPUT_NAME ${name}_$(PlatformTarget)
 	)
 endfunction(add_quote)
 
@@ -180,6 +188,7 @@ function(add_trade name folders)
 	set_target_properties(${name}
 		PROPERTIES
 		FOLDER "apis"
+		OUTPUT_NAME ${name}_$(PlatformTarget)
 	)
 endfunction(add_trade)
 
@@ -189,6 +198,26 @@ list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP)
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP/Quote)
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP_Quote)
 add_quote(CTP_Quote "${folder}")
+if (WIN32)
+	if (CMAKE_CL_64)
+		ADD_CUSTOM_COMMAND(TARGET CTP_Quote
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thostmduserapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thostmduserapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	else()
+		ADD_CUSTOM_COMMAND(TARGET CTP_Quote
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thostmduserapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thostmduserapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	endif()
+endif()
+target_link_libraries(CTP_Quote
+	thostmduserapi
+)
 
 # add CTP Trade
 set(folder "")
@@ -196,3 +225,56 @@ list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP)
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP/Trade)
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP_Trade)
 add_trade(CTP_Trade "${folder}")
+if (WIN32)
+	if (CMAKE_CL_64)
+		ADD_CUSTOM_COMMAND(TARGET CTP_Trade
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thosttraderapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thosttraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	else()
+		ADD_CUSTOM_COMMAND(TARGET CTP_Trade
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thosttraderapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thosttraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	endif()
+endif()
+target_link_libraries(CTP_Trade
+	thosttraderapi
+)
+
+
+# add Cpp Test
+file(GLOB CPP_TEST_H ${CMAKE_CURRENT_LIST_DIR}/tests/CPP/*.h)
+file(GLOB CPP_TEST_CPP ${CMAKE_CURRENT_LIST_DIR}/tests/CPP/*.cpp)
+if (WIN32)
+add_executable(CPP_TEST
+	${CPP_TEST_H}
+	${CPP_TEST_CPP}
+)
+set_target_properties(CPP_TEST
+	PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(OutDir)"
+)
+else()
+add_executable(CPP_TEST
+	${CPP_TEST_CPP}
+)
+endif()
+target_compile_definitions(CPP_TEST
+	PRIVATE USE_CMAKE BUILDING_DLL
+)
+add_dependencies(CPP_TEST
+	XAPI_CPP
+	CTP_Quote
+	CTP_Trade
+)
+target_link_libraries(CPP_TEST
+	XAPI_CPP
+)
+set_target_properties(CPP_TEST
+	PROPERTIES
+	FOLDER "tests/CPP"
+)

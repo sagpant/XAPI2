@@ -13,15 +13,7 @@
 #include "../../include/CTP/ThostFtdcUserApiStruct.h"
 #include "../../include/CTP/ThostFtdcTraderApi.h"
 
-#ifdef USE_CMAKE
-	#if _WIN32
-		#ifdef _WIN64
-			#pragma comment(lib, "../include/CTP/win64/thosttraderapi.lib")
-		#else
-			#pragma comment(lib, "../include/CTP/win32/thosttraderapi.lib")
-		#endif
-	#endif
-#else
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/CTP/win64/thosttraderapi.lib")
 #else
