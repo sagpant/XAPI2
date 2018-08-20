@@ -13,10 +13,12 @@
 #include "../../include/CTP/ThostFtdcUserApiStruct.h"
 #include "../../include/CTP/ThostFtdcTraderApi.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/CTP/win64/thosttraderapi.lib")
 #else
 	#pragma comment(lib, "../../include/CTP/win32/thosttraderapi.lib")
+#endif
 #endif
 
 // 条件编译

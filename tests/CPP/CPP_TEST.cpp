@@ -11,10 +11,12 @@
 #include <string.h>
 #include "../../include/XApiCpp.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 #pragma comment(lib, "../../lib/XAPI_CPP_x64.lib")
 #else
 #pragma comment(lib, "../../lib/XAPI_CPP_x86.lib")
+#endif
 #endif
 
 class CXSpiImpl :public CXSpi
@@ -369,8 +371,18 @@ int main(int argc, char* argv[])
 {
 	CXSpiImpl* p = new CXSpiImpl();
 #if defined WINDOWS || _WIN32
+#ifdef USE_CMAKE
+#if _WIN64
+	char DLLPath1[250] = "CTP_Quote_x64.dll";
+	char DLLPath2[250] = "CTP_Trade_x64.dll";
+#else
+	char DLLPath1[250] = "CTP_Quote_x86.dll";
+	char DLLPath2[250] = "CTP_Trade_x86.dll";
+#endif
+#else
 	char DLLPath1[250] = "C:\\Program Files\\SmartQuant Ltd\\OpenQuant 2014\\XAPI\\x86\\CTP\\CTP_Quote_x86.dll";
 	char DLLPath2[250] = "C:\\Program Files\\SmartQuant Ltd\\OpenQuant 2014\\XAPI\\x86\\CTP\\CTP_Trade_x86.dll";
+#endif
 #else
 	char DLLPath1[250] = "libQuantBox_CTP_Quote.so";
 	char DLLPath2[250] = "libQuantBox_CTP_Trade.so";

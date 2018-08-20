@@ -25,6 +25,16 @@ XAPI标准委员会 142703128（需邀请，用于高手进行标准的制定）
 8. **tools**:一些小工具。如FakeAPI用来获取CTP/LTS客户端授权码，请看项目中的READEME.md
 
 ## 编译XAPI
+
+### 使用CMake
+直接使用CMake生成工程，例如，想要生成vs2015，64位版本，则进入工程根目录，执行一下命令:
+```
+md build
+cd build
+cmake .. -G "Visual Studio 14 2015 Win64"
+```
+
+### 直接使用VS工程
 1. 打开AllCppProjects.sln
 2. common\Queue是每个API封装都依赖它的处理消息队列的库，有64位和32位版。所以在部署时可以放在System32或SysWOW64下。或放在客户端程序的exe同目录下，或放在每个API封装库的同目录下。
 3. apis\CTP_Quote等一类的项目，是对应的API的封装。编译好后还需要将API官方的库复制到同目录，你可以直接运行CopyApiDll.bat将依赖的dll复制到bin对应的目录下
