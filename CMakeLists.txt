@@ -535,3 +535,24 @@ set_target_properties(CPP_TEST
 	PROPERTIES
 	FOLDER "tests/CPP"
 )
+
+
+# add FakeAPI
+file(GLOB FAKE_API_H ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.h)
+file(GLOB FAKE_API_CPP ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.cpp)
+list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
+if (WIN32)
+add_library(FakeAPI SHARED
+	${FAKE_API_H}
+	${FAKE_API_CPP}
+	${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/export.def
+)
+else()
+add_library(FakeAPI SHARED
+	${FAKE_API_CPP}
+)
+endif()
+set_target_properties(FakeAPI
+	PROPERTIES
+	FOLDER "tools"
+)
