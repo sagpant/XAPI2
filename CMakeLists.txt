@@ -114,7 +114,7 @@ function(add_quote name folders)
 	endforeach(folder)
 	
 	list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
-	
+		
 	if (WIN32)
 		add_library(${name} SHARED
 			${h_files}
@@ -521,7 +521,7 @@ add_executable(CPP_TEST
 )
 endif()
 target_compile_definitions(CPP_TEST
-	PRIVATE USE_CMAKE BUILDING_DLL
+	PRIVATE USE_CMAKE
 )
 add_dependencies(CPP_TEST
 	XAPI_CPP

@@ -6,7 +6,7 @@
 #include "../../../include/QueueEnum.h"
 #include "../../../include/XApiC.h"
 
-void* __stdcall CXApiImpl::OnResponse(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
+void* CXApiImpl::OnResponse(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	if (pApi2 == nullptr)
 		return nullptr;
