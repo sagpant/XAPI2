@@ -3,10 +3,12 @@
 #include "../../include/ApiStruct.h"
 #include "../../include/LTS_v2/SecurityFtdcMdApi.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/LTS_v2/win64/securitymduserapi.lib")
 #else
 	#pragma comment(lib, "../../include/LTS_v2/win32/securitymduserapi.lib")
+#endif
 #endif
 
 #include <set>

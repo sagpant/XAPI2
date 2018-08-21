@@ -4,10 +4,12 @@
 #include "../../include/ApiStruct.h"
 #include "../../include/QueueEnum.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/LTS_v2/win64/securityqueryapi.lib")
 #else
 	#pragma comment(lib, "../../include/LTS_v2/win32/securityqueryapi.lib")
+#endif
 #endif
 
 #include <set>

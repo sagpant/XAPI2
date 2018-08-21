@@ -15,10 +15,12 @@
 
 using namespace fstech;
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/Sgit/win64/sgittradeapi.lib")
 #else
 	#pragma comment(lib, "../../include/Sgit/win32/sgittradeapi.lib")
+#endif
 #endif
 
 // 是否飞鼠API

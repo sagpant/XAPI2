@@ -16,10 +16,12 @@
 
 using namespace fstech;
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/Sgit/win64/sgitquotapi.lib")
 #else
 	#pragma comment(lib, "../../include/Sgit/win32/sgitquotapi.lib")
+#endif
 #endif
 
 // ЬѕМўБрвы

@@ -27,12 +27,9 @@ XAPI标准委员会 142703128（需邀请，用于高手进行标准的制定）
 ## 编译XAPI
 
 ### 使用CMake
-直接使用CMake生成工程，例如，想要生成vs2015，64位版本，则进入工程根目录，执行一下命令:
-```
-md build
-cd build
-cmake .. -G "Visual Studio 14 2015 Win64"
-```
+直接使用CMake生成工程即可，对于不熟悉cmake的朋友，可以安装cmake (https://cmake.org/) 后，直接执行在工程根目录中的 build 脚本即可。
+1. windows环境下，运行build.bat，在build目录中，会生成对应的vs工程文件。注意，默认情况下，生成的是32位vs工程，若想指定生成工程的版本，运行cmake --help查看。
+1. linux环境下，运行build.sh，在build目录中，会生成对应的makefile工程文件。
 
 ### 直接使用VS工程
 1. 打开AllCppProjects.sln

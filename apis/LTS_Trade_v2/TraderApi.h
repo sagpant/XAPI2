@@ -3,10 +3,12 @@
 #include "../../include/LTS_v2/SecurityFtdcTraderApi.h"
 #include "../../include/ApiStruct.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/LTS_v2/win64/securitytraderapi.lib")
 #else
 	#pragma comment(lib, "../../include/LTS_v2/win32/securitytraderapi.lib")
+#endif
 #endif
 
 #include <set>

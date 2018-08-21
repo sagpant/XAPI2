@@ -16,10 +16,12 @@
 #include "../../include/CTPZQ/ZQThostFtdcUserApiStruct.h"
 #include "../../include/CTPZQ/ZQThostFtdcMdApi.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/CTPZQ/win64/zqthostmdapi.lib")
 #else
 	#pragma comment(lib, "../../include/CTPZQ/win32/zqthostmdapi.lib")
+#endif
 #endif
 
 
