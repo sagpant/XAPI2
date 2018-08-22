@@ -254,6 +254,36 @@ target_link_libraries(CTP_Trade
 	thosttraderapi
 )
 
+# add XTP Quote
+set(folder "")
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/XTP)
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/XTP/Quote)
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/XTP_Quote)
+add_quote(XTP_Quote "${folder}")
+if (WIN32)
+	if (CMAKE_CL_64)
+		ADD_CUSTOM_COMMAND(TARGET XTP_Quote
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win64/xtpquoteapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win64/xtpquoteapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	else()
+		ADD_CUSTOM_COMMAND(TARGET XTP_Quote
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win32/xtpquoteapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win32/xtpquoteapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	endif()
+endif()
+target_link_libraries(XTP_Quote
+	xtpquoteapi
+)
+target_compile_definitions(XTP_Quote
+	PRIVATE USE_CMAKE BUILDING_DLL ISLIB
+)
+
 # add CTP Spot Trade
 set(folder "")
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP)
@@ -504,6 +534,26 @@ target_link_libraries(Tdx_Trade
 	TdxApi
 )
 
+# add FakeAPI
+file(GLOB FAKE_API_H ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.h)
+file(GLOB FAKE_API_CPP ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.cpp)
+list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
+if (WIN32)
+add_library(FakeAPI SHARED
+	${FAKE_API_H}
+	${FAKE_API_CPP}
+	${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/export.def
+)
+else()
+add_library(FakeAPI SHARED
+	${FAKE_API_CPP}
+)
+endif()
+set_target_properties(FakeAPI
+	PROPERTIES
+	FOLDER "tools"
+)
+
 # add Cpp Test
 file(GLOB CPP_TEST_H ${CMAKE_CURRENT_LIST_DIR}/tests/CPP/*.h)
 file(GLOB CPP_TEST_CPP ${CMAKE_CURRENT_LIST_DIR}/tests/CPP/*.cpp)
@@ -536,23 +586,16 @@ set_target_properties(CPP_TEST
 	FOLDER "tests/CPP"
 )
 
+# add cpp examples
+add_executable(ExampleCTP ${CMAKE_CURRENT_LIST_DIR}/example/cpp/CTP/example_ctp.cpp)
+target_link_libraries(ExampleCTP XAPI_CPP)
+target_compile_definitions(ExampleCTP PRIVATE USE_CMAKE)
 
-# add FakeAPI
-file(GLOB FAKE_API_H ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.h)
-file(GLOB FAKE_API_CPP ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.cpp)
-list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
-if (WIN32)
-add_library(FakeAPI SHARED
-	${FAKE_API_H}
-	${FAKE_API_CPP}
-	${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/export.def
-)
-else()
-add_library(FakeAPI SHARED
-	${FAKE_API_CPP}
-)
-endif()
-set_target_properties(FakeAPI
+add_executable(ExampleXTP ${CMAKE_CURRENT_LIST_DIR}/example/cpp/XTP/example_xtp.cpp)
+target_link_libraries(ExampleXTP XAPI_CPP)
+target_compile_definitions(ExampleXTP PRIVATE USE_CMAKE)
+
+set_target_properties(ExampleCTP ExampleXTP
 	PROPERTIES
-	FOLDER "tools"
+	FOLDER "example/CPP"
 )
