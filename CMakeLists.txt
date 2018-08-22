@@ -200,6 +200,43 @@ function(add_trade name folders)
 	)
 endfunction(add_trade)
 
+function(add_apis name cpp_files h_files)
+	if (WIN32)
+		add_library(${name} SHARED
+			${h_files}
+			${cpp_files}
+			${common_h}
+			${common_cpp}
+			${common_quote_h}
+			${common_quote_cpp}
+			${synthetic_h}
+			${synthetic_cpp}
+		)
+		move_into_filter(common "${common_h}")
+		move_into_filter(common "${common_cpp}")
+		move_into_filter(common_quote "${common_quote_h}")
+		move_into_filter(common_quote "${common_quote_cpp}")
+		move_into_filter(synthetic "${synthetic_h}")
+		move_into_filter(synthetic "${synthetic_cpp}")
+	else()
+		add_library(${name} SHARED
+			${cpp_files}
+			${common_cpp}
+			${common_quote_cpp}
+			${synthetic_cpp}
+		)
+	endif()
+	
+	target_compile_definitions(${name}
+		PRIVATE USE_CMAKE BUILDING_DLL
+	)
+	set_target_properties(${name}
+		PROPERTIES
+		FOLDER "apis"
+		OUTPUT_NAME ${name}_$(PlatformTarget)
+	)
+endfunction(add_apis)
+
 # add CTP Quote
 set(folder "")
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP)
@@ -430,6 +467,38 @@ target_link_libraries(LTS_Quote_v2
 	securitymduserapi
 )
 
+# add LTS Query v2
+set(folder "")
+# list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Query_v2)
+file(GLOB LTS_Query_cpp ${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Query_v2/*.cpp)
+file(GLOB LTS_Query_h ${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Query_v2/*.h)
+list(APPEND LTS_Query_cpp ${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Trade_v2/TypeConvert.cpp)
+list(APPEND LTS_Query_h ${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Trade_v2/TypeConvert.h)
+add_apis(LTS_Query_v2 "${LTS_Query_cpp}" "${LTS_Query_h}")
+if (WIN32)
+	if (CMAKE_CL_64)
+		ADD_CUSTOM_COMMAND(TARGET LTS_Query_v2
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/LTS_v2/win64/securityqueryapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/LTS_v2/win64/securityqueryapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	else()
+		ADD_CUSTOM_COMMAND(TARGET LTS_Query_v2
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/LTS_v2/win32/securityqueryapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/LTS_v2/win32/securityqueryapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	endif()
+endif()
+target_link_libraries(LTS_Query_v2
+	securityqueryapi
+)
+target_include_directories(LTS_Query_v2 PRIVATE
+	${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Query_v2
+)
+
 # add LTS Trade v2
 set(folder "")
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/LTS_Trade_v2)
@@ -534,6 +603,32 @@ target_link_libraries(Tdx_Trade
 	TdxApi
 )
 
+
+# add Wind Quote
+set(folder "")
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/Wind_Quote)
+add_quote(Wind_Quote "${folder}")
+if (WIN32)
+	if (CMAKE_CL_64)
+		ADD_CUSTOM_COMMAND(TARGET Wind_Quote
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/Wind/win64/WAPIWrapperCpp.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/Wind/win64/WAPIWrapperCpp.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	else()
+		ADD_CUSTOM_COMMAND(TARGET Wind_Quote
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/Wind/win32/WAPIWrapperCpp.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/Wind/win32/WAPIWrapperCpp.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	endif()
+endif()
+target_link_libraries(Wind_Quote
+	WAPIWrapperCpp
+)
+
 # add FakeAPI
 file(GLOB FAKE_API_H ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.h)
 file(GLOB FAKE_API_CPP ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.cpp)
@@ -553,6 +648,11 @@ set_target_properties(FakeAPI
 	PROPERTIES
 	FOLDER "tools"
 )
+
+# # add Tongshi Quote
+# set(folder "")
+# list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/Tongshi_Quote)
+# add_quote(Tongshi_Quote "${folder}")
 
 # add Cpp Test
 file(GLOB CPP_TEST_H ${CMAKE_CURRENT_LIST_DIR}/tests/CPP/*.h)
@@ -590,10 +690,20 @@ set_target_properties(CPP_TEST
 add_executable(ExampleCTP ${CMAKE_CURRENT_LIST_DIR}/example/cpp/CTP/example_ctp.cpp)
 target_link_libraries(ExampleCTP XAPI_CPP)
 target_compile_definitions(ExampleCTP PRIVATE USE_CMAKE)
+add_dependencies(ExampleCTP
+	XAPI_CPP
+	CTP_Quote
+	CTP_Trade
+)
 
 add_executable(ExampleXTP ${CMAKE_CURRENT_LIST_DIR}/example/cpp/XTP/example_xtp.cpp)
 target_link_libraries(ExampleXTP XAPI_CPP)
 target_compile_definitions(ExampleXTP PRIVATE USE_CMAKE)
+add_dependencies(ExampleXTP
+	XAPI_CPP
+	XTP_Quote
+	# XTP_Trade
+)
 
 set_target_properties(ExampleCTP ExampleXTP
 	PROPERTIES
