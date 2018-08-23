@@ -286,20 +286,8 @@ void CMdUserApi::Subscribe(const set<string>& instrumentIDs, const string& szExc
 
 	m_pSubscribeManager->Subscribe(instrumentIDs, szExchangeID);
 
-	XTP_EXCHANGE_TYPE exchange_type;
-	if (szExchangeID == "SSE")
-	{
-		exchange_type = XTP_EXCHANGE_SH;
-	}
-	else if (szExchangeID == "SZSE")
-	{
-		exchange_type = XTP_EXCHANGE_SZ;
-	}
-	else
-	{
-		exchange_type = XTP_EXCHANGE_UNKNOWN;
-	}
-
+	XTP_EXCHANGE_TYPE exchange_type = (XTP_EXCHANGE_TYPE)Str_2_XTPExchangeType(szExchangeID.c_str());
+	
 	char **instruments = (char**)malloc(sizeof(char*) * instrumentIDs.size());
 	int i = 0;
 	for (auto &s : instrumentIDs)

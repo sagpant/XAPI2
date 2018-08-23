@@ -63,22 +63,22 @@ set(common_h
 	${CMAKE_CURRENT_LIST_DIR}/include/inirw.h
 	${CMAKE_CURRENT_LIST_DIR}/include/ChinaStock.h
 	${CMAKE_CURRENT_LIST_DIR}/include/IDGenerator.h
+	${CMAKE_CURRENT_LIST_DIR}/include/ApiProcess.h
 )
 set(common_cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/toolkit.cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/inirw.cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/ChinaStock.cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/IDGenerator.cpp
+	${CMAKE_CURRENT_LIST_DIR}/include/ApiProcess.cpp
 )
 set(common_quote_h
-	${CMAKE_CURRENT_LIST_DIR}/include/ApiProcess.h
 	${CMAKE_CURRENT_LIST_DIR}/include/CSubscribeManager.h
 	${CMAKE_CURRENT_LIST_DIR}/include/CSubscribeManager1.h
 	${CMAKE_CURRENT_LIST_DIR}/include/CSubscribeManager2.h
 	${CMAKE_CURRENT_LIST_DIR}/include/CSyntheticCalculate_DepthMarketDataNField.h
 )
 set(common_quote_cpp
-	${CMAKE_CURRENT_LIST_DIR}/include/ApiProcess.cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/CSubscribeManager.cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/CSubscribeManager1.cpp
 	${CMAKE_CURRENT_LIST_DIR}/include/CSubscribeManager2.cpp
@@ -319,6 +319,33 @@ target_link_libraries(XTP_Quote
 )
 target_compile_definitions(XTP_Quote
 	PRIVATE USE_CMAKE BUILDING_DLL ISLIB
+)
+
+# add XTP Trade
+set(folder "")
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/XTP)
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/XTP/Trade)
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/XTP_Trade)
+add_trade(XTP_Trade "${folder}")
+if (WIN32)
+	if (CMAKE_CL_64)
+		ADD_CUSTOM_COMMAND(TARGET XTP_Trade
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win64/xtptraderapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win64/xtptraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	else()
+		ADD_CUSTOM_COMMAND(TARGET XTP_Trade
+			PRE_LINK
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win32/xtptraderapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win32/xtptraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+		)
+	endif()
+endif()
+target_link_libraries(XTP_Trade
+	xtptraderapi
 )
 
 # add CTP Spot Trade
