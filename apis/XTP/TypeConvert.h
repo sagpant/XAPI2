@@ -12,8 +12,8 @@ int Str_2_XTPMarketType(const char *market_str);
 int OrderDir_XTP_2_XAPI(int xtp_side);
 int OrderDir_XAPI_2_XTP(int side);
 
-int OrderType_XTP_2_XAPI(int xtp_order_type);
-int OrderType_XAPI_2_XTP(int order_type);
+int OrderType_XTP_2_XAPI(int flag);
+int OrderType_XAPI_2_XTP(int flag);
 
 int OpenClose_XTP_2_XAPI(int flag);
 int OpenClose_XAPI_2_XTP(int flag);

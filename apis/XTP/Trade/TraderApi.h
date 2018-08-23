@@ -99,6 +99,8 @@ private:
 
 	void OnTrade(TradeField *pTrade);
 
+	void CheckError(int ret, const char *fn);
+
 public:
 
 	// 报单通知

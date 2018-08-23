@@ -27,6 +27,8 @@ CTraderApi::CTraderApi()
 	m_msgQueue = new CMsgQueue();
 	m_msgQueue_Query = new CMsgQueue();
 
+	m_session_id = 0;
+
 	m_msgQueue_Query->Register(Query);
 	m_msgQueue_Query->StartThread();
 }
@@ -93,14 +95,17 @@ char* CTraderApi::ReqOrderInsert(
 	body.market = (XTP_MARKET_TYPE)Str_2_XTPMarketType(pOrder->ExchangeID);
 	body.price = pOrder->Price;
 	body.stop_price = pOrder->StopPx;
-	body.quantity = pOrder->Qty;
+	body.quantity = (int64_t)pOrder->Qty;
 	body.price_type = (XTP_PRICE_TYPE)OrderType_XAPI_2_XTP(pOrder->Type);
 	body.side = (XTP_SIDE_TYPE)OrderDir_XAPI_2_XTP(pOrder->Side);
 	body.position_effect = (XTP_POSITION_EFFECT_TYPE)OpenClose_XAPI_2_XTP(pOrder->OpenClose);
 
 	body.business_type = XTP_BUSINESS_TYPE_CASH;
 
-	m_pApi->InsertOrder(&body, m_session_id);
+	uint64_t ret = m_pApi->InsertOrder(&body, m_session_id);
+	CheckError((int)ret, "InsertOrder");
+
+	return "";
 }
 
 char* CTraderApi::ReqOrderAction(OrderIDType* szIds, int count, char* pzsRtn)
@@ -323,6 +328,7 @@ int CTraderApi::_ReqUserLogin(char type, void* pApi1, void* pApi2, double double
 	}
 	else
 	{
+		CheckError(tmp_session, "Login");
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Disconnected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 		_DisconnectInThread();
 	}
@@ -493,10 +499,25 @@ void CTraderApi::OnTrade(TradeField *pTrade)
 	m_msgQueue->Input_Copy(ResponseType::ResponseType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, false, 0, pField, sizeof(PositionField), nullptr, 0, nullptr, 0);
 }
 
+void CTraderApi::CheckError(int ret, const char *fn)
+{
+	if (ret == 0)
+	{
+		XTPRI *xtpri = m_pApi->GetApiLastError();
+		ErrorField* pField = (ErrorField*)m_msgQueue->new_block(sizeof(ErrorField));
+
+		pField->RawErrorID = xtpri->error_id;
+		strcpy(pField->Text, xtpri->error_msg);
+		strcpy(pField->Source, fn);
+
+		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnError, m_msgQueue, m_pClass, true, 0, pField, sizeof(ErrorField), nullptr, 0, nullptr, 0);
+	}
+}
+
 void CTraderApi::OnOrderEvent(XTPOrderInfo *order_info, XTPRI *error_info, uint64_t session_id)
 {
 	OrderIDType orderId = { 0 };
-	sprintf(orderId, "%ld:%lu", order_info->insert_time, order_info->order_xtp_id);
+	sprintf(orderId, "%I64d:%I64u", order_info->insert_time, order_info->order_xtp_id);
 	OrderIDType orderSydId = { 0 };
 
 	{
@@ -519,7 +540,7 @@ void CTraderApi::OnOrderEvent(XTPOrderInfo *order_info, XTPRI *error_info, uint6
 		}
 
 		// 保存SysID用于定义成交回报与订单
-		sprintf(orderSydId, "%d:%s:%lu", (int)order_info->market, order_info->ticker, order_info->order_xtp_id);
+		sprintf(orderSydId, "%d:%s:%I64u", (int)order_info->market, order_info->ticker, order_info->order_xtp_id);
 		m_sysId_orderId.insert(pair<string, string>(orderSydId, orderId));
 	}
 
@@ -529,17 +550,17 @@ void CTraderApi::OnOrderEvent(XTPOrderInfo *order_info, XTPRI *error_info, uint6
 
 		strcpy(pOut->ID, orderId);
 		strcpy(pOut->LocalID, pOut->ID);
-		sprintf(pOut->OrderID, "%lu", order_info->order_xtp_id);
+		sprintf(pOut->OrderID, "%I64u", order_info->order_xtp_id);
 		strcpy(pOut->ExchangeID, XTPMarketType_2_Str(order_info->market));
 		strcpy(pOut->Symbol, order_info->ticker);
 		pOut->Price = order_info->price;
-		pOut->Qty = order_info->quantity;
+		pOut->Qty = (QtyType)order_info->quantity;
 		pOut->Side = (OrderSide)OrderDir_XTP_2_XAPI(order_info->side);
 		pOut->OpenClose = (OpenCloseType)OpenClose_XTP_2_XAPI(order_info->position_effect);
 		pOut->Status = (OrderStatus)OrderStatus_XTP_2_XAPI(order_info->order_status);
 		pOut->Type = (OrderType)OrderType_XTP_2_XAPI(order_info->order_type);
-		pOut->CumQty = order_info->qty_traded;
-		pOut->LeavesQty = order_info->qty_left;
+		pOut->CumQty = (QtyType)order_info->qty_traded;
+		pOut->LeavesQty = (QtyType)order_info->qty_left;
 
 		m_msgQueue->Input_Copy(ResponseType::ResponseType_OnRspQryOrder, m_msgQueue, m_pClass, true, 0, pOut, sizeof(OrderField), nullptr, 0, nullptr, 0);
 
@@ -553,14 +574,14 @@ void CTraderApi::OnTradeEvent(XTPTradeReport *trade_info, uint64_t session_id)
 	strcpy(pOut->ExchangeID, XTPMarketType_2_Str(trade_info->market));
 	strcpy(pOut->Symbol, trade_info->ticker);
 	pOut->Price = trade_info->price;
-	pOut->Qty = trade_info->quantity;
+	pOut->Qty = (QtyType)trade_info->quantity;
 	pOut->Side = (OrderSide)OrderDir_XTP_2_XAPI(trade_info->side);
 	pOut->OpenClose = (OpenCloseType)OpenClose_XTP_2_XAPI(trade_info->position_effect);
 	strcpy(pOut->TradeID, trade_info->exec_id);
 
 
 	OrderIDType orderSysId = { 0 };
-	sprintf(orderSysId, "%d:%s:%lu", (int)trade_info->market, trade_info->ticker, trade_info->order_xtp_id);
+	sprintf(orderSysId, "%d:%s:%I64u", (int)trade_info->market, trade_info->ticker, trade_info->order_xtp_id);
 	unordered_map<string, string>::iterator it = m_sysId_orderId.find(orderSysId);
 	if (it == m_sysId_orderId.end())
 	{

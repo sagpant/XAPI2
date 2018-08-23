@@ -69,23 +69,23 @@ int OrderDir_XAPI_2_XTP(int side)
 	return XTP_SIDE_UNKNOWN;
 }
 
-int OrderType_XTP_2_XAPI(int order_type)
+int OrderType_XTP_2_XAPI(int flag)
 {
-	switch (order_type)
-	{
-	case OrderType_Limit: return XTP_PRICE_LIMIT;
-	case OrderType_Market: return XTP_PRICE_ALL_OR_CANCEL;
-	}
-	return XTP_PRICE_ALL_OR_CANCEL;
-}
-int OrderType_XAPI_2_XTP(int xtp_order_type)
-{
-	switch (xtp_order_type)
+	switch (flag)
 	{
 	case XTP_PRICE_LIMIT: return OrderType_Limit;
 	case XTP_PRICE_ALL_OR_CANCEL: return OrderType_Market;
 	}
 	return OrderType_Market;
+}
+int OrderType_XAPI_2_XTP(int flag)
+{
+	switch (flag)
+	{
+	case OrderType_Limit: return XTP_PRICE_LIMIT;
+	case OrderType_Market: return XTP_PRICE_ALL_OR_CANCEL;
+	}
+	return XTP_PRICE_ALL_OR_CANCEL;
 }
 
 int OpenClose_XTP_2_XAPI(int flag)
@@ -106,7 +106,7 @@ int OpenClose_XAPI_2_XTP(int flag)
 	case OpenCloseType_Close: return XTP_POSITION_EFFECT_CLOSE;
 	case OpenCloseType_CloseToday: return XTP_POSITION_EFFECT_CLOSETODAY;
 	}
-	return OpenCloseType_Undefined;
+	return XTP_POSITION_EFFECT_INIT;
 }
 
 int OrderStatus_XTP_2_XAPI(int flag)

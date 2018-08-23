@@ -729,7 +729,7 @@ target_compile_definitions(ExampleXTP PRIVATE USE_CMAKE)
 add_dependencies(ExampleXTP
 	XAPI_CPP
 	XTP_Quote
-	# XTP_Trade
+	XTP_Trade
 )
 
 set_target_properties(ExampleCTP ExampleXTP
