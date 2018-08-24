@@ -289,20 +289,20 @@ int main(int argc, char *argv[])
 	trade_server_info.Port = 6001;
 
 	// 注意，这里要填入用户名，密码和key
-	strcpy(user_info.UserID, "userid");			// 用户名
+	strcpy(user_info.UserID, "userid");		// 用户名
 	strcpy(user_info.Password, "password");		// 密码
 	user_info.ExtInfoInt32 = p->client_id_;		// 自定义 client_id
-	strcpy(user_info.ExtInfoChar64, "xxxxxxxxxxxxxxxxxxxxxxxx"); // key
+	strcpy(user_info.ExtInfoChar64, "xxxxxxxx"); // key
 
 	CXApi* p_api_quote = CXApi::CreateApi(shared_lib_quote);
 	CXApi* p_api_trade = CXApi::CreateApi(shared_lib_trade);
 
-//	if (!p_api_quote->Init())
-//	{
-//		printf("%s\r\n", p_api_quote->GetLastError());
-//		p_api_quote->Disconnect();
-//		return 1;
-//	}
+	if (!p_api_quote->Init())
+	{
+		printf("%s\r\n", p_api_quote->GetLastError());
+		p_api_quote->Disconnect();
+		return 1;
+	}
 
 	if (!p_api_trade->Init())
 	{
