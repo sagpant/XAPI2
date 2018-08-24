@@ -150,14 +150,35 @@ private:
 	{
 		std::cout << "XTP Trade Api Ready" << std::endl;
 
-		OrderField order = { 0 };
-		strcpy(order.ExchangeID, szExchange_SH);
-		strcpy(order.Symbol, "600090");
-		order.Price = 7;
-		order.Qty = 200;
-		order.Type = OrderType::OrderType_Limit;
-		order.Side = OrderSide::OrderSide_Buy;
-		pApi->SendOrder(&order, 1, nullptr);
+		// query trading account
+		ReqQueryField query_account = { 0 };
+		pApi->ReqQuery(QueryType::QueryType_ReqQryTradingAccount, &query_account);
+
+		// query position
+		ReqQueryField query_position = { 0 };
+		pApi->ReqQuery(QueryType::QueryType_ReqQryInvestorPosition, &query_position);
+
+		// query orders
+		ReqQueryField query_order = { 0 };
+		query_order.DateStart = 20180101;
+		query_order.DateEnd = 20191231;
+		pApi->ReqQuery(QueryType::QueryType_ReqQryOrder, &query_order);
+
+		// query trades
+		ReqQueryField query_trade = { 0 };
+		query_trade.DateStart = 20180101;
+		query_trade.DateEnd = 20191231;
+		pApi->ReqQuery(QueryType::QueryType_ReqQryTrade, &query_trade);
+
+//		// insert order
+//		OrderField order = { 0 };
+//		strcpy(order.ExchangeID, szExchange_SH);
+//		strcpy(order.Symbol, "600090");
+//		order.Price = 5.5;
+//		order.Qty = 200;
+//		order.Type = OrderType::OrderType_Limit;
+//		order.Side = OrderSide::OrderSide_Buy;
+//		pApi->SendOrder(&order, 1, nullptr);
 	}
 
 	void print_order(OrderField* pOrder)
@@ -203,17 +224,36 @@ private:
 			<< "'open_close': " << pTrade->OpenClose 
 			<< "}" << std::endl;
 	}
-	void print_quote(QuoteField* pQuote)
-	{
-		// TODO:
-	}
 	void print_account(AccountField* pAccount)
 	{
-		// TODO:
+		if (pAccount == nullptr)
+		{
+			return;
+		}
+
+		std::cout << "{"
+			<< "'msg': 'account', "
+			<< "'balance': " << pAccount->Balance << ", "
+			<< "'available': " << pAccount->Available << ", "
+			<< "'withdraw_quota': " << pAccount->WithdrawQuota
+			<< "}" << std::endl;
 	}
 	void print_position(PositionField* position)
 	{
-		// TODO:
+		if (position == nullptr)
+		{
+			return;
+		}
+
+		std::cout << "{"
+			<< "'msg': 'position', "
+			<< "'exchange': '" << position->ExchangeID << "', "
+			<< "'symbol': '" << position->Symbol << "', "
+			<< "'dir': '" << position->Side << ", "
+			<< "'position': " << position->Position << ", "
+			<< "'sellable': " << position->Position - position->TodayPosition << ", "
+			<< "'avg_price': " << position->PositionCost
+			<< "}" << std::endl;
 	}
 
 public:
@@ -249,20 +289,20 @@ int main(int argc, char *argv[])
 	trade_server_info.Port = 6001;
 
 	// 注意，这里要填入用户名，密码和key
-	strcpy(user_info.UserID, "userid");		// 用户名
-	strcpy(user_info.Password, "password");	// 密码
-	user_info.ExtInfoInt32 = p->client_id_;	// 自定义 client_id
+	strcpy(user_info.UserID, "userid");			// 用户名
+	strcpy(user_info.Password, "password");		// 密码
+	user_info.ExtInfoInt32 = p->client_id_;		// 自定义 client_id
 	strcpy(user_info.ExtInfoChar64, "xxxxxxxxxxxxxxxxxxxxxxxx"); // key
 
 	CXApi* p_api_quote = CXApi::CreateApi(shared_lib_quote);
 	CXApi* p_api_trade = CXApi::CreateApi(shared_lib_trade);
 
-	if (!p_api_quote->Init())
-	{
-		printf("%s\r\n", p_api_quote->GetLastError());
-		p_api_quote->Disconnect();
-		return 1;
-	}
+//	if (!p_api_quote->Init())
+//	{
+//		printf("%s\r\n", p_api_quote->GetLastError());
+//		p_api_quote->Disconnect();
+//		return 1;
+//	}
 
 	if (!p_api_trade->Init())
 	{

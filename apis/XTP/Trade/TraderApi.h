@@ -97,11 +97,22 @@ private:
 	// 查询成交单
 	int _ReqQryTrade(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
+	void _OnOrderInfo(XTPOrderInfo *order_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id);
+	void _OnTradeInfo(XTPQueryTradeRsp *trade_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id);
+
 	void OnTrade(TradeField *pTrade);
+
+	void GetPositionID(PositionIDType position_id, const ExchangeIDType exchange_id, const SymbolType symbol, PositionSide dir);
 
 	void CheckError(int ret, const char *fn);
 
 public:
+
+	// 当客户端的某个连接与交易后台通信连接断开时
+	virtual void OnDisconnected(uint64_t session_id, int reason) override;
+
+	// 错误应答
+	virtual void OnError(XTPRI *error_info) override;
 
 	// 报单通知
 	virtual void OnOrderEvent(XTPOrderInfo *order_info, XTPRI *error_info, uint64_t session_id) override;

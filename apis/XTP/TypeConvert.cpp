@@ -69,6 +69,26 @@ int OrderDir_XAPI_2_XTP(int side)
 	return XTP_SIDE_UNKNOWN;
 }
 
+int PositionDir_XTP_2_XAPI(int flag)
+{
+	switch (flag)
+	{
+	case XTP_POSITION_DIRECTION_LONG: return PositionSide::PositionSide_Long;
+	case XTP_POSITION_DIRECTION_SHORT: return PositionSide::PositionSide_Short;
+	}
+
+	return PositionSide::PositionSide_Long;
+}
+int PositionDir_XAPI_2_XTP(int flag)
+{
+	switch (flag)
+	{
+	case PositionSide::PositionSide_Long: return XTP_POSITION_DIRECTION_LONG;
+	case PositionSide::PositionSide_Short: return XTP_POSITION_DIRECTION_SHORT;
+	}
+	return XTP_POSITION_DIRECTION_NET;
+}
+
 int OrderType_XTP_2_XAPI(int flag)
 {
 	switch (flag)

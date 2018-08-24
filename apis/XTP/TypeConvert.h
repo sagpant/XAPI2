@@ -12,6 +12,9 @@ int Str_2_XTPMarketType(const char *market_str);
 int OrderDir_XTP_2_XAPI(int xtp_side);
 int OrderDir_XAPI_2_XTP(int side);
 
+int PositionDir_XTP_2_XAPI(int flag);
+int PositionDir_XAPI_2_XTP(int flag);
+
 int OrderType_XTP_2_XAPI(int flag);
 int OrderType_XAPI_2_XTP(int flag);
 
