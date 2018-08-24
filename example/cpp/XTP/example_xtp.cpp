@@ -1,5 +1,7 @@
 #if defined WINDOWS || _WIN32
 #include <Windows.h>
+#else
+#include <unistd.h>
 #endif
 #include <stdio.h>
 #include <time.h>
@@ -273,8 +275,18 @@ int main(int argc, char *argv[])
 		char shared_lib_trade[250] = "XTP_Trade_x86.dll";
 	#endif
 #else
-	char shared_lib_quote[250] = "XTP_Quote.so";
-	char shared_lib_trade[250] = "XTP_Trade.so";
+	char shared_lib_quote[1024] = "libXTP_Quote.so";
+	char shared_lib_trade[1024] = "libXTP_Trade.so";
+	// char dir_path[512] = {0};
+	// char shared_lib_quote[1024] = {0};
+	// char shared_lib_trade[1024] = {0};
+
+	// if (getcwd(dir_path, sizeof(dir_path)) == NULL)
+	// {
+	// 	return 1;
+	// }
+	// snprintf(shared_lib_quote, "%s/%s", dir_path, "libXTP_Quote.so");
+	// snprintf(shared_lib_trade, "%s/%s", dir_path, "libXTP_Trade.so");
 #endif
 
 	ServerInfoField				quote_server_info = { 0 };

@@ -33,4 +33,11 @@
 #define QUEUE_DLL_PUBLIC
 #endif
 
+#ifndef _WIN32
+
+#define MAX_PATH 1024
+// #define min(x, y) ((x) < (y) ? (x) : (y))
+
+#endif
+
 #endif // _CROSS_PLATFORM_H_

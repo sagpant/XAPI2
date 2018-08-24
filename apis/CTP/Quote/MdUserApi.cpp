@@ -159,6 +159,7 @@ void CMdUserApi::Connect(const string& szPath,
 	UserInfoField* pUserInfo,
 	int count)
 {
+#if _WIN32
 	char szExePath[MAX_PATH] = { 0 };
 	GetExePath(szExePath);
 	char szDllPath[MAX_PATH] = { 0 };
@@ -175,6 +176,7 @@ void CMdUserApi::Connect(const string& szPath,
 	{
 		m_pSyntheticConfig->Write(szExistingFileName);
 	}
+#endif
 
 	m_szPath = szPath;
 	memcpy(&m_ServerInfo, pServerInfo, sizeof(ServerInfoField));

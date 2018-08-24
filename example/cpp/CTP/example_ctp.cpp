@@ -1,6 +1,7 @@
-
 #if defined WINDOWS || _WIN32
 #include <Windows.h>
+#else
+#include <unistd.h>
 #endif
 
 #include <stdio.h>
@@ -143,8 +144,18 @@ int main(int argc, char* argv[])
 	char DLLPath2[250] = "CTP_Trade_x86.dll";
 #endif
 #else
-	char DLLPath1[250] = "libQuantBox_CTP_Quote.so";
-	char DLLPath2[250] = "libQuantBox_CTP_Trade.so";
+	char DLLPath1[1024] = "libCTP_Quote.so";
+	char DLLPath2[1024] = "libCTP_Trade.so";
+//	char dir_path[512] = {0};
+//	char DLLPath1[1024] = {0};
+//	char DLLPath2[1024] = {0};
+//
+//	if (getcwd(dir_path, sizeof(dir_path)) == NULL)
+//	{
+//		return 1;
+//	}
+//	snprintf(DLLPath1, sizeof(DLLPath1), "%s/libCTP_Quote.so", dir_path);
+//	snprintf(DLLPath2, sizeof(DLLPath2), "%s/libCTP_Trade.so", dir_path);
 #endif
 
 	ServerInfoField				m_ServerInfo1 = { 0 };
@@ -182,11 +193,11 @@ int main(int argc, char* argv[])
 		}
 
 		pApi1->RegisterSpi(p);
-		pApi1->Connect("D:\\", &m_ServerInfo1, &m_UserInfo, 1);
+		pApi1->Connect("./", &m_ServerInfo1, &m_UserInfo, 1);
 		printf("已经执行完Connect\n");
 
 		pApi2->RegisterSpi(p);
-		pApi2->Connect("D:\\", &m_ServerInfo2, &m_UserInfo, 1);
+		pApi2->Connect("./", &m_ServerInfo2, &m_UserInfo, 1);
 		printf("已经执行完Connect\n");
 		getchar();
 

@@ -3,7 +3,7 @@ project(XAPI2)
 
 # set compile parameter
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -Wall -Wextra -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -Wall -Wextra -fpermissive -rdynamic -std=c++11")
 elseif (${CMAKE_CXX_COMPILER_ID} MATCHES Clang)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -Wall -Wextra -Wno-missing-field-initializers")
 	set(CMAKE_CXX_STANDARD 11)
@@ -24,6 +24,9 @@ endif()
 
 # set use folder in vs
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+# thread
+find_package(Threads)
 
 # include and link directories
 link_directories(
@@ -52,6 +55,10 @@ else()
 		${XAPI_CPP_cpp}
 	)
 endif()
+target_link_libraries(XAPI_CPP 
+	${CMAKE_THREAD_LIBS_INIT}
+	${CMAKE_DL_LIBS}
+)
 target_compile_definitions(XAPI_CPP
 	PRIVATE BUILDING_DLL
 	PUBLIC XAPI_CPP_EXPORTS
@@ -113,7 +120,7 @@ function(add_quote name folders)
 		list(APPEND src_files ${tmp_cpp})
 	endforeach(folder)
 	
-	list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
+	# list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
 		
 	if (WIN32)
 		add_library(${name} SHARED
@@ -147,11 +154,13 @@ function(add_quote name folders)
 	target_compile_definitions(${name}
 		PRIVATE USE_CMAKE BUILDING_DLL
 	)
-	set_target_properties(${name}
-		PROPERTIES
-		FOLDER "apis"
-		OUTPUT_NAME ${name}_$(PlatformTarget)
-	)
+	if (WIN32)
+		set_target_properties(${name}
+			PROPERTIES
+			FOLDER "apis"
+			OUTPUT_NAME ${name}_$(PlatformTarget)
+		)
+	endif()
 endfunction(add_quote)
 
 function(add_trade name folders)
@@ -164,7 +173,7 @@ function(add_trade name folders)
 		list(APPEND src_files ${tmp_cpp})
 	endforeach(folder)
 	
-	list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
+	# list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
 	
 	if (WIN32)
 		add_library(${name} SHARED
@@ -193,11 +202,13 @@ function(add_trade name folders)
 	target_compile_definitions(${name}
 		PRIVATE USE_CMAKE BUILDING_DLL
 	)
-	set_target_properties(${name}
-		PROPERTIES
-		FOLDER "apis"
-		OUTPUT_NAME ${name}_$(PlatformTarget)
-	)
+	if (WIN32)
+		set_target_properties(${name}
+			PROPERTIES
+			FOLDER "apis"
+			OUTPUT_NAME ${name}_$(PlatformTarget)
+		)
+	endif()
 endfunction(add_trade)
 
 function(add_apis name cpp_files h_files)
@@ -230,11 +241,13 @@ function(add_apis name cpp_files h_files)
 	target_compile_definitions(${name}
 		PRIVATE USE_CMAKE BUILDING_DLL
 	)
-	set_target_properties(${name}
-		PROPERTIES
-		FOLDER "apis"
-		OUTPUT_NAME ${name}_$(PlatformTarget)
-	)
+	if (WIN32)
+		set_target_properties(${name}
+			PROPERTIES
+			FOLDER "apis"
+			OUTPUT_NAME ${name}_$(PlatformTarget)
+		)
+	endif()
 endfunction(add_apis)
 
 # add CTP Quote
@@ -259,6 +272,11 @@ if (WIN32)
 			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thostmduserapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	endif()
+else()
+	ADD_CUSTOM_COMMAND(TARGET CTP_Quote
+		PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/linux64/libthostmduserapi.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+	)
 endif()
 target_link_libraries(CTP_Quote
 	thostmduserapi
@@ -286,6 +304,11 @@ if (WIN32)
 			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thosttraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	endif()
+else()
+	ADD_CUSTOM_COMMAND(TARGET CTP_Trade
+		PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/linux64/libthosttraderapi.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+	)
 endif()
 target_link_libraries(CTP_Trade
 	thosttraderapi
@@ -313,6 +336,11 @@ if (WIN32)
 			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win32/xtpquoteapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	endif()
+else()
+	ADD_CUSTOM_COMMAND(TARGET XTP_Quote
+		PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/linux64/libxtpquoteapi.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+	)
 endif()
 target_link_libraries(XTP_Quote
 	xtpquoteapi
@@ -343,10 +371,17 @@ if (WIN32)
 			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/win32/xtptraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	endif()
+else()
+	ADD_CUSTOM_COMMAND(TARGET XTP_Trade
+		PRE_LINK
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/XTP/linux64/libxtptraderapi.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+	)
 endif()
 target_link_libraries(XTP_Trade
 	xtptraderapi
 )
+
+if (WIN32)
 
 # add CTP Spot Trade
 set(folder "")
@@ -659,7 +694,7 @@ target_link_libraries(Wind_Quote
 # add FakeAPI
 file(GLOB FAKE_API_H ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.h)
 file(GLOB FAKE_API_CPP ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.cpp)
-list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
+# list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
 if (WIN32)
 add_library(FakeAPI SHARED
 	${FAKE_API_H}
@@ -713,6 +748,8 @@ set_target_properties(CPP_TEST
 	FOLDER "tests/CPP"
 )
 
+endif(WIN32)
+ 
 # add cpp examples
 add_executable(ExampleCTP ${CMAKE_CURRENT_LIST_DIR}/example/cpp/CTP/example_ctp.cpp)
 target_link_libraries(ExampleCTP XAPI_CPP)

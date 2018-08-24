@@ -2,6 +2,7 @@
 #define XTP_MD_USER_API_H_
 
 #include <stdint.h>
+#include <float.h>
 #include <set>
 #include <string>
 #include <atomic>

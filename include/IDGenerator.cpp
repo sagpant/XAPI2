@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "IDGenerator.h"
+#include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 CIDGenerator::CIDGenerator()
 {

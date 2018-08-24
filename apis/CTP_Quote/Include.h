@@ -12,6 +12,7 @@
 #include "../../include/CTP/ThostFtdcUserApiDataType.h"
 #include "../../include/CTP/ThostFtdcUserApiStruct.h"
 #include "../../include/CTP/ThostFtdcMdApi.h"
+#include "../../include/CrossPlatform.h"
 
 #ifndef USE_CMAKE
 #ifdef _WIN64

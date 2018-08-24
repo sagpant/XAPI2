@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "CSyntheticMarketData.h"
 
+#include <string.h>
+
 
 CSyntheticMarketData::CSyntheticMarketData(const char* product, set<string> emits, CSyntheticCalculate* pCal)
 {
