@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.6.3)
 project(XAPI2)
 
 # set compile parameter
@@ -37,6 +37,7 @@ link_directories(
 # add XAPI_CPP
 file(GLOB_RECURSE XAPI_CPP_h ${CMAKE_CURRENT_LIST_DIR}/languages/CPP/XAPI_CPP/*.h)
 file(GLOB_RECURSE XAPI_CPP_cpp ${CMAKE_CURRENT_LIST_DIR}/languages/CPP/XAPI_CPP/*.cpp)
+list(FILTER XAPI_CPP_cpp EXCLUDE REGEX ".*dllmain.cpp")
 if (WIN32)
 	add_library(XAPI_CPP SHARED
 		${XAPI_CPP_h}
@@ -120,7 +121,7 @@ function(add_quote name folders)
 		list(APPEND src_files ${tmp_cpp})
 	endforeach(folder)
 	
-	# list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
+	list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
 		
 	if (WIN32)
 		add_library(${name} SHARED
@@ -173,7 +174,7 @@ function(add_trade name folders)
 		list(APPEND src_files ${tmp_cpp})
 	endforeach(folder)
 	
-	# list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
+	list(FILTER src_files EXCLUDE REGEX ".*dllmain.cpp")
 	
 	if (WIN32)
 		add_library(${name} SHARED
@@ -212,6 +213,8 @@ function(add_trade name folders)
 endfunction(add_trade)
 
 function(add_apis name cpp_files h_files)
+	list(FILTER cpp_files EXCLUDE REGEX ".*dllmain.cpp")
+
 	if (WIN32)
 		add_library(${name} SHARED
 			${h_files}
@@ -694,7 +697,7 @@ target_link_libraries(Wind_Quote
 # add FakeAPI
 file(GLOB FAKE_API_H ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.h)
 file(GLOB FAKE_API_CPP ${CMAKE_CURRENT_LIST_DIR}/tools/FakeAPI/*.cpp)
-# list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
+list(FILTER FAKE_API_CPP EXCLUDE REGEX ".*dllmain.cpp")
 if (WIN32)
 add_library(FakeAPI SHARED
 	${FAKE_API_H}
