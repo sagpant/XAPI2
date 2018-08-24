@@ -442,7 +442,7 @@ void CTraderApi::_OnOrderInfo(XTPOrderInfo *order_info, XTPRI *error_info, int r
 	if (error_info == nullptr || error_info->error_id == 0)
 	{
 		OrderIDType orderId = { 0 };
-		sprintf(orderId, "%I64d:%I64u", order_info->insert_time, order_info->order_xtp_id);
+		sprintf(orderId, "%lld:%llu", order_info->insert_time, order_info->order_xtp_id);
 		OrderIDType orderSydId = { 0 };
 
 		{
@@ -465,7 +465,7 @@ void CTraderApi::_OnOrderInfo(XTPOrderInfo *order_info, XTPRI *error_info, int r
 			}
 
 			// 保存SysID用于定义成交回报与订单
-			sprintf(orderSydId, "%d:%s:%I64u", (int)order_info->market, order_info->ticker, order_info->order_xtp_id);
+			sprintf(orderSydId, "%d:%s:%llu", (int)order_info->market, order_info->ticker, order_info->order_xtp_id);
 			m_sysId_orderId.insert(pair<string, string>(orderSydId, orderId));
 		}
 
@@ -475,7 +475,7 @@ void CTraderApi::_OnOrderInfo(XTPOrderInfo *order_info, XTPRI *error_info, int r
 
 			strcpy(pOut->ID, orderId);
 			strcpy(pOut->LocalID, pOut->ID);
-			sprintf(pOut->OrderID, "%I64u", order_info->order_xtp_id);
+			sprintf(pOut->OrderID, "%llu", order_info->order_xtp_id);
 			strcpy(pOut->ExchangeID, XTPMarketType_2_Str(order_info->market));
 			strcpy(pOut->Symbol, order_info->ticker);
 			pOut->Price = order_info->price;
@@ -527,7 +527,7 @@ void CTraderApi::_OnTradeInfo(XTPQueryTradeRsp *trade_info, XTPRI *error_info, i
 
 
 		OrderIDType orderSysId = { 0 };
-		sprintf(orderSysId, "%d:%s:%I64u", (int)trade_info->market, trade_info->ticker, trade_info->order_xtp_id);
+		sprintf(orderSysId, "%d:%s:%llu", (int)trade_info->market, trade_info->ticker, trade_info->order_xtp_id);
 		unordered_map<string, string>::iterator it = m_sysId_orderId.find(orderSysId);
 
 		if (request_id == 0)
