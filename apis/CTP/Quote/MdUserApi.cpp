@@ -24,7 +24,7 @@
 
 using namespace std;
 
-void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
+void* Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
 {
 	// 由内部调用，不用检查是否为空
 	CMdUserApi* pApi = (CMdUserApi*)pApi2;
@@ -159,6 +159,7 @@ void CMdUserApi::Connect(const string& szPath,
 	UserInfoField* pUserInfo,
 	int count)
 {
+#if _WIN32
 	char szExePath[MAX_PATH] = { 0 };
 	GetExePath(szExePath);
 	char szDllPath[MAX_PATH] = { 0 };
@@ -175,6 +176,7 @@ void CMdUserApi::Connect(const string& szPath,
 	{
 		m_pSyntheticConfig->Write(szExistingFileName);
 	}
+#endif
 
 	m_szPath = szPath;
 	memcpy(&m_ServerInfo, pServerInfo, sizeof(ServerInfoField));

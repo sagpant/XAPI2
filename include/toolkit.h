@@ -32,6 +32,7 @@ double my_round(float val, int x = 0);
 //根据OnFrontDisconnected(int nReason)的值填上错误消息
 void GetOnFrontDisconnectedMsg(int ErrorId, char* ErrorMsg);
 
+#if _WIN32
 // 通过公开的函数名，得到当前的路径
 void GetDllPathByFunctionName(const char* szFunctionName, char* szPath);
 // 得到当前可执行程序的路径
@@ -40,5 +41,6 @@ void GetExePath(char* szPath);
 void GetDirectoryByPath(const char* szPath, char* szDirectory);
 // 通过一个路径得到新的路径
 void GetNewPathInSameDirectory(const char* szPath, const char* szFname, const char* szExt, char* szFileName);
+#endif
 
 #endif

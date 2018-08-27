@@ -13,10 +13,12 @@
 #include "../../include/CTP_SOPT/ThostFtdcUserApiStruct.h"
 #include "../../include/CTP_SOPT/ThostFtdcTraderApi.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/CTP_SOPT/win64/thosttraderapi.lib")
 #else
 	#pragma comment(lib, "../../include/CTP_SOPT/win32/thosttraderapi.lib")
+#endif
 #endif
 
 

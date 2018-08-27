@@ -2,6 +2,7 @@
 #include "toolkit.h"
 #include <string.h>
 #include <time.h>
+#include <stdarg.h>
 
 #if defined _WIN32 || WIN32 || _WINDOWS
     #include <direct.h>
@@ -454,4 +455,14 @@ void GetNewPathInSameDirectory(const char* szPath, const char* szFname, const ch
 	_splitpath(szPath, drive, dir, fname, ext);
 	_makepath(szFileName, drive, dir, szFname, szExt);
 }
+#else
+void GetDllPathByFunctionName(const char* szFunctionName, char* szPath)
+{}
+void GetExePath(char* szPath)
+{}
+void GetDirectoryByPath(const char* szPath, char* szDirectory)
+{}
+void GetNewPathInSameDirectory(const char* szPath, const char* szFname, const char* szExt, char* szFileName)
+{}
+
 #endif

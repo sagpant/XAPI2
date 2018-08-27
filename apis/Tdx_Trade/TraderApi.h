@@ -5,10 +5,12 @@
 #include "../../include/IDGenerator.h"
 #include "../../include/QueueEnum.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/Tdx/win64/TdxApi.lib")
 #else
 	#pragma comment(lib, "../../include/Tdx/win32/TdxApi.lib")
+#endif
 #endif
 
 #include "SingleUser.h"
@@ -105,7 +107,7 @@ public:
 private:
 	virtual void OnResponse(CTdxApi* pApi, RequestResponse_STRUCT* pRespone);
 
-	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	friend void* Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	virtual void TestInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 

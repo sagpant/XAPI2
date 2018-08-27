@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #ifdef _WIN64
-#define QUEUE_INT LONG64
+#define QUEUE_INT int64_t
 #else
 #define QUEUE_INT unsigned long
 #endif

@@ -238,7 +238,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # Linux objects
-*.so
+# *.so
 *.o
 
 # Misc files

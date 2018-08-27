@@ -3,10 +3,12 @@
 #include "../../include/LTS_v2/SecurityFtdcTraderApi.h"
 #include "../../include/ApiStruct.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/LTS_v2/win64/securitytraderapi.lib")
 #else
 	#pragma comment(lib, "../../include/LTS_v2/win32/securitytraderapi.lib")
+#endif
 #endif
 
 #include <set>
@@ -96,7 +98,7 @@ public:
 	//void ReqQryInvestor();
 
 private:
-	friend void* __stdcall Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
+	friend void* Query(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 	void QueryInThread(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
 
 	void Clear();

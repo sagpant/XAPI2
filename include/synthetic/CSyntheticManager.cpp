@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "CSyntheticManager.h"
 
+#include <string.h>
+
 
 CSyntheticManager::CSyntheticManager()
 {

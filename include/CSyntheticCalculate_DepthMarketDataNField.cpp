@@ -1,9 +1,12 @@
 ﻿#include "stdafx.h"
 #include "CSyntheticCalculate_DepthMarketDataNField.h"
 
+#include <string.h>
+#include <float.h>
+
 #include "ApiStruct.h"
 #include "ApiProcess.h"
-
+#include "CrossPlatform.h"
 
 void CSyntheticCalculate_DepthMarketDataNField_OpenInterest::Begin(CSyntheticMarketData* pCall, char* pBuf, LegData* pOut)
 {
@@ -173,7 +176,8 @@ void CSyntheticCalculate_DepthMarketDataNField_Spread::ForEach(CSyntheticMarketD
 		}
 		else
 		{
-			pOut->askSize = min(pOut->askSize, ask->Size);
+			// pOut->askSize = min(pOut->askSize, ask->Size);
+			pOut->askSize = pOut->askSize < ask->Size ? pOut->askSize : ask->Size;
 			pOut->ask += ask->Price*pIn->weight;
 		}
 
@@ -184,7 +188,8 @@ void CSyntheticCalculate_DepthMarketDataNField_Spread::ForEach(CSyntheticMarketD
 		}
 		else
 		{
-			pOut->bidSize = min(pOut->bidSize, bid->Size);
+			// pOut->bidSize = min(pOut->bidSize, bid->Size);
+			pOut->bidSize = pOut->bidSize < bid->Size ? pOut->bidSize : bid->Size;
 			pOut->bid += bid->Price*pIn->weight;
 		}
 	}
@@ -197,7 +202,8 @@ void CSyntheticCalculate_DepthMarketDataNField_Spread::ForEach(CSyntheticMarketD
 		}
 		else
 		{
-			pOut->bidSize = min(pOut->bidSize, ask->Size);
+			// pOut->bidSize = min(pOut->bidSize, ask->Size);
+			pOut->bidSize = pOut->bidSize < ask->Size ? pOut->bidSize : ask->Size;
 			pOut->bid += ask->Price*pIn->weight;
 		}
 
@@ -208,7 +214,8 @@ void CSyntheticCalculate_DepthMarketDataNField_Spread::ForEach(CSyntheticMarketD
 		}
 		else
 		{
-			pOut->askSize = min(pOut->askSize, bid->Size);
+			// pOut->askSize = min(pOut->askSize, bid->Size);
+			pOut->askSize = pOut->askSize < bid->Size ? pOut->askSize : bid->Size;
 			pOut->ask += bid->Price*pIn->weight;
 		}
 	}

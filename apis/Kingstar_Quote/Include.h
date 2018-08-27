@@ -15,10 +15,12 @@
 
 using namespace KingstarAPI;
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/Kingstar/win64/KSMarketDataAPI.lib")
 #else
 	#pragma comment(lib, "../../include/Kingstar/win32/KSMarketDataAPI.lib")
+#endif
 #endif
 
 // 为了解决金仕达授权问题而加的功能

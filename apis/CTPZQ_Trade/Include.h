@@ -16,10 +16,12 @@
 #include "../../include/CTPZQ/ZQThostFtdcUserApiStruct.h"
 #include "../../include/CTPZQ/ZQThostFtdcTraderApi.h"
 
+#ifndef USE_CMAKE
 #ifdef _WIN64
 	#pragma comment(lib, "../../include/CTPZQ/win64/zqthosttraderapi.lib")
 #else
 	#pragma comment(lib, "../../include/CTPZQ/win32/zqthosttraderapi.lib")
+#endif
 #endif
 
 // 条件编译
