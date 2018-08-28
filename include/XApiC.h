@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CrossPlatform.h"
 #include "ApiStruct.h"
 #include "QueueEnum.h"
 

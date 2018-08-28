@@ -1,4 +1,5 @@
 #pragma once
+#include "../../../include/CrossPlatform.h"
 #include "../../../include/XApiCpp.h"
 
 

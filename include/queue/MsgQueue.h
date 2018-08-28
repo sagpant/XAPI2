@@ -3,6 +3,7 @@
 #ifndef _QUEUE_H_
 #define _QUEUE_H_
 
+#include "../CrossPlatform.h"
 #include <thread>
 #include <mutex>
 #include <cstring>

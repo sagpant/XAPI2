@@ -5,6 +5,7 @@
 #define API_NAME    "XTP"
 #define DLL_PUBLIC_KEY ""
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/ApiStruct.h"
 #include "../../include/XTP/xtp_api_data_type.h"
 #include "../../include/XTP/xtp_trader_api.h"

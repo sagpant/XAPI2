@@ -37,6 +37,9 @@
 
 #define MAX_PATH 1024
 // #define min(x, y) ((x) < (y) ? (x) : (y))
+#ifndef __stdcall
+	#define __stdcall  
+#endif
 
 #endif
 
