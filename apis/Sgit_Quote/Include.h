@@ -10,6 +10,7 @@
 #define DLL_PUBLIC_KEY ""
 
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/Sgit/SgitFtdcUserApiDataType.h"
 #include "../../include/Sgit/SgitFtdcUserApiStruct.h"
 #include "../../include/Sgit/SgitFtdcMdApi.h"

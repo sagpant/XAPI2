@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/LTS_v2/SecurityFtdcQueryApi.h"
 #include "../../include/ApiStruct.h"
 #include "../../include/QueueEnum.h"

@@ -9,6 +9,7 @@
 #define API_NAME	"CTP_SOPT"
 #define DLL_PUBLIC_KEY "0"
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/CTP_SOPT/ThostFtdcUserApiDataType.h"
 #include "../../include/CTP_SOPT/ThostFtdcUserApiStruct.h"
 #include "../../include/CTP_SOPT/ThostFtdcTraderApi.h"

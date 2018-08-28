@@ -2,6 +2,7 @@
 #ifndef _USE_32BIT_TIME_T
 #define _USE_32BIT_TIME_T
 #endif
+#include "../../include/CrossPlatform.h"
 #include "../../include/ApiStruct.h"
 #include <stdlib.h>
 #include "Stockdrv.h"

@@ -12,6 +12,7 @@
 // 由于CTPZQ与CTP各种类型定义不一样，所以重新定义一下
 #include "Redefine.h"
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/CTPZQ/ZQThostFtdcUserApiDataType.h"
 #include "../../include/CTPZQ/ZQThostFtdcUserApiStruct.h"
 #include "../../include/CTPZQ/ZQThostFtdcMdApi.h"

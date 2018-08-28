@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/Tdx/TdxApi.h"
 #include "../../include/ApiStruct.h"
 #include "../../include/IDGenerator.h"
