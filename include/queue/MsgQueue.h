@@ -36,7 +36,7 @@ struct ResponeItem
 extern "C" {
 #endif
 
-	typedef void* (*fnOnResponse) (char type,
+	typedef void* (__stdcall *fnOnResponse) (char type,
 		void* pApi1, void* pApi2,
 		double double1, double double2,
 		void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3);
