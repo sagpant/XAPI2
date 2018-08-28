@@ -9,6 +9,7 @@
 #define API_NAME	"Kingstar"
 #define DLL_PUBLIC_KEY ""
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/Kingstar/IncEx/KSUserApiDataTypeEx.h"
 #include "../../include/Kingstar/IncEx/KSUserApiStructEx.h"
 #include "../../include/Kingstar/inc/KSTradeAPI.h"

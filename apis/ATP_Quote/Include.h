@@ -9,6 +9,7 @@
 #define API_NAME	"ATP"
 #define DLL_PUBLIC_KEY ""
 
+#include "../../include/CrossPlatform.h"
 #include "../../include/ATP/ThostFtdcUserApiDataType.h"
 #include "../../include/ATP/ThostFtdcUserApiStruct.h"
 #include "../../include/ATP/ThostFtdcMdApi.h"
