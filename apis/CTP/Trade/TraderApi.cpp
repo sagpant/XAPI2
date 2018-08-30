@@ -533,7 +533,7 @@ void CTraderApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 		QueryOrderTrade(false);
 #endif // HAS_Settlement
 
-		
+
 
 #ifdef IS_SGIT_API
 		// 飞鼠返回的资金太多了，关闭掉
@@ -1253,6 +1253,13 @@ void CTraderApi::GetPositionID2(CThostFtdcInvestorPositionField *pInvestorPositi
 // 对于上期所，目前没条件测，当成是也只有两条
 void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInvestorPosition, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
+	// 融航接口的设计缺陷，20180830
+	// 它会通过返回-1来表示没有记录，而查询委托就没有这个问题
+	if (pRspInfo && pRspInfo->ErrorID == -1)
+	{
+		m_msgQueue->Input_Copy(ResponseType::ResponseType_OnRspQryInvestorPosition, m_msgQueue, m_pClass, bIsLast, 0, nullptr, 0, nullptr, 0, nullptr, 0);
+		return;
+	}
 	if (!IsErrorRspInfo("OnRspQryInvestorPosition", pRspInfo, nRequestID, bIsLast))
 	{
 		// 如果没有持仓，返回空的数据
