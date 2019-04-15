@@ -1269,6 +1269,11 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 			return;
 		}
 
+		if (strcmp(pInvestorPosition->InstrumentID, "al1810") == 0)
+		{
+			int dubug = 1;
+		}
+
 		// 得到持仓ID
 		PositionIDType positionId = { 0 };
 		GetPositionID(pInvestorPosition, positionId);
@@ -1306,6 +1311,12 @@ void CTraderApi::OnRspQryInvestorPosition(CThostFtdcInvestorPositionField *pInve
 		for (unordered_map<string, CThostFtdcInvestorPositionField*>::iterator iter = m_id_api_position.begin(); iter != m_id_api_position.end(); iter++)
 		{
 			CThostFtdcInvestorPositionField* pField2 = iter->second;
+
+			//if (strcmp(pField2->InstrumentID, "al1810") == 0)
+			if (strcmp(pField2->InstrumentID, "al1811") == 0)
+			{
+				int dubug = 1;
+			}
 
 			// 得到持仓ID
 			PositionIDType positionId2 = { 0 };

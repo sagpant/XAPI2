@@ -14,13 +14,13 @@
     <ProjectGuid>{26C43947-9E7A-4B55-8A6D-A0F5222612AA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>UFX_Trade</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -43,7 +43,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_$(PlatformTarget)</TargetName>
-    <OutDir>..\..\bin\$(Configuration)\$(PlatformTarget)\UFX</OutDir>
+    <OutDir>C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\UFX</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\ApiProcess.h" />
     <ClInclude Include="..\..\include\IDGenerator.h" />
+    <ClInclude Include="..\..\include\switch_string.h" />
     <ClInclude Include="..\..\include\toolkit.h" />
     <ClInclude Include="O32\O32Codec.h" />
     <ClInclude Include="O32\O32Processor.h" />
@@ -98,9 +99,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TraderApi.h" />
-    <ClInclude Include="ZQ\ufx_enum_zq.h" />
-    <ClInclude Include="ZQ\ufx_struct_zq.h" />
-    <ClInclude Include="ZQ\ZQCodec.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\include\ApiProcess.cpp" />
@@ -111,13 +109,11 @@
     <ClCompile Include="O32\O32Codec.cpp" />
     <ClCompile Include="O32\O32Processor.cpp" />
     <ClCompile Include="O32\TypeConvert_o32.cpp" />
-    <ClCompile Include="OrderMap.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TraderApi.cpp" />
-    <ClCompile Include="ZQ\ZQCodec.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

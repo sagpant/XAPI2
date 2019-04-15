@@ -48,15 +48,6 @@
     <ClInclude Include="O32\ufx_struct_o32.h">
       <Filter>O32</Filter>
     </ClInclude>
-    <ClInclude Include="ZQ\ufx_enum_zq.h">
-      <Filter>ZQ</Filter>
-    </ClInclude>
-    <ClInclude Include="ZQ\ufx_struct_zq.h">
-      <Filter>ZQ</Filter>
-    </ClInclude>
-    <ClInclude Include="ZQ\ZQCodec.h">
-      <Filter>ZQ</Filter>
-    </ClInclude>
     <ClInclude Include="O32\O32Processor.h">
       <Filter>O32</Filter>
     </ClInclude>
@@ -67,6 +58,9 @@
       <Filter>O32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\IDGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\switch_string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,14 +86,8 @@
     <ClCompile Include="O32\O32Codec.cpp">
       <Filter>O32</Filter>
     </ClCompile>
-    <ClCompile Include="ZQ\ZQCodec.cpp">
-      <Filter>ZQ</Filter>
-    </ClCompile>
     <ClCompile Include="O32\O32Processor.cpp">
       <Filter>O32</Filter>
-    </ClCompile>
-    <ClCompile Include="OrderMap.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="O32\TypeConvert_o32.cpp">
       <Filter>O32</Filter>
