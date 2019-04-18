@@ -21,3 +21,8 @@
 4. 从官方从文件中复制对应的Api类定义到cpp中，修改成继承于这个类，然后把所有的函数先都实现成一个空函数，按情况构造一些假的返回值。参考代码已经提供的CTP与LTS的示列即可
 5. 对于有些API如通视接口，由于导出函数名命问题，你可以在export.def中添加。
 
+## 穿透式
+1. FakeAPI设置项目属性的Target Name为`thosttraderapi_se`
+2. 由于同一项目中`CTP`与`CTP_SE`两个项目的导出函数重复，无法直接编译，所以目前先将`ThostFtdcTraderApi.cpp`移除，只保留了`ThostFtdcTraderApi_SE.cpp`,如果还想使用老版本，反过来操作即可。
+
+

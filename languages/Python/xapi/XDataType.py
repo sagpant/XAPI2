@@ -138,6 +138,11 @@ AuthCodeType是一个客户端认证码类型
 AuthCodeType = c_char*17
 
 """
+AppIDType是一个App代码类型
+"""
+AppIDType = c_char*33
+
+"""
 AddressType是一个地址类型
 """
 AddressType = c_char*512

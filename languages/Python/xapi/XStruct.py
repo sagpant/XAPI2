@@ -5,6 +5,8 @@
 # import pydevd
 from .XDataType import *
 from .XEnum import *
+from datetime import datetime
+from datetime import date
 
 # 定义枚举类型在C结接体中的类型
 # _BusinessType = c_char
@@ -352,6 +354,7 @@ class ServerInfoField(Structure):
         ("BrokerID", BrokerIDType),
         ("UserProductInfo", ProductInfoType),
         ("AuthCode", AuthCodeType),
+        ("AppID", AppIDType),
         ("Address", AddressType),
         ("ConfigPath", Char256Type),
         ("ExtInfoChar128", Char128Type),
@@ -439,6 +442,35 @@ class RspUserLoginField(Structure):
                         self.XErrorID, self.RawErrorID, self.get_text())
         )
 
+    def to_dict(self):
+        return {
+            'TradingDay': self.TradingDay,
+            'LoginTime': self.LoginTime,
+            'SessionID': self.get_session_id(),
+            'InvestorName': self.get_investor_name(),
+            'XErrorID': self.XErrorID,
+            'RawErrorID': self.RawErrorID,
+            'Text': self.get_text(),
+        }
+
+
+class DepthField(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ("Price", PriceType),
+        ("Size", VolumeType),
+        ("Count", VolumeType)
+    ]
+
+    def __str__(self):
+        return to_str(
+            u'[Price={0};Size={1};Count={2}]'
+                .format(self.Price, self.Size, self.Count)
+        )
+
+    # def to_dict(self):
+    #     return {}
+
 
 # 深度行情N档
 class DepthMarketDataNField(Structure):
@@ -502,6 +534,9 @@ class DepthMarketDataNField(Structure):
     def get_instrument_id(self):
         return self.InstrumentID.decode('GBK')
 
+    def get_exchange_id(self):
+        return self.ExchangeID.decode('GBK')
+
     def get_bid_count(self):
         return self.BidCount
 
@@ -512,29 +547,30 @@ class DepthMarketDataNField(Structure):
     def get_ask_count(self):
         return int(self.get_ticks_count() - self.BidCount)
 
-    def get_bid(self, ptr, pos):
-        """
-        获取买档，pos=1表示买1
-        :param pos:
-        :return:
-        """
-        if pos < 0 or pos >= self.BidCount:
-            return None
-        p = ptr + sizeof(DepthMarketDataNField) + sizeof(DepthField) * pos
-        return cast(p, POINTER(DepthField)).contents
+    def get_bids(self):
+        ticks = []
+        for i in range(self.BidCount):
+            p = addressof(self) + sizeof(DepthMarketDataNField) + sizeof(DepthField) * i
+            p_t = cast(p, POINTER(DepthField)).contents
+            ticks.append((p_t.Price, p_t.Size))
+        return ticks
 
-    def get_ask(self, ptr, pos):
-        """
-        获取卖档，pos=1表示卖1
-        :param p_market_data:
-        :param pos:
-        :return:
-        """
-        if pos < 0 or pos >= self.get_ask_count():
-            return None
-        p = ptr + sizeof(DepthMarketDataNField) + sizeof(DepthField) * (
-            self.BidCount + pos)
-        return cast(p, POINTER(DepthField)).contents
+    def get_asks(self):
+        ask_count = self.get_ask_count()
+
+        ticks = []
+        for i in range(ask_count):
+            p = addressof(self) + sizeof(DepthMarketDataNField) + sizeof(DepthField) * (self.BidCount + i)
+            p_t = cast(p, POINTER(DepthField)).contents
+            ticks.append((p_t.Price, p_t.Size))
+        return ticks
+
+    def get_trading_date(self):
+        return datetime.strptime(f'{self.TradingDay}', '%Y%m%d').date()
+
+    def get_action_datetime(self):
+        return datetime.strptime(f'{self.ActionDay} {self.UpdateTime}.{self.UpdateMillisec:03}',
+                                 '%Y%m%d %H%M%S.%f')
 
     def __str__(self):
         # pydevd.settrace(suspend=True, trace_only_current_thread=True)
@@ -545,20 +581,34 @@ class DepthMarketDataNField(Structure):
                         self.BidCount, self.get_ask_count(), self.LastPrice, self.UpperLimitPrice, self.LowerLimitPrice)
         )
 
+    def to_dict(self):
+        return {
+            'TradingDay': self.get_trading_date().strftime('%F'),
+            'DateTime': self.get_action_datetime().strftime('%Y-%m-%d %H:%M:%S.%f'),
+            'Symbol': self.get_symbol(),
+            'InstrumentID': self.get_instrument_id(),
+            'ExchangeID': self.get_exchange_id(),
+            'LastPrice': self.LastPrice,
+            'Volume': self.Volume,
+            'Turnover': self.Turnover,
+            'OpenInterest': self.OpenInterest,
 
-class DepthField(Structure):
-    _pack_ = 1
-    _fields_ = [
-        ("Price", PriceType),
-        ("Size", VolumeType),
-        ("Count", VolumeType)
-    ]
+            'Bids': self.get_bids(),
+            'Asks': self.get_asks(),
 
-    def __str__(self):
-        return to_str(
-            u'[Price={0};Size={1};Count={2}]'
-                .format(self.Price, self.Size, self.Count)
-        )
+            'AveragePrice': self.AveragePrice,
+            'OpenPrice': self.OpenPrice,
+            'HighestPrice': self.HighestPrice,
+            'LowestPrice': self.LowestPrice,
+            'ClosePrice': self.ClosePrice,
+            'SettlementPrice': self.SettlementPrice,
+            'UpperLimitPrice': self.UpperLimitPrice,
+            'LowerLimitPrice': self.LowerLimitPrice,
+
+            'PreClosePrice': self.PreClosePrice,
+            'PreSettlementPrice': self.PreSettlementPrice,
+            'TradingPhase': self.TradingPhase,
+        }
 
 
 # 合约

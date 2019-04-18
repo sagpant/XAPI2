@@ -23,3 +23,7 @@
 #define HAS_ExchangeID_Quote	1
 #define HAS_ExchangeID_Quote_ForQuoteSysID	1
 
+//使用穿透试认证
+#define USE_APP_ID	1
+#undef USE_APP_ID
+

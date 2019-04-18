@@ -325,6 +325,11 @@ namespace XAPI
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 17)]
         public string AuthCode;
         /// <summary>
+        /// App代码
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 33)]
+        public string AppID;
+        /// <summary>
         /// 地址
         /// </summary>
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 512)]

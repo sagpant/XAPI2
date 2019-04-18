@@ -169,16 +169,16 @@ class MyXSpi(XSpi):
             print(obj)
 
         # 由于对象中不带指针后的区域，所以涨跌停修正只能在这做
-        if obj.UpperLimitPrice == 0:
-            ask_count = obj.get_ask_count()
-            if ask_count > 0:
-                ask = obj.get_ask(ptr1, ask_count - 1)
-                obj.UpperLimitPrice = ask.Price
-        if obj.LowerLimitPrice == 0:
-            bid_count = obj.get_bid_count()
-            if bid_count > 0:
-                bid = obj.get_bid(ptr1, bid_count - 1)
-                obj.LowerLimitPrice = bid.Price
+        # if obj.UpperLimitPrice == 0:
+        #     ask_count = obj.get_ask_count()
+        #     if ask_count > 0:
+        #         ask = obj.get_ask(ptr1, ask_count - 1)
+        #         obj.UpperLimitPrice = ask.Price
+        # if obj.LowerLimitPrice == 0:
+        #     bid_count = obj.get_bid_count()
+        #     if bid_count > 0:
+        #         bid = obj.get_bid(ptr1, bid_count - 1)
+        #         obj.LowerLimitPrice = bid.Price
 
         cp_obj = copy.copy(obj)
         # 由于是期货，直接使用合约名就可以定位

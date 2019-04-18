@@ -386,8 +386,7 @@ void CTraderApi::OnFrontConnected()
 	m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnConnectionStatus, m_msgQueue, m_pClass, ConnectionStatus::ConnectionStatus_Connected, 0, nullptr, 0, nullptr, 0, nullptr, 0);
 
 	//连接成功后自动请求认证或登录
-	if (strlen(m_ServerInfo.AuthCode) > 0
-		&& strlen(m_ServerInfo.UserProductInfo) > 0)
+	if (strlen(m_ServerInfo.AuthCode) > 0)
 	{
 		//填了认证码就先认证
 		ReqAuthenticate();
@@ -420,6 +419,11 @@ void CTraderApi::ReqAuthenticate()
 	strncpy(pBody->UserID, m_UserInfo.UserID, sizeof(TThostFtdcInvestorIDType));
 	strncpy(pBody->UserProductInfo, m_ServerInfo.UserProductInfo, sizeof(TThostFtdcProductInfoType));
 	strncpy(pBody->AuthCode, m_ServerInfo.AuthCode, sizeof(TThostFtdcAuthCodeType));
+
+#ifdef USE_APP_ID
+	// CTP接口新加了穿透试认证
+	strncpy(pBody->AppID, m_ServerInfo.AppID, sizeof(TThostFtdcAppIDType));
+#endif
 
 	m_msgQueue_Query->Input_NoCopy(RequestType::E_ReqAuthenticateField, m_msgQueue_Query, this, 0, 0,
 		pBody, sizeof(CThostFtdcReqAuthenticateField), nullptr, 0, nullptr, 0);

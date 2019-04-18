@@ -347,6 +347,8 @@ struct ServerInfoField
 	ProductInfoType		UserProductInfo;
 	///授权码
 	AuthCodeType		AuthCode;
+	///App代码
+	AppIDType			AppID;
 	///地址信息
 	AddressType			Address;
 	///配置文件路径

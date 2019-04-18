@@ -22,7 +22,7 @@
     <ProjectGuid>{3F2DB224-C53A-4983-B77D-0629D3ABDD80}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ATP_Quote</RootNamespace>
-    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
