@@ -8,10 +8,14 @@
 class EnumBase(type):
     def __init__(self, name, base, fields):
         super(EnumBase, self).__init__(name, base, fields)
-        self.__mapping = dict((v, k) for k, v in fields.items())
+        self.__mapping_int = dict((v, k) for k, v in fields.items())
+        self.__mapping_str = dict((k, v) for k, v in fields.items())
 
     def __getitem__(self, val):
-        return self.__mapping[val]
+        try:
+            return self.__mapping_int[val]
+        except KeyError:
+            return self.__mapping_str[val]
 
 
 def enum_kv(*seq, **named):
@@ -20,8 +24,9 @@ def enum_kv(*seq, **named):
 
 
 def enum_k(start, *sequential, **named):
-    enums = dict(zip(sequential, range(start, start+len(sequential))), **named)
+    enums = dict(zip(sequential, range(start, start + len(sequential))), **named)
     return EnumBase('Enum', (), enums)
+
 
 """
 连接状态,此枚举主要供程序进行识别使用
@@ -315,15 +320,16 @@ BusinessType = enum_k(
     'Option',
 )
 
+if __name__ == '__main__':
+    Numbers = enum_kv(ONE=1, TWO=2, THREE='three')
+    print(Numbers.TWO)
+    print(Numbers[Numbers.ONE])
+    print(Numbers[2])
+    print(Numbers['three'])
 
-# Numbers = enum_kv(ONE=1, TWO=2, THREE='three')
-# print(Numbers.TWO)
-# print(Numbers[Numbers.ONE])
-# print(Numbers[2])
-# print(Numbers['three'])
-
-# print(ConnectionStatus)
-# print(type(ConnectionStatus))
-# print(ConnectionStatus.Authorized)
-# print(ConnectionStatus[ConnectionStatus.Authorized])
-# print(type(ConnectionStatus.Authorized))
+    print(ConnectionStatus)
+    print(type(ConnectionStatus))
+    print(ConnectionStatus.Authorized)
+    print(ConnectionStatus[ConnectionStatus.Authorized])
+    print(type(ConnectionStatus.Authorized))
+    print(ConnectionStatus['Authorized'])

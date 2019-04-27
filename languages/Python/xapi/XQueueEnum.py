@@ -73,6 +73,7 @@ ResponseType = enum_k(
     'OnRspQryHistoricalTicks',
     'OnRspQryHistoricalBars',
     'OnRspQryInvestor',
+    'OnRtnInstrumentStatus',
 
     'OnFilterSubscribe',
 )
