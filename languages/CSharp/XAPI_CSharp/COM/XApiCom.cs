@@ -62,8 +62,8 @@ namespace XAPI.COM
         private readonly ConcurrentQueue<QueueData> MessageQueue;
 
         private readonly XApi api;
-        private ServerInfoField _Server;
-        private UserInfoField _User;
+        private ServerInfoField _Server = new ServerInfoField();
+        private UserInfoField _User = new UserInfoField();
         private OrderField _Order;
         private ReqQueryField _Query;
 
@@ -247,7 +247,7 @@ namespace XAPI.COM
 
         public void NewOrder()
         {
-            _Order = default(OrderField);
+            _Order = new OrderField();
         }
         public void SetOrder(string key, object value)
         {
@@ -279,7 +279,7 @@ namespace XAPI.COM
 
         public void NewQuery()
         {
-            _Query = default(ReqQueryField);
+            _Query = new ReqQueryField();
         }
         public void SetQuery(string key, object value)
         {

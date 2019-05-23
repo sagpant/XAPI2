@@ -15,7 +15,7 @@ namespace XAPI
     {
         static void OnConnectionStatus(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1)
         {
-            if (size1>0)
+            if (size1 > 0)
             {
                 Console.WriteLine("333333" + status);
                 Console.WriteLine("333333" + userLogin.ToFormattedStringLong());
@@ -46,7 +46,7 @@ namespace XAPI
             //Console.WriteLine(marketData.Exchange);
             Console.WriteLine(marketData.LastPrice);
             //Console.WriteLine(marketData.OpenInterest);
-            if(marketData.Bids.Count()>0)
+            if (marketData.Bids.Count() > 0)
             {
                 Console.WriteLine(marketData.Bids[0].Price);
             }
@@ -56,7 +56,7 @@ namespace XAPI
             }
         }
 
-        static void OnRspQryInstrument(object sender, ref InstrumentField instrument,int size1, bool bIsLast)
+        static void OnRspQryInstrument(object sender, ref InstrumentField instrument, int size1, bool bIsLast)
         {
             Console.WriteLine(instrument.InstrumentName);
         }
@@ -107,9 +107,9 @@ namespace XAPI
                     return (prefix1 == 0) || (prefix3 == 300);
                 default:
                     break;
-		    }
+            }
 
-		    return true;
+            return true;
         }
 
         static void Main(string[] args)
@@ -130,14 +130,14 @@ namespace XAPI
 
             //for (int i = 0; i < 10000; ++i)
             {
-                test_CTP_Main(args);
+                test_CTP_COM_Main(args);
             }
             Console.ReadKey();
         }
 
         static void test_Linux_Main(string[] args)
         {
-			XApi api = new XApi(@"libQuantBox_CTP_Quote.so");
+            XApi api = new XApi(@"libQuantBox_CTP_Quote.so");
             XApi api2 = new XApi(@"libQuantBox_CTP_Trade.so");
 
             api.Server.BrokerID = "1017";
@@ -151,7 +151,7 @@ namespace XAPI
 
             api2.Server.BrokerID = "1017";
             api2.Server.Address = "tcp://ctpmn1-front1.citicsf.com:51205";
-			api2.Server.PrivateTopicResumeType = ResumeType.Quick;
+            api2.Server.PrivateTopicResumeType = ResumeType.Quick;
 
             api2.User.UserID = "00000015";
             api2.User.Password = "123456";
@@ -166,19 +166,19 @@ namespace XAPI
             api2.OnRtnTrade = OnRtnTrade;
 
             api.Connect();
-           	api2.Connect();
+            api2.Connect();
 
             api.Subscribe("IF1502;IF1503", "");
 
             Console.ReadKey();
 
-			Thread.Sleep (10000);
-			Console.WriteLine (123);
+            Thread.Sleep(10000);
+            Console.WriteLine(123);
             api.Dispose();
             api2.Dispose();
         }
 
-		#region LTS
+        #region LTS
         static void test_LTS_Main(string[] args)
         {
             XApi api = new XApi("QuantBox_LTS_Quote.dll");
@@ -221,7 +221,7 @@ namespace XAPI
             api2.Dispose();
             //queue.Dispose();
         }
-		#endregion
+        #endregion
 
         static IXApi api;
 
@@ -447,6 +447,39 @@ namespace XAPI
         static void api_OnConnectionStatus(object sender, OnConnectionStatusEventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        static void test_CTP_COM_Main(string[] args)
+        {
+            var api = new XAPI.COM.XApiCom();
+
+            //Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
+            //var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll");
+
+            //api = a;
+
+            //api.Server.BrokerID = "9999";
+            //api.Server.Address = "tcp://180.168.146.187:10010";
+            //api.Server.PrivateTopicResumeType = ResumeType.Undefined;
+
+            //api.User.UserID = "037505";
+            //api.User.Password = "123456";
+
+            //api.OnConnectionStatus = OnConnectionStatus;
+            //api.OnRtnDepthMarketData = OnRtnDepthMarketData;
+            //api.OnRspQryInstrument = OnRspQryInstrument;
+            //api.OnRspQrySettlementInfo = OnRspQrySettlementInfo;
+
+            api.Connect();
+            Thread.Sleep(3 * 1000);
+            api.Subscribe("IF000;IF_WI;IF_IH_1803;IF888", "");
+
+            Console.ReadKey();
+            Thread.Sleep(1000 * 1000);
+
+            api.Dispose();
+
+            Thread.Sleep(5 * 1000);
         }
     }
 }
