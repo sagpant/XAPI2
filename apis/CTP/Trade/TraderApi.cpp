@@ -61,6 +61,9 @@ void CTraderApi::QueryInThread(char type, void* pApi1, void* pApi2, double doubl
 		case E_UserLogoutField:
 			iRet = _ReqUserLogout(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 			break;
+		case E_ReqUserPasswordUpdateField:
+			iRet = _ReqUserPasswordUpdate(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
+			break;
 		case QueryType::QueryType_ReqQryTradingAccount:
 			iRet = _ReqQryTradingAccount(type, pApi1, pApi2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3);
 			break;
@@ -562,6 +565,15 @@ void CTraderApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 	}
 	else
 	{
+		// 140,首次登录改密码
+		// 131 弱密码
+		//if (pRspInfo->ErrorID == 140)
+		//{
+		//	// ReqUserPasswordUpdate("123456", "123@abc");
+		//	ReqUserPasswordUpdate("123456", "279183@ABC");
+		//	return;
+		//}
+
 		pField->RawErrorID = pRspInfo->ErrorID;
 		strncpy(pField->Text, pRspInfo->ErrorMsg, sizeof(Char256Type));
 
@@ -569,6 +581,35 @@ void CTraderApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 
 		// 收到登录失败后并没有销毁API，飞鼠一次只能登录一个用户，所以导致飞鼠用户失败
 		_DisconnectInThread();
+	}
+}
+
+void CTraderApi::ReqUserPasswordUpdate(char* szOldPassword, char* szNewPassword)
+{
+	CThostFtdcUserPasswordUpdateField* pBody = (CThostFtdcUserPasswordUpdateField*)m_msgQueue_Query->new_block(sizeof(CThostFtdcUserPasswordUpdateField));
+
+	strncpy(pBody->BrokerID, m_ServerInfo.BrokerID, sizeof(TThostFtdcBrokerIDType));
+	strncpy(pBody->UserID, m_UserInfo.UserID, sizeof(TThostFtdcUserIDType));
+	strncpy(pBody->OldPassword, szOldPassword, sizeof(TThostFtdcPasswordType));
+	strncpy(pBody->NewPassword, szNewPassword, sizeof(TThostFtdcPasswordType));
+
+	m_msgQueue_Query->Input_NoCopy(RequestType::E_ReqUserPasswordUpdateField, m_msgQueue_Query, this, 0, 0,
+		pBody, sizeof(CThostFtdcUserPasswordUpdateField), nullptr, 0, nullptr, 0);
+}
+
+int CTraderApi::_ReqUserPasswordUpdate(char type, void* pApi1, void* pApi2, double double1, double double2, void* ptr1, int size1, void* ptr2, int size2, void* ptr3, int size3)
+{
+	return m_pApi->ReqUserPasswordUpdate((CThostFtdcUserPasswordUpdateField*)ptr1, ++m_lRequestID);
+}
+
+void CTraderApi::OnRspUserPasswordUpdate(CThostFtdcUserPasswordUpdateField *pUserPasswordUpdate, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+{
+	if (!IsErrorRspInfo(pRspInfo)
+		&& pUserPasswordUpdate)
+	{
+	}
+	else
+	{
 	}
 }
 
