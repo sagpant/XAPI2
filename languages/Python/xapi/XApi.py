@@ -7,6 +7,10 @@ import threading
 import queue
 import time
 
+import logging
+
+logger = logging.getLogger("XApi")
+
 # function
 fnOnRespone = WINFUNCTYPE(c_void_p, c_char, c_void_p, c_void_p, c_double, c_double, c_void_p, c_int, c_void_p, c_int,
                           c_void_p, c_int)
@@ -122,7 +126,7 @@ class XApi(object):
         func = self._cdll_api.X_Connect
         func.restype = None
         func.argtypes = [c_void_p, c_void_p, c_char_p, POINTER(ServerInfoField), POINTER(UserInfoField), c_int]
-        func(self._fun, self._api, b'', byref(self.ServerInfo), byref(self.UserInfo), 1)
+        func(self._fun, self._api, b'tmp', byref(self.ServerInfo), byref(self.UserInfo), 1)
 
         if self.t is None:
             self.t = threading.Thread(target=self._t_check)
@@ -142,14 +146,15 @@ class XApi(object):
                 time.sleep(30)
                 continue
             if self.is_connecting():
-                time.sleep(10)
+                # 正在连接中，会收到回报，致时间有点久
+                time.sleep(30)
                 if self.is_connected():
                     continue
                 # N秒还没连上，销毁重连
                 self.disconnect(exit=False)
                 time.sleep(2)
                 continue
-            print(datetime.now(), '重连中...')
+            logger.info('%s:重连中...', self.name)
             self.connect()
             time.sleep(10)
 
@@ -262,7 +267,7 @@ class XApi(object):
                                                                            ptr1, size1, ptr2, size2, ptr3, size3)
 
     def _on_default(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
-        print(u"功能还没实现:%d" % ord(response_type))
+        logger.warning("功能还没实现:%d" % ord(response_type))
 
     def _OnConnectionStatus(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
                             size3):
@@ -273,7 +278,8 @@ class XApi(object):
         self._status = int(double1)
         self._spi.OnConnectionStatus(self, self._status, obj, size1)
         if self.is_connected():
-            for k, v in self.subscribed.items():
+            _subscribed = self.subscribed.copy()
+            for k, v in _subscribed.items():
                 self.subscribe(k, v)
 
     def _OnRtnInstrumentStatus(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,

@@ -585,3 +585,27 @@ class MyXSpi(XSpi):
         }
 
         _menu.get(x, self.usage)()
+
+
+if __name__ == "__main__":
+    # order = (OrderField * 1)()
+    # orderid = (OrderIDTypeField * 1)()
+    # orderid[0].OrderIDType = b''
+    # x = {'InstrumentID': 'agc'}
+    # for k, v in x.items():
+    #     o = getattr(order[0], k)
+    #     if isinstance(o, bytes):
+    #         setattr(order[0], k, v.encode('gbk'))
+    # orderid[0]
+    x = {'InstrumentID': 'agc',
+         'ExchangeID': '',
+         'Type': OrderType.Market,
+         'Side': OrderSide.Sell,
+         'Qty': 45,
+         'Price': 123.1,
+         'OpenClose': OpenCloseType.CloseToday,
+         'HedgeFlag': HedgeFlagType.Speculation,
+         }
+    order = OrderField()
+    order.from_dict(x)
+    order
