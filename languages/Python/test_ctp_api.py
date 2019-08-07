@@ -20,10 +20,10 @@ def init(config):
 
     # 行情连接
     md = XApi(r'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\XAPI_CPP_x86.dll')
-    md.ServerInfo.Address = config['md']['Address']
-    md.ServerInfo.BrokerID = config['md']['BrokerID']
-    md.UserInfo.UserID = config['md']['UserID']
-    md.UserInfo.Password = config['md']['Password']
+    md.ServerInfo.Address = config['api']['Address']
+    md.ServerInfo.BrokerID = config['api']['BrokerID']
+    md.UserInfo.UserID = config['api']['UserID']
+    md.UserInfo.Password = config['api']['Password']
 
     ret = td.init(br'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Trade_x86.dll')
     if not ret:

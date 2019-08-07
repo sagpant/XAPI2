@@ -16,7 +16,7 @@ from test_ctp_api import main
 
 configs = {
     'root_dir': r'd:' + '\\test_ctp\\某用户',
-    'md': {
+    'api': {
         'Address': br'tcp://218.202.237.33:10012',
         'BrokerID': b'9999',
         'UserID': b'654321',
