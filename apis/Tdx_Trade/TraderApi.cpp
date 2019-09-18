@@ -695,8 +695,8 @@ int CTraderApi::OnResponse_Subscribe(CTdxApi* pApi, RequestResponse_STRUCT* pRes
 		sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, "");
 
 		// 交易时间
-		GetExchangeTime(time(nullptr), &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime);
-
+		pField->TradingDay = pField->ActionDay = current_date();
+		pField->UpdateTime = current_time();
 
 		pField->LastPrice = pDepthMarketData->DQJ_;
 		//pField->Volume = 0;

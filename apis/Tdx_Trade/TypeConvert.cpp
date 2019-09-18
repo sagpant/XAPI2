@@ -288,16 +288,7 @@ void CharTable2WTLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, WTLB_STRUCT
 		// 可能没有，怎么办?那就只好不用它了
 		ppResults[i]->CDSL_ = atoi(ppResults[i]->CDSL);
 
-		if (strstr(ppResults[i]->WTSJ, ":"))
-		{
-			int HH = 0, mm = 0, ss = 0;
-			GetUpdateTime_HH_mm_ss(ppResults[i]->WTSJ, &HH, &mm, &ss);
-			ppResults[i]->WTSJ_ = HH * 10000 + mm * 100 + ss;
-		}
-		else
-		{
-			ppResults[i]->WTSJ_ = atoi(ppResults[i]->WTSJ);
-		}
+		ppResults[i]->WTSJ_ = str_to_HHmmss(ppResults[i]->WTSJ);
 
 
 		if (col_147 >= 0)
@@ -437,18 +428,7 @@ void CharTable2CJLB(FieldInfo_STRUCT** ppFieldInfos, char** ppTable, CJLB_STRUCT
 		ppResults[i]->CDBZ_ = atoi(ppResults[i]->CDBZ);
 		ppResults[i]->FSJE_ = atof(ppResults[i]->FSJE);
 
-
-		if (strstr(ppResults[i]->CJSJ, ":"))
-		{
-			int HH = 0, mm = 0, ss = 0;
-			GetUpdateTime_HH_mm_ss(ppResults[i]->CJSJ, &HH, &mm, &ss);
-			ppResults[i]->CJSJ_ = HH * 10000 + mm * 100 + ss;
-		}
-		else
-		{
-			ppResults[i]->CJSJ_ = atoi(ppResults[i]->CJSJ);
-		}
-
+		ppResults[i]->CJSJ_ = str_to_HHmmss(ppResults[i]->CJSJ);
 		ppResults[i]->WTLB_ = WTLB_str_2_int(ppResults[i]->WTLB);
 
 		ppResults[i]->Client = Client;

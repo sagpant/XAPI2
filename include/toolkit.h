@@ -14,18 +14,36 @@ void WriteLog(const char *fmt, ...);
 //输入路径，生成多级目录
 void makedirs(const char* dir);
 
-int GetUpdateTime(char* UpdateTime, int* _UpdateTime, int* UpdateMillisec);
-void GetExchangeTime_CZCE(int iTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);
-void GetExchangeTime_Undefined(int iTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);
-void GetExchangeTime_DCE(char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);
-void GetExchangeTime(char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);
-void GetExchangeTime(time_t Time, int* _TradingDay, int* _ActionDay, int* _UpdateTime);
+void split_int_to_4_2_2(int HHmmss, int* _HH, int* _mm, int* _ss);
+int contact_4_2_2_to_HHmmss(int yyyy, int MM, int ss);
+void split_str_to_4_2_2(const char* szHHmmss, int* _HH, int* _mm, int* _ss);
 
-void GetUpdateTime_HH_mm_ss(char* UpdateTime, int* _HH, int* _mm, int* _ss);
-void GetUpdateTime_HHmmss(char* UpdateTime, int* _HH, int* _mm, int* _ss);
+void split_HH_mm_ss_to_2_2_2(const char* szHH_mm_ss, int* _HH, int* _mm, int* _ss);
 
-int GetDate(char* TradingDay);
-int GetTime(char* UpdateTime);
+void split_yyyy_MM_dd_to_2_2_2(const char* szyyyy_MM_dd, int* _HH, int* _mm, int* _ss);
+
+tm tm_add_seconds(tm* _Tm, int sec);
+
+tm yyyy_MM_dd_to_tm(int yyyy, int MM, int dd);
+tm yyyyMMdd_to_tm(int yyyyMMdd);
+
+int tm_to_yyyyMMdd(tm* _tm);
+
+int tm_to_HHmmss(tm* _tm);
+
+int current_date();
+
+int current_time();
+
+tm get_pre_trading_day(tm* _tm);
+
+int str_to_yyyyMMdd(const char* yyyyMMdd);
+
+int str_to_HHmmss(const char* HHmmss);
+
+int GetUpdateTime(const char* UpdateTime, int* _UpdateTime, int* UpdateMillisec);
+
+void GetExchangeTime(int iTradingDay, int iPreTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec);
 
 double my_round(float val, int x = 0);
 

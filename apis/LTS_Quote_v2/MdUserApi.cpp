@@ -377,10 +377,13 @@ void CMdUserApi::OnRspUserLogin(CSecurityFtdcRspUserLoginField *pRspUserLogin, C
 	if (!IsErrorRspInfo(pRspInfo)
 		&&pRspUserLogin)
 	{
-		//GetExchangeTime(pRspUserLogin->TradingDay, nullptr, pRspUserLogin->LoginTime,
-		//	&pField->TradingDay, nullptr, &pField->LoginTime, nullptr);
-		pField->TradingDay = GetDate(pRspUserLogin->TradingDay);
-		pField->LoginTime = GetTime(pRspUserLogin->LoginTime);
+		pField->TradingDay = str_to_yyyyMMdd(pRspUserLogin->TradingDay);
+		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
+
+		m_TradingDay = pField->TradingDay;
+		tm _tm1 = yyyyMMdd_to_tm(m_TradingDay);
+		tm _tm2 = get_pre_trading_day(&_tm1);
+		m_PreTradingDay = tm_to_yyyyMMdd(&_tm2);
 
 		sprintf(pField->SessionID, "%d:%d", pRspUserLogin->FrontID, pRspUserLogin->SessionID);
 
@@ -439,8 +442,11 @@ void CMdUserApi::OnRtnDepthMarketData(CSecurityFtdcDepthMarketDataField *pDepthM
 	pField->Exchange = TSecurityFtdcExchangeIDType_2_ExchangeType(pDepthMarketData->ExchangeID);
 
 	sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pDepthMarketData->ExchangeID);
-	GetExchangeTime(pDepthMarketData->TradingDay, nullptr, pDepthMarketData->UpdateTime
-		, &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
+
+	GetExchangeTime(m_TradingDay, m_PreTradingDay,
+		pDepthMarketData->TradingDay, pDepthMarketData->ActionDay, pDepthMarketData->UpdateTime,
+		&pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
+
 	pField->UpdateMillisec = pDepthMarketData->UpdateMillisec;
 
 	pField->LastPrice = pDepthMarketData->LastPrice;

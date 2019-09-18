@@ -327,8 +327,8 @@ void CTraderApi::OnRspUserLogin(CSecurityFtdcRspUserLoginField *pRspUserLogin, C
 	if (!IsErrorRspInfo(pRspInfo)
 		&&pRspUserLogin)
 	{
-		pField->TradingDay = GetDate(pRspUserLogin->TradingDay);
-		pField->LoginTime = GetTime(pRspUserLogin->LoginTime);
+		pField->TradingDay = str_to_yyyyMMdd(pRspUserLogin->TradingDay);
+		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
 
 		sprintf(pField->SessionID, "%d:%d", pRspUserLogin->FrontID, pRspUserLogin->SessionID);
 
@@ -796,7 +796,7 @@ void CTraderApi::OnTrade(CSecurityFtdcTradeField *pTrade, int nRequestID, bool b
 	pField->OpenClose = TSecurityFtdcOffsetFlagType_2_OpenCloseType(pTrade->OffsetFlag);
 	pField->HedgeFlag = TSecurityFtdcHedgeFlagType_2_HedgeFlagType(pTrade->HedgeFlag);
 	pField->Commission = 0;//TODO收续费以后要计算出来
-	pField->Time = GetTime(pTrade->TradeTime);
+	pField->Time = str_to_HHmmss(pTrade->TradeTime);
 	strcpy(pField->TradeID, pTrade->TradeID);
 
 	if (nRequestID == 0)

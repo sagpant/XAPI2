@@ -18,6 +18,7 @@
 #define TThostFtdcAuthCodeType				TZQThostFtdcAuthCodeType
 #define	TThostFtdcOrderRefType				TZQThostFtdcOrderRefType
 #define TThostFtdcInstrumentStatusType		TZQThostFtdcInstrumentStatusType
+#define TThostFtdcUserIDType				TZQThostFtdcUserIDType
 
 // 结构体
 #define CThostFtdcRspInfoField				CZQThostFtdcRspInfoField
@@ -43,6 +44,7 @@
 #define CThostFtdcQryInvestorField			CZQThostFtdcQryInvestorField
 #define CThostFtdcQryInvestorPositionField	CZQThostFtdcQryInvestorPositionField
 #define CThostFtdcQryTradingAccountField	CZQThostFtdcQryTradingAccountField
+#define CThostFtdcUserPasswordUpdateField	CZQThostFtdcUserPasswordUpdateField
 
 
 // 类

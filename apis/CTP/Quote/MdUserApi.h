@@ -107,7 +107,9 @@ private:
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 
+	// 交易日
 	int							m_TradingDay;
+	int							m_PreTradingDay;
 
 	CSubscribeManager*			m_pSubscribeManager;
 	CSubscribeManager*			m_pQuoteSubscribeManager;

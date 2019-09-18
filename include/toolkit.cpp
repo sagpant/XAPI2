@@ -5,12 +5,12 @@
 #include <stdarg.h>
 
 #if defined _WIN32 || WIN32 || _WINDOWS
-    #include <direct.h>
-    #define MKDIR(X) _mkdir((X));
+#include <direct.h>
+#define MKDIR(X) _mkdir((X));
 #else
-    #include <sys/stat.h>
-    #define MKDIR(X) mkdir((X),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    #define _vsnprintf vsnprintf
+#include <sys/stat.h>
+#define MKDIR(X) mkdir((X),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#define _vsnprintf vsnprintf
 #endif // defined
 
 void WriteLog(const char *fmt, ...)
@@ -35,12 +35,12 @@ void makedirs(const char* dir)
 
 	size_t len = strlen(dir);
 
-	char * p = new char[len+1];
-	strcpy(p,dir);
-	for (size_t i = 0; i<len; ++i)
+	char * p = new char[len + 1];
+	strcpy(p, dir);
+	for (size_t i = 0; i < len; ++i)
 	{
 		char ch = p[i];
-		if ('\\' == ch ||'/' == ch)
+		if ('\\' == ch || '/' == ch)
 		{
 			p[i] = '\0';
 			MKDIR(p);
@@ -56,335 +56,220 @@ double my_round(float val, int x)
 	return i;
 }
 
-void GetUpdateTime_HH_mm_ss(char* UpdateTime,int* _HH,int* _mm,int* _ss)
+void split_int_to_4_2_2(int HHmmss, int* _HH, int* _mm, int* _ss)
 {
-	*_HH = atoi(&UpdateTime[0]);
-	*_mm = atoi(&UpdateTime[3]);
-	*_ss = atoi(&UpdateTime[6]);
-}
-
-void GetUpdateTime_HHmmss(char* UpdateTime, int* _HH, int* _mm, int* _ss)
-{
-	int HHmmss = atoi(UpdateTime);
+	// 20190917
+	// 2019 09 17
+	// 135400
+	// 13 54 00
 	*_HH = HHmmss / 10000;
 	*_mm = HHmmss % 10000 / 100;
 	*_ss = HHmmss % 100;
 }
 
-int GetDate(char* TradingDay)
+int contact_4_2_2_to_HHmmss(int yyyy, int MM, int ss)
 {
-	int yyyyMMdd = atoi(TradingDay);
-	return yyyyMMdd;
+	return yyyy * 10000 + MM * 100 + ss;
 }
 
-int GetTime(char* UpdateTime)
+void split_str_to_4_2_2(const char* szHHmmss, int* _HH, int* _mm, int* _ss)
 {
-	int HH = 0;// atoi(&UpdateTime[0]);
-	int mm = 0;//atoi(&UpdateTime[3]);
-	int ss = 0;//atoi(&UpdateTime[6]);
-	if (strlen(UpdateTime) <= 6)
-	{
-		GetUpdateTime_HHmmss(UpdateTime, &HH, &mm, &ss);
-	}
-	else
-	{
-		GetUpdateTime_HH_mm_ss(UpdateTime, &HH, &mm, &ss);
-	}
-	return HH * 10000 + mm * 100 + ss;
+	int HHmmss = atoi(szHHmmss);
+	split_int_to_4_2_2(HHmmss, _HH, _mm, _ss);
 }
 
-int GetUpdateTime(char* UpdateTime, int* _UpdateTime, int* UpdateMillisec)
+void split_HH_mm_ss_to_2_2_2(const char* szHH_mm_ss, int* _HH, int* _mm, int* _ss)
+{
+	// 处理有间隔的字符串,但没有处理HH:mm:ss.fff的情况
+	// 13:54:00
+	// 13 54 00
+	// 2019-09-17
+	// 2019 09 17
+	int len = 8;
+
+	*_HH = atoi(&szHH_mm_ss[0]);
+	*_mm = atoi(&szHH_mm_ss[len - 2 - 3]);
+	*_ss = atoi(&szHH_mm_ss[len - 2]);
+}
+
+void split_yyyy_MM_dd_to_2_2_2(const char* szyyyy_MM_dd, int* _HH, int* _mm, int* _ss)
+{
+	// 处理有间隔的字符串
+	// 13:54:00
+	// 13 54 00
+	// 2019-09-17
+	// 2019 09 17
+	int len = strlen(szyyyy_MM_dd);
+
+	*_HH = atoi(&szyyyy_MM_dd[0]);
+	*_mm = atoi(&szyyyy_MM_dd[len - 2 - 3]);
+	*_ss = atoi(&szyyyy_MM_dd[len - 2]);
+}
+
+tm tm_add_seconds(tm* _Tm, int sec)
+{
+	time_t _t = mktime(_Tm);
+	_t += sec;
+	// 需要立即取出，所以使用了*
+	return *localtime(&_t);
+}
+
+tm yyyy_MM_dd_to_tm(int yyyy, int MM, int dd)
+{
+	tm _tm = { 0 }; // 记得要清空
+	_tm.tm_year = yyyy - 1900;
+	_tm.tm_mon = MM - 1;
+	_tm.tm_mday = dd;
+	return _tm;
+}
+
+tm yyyyMMdd_to_tm(int yyyyMMdd)
+{
+	int yyyy = 0;
+	int MM = 0;
+	int dd = 0;
+	split_int_to_4_2_2(yyyyMMdd, &yyyy, &MM, &dd);
+	return yyyy_MM_dd_to_tm(yyyy, MM, dd);
+}
+
+int tm_to_yyyyMMdd(tm* _tm)
+{
+	return (_tm->tm_year + 1900) * 10000 + (_tm->tm_mon + 1) * 100 + _tm->tm_mday;
+}
+
+int tm_to_HHmmss(tm* _tm)
+{
+	return _tm->tm_hour * 10000 + _tm->tm_min * 100 + _tm->tm_sec;
+}
+
+int current_date()
+{
+	time_t now = time(0);
+	return tm_to_yyyyMMdd(localtime(&now));
+}
+
+int current_time()
+{
+	time_t now = time(0);
+	return tm_to_HHmmss(localtime(&now));
+}
+
+tm get_pre_trading_day(tm* _tm)
+{
+	// 没有处理长假问题，但使用时不用担心
+
+	// 从周日开始，0-6
+
+	// 周日周一，都要退到周五，其它只要退一天即可
+	if (_tm->tm_wday == 1)
+	{
+		// 周一
+		return tm_add_seconds(_tm, -86400 * 3);
+	}
+	if (_tm->tm_wday == 0)
+	{
+		// 周日
+		return tm_add_seconds(_tm, -86400 * 2);
+	}
+	// 周六到周二
+	return tm_add_seconds(_tm, -86400 * 1);
+}
+
+int str_to_yyyyMMdd(const char* yyyyMMdd)
+{
+	return atoi(yyyyMMdd);
+}
+
+int str_to_HHmmss(const char* HHmmss)
 {
 	// UpdateTime处理
-	int HH = 0;// atoi(&UpdateTime[0]);
-	int mm = 0;//atoi(&UpdateTime[3]);
-	int ss = 0;//atoi(&UpdateTime[6]);
-	if (strlen(UpdateTime) <= 6)
+	int HH = 0;
+	int mm = 0;
+	int ss = 0;
+	// 兼容
+	int len = strlen(HHmmss);
+	if (len <= 6)
 	{
-		GetUpdateTime_HHmmss(UpdateTime, &HH, &mm, &ss);
+		split_str_to_4_2_2(HHmmss, &HH, &mm, &ss);
 	}
 	else
 	{
-		GetUpdateTime_HH_mm_ss(UpdateTime, &HH, &mm, &ss);
+		// 处理HH:mm:ss
+		split_HH_mm_ss_to_2_2_2(HHmmss, &HH, &mm, &ss);
+	}
+	return contact_4_2_2_to_HHmmss(HH, mm, ss);
+}
+
+int GetUpdateTime(const char* UpdateTime, int* _UpdateTime, int* UpdateMillisec)
+{
+	*UpdateMillisec = 0;
+
+	*_UpdateTime = str_to_HHmmss(UpdateTime);
+
+	// 兼容
+	int len = strlen(UpdateTime);
+	if (len > 9)
+	{
+		// 处理HH:mm:ss.fff
+		*UpdateMillisec = atoi(&UpdateTime[9]);
 	}
 
-	if (UpdateMillisec)
+	return *_UpdateTime / 10000;
+}
+
+void GetExchangeTime(int iTradingDay, int iPreTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec)
+{
+	// iTradingDay登录时获取的交易日，
+	// iPreTradingDay登录时获取的交易日的前一交易日
+
+	// 郑
+
+	// UpdateTime处理
+	int HH = GetUpdateTime(UpdateTime, _UpdateTime, UpdateMillisec);
+
+	int tradingDay = atoi(TradingDay);
+	int actionDay = atoi(ActionDay);
+
+	// 白天直接使用
+	*_TradingDay = tradingDay;
+	*_ActionDay = actionDay;
+
+	// 白天不处理，最早18点44就收到了数据
+	if (HH > 6 && HH < 18)
+		return;
+
+	if (tradingDay != actionDay)
 	{
-		if (strlen(UpdateTime)>9)
+		// 上海，21点到0点之间正好不相等，不需要处理
+		// 上海第二天，两个值就相等了
+		return;
+	}
+
+	// 1. 登录时间周一早上
+	// 2. 登录时间周日
+	// 3. 登录时间，周六晚
+	// 4. 登录时间，周五晚
+	if (HH <= 6)
+	{
+		// 只有上期所和能源中心的合约会进入到此状态，而它们的Day都是正确的，不用调整
+		return;
+	}
+
+	if (HH >= 18)
+	{
+		// 大商所ActionDay存的是交易日，需要修正成交易日的前一交易日
+		// 郑商所TradingDay存的是行情日，需要修正成交易日
+		if (iTradingDay == tradingDay)
 		{
-			*UpdateMillisec = atoi(&UpdateTime[9]);
+			// 大商所
+			// 由于长假前没有夜盘，所以不用担心前交易日计算错误
+			*_ActionDay = iPreTradingDay;
 		}
 		else
 		{
-			*UpdateMillisec = 0;
+			// 郑商所
+			*_TradingDay = iTradingDay;
 		}
-	}
-
-	if (_UpdateTime)
-	{
-		*_UpdateTime = HH * 10000 + mm * 100 + ss;
-		if (*_UpdateTime == 0)
-		{
-			time_t now = time(0);
-			struct tm *ptmNow = localtime(&now);
-			int datetime = ptmNow->tm_hour * 10000 + ptmNow->tm_min * 100 + ptmNow->tm_sec;
-			if (datetime > 1500 && datetime < 234500)
-				*_UpdateTime = datetime;
-		}
-	}
-
-	return HH;
-}
-
-void GetExchangeTime_DCE(char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec)
-{
-//DCE
-//TradingDay : 交易日
-//ActionDay : 交易日
-	// UpdateTime处理
-	int HH = GetUpdateTime(UpdateTime, _UpdateTime, UpdateMillisec);
-
-	// TradingDay处理
-	if (_TradingDay)
-	{
-		int tradingday = atoi(TradingDay);
-		if (tradingday == 0)
-		{
-			time_t now = time(0);
-			struct tm *ptmNow = localtime(&now);
-			tradingday = (ptmNow->tm_year + 1900) * 10000 + (ptmNow->tm_mon + 1) * 100 + ptmNow->tm_mday;
-		}
-		*_TradingDay = tradingday;
-	}
-
-	if (_ActionDay == nullptr)
-		return;
-
-	// ActionDay处理
-	if ((HH>6 && HH<18) && (ActionDay != nullptr) && (strlen(ActionDay) == 8))
-	{
-		*_ActionDay = atoi(ActionDay);
-	}
-	else
-	{
-		time_t now = time(0);
-		struct tm *ptmNow = localtime(&now);
-		if (HH >= 23)
-		{
-			if (ptmNow->tm_hour<1)
-			{
-				now -= 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-		else if (HH<1)
-		{
-			if (ptmNow->tm_hour >= 23)
-			{
-				now += 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-
-		*_ActionDay = (1900 + ptmNow->tm_year) * 10000 + (1 + ptmNow->tm_mon) * 100 + ptmNow->tm_mday;
-	}
-}
-
-void GetExchangeTime_CZCE(int iTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec)
-{
-//CZC
-//TradingDay : 行情日
-//ActionDay : 行情日
-
-	// UpdateTime处理
-	int HH = GetUpdateTime(UpdateTime, _UpdateTime, UpdateMillisec);
-
-	// TradingDay处理
-	if (_TradingDay)
-	{
-		int tradingday = 0;
-		if ((HH > 18 || HH < 6))
-		{
-			tradingday = iTradingDay;
-		}
-		else
-		{
-			tradingday = atoi(TradingDay);
-		}
-		if (tradingday == 0)
-		{
-			time_t now = time(0);
-			struct tm *ptmNow = localtime(&now);
-			tradingday = (ptmNow->tm_year + 1900) * 10000 + (ptmNow->tm_mon + 1) * 100 + ptmNow->tm_mday;
-		}
-		*_TradingDay = tradingday;
-	}
-
-	if (_ActionDay == nullptr)
-		return;
-
-	// ActionDay处理
-	if ((ActionDay != nullptr) && (strlen(ActionDay) == 8))
-	{
-		*_ActionDay = atoi(ActionDay);
-	}
-	else
-	{
-		time_t now = time(0);
-		struct tm *ptmNow = localtime(&now);
-		if (HH >= 23)
-		{
-			if (ptmNow->tm_hour<1)
-			{
-				now -= 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-		else if (HH<1)
-		{
-			if (ptmNow->tm_hour >= 23)
-			{
-				now += 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-
-		*_ActionDay = (1900 + ptmNow->tm_year) * 10000 + (1 + ptmNow->tm_mon) * 100 + ptmNow->tm_mday;
-	}
-}
-
-void GetExchangeTime_Undefined(int iTradingDay, char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec)
-{
-	// 由于CTP期货中行情没有提供交易所，所以一开始就无法按交易所来分类
-
-	// UpdateTime处理
-	int HH = GetUpdateTime(UpdateTime, _UpdateTime, UpdateMillisec);
-
-	// TradingDay处理
-	if (_TradingDay)
-	{
-		int tradingday = 0;
-		if ((HH > 18 || HH < 6))
-		{
-			tradingday = iTradingDay;
-		}
-		else
-		{
-			tradingday = atoi(TradingDay);
-		}
-		if (tradingday == 0)
-		{
-			time_t now = time(0);
-			struct tm *ptmNow = localtime(&now);
-			tradingday = (ptmNow->tm_year + 1900) * 10000 + (ptmNow->tm_mon + 1) * 100 + ptmNow->tm_mday;
-		}
-		*_TradingDay = tradingday;
-	}
-
-	if (_ActionDay == nullptr)
-		return;
-
-	// ActionDay处理
-	if ((HH>6 && HH<18) && (ActionDay != nullptr) && (strlen(ActionDay) == 8))
-	{
-		*_ActionDay = atoi(ActionDay);
-	}
-	else
-	{
-		time_t now = time(0);
-		struct tm *ptmNow = localtime(&now);
-		if (HH >= 23)
-		{
-			if (ptmNow->tm_hour<1)
-			{
-				now -= 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-		else if (HH<1)
-		{
-			if (ptmNow->tm_hour >= 23)
-			{
-				now += 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-
-		*_ActionDay = (1900 + ptmNow->tm_year) * 10000 + (1 + ptmNow->tm_mon) * 100 + ptmNow->tm_mday;
-	}
-}
-
-void GetExchangeTime(char* TradingDay, char* ActionDay, char* UpdateTime, int* _TradingDay, int* _ActionDay, int* _UpdateTime, int* UpdateMillisec)
-{
-	// TradingDay处理
-	if (_TradingDay)
-	{
-		int tradingday = atoi(TradingDay);
-		if (tradingday == 0)
-		{
-			time_t now = time(0);
-			struct tm *ptmNow = localtime(&now);
-			tradingday = (ptmNow->tm_year + 1900) * 10000 + (ptmNow->tm_mon + 1) * 100 + ptmNow->tm_mday;
-		}
-		*_TradingDay = tradingday;
-	}
-
-	// UpdateTime处理
-	int HH = GetUpdateTime(UpdateTime, _UpdateTime, UpdateMillisec);
-
-	if (_ActionDay == nullptr)
-		return;
-
-	// ActionDay处理
-	if ((ActionDay != nullptr) && (strlen(ActionDay) == 8))
-	{
-		*_ActionDay = atoi(ActionDay);
-	}
-	else
-	{
-		time_t now = time(0);
-		struct tm *ptmNow = localtime(&now);
-		if (HH >= 23)
-		{
-			if (ptmNow->tm_hour<1)
-			{
-				now -= 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-		else if (HH<1)
-		{
-			if (ptmNow->tm_hour >= 23)
-			{
-				now += 86400;
-				ptmNow = localtime(&now);
-			}
-		}
-
-		*_ActionDay = (1900 + ptmNow->tm_year) * 10000 + (1 + ptmNow->tm_mon) * 100 + ptmNow->tm_mday;
-	}
-}
-
-void GetExchangeTime(time_t Time, int* _TradingDay, int* _ActionDay, int* _UpdateTime)
-{
-	struct tm *ptmNow = localtime(&Time);
-
-	int date = (ptmNow->tm_year + 1900) * 10000 + (ptmNow->tm_mon + 1) * 100 + ptmNow->tm_mday;
-	int time = (ptmNow->tm_hour) * 10000 + (ptmNow->tm_min) * 100 + ptmNow->tm_sec;
-
-	if (_TradingDay)
-	{
-		*_TradingDay = date;
-	}
-
-	if (_ActionDay)
-	{
-		*_ActionDay = date;
-	}
-
-	if (_UpdateTime)
-	{
-		*_UpdateTime = time;
 	}
 }
 

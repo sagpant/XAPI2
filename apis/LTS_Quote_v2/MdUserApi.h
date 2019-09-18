@@ -93,6 +93,10 @@ private:
 	CMsgQueue*					m_msgQueue_Query;
 	void*						m_pClass;
 
+	// ½»Ò×ÈÕ
+	int							m_TradingDay;
+	int							m_PreTradingDay;
+
 	CSubscribeManager*			m_pSubscribeManager;
 	CSyntheticConfig*			m_pSyntheticConfig;
 	CSyntheticManager*			m_pSyntheticManager;

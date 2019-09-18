@@ -509,9 +509,11 @@ void CTraderApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 		&& pRspUserLogin)
 	{
 #ifdef HAS_TradingDay_UserLogin
-		pField->TradingDay = GetDate(pRspUserLogin->TradingDay);
+		pField->TradingDay = str_to_yyyyMMdd(pRspUserLogin->TradingDay);
+#else
+		pField->TradingDay = current_date();
 #endif // HAS_TradingDay_UserLogin
-		pField->LoginTime = GetTime(pRspUserLogin->LoginTime);
+		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
 
 		sprintf(pField->SessionID, "%d:%d", pRspUserLogin->FrontID, pRspUserLogin->SessionID);
 
@@ -1461,7 +1463,7 @@ void CTraderApi::OnRspQryInstrument(CThostFtdcInstrumentField *pInstrument, CTho
 			pField->Type = CThostFtdcInstrumentField_2_InstrumentType(pInstrument);
 			pField->VolumeMultiple = pInstrument->VolumeMultiple;
 			pField->PriceTick = pInstrument->PriceTick;
-			pField->ExpireDate = GetDate(pInstrument->ExpireDate);
+			pField->ExpireDate = str_to_yyyyMMdd(pInstrument->ExpireDate);
 			pField->OptionsType = TThostFtdcOptionsTypeType_2_PutCall(pInstrument->OptionsType);
 			pField->StrikePrice = (pInstrument->StrikePrice < DBL_EPSILON || pInstrument->StrikePrice == DBL_MAX) ? 0 : pInstrument->StrikePrice;
 			strcpy(pField->UnderlyingInstrID, pInstrument->UnderlyingInstrID);
@@ -1639,7 +1641,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 
 				// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
 				CThostFtdcOrderField_2_OrderField_0(orderId, pOrder, pField);
-				pField->Time = GetTime(pOrder->InsertTime);
+				pField->Time = str_to_HHmmss(pOrder->InsertTime);
 
 				// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
 				m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));
@@ -1669,7 +1671,7 @@ void CTraderApi::OnOrder(CThostFtdcOrderField *pOrder, int nRequestID, bool bIsL
 
 			// 开盘时发单信息还没有，所以找不到对应的单子，需要进行Order的恢复
 			CThostFtdcOrderField_2_OrderField_0(orderId, pOrder, pField);
-			pField->Time = GetTime(pOrder->InsertTime);
+			pField->Time = str_to_HHmmss(pOrder->InsertTime);
 
 			// 添加到map中，用于其它工具的读取，撤单失败时的再通知等
 			//m_id_platform_order.insert(pair<string, OrderField*>(orderId, pField));
@@ -1731,7 +1733,7 @@ void CTraderApi::OnTrade(CThostFtdcTradeField *pTrade, int nRequestID, bool bIsL
 	pField->OpenClose = TThostFtdcOffsetFlagType_2_OpenCloseType(pTrade->OffsetFlag);
 	pField->HedgeFlag = TThostFtdcHedgeFlagType_2_HedgeFlagType(pTrade->HedgeFlag);
 	pField->Commission = 0;//TODO收续费以后要计算出来
-	pField->Time = GetTime(pTrade->TradeTime);
+	pField->Time = str_to_HHmmss(pTrade->TradeTime);
 	strcpy(pField->TradeID, pTrade->TradeID);
 
 	if (nRequestID == 0)
@@ -1869,7 +1871,7 @@ void CTraderApi::OnRtnInstrumentStatus(CThostFtdcInstrumentStatusField *pInstrum
 		sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pField->ExchangeID);
 
 		pField->InstrumentStatus = TThostFtdcInstrumentStatusType_2_TradingPhaseType(pInstrumentStatus->InstrumentStatus);
-		pField->EnterTime = GetTime(pInstrumentStatus->EnterTime);
+		pField->EnterTime = str_to_HHmmss(pInstrumentStatus->EnterTime);
 
 		m_msgQueue->Input_NoCopy(ResponseType::ResponseType_OnRtnInstrumentStatus, m_msgQueue, m_pClass, true, 0, pField, sizeof(InstrumentStatusField), nullptr, 0, nullptr, 0);
 	}

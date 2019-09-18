@@ -504,10 +504,16 @@ void CMdUserApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 		&& pRspUserLogin)
 	{
 #ifdef HAS_TradingDay_UserLogin
-		pField->TradingDay = GetDate(pRspUserLogin->TradingDay);
+		pField->TradingDay = str_to_yyyyMMdd(pRspUserLogin->TradingDay);
+#else
+		pField->TradingDay = current_date();
 #endif // HAS_TradingDay_UserLogin
-		pField->LoginTime = GetTime(pRspUserLogin->LoginTime);
+		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
+
 		m_TradingDay = pField->TradingDay;
+		tm _tm1 = yyyyMMdd_to_tm(m_TradingDay);
+		tm _tm2 = get_pre_trading_day(&_tm1);
+		m_PreTradingDay = tm_to_yyyyMMdd(&_tm2);
 
 		sprintf(pField->SessionID, "%d:%d", pRspUserLogin->FrontID, pRspUserLogin->SessionID);
 
@@ -586,26 +592,11 @@ void CMdUserApi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMark
 
 	sprintf(pField->Symbol, "%s.%s", pField->InstrumentID, pDepthMarketData->ExchangeID);
 
+
 	// 交易时间
-	switch (pField->Exchange)
-	{
-	case ExchangeType::ExchangeType_DCE:
-		GetExchangeTime_DCE(pDepthMarketData->TradingDay, pDepthMarketData->ActionDay, pDepthMarketData->UpdateTime
-			, &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
-		break;
-	case ExchangeType::ExchangeType_CZCE:
-		GetExchangeTime_CZCE(m_TradingDay, pDepthMarketData->TradingDay, pDepthMarketData->ActionDay, pDepthMarketData->UpdateTime
-			, &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
-		break;
-	case ExchangeType::ExchangeType_Undefined:
-		GetExchangeTime_Undefined(m_TradingDay, pDepthMarketData->TradingDay, pDepthMarketData->ActionDay, pDepthMarketData->UpdateTime
-			, &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
-		break;
-	default:
-		GetExchangeTime(pDepthMarketData->TradingDay, pDepthMarketData->ActionDay, pDepthMarketData->UpdateTime
-			, &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
-		break;
-	}
+	GetExchangeTime(m_TradingDay, m_PreTradingDay,
+		pDepthMarketData->TradingDay, pDepthMarketData->ActionDay, pDepthMarketData->UpdateTime,
+		&pField->TradingDay, &pField->ActionDay, &pField->UpdateTime, &pField->UpdateMillisec);
 
 	pField->UpdateMillisec = pDepthMarketData->UpdateMillisec;
 
@@ -827,8 +818,8 @@ void CMdUserApi::OnRtnForQuoteRsp(CThostFtdcForQuoteRspField *pForQuoteRsp)
 	// 上期技术的人说，上海中金走的交易接口，大商，郑商走行情，所以这个地方后期可能要改
 	QuoteRequestField* pField = (QuoteRequestField*)m_msgQueue->new_block(sizeof(QuoteRequestField));
 
-	pField->TradingDay = GetDate(pForQuoteRsp->TradingDay);
-	pField->QuoteTime = GetDate(pForQuoteRsp->ForQuoteTime);
+	pField->TradingDay = str_to_yyyyMMdd(pForQuoteRsp->TradingDay);
+	pField->QuoteTime = str_to_yyyyMMdd(pForQuoteRsp->ForQuoteTime);
 	strcpy(pField->Symbol, pForQuoteRsp->InstrumentID);
 	strcpy(pField->InstrumentID, pForQuoteRsp->InstrumentID);
 	strcpy(pField->ExchangeID, pForQuoteRsp->ExchangeID);

@@ -351,8 +351,9 @@ void CMdUserApi::OnRtnDepthMarketData(RCV_REPORT_STRUCTEx *pDepthMarketData, int
 		OnRspQryInstrument(pField, pDepthMarketData, index, Count);
 		m_setInstrumentIDsReceived.insert(pField->Symbol);
 	}
-
-	GetExchangeTime(pDepthMarketData->m_time, &pField->TradingDay, &pField->ActionDay, &pField->UpdateTime);
+	
+	pField->TradingDay = pField->ActionDay = current_date();
+	pField->UpdateTime = current_time();
 	
 	pField->LastPrice = my_round(pDepthMarketData->m_fNewPrice);
 	pField->Volume = pDepthMarketData->m_fVolume;

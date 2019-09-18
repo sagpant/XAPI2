@@ -360,8 +360,8 @@ void CQueryApi::OnRspUserLogin(CSecurityFtdcRspUserLoginField *pRspUserLogin, CS
 	if (!IsErrorRspInfo(pRspInfo)
 		&&pRspUserLogin)
 	{
-		pField->TradingDay = GetDate(pRspUserLogin->TradingDay);
-		pField->LoginTime = GetTime(pRspUserLogin->LoginTime);
+		pField->TradingDay = str_to_yyyyMMdd(pRspUserLogin->TradingDay);
+		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
 
 		sprintf(pField->SessionID, "%d:%d", pRspUserLogin->FrontID, pRspUserLogin->SessionID);
 
@@ -544,7 +544,7 @@ void CQueryApi::OnRspQryInstrument(CSecurityFtdcInstrumentField *pInstrument, CS
 			pField->Type = CSecurityFtdcInstrumentField_2_InstrumentType(pInstrument);
 			pField->VolumeMultiple = pInstrument->VolumeMultiple;
 			pField->PriceTick = CSecurityFtdcInstrumentField_2_PriceTick(pInstrument);
-			pField->ExpireDate = GetDate(pInstrument->ExpireDate);
+			pField->ExpireDate = str_to_yyyyMMdd(pInstrument->ExpireDate);
 			pField->OptionsType = CSecurityFtdcInstrumentField_2_PutCall(pInstrument);
 			pField->StrikePrice = pInstrument->ExecPrice;
 
@@ -709,7 +709,7 @@ void CQueryApi::OnTrade(CSecurityFtdcTradeField *pTrade, int nRequestID, bool bI
 	pField->OpenClose = TSecurityFtdcOffsetFlagType_2_OpenCloseType(pTrade->OffsetFlag);
 	pField->HedgeFlag = TSecurityFtdcHedgeFlagType_2_HedgeFlagType(pTrade->HedgeFlag);
 	pField->Commission = 0;//TODO收续费以后要计算出来
-	pField->Time = GetTime(pTrade->TradeTime);
+	pField->Time = str_to_HHmmss(pTrade->TradeTime);
 	strcpy(pField->TradeID, pTrade->TradeID);
 
 	if (nRequestID == 0)
