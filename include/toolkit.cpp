@@ -120,7 +120,10 @@ tm yyyy_MM_dd_to_tm(int yyyy, int MM, int dd)
 	_tm.tm_year = yyyy - 1900;
 	_tm.tm_mon = MM - 1;
 	_tm.tm_mday = dd;
-	return _tm;
+
+	// 直接返回的话wday还是空的，所以得转换一下
+	// 因为在推算前后交易日时需要得到星期几
+	return tm_add_seconds(&_tm, 0);
 }
 
 tm yyyyMMdd_to_tm(int yyyyMMdd)
