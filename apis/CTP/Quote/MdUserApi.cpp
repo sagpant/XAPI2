@@ -511,14 +511,25 @@ void CMdUserApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
 
 		m_TradingDay = pField->TradingDay;
-		if (m_TradingDay == 0)
+		//if (m_TradingDay == 0)
 		{
-			// 某些时候可能出现无下一交易的情况，只能构造出下一交易日
-			m_TradingDay = tm_to_yyyyMMdd(&get_next_trading_day(&current_date_tm()));
+			// 某些时候可能出现无交易日的情况，只能构造出交易日
+			// 18点以后算第二天，之前算当天
+			tm _tm0 = current_date_tm();
+			if (_tm0.tm_hour >= 18)
+			{
+				_tm0 = get_next_trading_day(&_tm0);
+			}
+			else if (_tm0.tm_wday == 6 || _tm0.tm_wday == 0)
+			{
+				// 凌晨一般不用动，但周六日比较特别
+				_tm0 = get_next_trading_day(&_tm0);
+			}
+
+			m_TradingDay = tm_to_yyyyMMdd(&_tm0);
 		}
-		tm _tm1 = yyyyMMdd_to_tm(m_TradingDay);
-		tm _tm2 = get_pre_trading_day(&_tm1);
-		m_PreTradingDay = tm_to_yyyyMMdd(&_tm2);
+
+		m_PreTradingDay = tm_to_yyyyMMdd(&get_pre_trading_day(&yyyyMMdd_to_tm(m_TradingDay)));
 
 		sprintf(pField->SessionID, "%d:%d", pRspUserLogin->FrontID, pRspUserLogin->SessionID);
 
