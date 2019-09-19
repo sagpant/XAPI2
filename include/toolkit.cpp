@@ -157,6 +157,12 @@ int current_time()
 	return tm_to_HHmmss(localtime(&now));
 }
 
+tm current_date_tm()
+{
+	time_t now = time(0);
+	return *localtime(&now);
+}
+
 tm get_pre_trading_day(tm* _tm)
 {
 	// 没有处理长假问题，但使用时不用担心
@@ -176,6 +182,26 @@ tm get_pre_trading_day(tm* _tm)
 	}
 	// 周六到周二
 	return tm_add_seconds(_tm, -86400 * 1);
+}
+
+tm get_next_trading_day(tm* _tm)
+{
+	// 没有处理长假问题，但使用时不用担心
+
+	// 从周日开始，0-6
+
+	if (_tm->tm_wday == 5)
+	{
+		// 周五
+		return tm_add_seconds(_tm, 86400 * 3);
+	}
+	if (_tm->tm_wday == 6)
+	{
+		// 周六
+		return tm_add_seconds(_tm, 86400 * 2);
+	}
+	// 周日到周四
+	return tm_add_seconds(_tm, 86400 * 1);
 }
 
 int str_to_yyyyMMdd(const char* yyyyMMdd)

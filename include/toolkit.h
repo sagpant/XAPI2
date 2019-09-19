@@ -35,7 +35,10 @@ int current_date();
 
 int current_time();
 
+tm current_date_tm();
+
 tm get_pre_trading_day(tm* _tm);
+tm get_next_trading_day(tm* _tm);
 
 int str_to_yyyyMMdd(const char* yyyyMMdd);
 

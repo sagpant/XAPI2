@@ -511,6 +511,11 @@ void CMdUserApi::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CTho
 		pField->LoginTime = str_to_HHmmss(pRspUserLogin->LoginTime);
 
 		m_TradingDay = pField->TradingDay;
+		if (m_TradingDay == 0)
+		{
+			// 某些时候可能出现无下一交易的情况，只能构造出下一交易日
+			m_TradingDay = tm_to_yyyyMMdd(&get_next_trading_day(&current_date_tm()));
+		}
 		tm _tm1 = yyyyMMdd_to_tm(m_TradingDay);
 		tm _tm2 = get_pre_trading_day(&_tm1);
 		m_PreTradingDay = tm_to_yyyyMMdd(&_tm2);
