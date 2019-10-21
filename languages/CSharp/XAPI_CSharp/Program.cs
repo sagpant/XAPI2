@@ -451,35 +451,35 @@ namespace XAPI
 
         static void test_CTP_COM_Main(string[] args)
         {
-            var api = new XAPI.COM.XApiCom();
+            //var api = new XAPI.COM.XApiCom();
 
-            //Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
-            //var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll");
+            ////Type type = Type.GetType("XAPI.Callback.XApi, XAPI_CSharp");
+            ////var a = (IXApi)Activator.CreateInstance(type, @"C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x86\CTP\CTP_Quote_x86.dll");
 
-            //api = a;
+            ////api = a;
 
-            //api.Server.BrokerID = "9999";
-            //api.Server.Address = "tcp://180.168.146.187:10010";
-            //api.Server.PrivateTopicResumeType = ResumeType.Undefined;
+            ////api.Server.BrokerID = "9999";
+            ////api.Server.Address = "tcp://180.168.146.187:10010";
+            ////api.Server.PrivateTopicResumeType = ResumeType.Undefined;
 
-            //api.User.UserID = "037505";
-            //api.User.Password = "123456";
+            ////api.User.UserID = "037505";
+            ////api.User.Password = "123456";
 
-            //api.OnConnectionStatus = OnConnectionStatus;
-            //api.OnRtnDepthMarketData = OnRtnDepthMarketData;
-            //api.OnRspQryInstrument = OnRspQryInstrument;
-            //api.OnRspQrySettlementInfo = OnRspQrySettlementInfo;
+            ////api.OnConnectionStatus = OnConnectionStatus;
+            ////api.OnRtnDepthMarketData = OnRtnDepthMarketData;
+            ////api.OnRspQryInstrument = OnRspQryInstrument;
+            ////api.OnRspQrySettlementInfo = OnRspQrySettlementInfo;
 
-            api.Connect();
-            Thread.Sleep(3 * 1000);
-            api.Subscribe("IF000;IF_WI;IF_IH_1803;IF888", "");
+            //api.Connect();
+            //Thread.Sleep(3 * 1000);
+            //api.Subscribe("IF000;IF_WI;IF_IH_1803;IF888", "");
 
-            Console.ReadKey();
-            Thread.Sleep(1000 * 1000);
+            //Console.ReadKey();
+            //Thread.Sleep(1000 * 1000);
 
-            api.Dispose();
+            //api.Dispose();
 
-            Thread.Sleep(5 * 1000);
+            //Thread.Sleep(5 * 1000);
         }
     }
 }

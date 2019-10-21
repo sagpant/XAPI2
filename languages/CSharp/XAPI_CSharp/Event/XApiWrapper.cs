@@ -5,12 +5,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using System.Windows.Forms;
 
 namespace XAPI.Event
 {
     [ComVisible(false)]
-    public class XApiWrapper:XApi
+    public class XApiWrapper : XApi
     {
         public new event EventHandler<OnConnectionStatusEventArgs> OnConnectionStatus;
         public new event EventHandler<OnRtnErrorEventArgs> OnRtnError;
@@ -38,12 +37,12 @@ namespace XAPI.Event
         public new event EventHandler<OnRspQryInvestorEventArgs> OnRspQryInvestor;
 
 
-        public XApiWrapper(string path):this()
+        public XApiWrapper(string path) : this()
         {
             LibPath = path;
         }
 
-        public XApiWrapper():base()
+        public XApiWrapper() : base()
         {
             base.OnConnectionStatus = OnConnectionStatus_callback;
             base.OnRtnError = OnRtnError_callback;
@@ -69,12 +68,12 @@ namespace XAPI.Event
             base.OnRspQryHistoricalBars = OnRspQryHistoricalBars_callback;
 
             base.OnRspQryInvestor = OnRspQryInvestor_callback;
-            
+
         }
 
         public void Show()
         {
-            MessageBox.Show("123456789");
+            // MessageBox.Show("123456789");
         }
 
         private void OnConnectionStatus_callback(object sender, ConnectionStatus status, ref RspUserLoginField userLogin, int size1)

@@ -20,8 +20,8 @@ namespace XAPI.COM
     [ProgId("XAPI.COM")]
     //[EventTrackingEnabled(true)]
     //[Description("Interface Serviced Component")]
-    public class XApiCom : UserControl,/*ServicedComponent,*/ IXApi,
-        IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
+    public class XApiCom : UserControl,/*ServicedComponent,*/ IXApi
+        //,IObjectSafety // implement IObjectSafety to supress the unsafe for scripting 
                        // warning message
     {
         #region Constants
