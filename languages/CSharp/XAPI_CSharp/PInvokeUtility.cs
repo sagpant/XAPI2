@@ -13,7 +13,13 @@ namespace XAPI
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
         public static extern void OutputDebugString(string message);
 
-        static Encoding encodingGB2312 = Encoding.GetEncoding(936);
+        static PInvokeUtility()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            encodingGB2312 = Encoding.GetEncoding(936);
+        }
+
+        static Encoding encodingGB2312;
 
         public static string GetUnicodeString(byte[] str)
         {

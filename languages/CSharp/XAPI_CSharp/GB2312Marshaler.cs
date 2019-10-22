@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-
 namespace XAPI
 {
     /// <summary>
@@ -14,7 +13,13 @@ namespace XAPI
     [ComVisible(false)]
     public class GB2312Marshaler : ICustomMarshaler
     {
-        static Encoding encodingGB2312 = Encoding.GetEncoding(936);
+        public GB2312Marshaler()
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            encodingGB2312 = Encoding.GetEncoding(936);
+        }
+
+        static Encoding encodingGB2312;
         static GB2312Marshaler static_instance;
 
         public IntPtr MarshalManagedToNative(object managedObj)

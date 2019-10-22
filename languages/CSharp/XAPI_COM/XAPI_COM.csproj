@@ -181,8 +181,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\XAPI_CSharp2\XAPI_CSharp.csproj">
-      <Project>{455a0b2a-8a32-4870-ad76-958645bdcbee}</Project>
+    <ProjectReference Include="..\XAPI_CSharp\XAPI_CSharp.csproj">
+      <Project>{a36e6b08-8b4e-4d31-8af5-010905781e81}</Project>
       <Name>XAPI_CSharp</Name>
     </ProjectReference>
   </ItemGroup>
