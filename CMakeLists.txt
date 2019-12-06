@@ -257,64 +257,64 @@ endfunction(add_apis)
 set(folder "")
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP)
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP/Quote)
-list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP_Quote)
-add_quote(CTP_Quote "${folder}")
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP_SE_Quote)
+add_quote(CTP_SE_Quote "${folder}")
 if (WIN32)
 	if (CMAKE_CL_64)
-		ADD_CUSTOM_COMMAND(TARGET CTP_Quote
+		ADD_CUSTOM_COMMAND(TARGET CTP_SE_Quote
 			PRE_LINK
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thostmduserapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thostmduserapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win64/thostmduserapi_se.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win64/thostmduserapi_se.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	else()
-		ADD_CUSTOM_COMMAND(TARGET CTP_Quote
+		ADD_CUSTOM_COMMAND(TARGET CTP_SE_Quote
 			PRE_LINK
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thostmduserapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thostmduserapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win32/thostmduserapi_se.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win32/thostmduserapi_se.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	endif()
 else()
-	ADD_CUSTOM_COMMAND(TARGET CTP_Quote
+	ADD_CUSTOM_COMMAND(TARGET CTP_SE_Quote
 		PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/linux64/libthostmduserapi.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/linux64/libthostmduserapi_se.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
 	)
 endif()
-target_link_libraries(CTP_Quote
-	thostmduserapi
+target_link_libraries(CTP_SE_Quote
+	thostmduserapi_se
 )
 
 # add CTP Trade
 set(folder "")
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP)
 list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP/Trade)
-list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP_Trade)
-add_trade(CTP_Trade "${folder}")
+list(APPEND folder ${CMAKE_CURRENT_LIST_DIR}/apis/CTP_SE_Trade)
+add_trade(CTP_SE_Trade "${folder}")
 if (WIN32)
 	if (CMAKE_CL_64)
-		ADD_CUSTOM_COMMAND(TARGET CTP_Trade
+		ADD_CUSTOM_COMMAND(TARGET CTP_SE_Trade
 			PRE_LINK
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thosttraderapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win64/thosttraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win64/thosttraderapi_se.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win64/thosttraderapi_se.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	else()
-		ADD_CUSTOM_COMMAND(TARGET CTP_Trade
+		ADD_CUSTOM_COMMAND(TARGET CTP_SE_Trade
 			PRE_LINK
 			COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thosttraderapi.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
-			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/win32/thosttraderapi.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win32/thosttraderapi_se.dll ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)/
+			COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/win32/thosttraderapi_se.lib ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/$(Configuration)/
 		)
 	endif()
 else()
-	ADD_CUSTOM_COMMAND(TARGET CTP_Trade
+	ADD_CUSTOM_COMMAND(TARGET CTP_SE_Trade
 		PRE_LINK
-		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP/linux64/libthosttraderapi.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
+		COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/include/CTP_SE/linux64/libthosttraderapi_se.so ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/
 	)
 endif()
-target_link_libraries(CTP_Trade
-	thosttraderapi
+target_link_libraries(CTP_SE_Trade
+	thosttraderapi_se
 )
 
 # add XTP Quote

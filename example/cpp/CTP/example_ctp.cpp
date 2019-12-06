@@ -37,7 +37,7 @@ public:
 		{
 			if ((pApi->GetApiTypes() & ApiType::ApiType_MarketData) == ApiType::ApiType_MarketData)
 			{
-				// µÃµ½µ±Ç°µÄÊ±¼ä
+				// å¾—åˆ°å½“å‰çš„æ—¶é—´
 				time_t rawtime;
 				struct tm * timeinfo;
 				time(&rawtime);
@@ -104,10 +104,10 @@ public:
 
 	virtual bool OnFilterSubscribe(CXApi* pApi, ExchangeType exchange, int instrument_part1, int instrument_part2, int instrument_part3, char* pInstrument)
 	{
-		// µ±Êı×ÖÎª0Ê±£¬Ö»ÅĞ¶Ï½»Ò×Ëù
-		// µ±½»Ò×ËùÎª
+		// å½“æ•°å­—ä¸º0æ—¶ï¼Œåªåˆ¤æ–­äº¤æ˜“æ‰€
+		// å½“äº¤æ˜“æ‰€ä¸º
 		if (instrument_part1 == 0)
-			// Ö»ÒªÉÏº£ÓëÉîÛÚ£¬²»´¦ÀíÈı°å
+			// åªè¦ä¸Šæµ·ä¸æ·±åœ³ï¼Œä¸å¤„ç†ä¸‰æ¿
 			return exchange != ExchangeType::ExchangeType_NEEQ;
 
 		//type = ExchangeType::SZSE;
@@ -144,8 +144,8 @@ int main(int argc, char* argv[])
 	char DLLPath2[250] = "CTP_Trade_x86.dll";
 #endif
 #else
-	char DLLPath1[1024] = "libCTP_Quote.so";
-	char DLLPath2[1024] = "libCTP_Trade.so";
+	char DLLPath1[1024] = "libCTP_SE_Quote.so";
+	char DLLPath2[1024] = "libCTP_SE_Trade.so";
 //	char dir_path[512] = {0};
 //	char DLLPath1[1024] = {0};
 //	char DLLPath2[1024] = {0};
@@ -162,13 +162,19 @@ int main(int argc, char* argv[])
 	ServerInfoField				m_ServerInfo2 = { 0 };
 	UserInfoField				m_UserInfo = { 0 };
 
-	strcpy(m_ServerInfo1.BrokerID, "4040");
-	strcpy(m_ServerInfo1.Address, "tcp://yhzx-front1.yhqh.com:41213;tcp://yhzx-front3.yhqh.com:41213");
+	strcpy(m_ServerInfo1.BrokerID, "9999");
+	strcpy(m_ServerInfo1.Address, "tcp://218.202.237.33:10112");
+	strcpy(m_ServerInfo1.AppID, "TD_MJ_V2.3.0");
+	strcpy(m_ServerInfo1.AuthCode, "FJFC4R1FCOOP7EGM");
+	strcpy(m_ServerInfo1.UserProductInfo, "OpenQuant");
 
-	strcpy(m_ServerInfo2.BrokerID, "4040");
-	strcpy(m_ServerInfo2.Address, "tcp://yhzx-front1.yhqh.com:51205;tcp://yhzx-front3.yhqh.com:52205");
+	strcpy(m_ServerInfo2.BrokerID, "9999");
+	strcpy(m_ServerInfo2.Address, "tcp://218.202.237.33:10102");
+	strcpy(m_ServerInfo2.AppID, "TD_MJ_V2.3.0");
+	strcpy(m_ServerInfo2.AuthCode, "FJFC4R1FCOOP7EGM");
+	strcpy(m_ServerInfo2.UserProductInfo, "OpenQuant");
 
-	strcpy(m_UserInfo.UserID, "00000025");
+	strcpy(m_UserInfo.UserID, "654321");
 	strcpy(m_UserInfo.Password, "123456");
 
 
@@ -194,16 +200,16 @@ int main(int argc, char* argv[])
 
 		pApi1->RegisterSpi(p);
 		pApi1->Connect("./", &m_ServerInfo1, &m_UserInfo, 1);
-		printf("ÒÑ¾­Ö´ĞĞÍêConnect\n");
+		printf("å·²ç»æ‰§è¡Œå®ŒConnect\n");
 
 		pApi2->RegisterSpi(p);
 		pApi2->Connect("./", &m_ServerInfo2, &m_UserInfo, 1);
-		printf("ÒÑ¾­Ö´ĞĞÍêConnect\n");
+		printf("å·²ç»æ‰§è¡Œå®ŒConnect\n");
 		getchar();
 
 		pApi1->Disconnect();
 		pApi2->Disconnect();
-		printf("ÒÑ¾­Ö´ĞĞÍêDisconnect");
+		printf("å·²ç»æ‰§è¡Œå®ŒDisconnect");
 		//getchar();
 	}
 
