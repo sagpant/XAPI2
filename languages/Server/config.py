@@ -40,10 +40,10 @@ def config_td():
     print('config_td')
     # 行情连接
     api = XApi(r'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x64\XAPI_CPP_x64.dll', 'td')
-    api.ServerInfo.Address = br'tcp://218.202.237.33:10002'
+    api.ServerInfo.Address = br'tcp://218.202.237.33:10102'
     api.ServerInfo.BrokerID = b'9999'
     api.UserInfo.UserID = b'037505'
-    api.UserInfo.UserID = b'037504'
+    api.UserInfo.UserID = b'654321'
     api.UserInfo.Password = b'123456'
 
     return api
@@ -51,7 +51,7 @@ def config_td():
 
 def init_md(api):
     print('init_md')
-    ret = api.init(br'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x64\CTP\CTP_Quote_x64.dll')
+    ret = api.init(br'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x64\CTP_SE\CTP_SE_Quote_x64.dll')
     if not ret:
         print(api.get_last_error())
         exit(-1)
@@ -64,7 +64,7 @@ def init_md(api):
 
 def init_td(api):
     print('init_td')
-    ret = api.init(br'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x64\CTP\CTP_Trade_x64.dll')
+    ret = api.init(br'C:\Program Files\SmartQuant Ltd\OpenQuant 2014\XAPI\x64\CTP_SE\CTP_SE_Trade_x64.dll')
     if not ret:
         print(api.get_last_error())
         exit(-1)

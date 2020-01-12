@@ -41,6 +41,10 @@ class XSpi(object):
         if size1 > 0:
             logger.info(pOrder)
 
+    def OnRspQryTrade(self, api, pTrade, size1, bIsLast):
+        if size1 > 0:
+            logger.info(pTrade)
+
     def OnRspQryInvestor(self, api, pInvestor, size1, bIsLast):
         if size1 > 0:
             logger.info(pInvestor)

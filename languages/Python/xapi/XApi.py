@@ -48,6 +48,7 @@ class XApi(object):
             ResponseType.OnLog: self._OnLog,
             ResponseType.OnRspQryInstrument: self._OnRspQryInstrument,
             ResponseType.OnRspQryOrder: self._OnRspQryOrder,
+            ResponseType.OnRspQryTrade: self._OnRspQryTrade,
             ResponseType.OnRspQryInvestorPosition: self._OnRspQryInvestorPosition,
             ResponseType.OnRspQryInvestor: self._OnRspQryInvestor,
             ResponseType.OnRtnOrder: self._OnRtnOrder,
@@ -307,6 +308,13 @@ class XApi(object):
         else:
             obj = OrderField()
         self._spi.OnRspQryOrder(self, obj, size1, bool(double1))
+
+    def _OnRspQryTrade(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3, size3):
+        if size1 > 0:
+            obj = cast(ptr1, POINTER(TradeField)).contents
+        else:
+            obj = TradeField()
+        self._spi.OnRspQryTrade(self, obj, size1, bool(double1))
 
     def _OnRspQryInvestorPosition(self, response_type, p_api1, p_api2, double1, double2, ptr1, size1, ptr2, size2, ptr3,
                                   size3):
